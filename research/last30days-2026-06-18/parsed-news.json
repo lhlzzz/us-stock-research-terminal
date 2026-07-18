@@ -1,0 +1,27 @@
+{
+  "WDC": {
+    "name": "Western Digital",
+    "article_count": 0,
+    "articles": []
+  },
+  "STX": {
+    "name": "Seagate Technology",
+    "article_count": 0,
+    "articles": []
+  },
+  "UAL": {
+    "name": "United Airlines",
+    "article_count": 0,
+    "articles": []
+  },
+  "TER": {
+    "name": "Teradyne",
+    "article_count": 0,
+    "articles": []
+  },
+  "AMAT": {
+    "name": "Applied Materials",
+    "article_count": 0,
+    "articles": []
+  }
+}

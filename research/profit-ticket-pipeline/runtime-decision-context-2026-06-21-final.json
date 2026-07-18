@@ -1,0 +1,82 @@
+{
+  "as_of_date": "2026-06-18",
+  "market_data_source": "Yahoo Finance historical kline + EastMoney US realtime quote",
+  "kline_source": "Yahoo Finance historical kline",
+  "quote_source": "EastMoney US realtime/delayed quote + kline",
+  "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+  "top_candidates": [
+    {
+      "symbol": "SW",
+      "ticket_rank": 1,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.3640838206627681,
+      "market_score": 0.7890838206627682,
+      "strongest_relevance": 0.95,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "GE",
+      "ticket_rank": 2,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.359307992202729,
+      "market_score": 0.784307992202729,
+      "strongest_relevance": 0.95,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "MRNA",
+      "ticket_rank": 3,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.3480019493177389,
+      "market_score": 0.7730019493177388,
+      "strongest_relevance": 0.95,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "TECH",
+      "ticket_rank": 4,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.3280214424951267,
+      "market_score": 0.8030214424951266,
+      "strongest_relevance": 0.95,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "TER",
+      "ticket_rank": 5,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.2560136452241715,
+      "market_score": 0.8110136452241714,
+      "strongest_relevance": 0.75,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    }
+  ],
+  "best_watch_candidate": {
+    "symbol": "SW",
+    "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+    "lifecycle_stage": "paper_review_candidate",
+    "ticket_score": 1.3640838206627681,
+    "market_score": 0.7890838206627682,
+    "watch_reason": "classification=CANDIDATE_FOR_PAPER_REVIEW; risk=ELEVATED; evidence=CANDIDATE_FOR_PAPER_REVIEW"
+  }
+}

@@ -1,0 +1,40 @@
+# xiaomei infrastructure
+# Native PostgreSQL 14 + Redis 6 (no Docker dependency)
+#
+# Services run directly on host:
+#   PostgreSQL: localhost:5432 (user=xiaomei, db=xiaomei)
+#   Redis: localhost:6379
+#
+# Start services: bash scripts/start_services.sh
+# The Docker setup below is FALLBACK only - use when native services unavailable.
+
+services:
+  xiaomei-db:
+    image: pgvector/pgvector:pg16
+    container_name: xiaomei-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: xiaomei
+      POSTGRES_USER: xiaomei
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-xiaomei2026}
+    volumes:
+      - xiaomei-pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    profiles:
+      - docker-fallback
+
+  xiaomei-redis:
+    image: redis:7-alpine
+    container_name: xiaomei-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - xiaomei-redis:/data
+    restart: unless-stopped
+    profiles:
+      - docker-fallback
+
+volumes:
+  xiaomei-pgdata:
+  xiaomei-redis:

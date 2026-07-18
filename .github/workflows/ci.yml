@@ -1,0 +1,24 @@
+name: xiaomei-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pytest fastapi sqlalchemy psycopg2-binary pandas numpy
+      - run: python -m compileall -q scripts
+      - run: pytest tests -q
+      - run: python scripts/daily_scheduler.py --dry-run
+      - run: |
+          python - <<'PY'
+          from fastapi.testclient import TestClient
+          from scripts.api.main import app
+          assert TestClient(app).get("/api/demo").status_code == 200
+          PY

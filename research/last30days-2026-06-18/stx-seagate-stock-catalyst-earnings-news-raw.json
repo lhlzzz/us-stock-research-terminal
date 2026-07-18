@@ -1,0 +1,63 @@
+{
+  "artifacts": {
+    "grounding": [],
+    "plan_source": "deterministic",
+    "pre_research_flags_present": false,
+    "resolved": {
+      "context": "",
+      "entity": "STX Seagate stock catalyst earnings news",
+      "github_repos": [],
+      "github_user": "",
+      "subreddits": [],
+      "x_handle": ""
+    }
+  },
+  "clusters": [],
+  "errors_by_source": {},
+  "generated_at": "2026-06-17T18:39:59.595392+00:00",
+  "items_by_source": {
+    "hackernews": [],
+    "reddit": []
+  },
+  "provider_runtime": {
+    "planner_model": "gpt-5.4-nano",
+    "reasoning_provider": "openai",
+    "rerank_model": "gpt-5.4-nano"
+  },
+  "query_plan": {
+    "cluster_mode": "story",
+    "freshness_mode": "strict_recent",
+    "intent": "breaking_news",
+    "notes": [
+      "fallback-plan (LLM error: HTTPError)"
+    ],
+    "raw_topic": "STX Seagate stock catalyst earnings news",
+    "source_weights": {
+      "github": 0.14084507042253522,
+      "hackernews": 0.2535211267605634,
+      "polymarket": 0.14084507042253522,
+      "reddit": 0.323943661971831,
+      "youtube": 0.14084507042253522
+    },
+    "subqueries": [
+      {
+        "label": "primary",
+        "ranking_query": "What recent evidence from the last 30 days is most relevant to STX Seagate stock catalyst earnings news, especially about stx seagate stock catalyst earnings?",
+        "search_query": "stx seagate stock catalyst earnings",
+        "sources": [
+          "reddit",
+          "hackernews"
+        ],
+        "weight": 1.0
+      }
+    ]
+  },
+  "range_from": "2026-05-18",
+  "range_to": "2026-06-17",
+  "ranked_candidates": [],
+  "topic": "STX Seagate stock catalyst earnings news",
+  "warnings": [
+    "No candidates survived retrieval and ranking.",
+    "Evidence is thin for this topic."
+  ]
+}

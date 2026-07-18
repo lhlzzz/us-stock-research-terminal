@@ -1,0 +1,427 @@
+{
+  "status": "OK",
+  "total_trades": 672,
+  "wins": 382,
+  "losses": 290,
+  "win_rate": 0.5685,
+  "avg_return": 0.017517,
+  "median_return": 0.007535,
+  "avg_win": 0.064183,
+  "avg_loss": -0.043954,
+  "profit_factor": 1.9235,
+  "max_win": 0.426872,
+  "max_loss": -0.286944,
+  "by_horizon": {
+    "1d": {
+      "count": 226,
+      "win_rate": 0.5531,
+      "avg_return": 0.006088,
+      "median_return": 0.003022,
+      "max_win": 0.327582,
+      "max_loss": -0.167367
+    },
+    "3d": {
+      "count": 224,
+      "win_rate": 0.567,
+      "avg_return": 0.015309,
+      "median_return": 0.012072,
+      "max_win": 0.379671,
+      "max_loss": -0.286944
+    },
+    "5d": {
+      "count": 222,
+      "win_rate": 0.5856,
+      "avg_return": 0.031378,
+      "median_return": 0.014843,
+      "max_win": 0.426872,
+      "max_loss": -0.209935
+    }
+  },
+  "by_symbol": {
+    "IVZ": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.003889
+    },
+    "ALB": {
+      "count": 6,
+      "win_rate": 0.1667,
+      "avg_return": -0.10258
+    },
+    "TPR": {
+      "count": 6,
+      "win_rate": 0.6667,
+      "avg_return": 0.010306
+    },
+    "IQV": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.044085
+    },
+    "AMD": {
+      "count": 15,
+      "win_rate": 0.4667,
+      "avg_return": 0.012071
+    },
+    "GEV": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.014534
+    },
+    "FIX": {
+      "count": 6,
+      "win_rate": 0.1667,
+      "avg_return": -0.005438
+    },
+    "ANET": {
+      "count": 3,
+      "win_rate": 0.3333,
+      "avg_return": -0.003363
+    },
+    "ALNY": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.004819
+    },
+    "APP": {
+      "count": 15,
+      "win_rate": 0.5333,
+      "avg_return": 0.003836
+    },
+    "WSM": {
+      "count": 3,
+      "win_rate": 0.3333,
+      "avg_return": -0.007714
+    },
+    "EBAY": {
+      "count": 6,
+      "win_rate": 0.5,
+      "avg_return": -0.002558
+    },
+    "HUM": {
+      "count": 9,
+      "win_rate": 1.0,
+      "avg_return": 0.026998
+    },
+    "CHRW": {
+      "count": 12,
+      "win_rate": 0.8333,
+      "avg_return": 0.011277
+    },
+    "INSM": {
+      "count": 6,
+      "win_rate": 0.6667,
+      "avg_return": 0.01453
+    },
+    "HCA": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.001179
+    },
+    "TER": {
+      "count": 6,
+      "win_rate": 0.6667,
+      "avg_return": 0.018458
+    },
+    "INTC": {
+      "count": 21,
+      "win_rate": 0.619,
+      "avg_return": 0.023325
+    },
+    "SATS": {
+      "count": 9,
+      "win_rate": 0.5556,
+      "avg_return": 0.068359
+    },
+    "SNDK": {
+      "count": 36,
+      "win_rate": 0.8611,
+      "avg_return": 0.100561
+    },
+    "LITE": {
+      "count": 24,
+      "win_rate": 0.75,
+      "avg_return": 0.055439
+    },
+    "CIEN": {
+      "count": 15,
+      "win_rate": 0.5333,
+      "avg_return": 0.006723
+    },
+    "STX": {
+      "count": 9,
+      "win_rate": 0.5556,
+      "avg_return": -0.001338
+    },
+    "WBD": {
+      "count": 9,
+      "win_rate": 0.6667,
+      "avg_return": 0.014563
+    },
+    "WDC": {
+      "count": 18,
+      "win_rate": 0.6667,
+      "avg_return": 0.018174
+    },
+    "TSLA": {
+      "count": 3,
+      "win_rate": 1.0,
+      "avg_return": 0.03066
+    },
+    "LRCX": {
+      "count": 12,
+      "win_rate": 0.4167,
+      "avg_return": -0.008162
+    },
+    "HOOD": {
+      "count": 6,
+      "win_rate": 0.6667,
+      "avg_return": 0.014678
+    },
+    "MU": {
+      "count": 33,
+      "win_rate": 0.6667,
+      "avg_return": 0.051748
+    },
+    "SMCI": {
+      "count": 6,
+      "win_rate": 0.0,
+      "avg_return": -0.067231
+    },
+    "AMAT": {
+      "count": 3,
+      "win_rate": 1.0,
+      "avg_return": 0.067
+    },
+    "VRT": {
+      "count": 30,
+      "win_rate": 0.3667,
+      "avg_return": -0.000396
+    },
+    "CRL": {
+      "count": 6,
+      "win_rate": 0.5,
+      "avg_return": 0.011178
+    },
+    "COHR": {
+      "count": 21,
+      "win_rate": 0.381,
+      "avg_return": -0.031294
+    },
+    "LVS": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.016057
+    },
+    "LLY": {
+      "count": 6,
+      "win_rate": 0.8333,
+      "avg_return": 0.021756
+    },
+    "CAH": {
+      "count": 6,
+      "win_rate": 1.0,
+      "avg_return": 0.017343
+    },
+    "REGN": {
+      "count": 6,
+      "win_rate": 0.6667,
+      "avg_return": 0.011784
+    },
+    "EXE": {
+      "count": 3,
+      "win_rate": 0.3333,
+      "avg_return": -0.016066
+    },
+    "CVNA": {
+      "count": 15,
+      "win_rate": 0.4667,
+      "avg_return": 0.017152
+    },
+    "DG": {
+      "count": 6,
+      "win_rate": 0.3333,
+      "avg_return": -0.018833
+    },
+    "LUV": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.021421
+    },
+    "MRNA": {
+      "count": 27,
+      "win_rate": 0.3704,
+      "avg_return": -0.003508
+    },
+    "LULU": {
+      "count": 6,
+      "win_rate": 0.6667,
+      "avg_return": 0.001779
+    },
+    "KLAC": {
+      "count": 6,
+      "win_rate": 0.0,
+      "avg_return": -0.111479
+    },
+    "ASML": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.027951
+    },
+    "BG": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.002339
+    },
+    "GLW": {
+      "count": 15,
+      "win_rate": 0.4667,
+      "avg_return": 0.007771
+    },
+    "GNRC": {
+      "count": 6,
+      "win_rate": 0.6667,
+      "avg_return": 0.005685
+    },
+    "TPL": {
+      "count": 12,
+      "win_rate": 1.0,
+      "avg_return": 0.065493
+    },
+    "KEYS": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.07527
+    },
+    "AXON": {
+      "count": 3,
+      "win_rate": 0.3333,
+      "avg_return": -0.063156
+    },
+    "COIN": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.00387
+    },
+    "TRI": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.10596
+    },
+    "CF": {
+      "count": 12,
+      "win_rate": 0.3333,
+      "avg_return": -0.025914
+    },
+    "DELL": {
+      "count": 12,
+      "win_rate": 0.6667,
+      "avg_return": 0.136683
+    },
+    "APA": {
+      "count": 15,
+      "win_rate": 0.7333,
+      "avg_return": 0.048714
+    },
+    "VLO": {
+      "count": 6,
+      "win_rate": 0.1667,
+      "avg_return": -0.016091
+    },
+    "DOW": {
+      "count": 6,
+      "win_rate": 0.0,
+      "avg_return": -0.039225
+    },
+    "MRVL": {
+      "count": 18,
+      "win_rate": 0.7222,
+      "avg_return": 0.003194
+    },
+    "ARM": {
+      "count": 12,
+      "win_rate": 0.75,
+      "avg_return": 0.089423
+    },
+    "ON": {
+      "count": 12,
+      "win_rate": 1.0,
+      "avg_return": 0.094472
+    },
+    "MPWR": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": -0.005435
+    },
+    "TXN": {
+      "count": 3,
+      "win_rate": 0.3333,
+      "avg_return": -0.014048
+    },
+    "CNC": {
+      "count": 15,
+      "win_rate": 0.6667,
+      "avg_return": 0.027231
+    },
+    "QCOM": {
+      "count": 6,
+      "win_rate": 1.0,
+      "avg_return": 0.121056
+    },
+    "AKAM": {
+      "count": 9,
+      "win_rate": 0.4444,
+      "avg_return": -0.006104
+    },
+    "DDOG": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.01294
+    },
+    "PANW": {
+      "count": 6,
+      "win_rate": 1.0,
+      "avg_return": 0.042566
+    },
+    "CRWD": {
+      "count": 6,
+      "win_rate": 0.6667,
+      "avg_return": 0.031962
+    },
+    "ZS": {
+      "count": 3,
+      "win_rate": 0.3333,
+      "avg_return": -0.140301
+    },
+    "NTAP": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.009467
+    },
+    "NOW": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.113794
+    },
+    "GEN": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.058603
+    },
+    "FTNT": {
+      "count": 3,
+      "win_rate": 0.3333,
+      "avg_return": -0.013409
+    },
+    "CSCO": {
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_return": -0.027091
+    },
+    "ODFL": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.002147
+    }
+  }
+}

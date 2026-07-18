@@ -1,0 +1,170 @@
+{
+  "status": "OK",
+  "as_of": "2026-06-17 13:27",
+  "total_completed": 58,
+  "wins": 37,
+  "losses": 21,
+  "win_rate": 0.6379,
+  "avg_return": 0.012569,
+  "median_return": 0.006741,
+  "avg_win": 0.036216,
+  "avg_loss": -0.029094,
+  "profit_factor": 2.1932,
+  "by_horizon": {
+    "1": {
+      "count": 22,
+      "win_rate": 0.5909,
+      "avg_return": 0.007648,
+      "median_return": 0.002975,
+      "max_win": 0.129235,
+      "max_loss": -0.037273
+    },
+    "3": {
+      "count": 30,
+      "win_rate": 0.6333,
+      "avg_return": 0.010152,
+      "median_return": 0.006391,
+      "max_win": 0.200671,
+      "max_loss": -0.14242
+    },
+    "5": {
+      "count": 6,
+      "win_rate": 0.8333,
+      "avg_return": 0.042702,
+      "median_return": 0.042176,
+      "max_win": 0.111283,
+      "max_loss": -0.057501
+    }
+  },
+  "by_symbol": {
+    "AAPL": {
+      "count": 4,
+      "win_rate": 1.0,
+      "avg_return": 0.021107
+    },
+    "ABNB": {
+      "count": 2,
+      "win_rate": 0.5,
+      "avg_return": -0.004206
+    },
+    "ADBE": {
+      "count": 2,
+      "win_rate": 0.0,
+      "avg_return": -0.082949
+    },
+    "ALNY": {
+      "count": 2,
+      "win_rate": 0.0,
+      "avg_return": -0.030744
+    },
+    "AMD": {
+      "count": 2,
+      "win_rate": 0.5,
+      "avg_return": 0.029444
+    },
+    "CAH": {
+      "count": 4,
+      "win_rate": 1.0,
+      "avg_return": 0.02013
+    },
+    "COO": {
+      "count": 5,
+      "win_rate": 1.0,
+      "avg_return": 0.010214
+    },
+    "CPB": {
+      "count": 4,
+      "win_rate": 0.0,
+      "avg_return": -0.037196
+    },
+    "HPE": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.010051
+    },
+    "HUBB": {
+      "count": 3,
+      "win_rate": 0.3333,
+      "avg_return": 0.00728
+    },
+    "KIM": {
+      "count": 6,
+      "win_rate": 0.1667,
+      "avg_return": -0.02099
+    },
+    "KLAC": {
+      "count": 3,
+      "win_rate": 1.0,
+      "avg_return": 0.147063
+    },
+    "LRCX": {
+      "count": 2,
+      "win_rate": 1.0,
+      "avg_return": 0.038447
+    },
+    "MRVL": {
+      "count": 3,
+      "win_rate": 0.6667,
+      "avg_return": 0.09481
+    },
+    "MSFT": {
+      "count": 2,
+      "win_rate": 1.0,
+      "avg_return": 0.013666
+    },
+    "NVDA": {
+      "count": 2,
+      "win_rate": 1.0,
+      "avg_return": 0.02554
+    },
+    "SJM": {
+      "count": 9,
+      "win_rate": 0.7778,
+      "avg_return": 0.003523
+    }
+  },
+  "symbol_penalties": {
+    "ADBE": {
+      "penalty": -0.05,
+      "reason": "win_rate=0% over 2 trades"
+    },
+    "ALNY": {
+      "penalty": -0.05,
+      "reason": "win_rate=0% over 2 trades"
+    },
+    "CPB": {
+      "penalty": -0.05,
+      "reason": "win_rate=0% over 4 trades"
+    },
+    "KIM": {
+      "penalty": -0.0417,
+      "reason": "win_rate=17% over 6 trades"
+    },
+    "STX": {
+      "penalty": -0.06,
+      "reason": "win_rate=0% over 8 trades, avg_return=-5.35%"
+    },
+    "TER": {
+      "penalty": -0.07,
+      "reason": "win_rate=0% over 11 trades, avg_return=-6.61%"
+    },
+    "SW": {
+      "penalty": -0.03,
+      "reason": "win_rate=20% over 10 trades, avg_return=-1.44%"
+    },
+    "SWK": {
+      "penalty": -0.04,
+      "reason": "win_rate=0% over 2 trades, avg_return=-3.14%"
+    }
+  },
+  "adjusted_momentum_exhaustion_threshold": null,
+  "adjusted_scoring_weights": null,
+  "adjusted_risk_params": {
+    "win_rate": 0.6379,
+    "avg_win_pct": 0.036216,
+    "avg_loss_pct": 0.029094
+  },
+  "risk_insights": [
+    "Risk manager params updated: win_rate=64%, avg_win=+3.62%, avg_loss=+2.91%"
+  ]
+}

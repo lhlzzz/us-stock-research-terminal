@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "codebase-memory-mcp": {
+      "type": "stdio",
+      "command": "/root/.local/bin/codebase-memory-mcp",
+      "args": []
+    },
+    "understand-anything": {
+      "type": "stdio",
+      "command": "/root/.local/bin/understand-anything-mcp",
+      "args": []
+    },
+    "agentmemory": {
+      "type": "stdio",
+      "command": "/root/.local/bin/agentmemory",
+      "args": ["mcp"]
+    },
+    "cloakbrowser": {
+      "type": "stdio",
+      "command": "/root/.local/bin/cloakbrowser-mcp",
+      "args": []
+    }
+  },
+  "permissions": {
+    "allow": []
+  }
+}

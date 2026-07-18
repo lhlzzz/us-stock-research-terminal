@@ -1,0 +1,380 @@
+{
+  "overall": {
+    "runtime_records": 0,
+    "tracking_rows": 274,
+    "completed_rows": 274,
+    "win_rate": 52.92,
+    "avg_forward_return": -0.145843,
+    "median_forward_return": 0.1592
+  },
+  "by_horizon": [
+    {
+      "horizon": "1d",
+      "count": 86,
+      "win_rate": 51.16,
+      "avg_forward_return": -1.255383,
+      "median_forward_return": 0.03945
+    },
+    {
+      "horizon": "3d",
+      "count": 75,
+      "win_rate": 49.33,
+      "avg_forward_return": -0.635004,
+      "median_forward_return": -0.2124
+    },
+    {
+      "horizon": "5d",
+      "count": 75,
+      "win_rate": 54.67,
+      "avg_forward_return": 0.308256,
+      "median_forward_return": 0.4514
+    },
+    {
+      "horizon": "10d",
+      "count": 38,
+      "win_rate": 60.53,
+      "avg_forward_return": 2.434421,
+      "median_forward_return": 1.26895
+    }
+  ],
+  "by_symbol": [
+    {
+      "symbol": "AMD",
+      "count": 19,
+      "win_rate": 31.58,
+      "avg_forward_return": -2.719268
+    },
+    {
+      "symbol": "TSLA",
+      "count": 15,
+      "win_rate": 20.0,
+      "avg_forward_return": -4.024333
+    },
+    {
+      "symbol": "AAPL",
+      "count": 15,
+      "win_rate": 93.33,
+      "avg_forward_return": 5.437607
+    },
+    {
+      "symbol": "DLTR",
+      "count": 13,
+      "win_rate": 100.0,
+      "avg_forward_return": 2.669969
+    },
+    {
+      "symbol": "PANW",
+      "count": 12,
+      "win_rate": 66.67,
+      "avg_forward_return": 0.629292
+    },
+    {
+      "symbol": "NVDA",
+      "count": 11,
+      "win_rate": 54.55,
+      "avg_forward_return": 0.628673
+    },
+    {
+      "symbol": "META",
+      "count": 10,
+      "win_rate": 40.0,
+      "avg_forward_return": 1.94928
+    },
+    {
+      "symbol": "GOOGL",
+      "count": 8,
+      "win_rate": 50.0,
+      "avg_forward_return": 0.311475
+    },
+    {
+      "symbol": "MSFT",
+      "count": 8,
+      "win_rate": 87.5,
+      "avg_forward_return": 2.554263
+    },
+    {
+      "symbol": "ADBE",
+      "count": 8,
+      "win_rate": 62.5,
+      "avg_forward_return": -15.097888
+    },
+    {
+      "symbol": "KMB",
+      "count": 7,
+      "win_rate": 14.29,
+      "avg_forward_return": -3.1563
+    },
+    {
+      "symbol": "AXON",
+      "count": 7,
+      "win_rate": 57.14,
+      "avg_forward_return": 9.305514
+    },
+    {
+      "symbol": "CMG",
+      "count": 7,
+      "win_rate": 42.86,
+      "avg_forward_return": -0.764529
+    },
+    {
+      "symbol": "REGN",
+      "count": 6,
+      "win_rate": 0.0,
+      "avg_forward_return": -2.131433
+    },
+    {
+      "symbol": "SHOP",
+      "count": 6,
+      "win_rate": 66.67,
+      "avg_forward_return": 0.944933
+    },
+    {
+      "symbol": "PYPL",
+      "count": 6,
+      "win_rate": 66.67,
+      "avg_forward_return": 1.745167
+    },
+    {
+      "symbol": "WTW",
+      "count": 6,
+      "win_rate": 33.33,
+      "avg_forward_return": -0.4809
+    },
+    {
+      "symbol": "GOOG",
+      "count": 5,
+      "win_rate": 80.0,
+      "avg_forward_return": -0.2061
+    },
+    {
+      "symbol": "AON",
+      "count": 4,
+      "win_rate": 100.0,
+      "avg_forward_return": 1.632775
+    },
+    {
+      "symbol": "WELL",
+      "count": 4,
+      "win_rate": 50.0,
+      "avg_forward_return": 0.09115
+    },
+    {
+      "symbol": "VRTX",
+      "count": 4,
+      "win_rate": 25.0,
+      "avg_forward_return": -4.6969
+    },
+    {
+      "symbol": "JNJ",
+      "count": 4,
+      "win_rate": 50.0,
+      "avg_forward_return": -1.443225
+    },
+    {
+      "symbol": "AMZN",
+      "count": 4,
+      "win_rate": 75.0,
+      "avg_forward_return": 1.814775
+    },
+    {
+      "symbol": "ABBV",
+      "count": 4,
+      "win_rate": 25.0,
+      "avg_forward_return": -2.4772
+    },
+    {
+      "symbol": "PGR",
+      "count": 4,
+      "win_rate": 100.0,
+      "avg_forward_return": 4.5798
+    },
+    {
+      "symbol": "ALL",
+      "count": 4,
+      "win_rate": 100.0,
+      "avg_forward_return": 4.873175
+    },
+    {
+      "symbol": "EXPE",
+      "count": 4,
+      "win_rate": 100.0,
+      "avg_forward_return": 5.0757
+    },
+    {
+      "symbol": "AJG",
+      "count": 4,
+      "win_rate": 100.0,
+      "avg_forward_return": 1.73455
+    },
+    {
+      "symbol": "PODD",
+      "count": 4,
+      "win_rate": 25.0,
+      "avg_forward_return": -2.008075
+    },
+    {
+      "symbol": "MA",
+      "count": 4,
+      "win_rate": 50.0,
+      "avg_forward_return": -0.363775
+    },
+    {
+      "symbol": "ALLE",
+      "count": 3,
+      "win_rate": 33.33,
+      "avg_forward_return": -0.446067
+    },
+    {
+      "symbol": "STX",
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_forward_return": -9.592733
+    },
+    {
+      "symbol": "AMAT",
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_forward_return": -4.4865
+    },
+    {
+      "symbol": "KDP",
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_forward_return": -1.463767
+    },
+    {
+      "symbol": "CCI",
+      "count": 3,
+      "win_rate": 66.67,
+      "avg_forward_return": 0.274
+    },
+    {
+      "symbol": "ABNB",
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_forward_return": -1.3518
+    },
+    {
+      "symbol": "CASY",
+      "count": 3,
+      "win_rate": 66.67,
+      "avg_forward_return": 0.244367
+    },
+    {
+      "symbol": "CRWD",
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_forward_return": -4.831933
+    },
+    {
+      "symbol": "TXN",
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_forward_return": -0.7556
+    },
+    {
+      "symbol": "MMM",
+      "count": 3,
+      "win_rate": 66.67,
+      "avg_forward_return": 0.796433
+    },
+    {
+      "symbol": "PDD",
+      "count": 3,
+      "win_rate": 33.33,
+      "avg_forward_return": 0.533
+    },
+    {
+      "symbol": "MELI",
+      "count": 3,
+      "win_rate": 100.0,
+      "avg_forward_return": 2.394933
+    },
+    {
+      "symbol": "FTNT",
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_forward_return": -1.886533
+    },
+    {
+      "symbol": "KO",
+      "count": 3,
+      "win_rate": 66.67,
+      "avg_forward_return": 0.620233
+    },
+    {
+      "symbol": "MGM",
+      "count": 3,
+      "win_rate": 0.0,
+      "avg_forward_return": -1.351833
+    },
+    {
+      "symbol": "NKE",
+      "count": 3,
+      "win_rate": 33.33,
+      "avg_forward_return": -0.9565
+    },
+    {
+      "symbol": "MDT",
+      "count": 1,
+      "win_rate": 100.0,
+      "avg_forward_return": 3.0958
+    },
+    {
+      "symbol": "WFC",
+      "count": 1,
+      "win_rate": 100.0,
+      "avg_forward_return": 0.5634
+    },
+    {
+      "symbol": "APP",
+      "count": 1,
+      "win_rate": 0.0,
+      "avg_forward_return": -3.7078
+    },
+    {
+      "symbol": "DE",
+      "count": 1,
+      "win_rate": 100.0,
+      "avg_forward_return": 0.9432
+    },
+    {
+      "symbol": "CL",
+      "count": 1,
+      "win_rate": 100.0,
+      "avg_forward_return": 2.2617
+    },
+    {
+      "symbol": "VTRS",
+      "count": 1,
+      "win_rate": 100.0,
+      "avg_forward_return": 4.8441
+    },
+    {
+      "symbol": "ASML",
+      "count": 1,
+      "win_rate": 0.0,
+      "avg_forward_return": -1.2268
+    },
+    {
+      "symbol": "BIIB",
+      "count": 1,
+      "win_rate": 100.0,
+      "avg_forward_return": 5.3944
+    },
+    {
+      "symbol": "HCA",
+      "count": 1,
+      "win_rate": 100.0,
+      "avg_forward_return": 1.9269
+    }
+  ],
+  "by_stage": [
+    {
+      "stage": null,
+      "count": 92,
+      "win_rate": 69.57,
+      "avg_forward_return": 2.361686
+    }
+  ]
+}

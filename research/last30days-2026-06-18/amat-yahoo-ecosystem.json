@@ -1,0 +1,151 @@
+{
+  "topic": "AMAT stock",
+  "ranked_candidates": [
+    {
+      "title": "Update: US Equity Indexes Mixed Ahead of Fed Chair Warsh's Policy Views as Iran Warns Israel Over Lebanon Attacks",
+      "snippet": "(Updates with index/price moves, macroeconomic data, and political/company news from the first parag",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Applied Materials, ASML, Lam Hit Record Highs, Lead Chip Gear Stocks Rally",
+      "snippet": "Shares of several leading semiconductor equipment firms, including ASML, hit record highs on Wednesday.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Applied Materials shares jump on launch of integrated AR smart glasses system",
+      "snippet": "Applied Materials Inc (NASDAQ:AMAT, XETRA:AP2) shares rose about 8% on Wednesday after the company unveiled SENZ, a new integrated visual system designed for next-generation smart glasses, marking its latest push into augmented reality hardware infrastructure. The company said SENZ is an...",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Applied Materials Stock Is One Of the S&P 500 Leaders Today. It’s AI.",
+      "snippet": "Three chip equipment maker stocks—Lam Research, Applied Materials, and KLA Corp.—were all surging on Wednesday after Citi hiked their price targets.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Applied Materials (AMAT) Climbed Amid Broad-Based Growth Drivers",
+      "snippet": "Renaissance Investment Management, an investment management company, released its Q1 2026 “Large Cap Growth Strategy.” A copy of the letter can be downloaded here. Stocks fell sharply in the first quarter due to the Iran conflict. The Energy and Materials sectors outperformed, Financials and Consumer Discretionary lagged. Large-cap stocks underperformed smaller-cap stocks, and Value outperformed Growth. […]",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Applied Materials Unveils SENZ™, a Fully Integrated Visual System for Next-Gen Smart Glasses",
+      "snippet": "Applied Materials’ SENZ™ — a Fully Integrated Visual System for Next-Gen Smart Glasses Applied Materials’ SENZ™ is an integrated ambient visual platform that combines waveguide optics, light engine, sensing, vision correction and electronic dimming technology in a single system designed for AI-powered next-generation display smart glasses. As a complete co-optimized solution, SENZ will reduce time-to-market and manufacturing complexity while enabling more flexible product designs and premium use",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Can AMAT's Semiconductor Systems Segment Sustain Momentum in 2026?",
+      "snippet": "Applied Materials' Semiconductor Systems business is benefiting from AI-driven chip investments, with record revenues and advanced packaging momentum fueling growth.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Is Applied Materials (AMAT) a Buy as Wall Street Analysts Look Optimistic?",
+      "snippet": "According to the average brokerage recommendation (ABR), one should invest in Applied Materials (AMAT). It is debatable whether this highly sought-after metric is effective because Wall Street analysts' recommendations tend to be overly optimistic. Would it be worth investing in the stock?",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "AI Demand, Earnings Send Applied Materials to New Highs",
+      "snippet": "Applied Materials, Inc. (AMAT) shares jump over 7,700% since 1997’s first institutional outlier signal.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Update: US Equity Futures Edge Slightly Higher Pre-Bell Ahead of Fed Decision Under New Chair",
+      "snippet": "(Updates with economic data, recent oil price movement, world markets' overview and corporate stock",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    }
+  ],
+  "items_by_source": {
+    "yahoo_finance": [
+      {
+        "title": "Update: US Equity Indexes Mixed Ahead of Fed Chair Warsh's Policy Views as Iran Warns Israel Over Lebanon Attacks",
+        "snippet": "(Updates with index/price moves, macroeconomic data, and political/company news from the first parag",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Applied Materials, ASML, Lam Hit Record Highs, Lead Chip Gear Stocks Rally",
+        "snippet": "Shares of several leading semiconductor equipment firms, including ASML, hit record highs on Wednesday.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Applied Materials shares jump on launch of integrated AR smart glasses system",
+        "snippet": "Applied Materials Inc (NASDAQ:AMAT, XETRA:AP2) shares rose about 8% on Wednesday after the company unveiled SENZ, a new integrated visual system designed for next-generation smart glasses, marking its latest push into augmented reality hardware infrastructure. The company said SENZ is an...",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Applied Materials Stock Is One Of the S&P 500 Leaders Today. It’s AI.",
+        "snippet": "Three chip equipment maker stocks—Lam Research, Applied Materials, and KLA Corp.—were all surging on Wednesday after Citi hiked their price targets.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Applied Materials (AMAT) Climbed Amid Broad-Based Growth Drivers",
+        "snippet": "Renaissance Investment Management, an investment management company, released its Q1 2026 “Large Cap Growth Strategy.” A copy of the letter can be downloaded here. Stocks fell sharply in the first quarter due to the Iran conflict. The Energy and Materials sectors outperformed, Financials and Consumer Discretionary lagged. Large-cap stocks underperformed smaller-cap stocks, and Value outperformed Growth. […]",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Applied Materials Unveils SENZ™, a Fully Integrated Visual System for Next-Gen Smart Glasses",
+        "snippet": "Applied Materials’ SENZ™ — a Fully Integrated Visual System for Next-Gen Smart Glasses Applied Materials’ SENZ™ is an integrated ambient visual platform that combines waveguide optics, light engine, sensing, vision correction and electronic dimming technology in a single system designed for AI-powered next-generation display smart glasses. As a complete co-optimized solution, SENZ will reduce time-to-market and manufacturing complexity while enabling more flexible product designs and premium use",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Can AMAT's Semiconductor Systems Segment Sustain Momentum in 2026?",
+        "snippet": "Applied Materials' Semiconductor Systems business is benefiting from AI-driven chip investments, with record revenues and advanced packaging momentum fueling growth.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Is Applied Materials (AMAT) a Buy as Wall Street Analysts Look Optimistic?",
+        "snippet": "According to the average brokerage recommendation (ABR), one should invest in Applied Materials (AMAT). It is debatable whether this highly sought-after metric is effective because Wall Street analysts' recommendations tend to be overly optimistic. Would it be worth investing in the stock?",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "AI Demand, Earnings Send Applied Materials to New Highs",
+        "snippet": "Applied Materials, Inc. (AMAT) shares jump over 7,700% since 1997’s first institutional outlier signal.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Update: US Equity Futures Edge Slightly Higher Pre-Bell Ahead of Fed Decision Under New Chair",
+        "snippet": "(Updates with economic data, recent oil price movement, world markets' overview and corporate stock",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      }
+    ]
+  },
+  "clusters": [],
+  "warnings": []
+}

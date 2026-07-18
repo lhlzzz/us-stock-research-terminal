@@ -1,0 +1,151 @@
+{
+  "topic": "WDC stock",
+  "ranked_candidates": [
+    {
+      "title": "Stock Market Today: Dow Gains; SpaceX Dives; Western Digital, Micron Lead AI Stock Rebound (Live Coverage)",
+      "snippet": "Stock Market Today: The Dow Jones index rises Wednesday before the Fed's decision and Fed Chair Warsh's comments. SpaceX stock is on the move.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Why It Is Time to Stop Buying Chip Stocks",
+      "snippet": "Sales and profit estimates for chip companies have moved higher, valuations have expanded—and volatility is picking up. What to do.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Western Digital (WDC) is a Great Momentum Stock: Should You Buy?",
+      "snippet": "Does Western Digital (WDC) have what it takes to be a top stock pick for momentum investors? Let's find out.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Is Micron Stock's Data Center Engine Stalling, Or Just Drowned Out By AI?",
+      "snippet": "Micron's narrative has shifted entirely to AI and cloud memory, but the silence on its once-touted data center SSD business reveals just how much the company's growth now depends on one explosive segment.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Western Digital Earnings Nearly Double on AI, Cloud Demand",
+      "snippet": "Shares of Western Digital Corporation (WDC) gain 11,294% since Big Money first bought big in 1994.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Western Digital (WDC) Moves 4.2% Higher: Will This Strength Last?",
+      "snippet": "Western Digital (WDC) witnessed a jump in share price last session on above-average trading volume. The latest trend in earnings estimate revisions for the stock suggests that there could be more strength down the road.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "WDC Stock To $1,000? Retail Traders Pile Into Memory Underdog After SNDK, MU Rallies: Here's A Key Signal Left Unnoticed",
+      "snippet": "WDC stock is riding a four-day winning streak, gaining nearly 40% over the period and bucking the broader market weakness.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Why Did MU, WDC, LION Stocks Surge To 52-Week Highs Today?",
+      "snippet": "AI infrastructure spending, memory chip demand, and consolidation across the entertainment industry drew investors’ interest.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Tesla booted from the ‘Magnificent Seven’ by a top fund manager. Here is the tech giant he’s crowned.",
+      "snippet": "T. Rowe Price fund manager David Giroux says Big Tech isn’t in a bubble, but there’s value in healthcare and utilities.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Western Digital Stock's Thousand-Percent Question",
+      "snippet": "The data storage giant is on a historic run fueled by an AI super-story, but the market is now pricing in something close to perfection.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    }
+  ],
+  "items_by_source": {
+    "yahoo_finance": [
+      {
+        "title": "Stock Market Today: Dow Gains; SpaceX Dives; Western Digital, Micron Lead AI Stock Rebound (Live Coverage)",
+        "snippet": "Stock Market Today: The Dow Jones index rises Wednesday before the Fed's decision and Fed Chair Warsh's comments. SpaceX stock is on the move.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Why It Is Time to Stop Buying Chip Stocks",
+        "snippet": "Sales and profit estimates for chip companies have moved higher, valuations have expanded—and volatility is picking up. What to do.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Western Digital (WDC) is a Great Momentum Stock: Should You Buy?",
+        "snippet": "Does Western Digital (WDC) have what it takes to be a top stock pick for momentum investors? Let's find out.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Is Micron Stock's Data Center Engine Stalling, Or Just Drowned Out By AI?",
+        "snippet": "Micron's narrative has shifted entirely to AI and cloud memory, but the silence on its once-touted data center SSD business reveals just how much the company's growth now depends on one explosive segment.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Western Digital Earnings Nearly Double on AI, Cloud Demand",
+        "snippet": "Shares of Western Digital Corporation (WDC) gain 11,294% since Big Money first bought big in 1994.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Western Digital (WDC) Moves 4.2% Higher: Will This Strength Last?",
+        "snippet": "Western Digital (WDC) witnessed a jump in share price last session on above-average trading volume. The latest trend in earnings estimate revisions for the stock suggests that there could be more strength down the road.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "WDC Stock To $1,000? Retail Traders Pile Into Memory Underdog After SNDK, MU Rallies: Here's A Key Signal Left Unnoticed",
+        "snippet": "WDC stock is riding a four-day winning streak, gaining nearly 40% over the period and bucking the broader market weakness.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Why Did MU, WDC, LION Stocks Surge To 52-Week Highs Today?",
+        "snippet": "AI infrastructure spending, memory chip demand, and consolidation across the entertainment industry drew investors’ interest.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Tesla booted from the ‘Magnificent Seven’ by a top fund manager. Here is the tech giant he’s crowned.",
+        "snippet": "T. Rowe Price fund manager David Giroux says Big Tech isn’t in a bubble, but there’s value in healthcare and utilities.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Western Digital Stock's Thousand-Percent Question",
+        "snippet": "The data storage giant is on a historic run fueled by an AI super-story, but the market is now pricing in something close to perfection.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      }
+    ]
+  },
+  "clusters": [],
+  "warnings": []
+}

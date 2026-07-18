@@ -1,0 +1,75 @@
+{
+  "as_of_date": "2026-06-24",
+  "market_data_source": "EastMoney US historical kline (via akshare) + EastMoney US realtime quote",
+  "kline_source": "EastMoney US historical kline",
+  "quote_source": "EastMoney US realtime/delayed quote + kline",
+  "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+  "top_candidates": [
+    {
+      "symbol": "DAL",
+      "ticket_rank": 1,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.1924859997819437,
+      "market_score": 1.1424859997819437,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "CAT",
+      "ticket_rank": 2,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.1815821881448008,
+      "market_score": 1.1315821881448007,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "MU",
+      "ticket_rank": 3,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.181567104275804,
+      "market_score": 1.131567104275804,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "UAL",
+      "ticket_rank": 4,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.1510935224355447,
+      "market_score": 1.1010935224355447,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "FLEX",
+      "ticket_rank": 5,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.1490413988795705,
+      "market_score": 1.0990413988795704,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    }
+  ],
+  "best_watch_candidate": null
+}

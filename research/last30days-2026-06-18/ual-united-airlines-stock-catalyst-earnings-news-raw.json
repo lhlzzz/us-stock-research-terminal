@@ -1,0 +1,273 @@
+{
+  "artifacts": {
+    "grounding": [],
+    "plan_source": "deterministic",
+    "pre_research_flags_present": false,
+    "resolved": {
+      "context": "",
+      "entity": "UAL United Airlines stock catalyst earnings news",
+      "github_repos": [],
+      "github_user": "",
+      "subreddits": [],
+      "x_handle": ""
+    }
+  },
+  "clusters": [
+    {
+      "candidate_ids": [
+        "https://reddit.com/r/everhint/comments/1tpbu2q/stock_market_news_morning_update_last_12_hours"
+      ],
+      "cluster_id": "cluster-1",
+      "representative_ids": [
+        "https://reddit.com/r/everhint/comments/1tpbu2q/stock_market_news_morning_update_last_12_hours"
+      ],
+      "score": 0.0,
+      "sources": [
+        "reddit"
+      ],
+      "title": "Stock Market News \u2014 Morning Update (last 12 hours, Pacific Time) - May 27, 2026",
+      "uncertainty": "single-source"
+    },
+    {
+      "candidate_ids": [
+        "https://reddit.com/r/theraceto10million/comments/1to914t/micron_is_on_an_absolute_tear_this_morning_how_do"
+      ],
+      "cluster_id": "cluster-2",
+      "representative_ids": [
+        "https://reddit.com/r/theraceto10million/comments/1to914t/micron_is_on_an_absolute_tear_this_morning_how_do"
+      ],
+      "score": 0.0,
+      "sources": [
+        "reddit"
+      ],
+      "title": "Micron is on an absolute TEAR this morning. How do you find these stocks before they blow up?",
+      "uncertainty": "single-source"
+    }
+  ],
+  "errors_by_source": {},
+  "generated_at": "2026-06-17T18:40:12.024053+00:00",
+  "items_by_source": {
+    "hackernews": [],
+    "reddit": [
+      {
+        "body": "Stock Market News \u2014 Morning Update (last 12 hours, Pacific Time) - May 27, 2026\n\ud83d\udc49 Net Sentiment: Moderately Bullish \u2014 AI tailwinds, Iran deal optimism, and strong earnings beats outweigh pockets of weakness in cybersecurity, medtech, and China-exposed names. Executive Summary Markets are navigating a complex crossroads: AI-driven momentum is lifting tech and semiconductor names while Iran peace deal hopes are crushing oil prices and sending cruise and airline stocks sharply higher. Goldman Sachs raised its S&amp;P 500 year-end target to 8,000, the single most bullish macro",
+        "container": "EverHint",
+        "date_confidence": "high",
+        "engagement": {
+          "num_comments": 0,
+          "score": 0
+        },
+        "freshness": 30,
+        "item_id": "R5",
+        "local_rank_score": 0.2375,
+        "local_relevance": 0.25,
+        "metadata": {
+          "comment_insights": [],
+          "top_comments": []
+        },
+        "published_at": "2026-05-27",
+        "relevance_hint": 0.18,
+        "snippet": "\ud83d\udc49 Net Sentiment: Moderately Bullish \u2014 AI tailwinds, Iran deal optimism, and strong earnings beats outweigh pockets of weakness in cybersecurity, medtech, and China-exposed names. Executive Summary Markets are navigating a complex crossroads: AI-driven momentum is lifting tech and semiconductor names while Iran peace deal hopes are crushing oil prices and sending cruise and airline stocks sharply h",
+        "source": "reddit",
+        "source_quality": 0.6,
+        "title": "Stock Market News \u2014 Morning Update (last 12 hours, Pacific Time) - May 27, 2026",
+        "url": "https://www.reddit.com/r/EverHint/comments/1tpbu2q/stock_market_news_morning_update_last_12_hours/",
+        "why_relevant": "Reddit RSS"
+      },
+      {
+        "body": "Micron is on an absolute TEAR this morning. How do you find these stocks before they blow up?\nAnyone get in earlier this year? What was your signal? EDIT: Check out this article from AltIndex I just found https://altindex.com/news/micron-earnings-alternative-data MU was the third most mentioned stock on Reddit last week ahead of today\u2019s big move and they flagged a ton of growth signals like hiring momentum, headcount expansion, employee sentiment, and congressional positioning back in March &#32; submitted by &#32; /u/Competitive-Case-185 &#32; to &#32; r/TheRaceTo10Million [link] &#32;",
+        "container": "TheRaceTo10Million",
+        "date_confidence": "high",
+        "engagement": {
+          "num_comments": 0,
+          "score": 0
+        },
+        "freshness": 26,
+        "item_id": "R8",
+        "local_rank_score": 0.2275,
+        "local_relevance": 0.25,
+        "metadata": {
+          "comment_insights": [],
+          "top_comments": []
+        },
+        "published_at": "2026-05-26",
+        "relevance_hint": 0.0,
+        "snippet": "Anyone get in earlier this year? What was your signal? EDIT: Check out this article from AltIndex I just found https://altindex.com/news/micron-earnings-alternative-data MU was the third most mentioned stock on Reddit last week ahead of today\u2019s big move and they flagged a ton of growth signals like hiring momentum, headcount expansion, employee sentiment, and congressional positioning back in Marc",
+        "source": "reddit",
+        "source_quality": 0.6,
+        "title": "Micron is on an absolute TEAR this morning. How do you find these stocks before they blow up?",
+        "url": "https://www.reddit.com/r/TheRaceTo10Million/comments/1to914t/micron_is_on_an_absolute_tear_this_morning_how_do/",
+        "why_relevant": "Reddit RSS"
+      }
+    ]
+  },
+  "provider_runtime": {
+    "planner_model": "gpt-5.4-nano",
+    "reasoning_provider": "openai",
+    "rerank_model": "gpt-5.4-nano"
+  },
+  "query_plan": {
+    "cluster_mode": "story",
+    "freshness_mode": "strict_recent",
+    "intent": "breaking_news",
+    "notes": [
+      "fallback-plan (LLM error: HTTPError)"
+    ],
+    "raw_topic": "UAL United Airlines stock catalyst earnings news",
+    "source_weights": {
+      "github": 0.14084507042253522,
+      "hackernews": 0.2535211267605634,
+      "polymarket": 0.14084507042253522,
+      "reddit": 0.323943661971831,
+      "youtube": 0.14084507042253522
+    },
+    "subqueries": [
+      {
+        "label": "primary",
+        "ranking_query": "What recent evidence from the last 30 days is most relevant to UAL United Airlines stock catalyst earnings news, especially about ual united airlines stock catalyst earnings?",
+        "search_query": "\"United Airlines\" ual united airlines stock catalyst earnings",
+        "sources": [
+          "reddit",
+          "hackernews"
+        ],
+        "weight": 1.0
+      }
+    ]
+  },
+  "range_from": "2026-05-18",
+  "range_to": "2026-06-17",
+  "ranked_candidates": [
+    {
+      "candidate_id": "https://reddit.com/r/everhint/comments/1tpbu2q/stock_market_news_morning_update_last_12_hours",
+      "cluster_id": "cluster-1",
+      "explanation": "fallback-local-score (entity-miss demotion)",
+      "final_score": 0.0,
+      "freshness": 30,
+      "fun_explanation": "heuristic-fallback",
+      "fun_score": 0.0,
+      "item_id": "R5",
+      "local_relevance": 0.25,
+      "metadata": {
+        "provenance": [
+          {
+            "item_id": "R5",
+            "native_rank": 1,
+            "source": "reddit",
+            "subquery_label": "primary"
+          }
+        ]
+      },
+      "native_ranks": {
+        "primary:reddit": 1
+      },
+      "rerank_score": 4.5,
+      "rrf_score": 0.005310551835603787,
+      "snippet": "\ud83d\udc49 Net Sentiment: Moderately Bullish \u2014 AI tailwinds, Iran deal optimism, and strong earnings beats outweigh pockets of weakness in cybersecurity, medtech, and China-exposed names. Executive Summary Markets are navigating a complex crossroads: AI-driven momentum is lifting tech and semiconductor names while Iran peace deal hopes are crushing oil prices and sending cruise and airline stocks sharply h",
+      "source": "reddit",
+      "source_items": [
+        {
+          "body": "Stock Market News \u2014 Morning Update (last 12 hours, Pacific Time) - May 27, 2026\n\ud83d\udc49 Net Sentiment: Moderately Bullish \u2014 AI tailwinds, Iran deal optimism, and strong earnings beats outweigh pockets of weakness in cybersecurity, medtech, and China-exposed names. Executive Summary Markets are navigating a complex crossroads: AI-driven momentum is lifting tech and semiconductor names while Iran peace deal hopes are crushing oil prices and sending cruise and airline stocks sharply higher. Goldman Sachs raised its S&amp;P 500 year-end target to 8,000, the single most bullish macro",
+          "container": "EverHint",
+          "date_confidence": "high",
+          "engagement": {
+            "num_comments": 0,
+            "score": 0
+          },
+          "freshness": 30,
+          "item_id": "R5",
+          "local_rank_score": 0.2375,
+          "local_relevance": 0.25,
+          "metadata": {
+            "comment_insights": [],
+            "top_comments": []
+          },
+          "published_at": "2026-05-27",
+          "relevance_hint": 0.18,
+          "snippet": "\ud83d\udc49 Net Sentiment: Moderately Bullish \u2014 AI tailwinds, Iran deal optimism, and strong earnings beats outweigh pockets of weakness in cybersecurity, medtech, and China-exposed names. Executive Summary Markets are navigating a complex crossroads: AI-driven momentum is lifting tech and semiconductor names while Iran peace deal hopes are crushing oil prices and sending cruise and airline stocks sharply h",
+          "source": "reddit",
+          "source_quality": 0.6,
+          "title": "Stock Market News \u2014 Morning Update (last 12 hours, Pacific Time) - May 27, 2026",
+          "url": "https://www.reddit.com/r/EverHint/comments/1tpbu2q/stock_market_news_morning_update_last_12_hours/",
+          "why_relevant": "Reddit RSS"
+        }
+      ],
+      "source_quality": 0.6,
+      "sources": [
+        "reddit"
+      ],
+      "subquery_labels": [
+        "primary"
+      ],
+      "title": "Stock Market News \u2014 Morning Update (last 12 hours, Pacific Time) - May 27, 2026",
+      "url": "https://www.reddit.com/r/EverHint/comments/1tpbu2q/stock_market_news_morning_update_last_12_hours/"
+    },
+    {
+      "candidate_id": "https://reddit.com/r/theraceto10million/comments/1to914t/micron_is_on_an_absolute_tear_this_morning_how_do",
+      "cluster_id": "cluster-2",
+      "explanation": "fallback-local-score (entity-miss demotion)",
+      "final_score": 0.0,
+      "freshness": 26,
+      "fun_explanation": "heuristic-fallback",
+      "fun_score": 0.0,
+      "item_id": "R8",
+      "local_relevance": 0.25,
+      "metadata": {
+        "provenance": [
+          {
+            "item_id": "R8",
+            "native_rank": 2,
+            "source": "reddit",
+            "subquery_label": "primary"
+          }
+        ]
+      },
+      "native_ranks": {
+        "primary:reddit": 2
+      },
+      "rerank_score": 3.6999999999999993,
+      "rrf_score": 0.00522489777373921,
+      "snippet": "Anyone get in earlier this year? What was your signal? EDIT: Check out this article from AltIndex I just found https://altindex.com/news/micron-earnings-alternative-data MU was the third most mentioned stock on Reddit last week ahead of today\u2019s big move and they flagged a ton of growth signals like hiring momentum, headcount expansion, employee sentiment, and congressional positioning back in Marc",
+      "source": "reddit",
+      "source_items": [
+        {
+          "body": "Micron is on an absolute TEAR this morning. How do you find these stocks before they blow up?\nAnyone get in earlier this year? What was your signal? EDIT: Check out this article from AltIndex I just found https://altindex.com/news/micron-earnings-alternative-data MU was the third most mentioned stock on Reddit last week ahead of today\u2019s big move and they flagged a ton of growth signals like hiring momentum, headcount expansion, employee sentiment, and congressional positioning back in March &#32; submitted by &#32; /u/Competitive-Case-185 &#32; to &#32; r/TheRaceTo10Million [link] &#32;",
+          "container": "TheRaceTo10Million",
+          "date_confidence": "high",
+          "engagement": {
+            "num_comments": 0,
+            "score": 0
+          },
+          "freshness": 26,
+          "item_id": "R8",
+          "local_rank_score": 0.2275,
+          "local_relevance": 0.25,
+          "metadata": {
+            "comment_insights": [],
+            "top_comments": []
+          },
+          "published_at": "2026-05-26",
+          "relevance_hint": 0.0,
+          "snippet": "Anyone get in earlier this year? What was your signal? EDIT: Check out this article from AltIndex I just found https://altindex.com/news/micron-earnings-alternative-data MU was the third most mentioned stock on Reddit last week ahead of today\u2019s big move and they flagged a ton of growth signals like hiring momentum, headcount expansion, employee sentiment, and congressional positioning back in Marc",
+          "source": "reddit",
+          "source_quality": 0.6,
+          "title": "Micron is on an absolute TEAR this morning. How do you find these stocks before they blow up?",
+          "url": "https://www.reddit.com/r/TheRaceTo10Million/comments/1to914t/micron_is_on_an_absolute_tear_this_morning_how_do/",
+          "why_relevant": "Reddit RSS"
+        }
+      ],
+      "source_quality": 0.6,
+      "sources": [
+        "reddit"
+      ],
+      "subquery_labels": [
+        "primary"
+      ],
+      "title": "Micron is on an absolute TEAR this morning. How do you find these stocks before they blow up?",
+      "url": "https://www.reddit.com/r/TheRaceTo10Million/comments/1to914t/micron_is_on_an_absolute_tear_this_morning_how_do/"
+    }
+  ],
+  "topic": "UAL United Airlines stock catalyst earnings news",
+  "warnings": [
+    "Evidence is thin for this topic."
+  ]
+}

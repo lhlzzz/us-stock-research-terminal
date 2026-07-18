@@ -1,0 +1,6050 @@
+[
+  {
+    "date": "2025-07-24",
+    "symbol": "IVZ",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 21.43000030517578,
+    "exit_price": 21.809999465942383,
+    "forward_return": 0.017732111775790482
+  },
+  {
+    "date": "2025-07-24",
+    "symbol": "IVZ",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 21.43000030517578,
+    "exit_price": 21.719999313354492,
+    "forward_return": 0.0135323846966382
+  },
+  {
+    "date": "2025-07-24",
+    "symbol": "IVZ",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 21.43000030517578,
+    "exit_price": 21.010000228881836,
+    "forward_return": -0.019598696701488505
+  },
+  {
+    "date": "2025-07-25",
+    "symbol": "ALB",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 83.73999786376953,
+    "exit_price": 74.7699966430664,
+    "forward_return": -0.10711728504335238
+  },
+  {
+    "date": "2025-07-25",
+    "symbol": "ALB",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 83.73999786376953,
+    "exit_price": 68.88999938964844,
+    "forward_return": -0.17733459341949676
+  },
+  {
+    "date": "2025-07-25",
+    "symbol": "ALB",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 83.73999786376953,
+    "exit_price": 67.9000015258789,
+    "forward_return": -0.18915687535196213
+  },
+  {
+    "date": "2025-07-28",
+    "symbol": "TPR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 110.41999816894531,
+    "exit_price": 107.4000015258789,
+    "forward_return": -0.02735008778433179
+  },
+  {
+    "date": "2025-07-28",
+    "symbol": "TPR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 110.41999816894531,
+    "exit_price": 108.02999877929688,
+    "forward_return": -0.021644624427467174
+  },
+  {
+    "date": "2025-07-28",
+    "symbol": "TPR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 110.41999816894531,
+    "exit_price": 111.88999938964844,
+    "forward_return": 0.01331281692700248
+  },
+  {
+    "date": "2025-07-29",
+    "symbol": "IQV",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 194.5500030517578,
+    "exit_price": 191.5399932861328,
+    "forward_return": -0.015471651084087767
+  },
+  {
+    "date": "2025-07-29",
+    "symbol": "IQV",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 194.5500030517578,
+    "exit_price": 182.4499969482422,
+    "forward_return": -0.06219483892938593
+  },
+  {
+    "date": "2025-07-29",
+    "symbol": "IQV",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 194.5500030517578,
+    "exit_price": 183.92999267578125,
+    "forward_return": -0.054587562114564614
+  },
+  {
+    "date": "2025-07-30",
+    "symbol": "AMD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 179.50999450683594,
+    "exit_price": 176.30999755859375,
+    "forward_return": -0.017826288486239794
+  },
+  {
+    "date": "2025-07-30",
+    "symbol": "AMD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 179.50999450683594,
+    "exit_price": 176.77999877929688,
+    "forward_return": -0.015208043067680532
+  },
+  {
+    "date": "2025-07-30",
+    "symbol": "AMD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 179.50999450683594,
+    "exit_price": 163.1199951171875,
+    "forward_return": -0.09130410501474495
+  },
+  {
+    "date": "2025-07-31",
+    "symbol": "GEV",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 660.2899780273438,
+    "exit_price": 656.5,
+    "forward_return": -0.00573986907792623
+  },
+  {
+    "date": "2025-07-31",
+    "symbol": "GEV",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 660.2899780273438,
+    "exit_price": 649.719970703125,
+    "forward_return": -0.016008129270411287
+  },
+  {
+    "date": "2025-07-31",
+    "symbol": "GEV",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 660.2899780273438,
+    "exit_price": 645.8599853515625,
+    "forward_return": -0.021854023468433903
+  },
+  {
+    "date": "2025-08-01",
+    "symbol": "FIX",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 695.2999877929688,
+    "exit_price": 699.1599731445312,
+    "forward_return": 0.005551539507162806
+  },
+  {
+    "date": "2025-08-01",
+    "symbol": "FIX",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 695.2999877929688,
+    "exit_price": 690.4500122070312,
+    "forward_return": -0.006975371308911349
+  },
+  {
+    "date": "2025-08-01",
+    "symbol": "FIX",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 695.2999877929688,
+    "exit_price": 691.760009765625,
+    "forward_return": -0.005091295972232679
+  },
+  {
+    "date": "2025-08-04",
+    "symbol": "AMD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 176.77999877929688,
+    "exit_price": 174.30999755859375,
+    "forward_return": -0.013972175799066622
+  },
+  {
+    "date": "2025-08-04",
+    "symbol": "AMD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 176.77999877929688,
+    "exit_price": 172.39999389648438,
+    "forward_return": -0.024776586226141872
+  },
+  {
+    "date": "2025-08-04",
+    "symbol": "AMD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 176.77999877929688,
+    "exit_price": 172.27999877929688,
+    "forward_return": -0.0254553684301021
+  },
+  {
+    "date": "2025-08-05",
+    "symbol": "AMD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 174.30999755859375,
+    "exit_price": 163.1199951171875,
+    "forward_return": -0.06419598759758327
+  },
+  {
+    "date": "2025-08-05",
+    "symbol": "AMD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 174.30999755859375,
+    "exit_price": 172.75999450683594,
+    "forward_return": -0.008892221177599358
+  },
+  {
+    "date": "2025-08-05",
+    "symbol": "AMD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 174.30999755859375,
+    "exit_price": 174.9499969482422,
+    "forward_return": 0.0036716160783221152
+  },
+  {
+    "date": "2025-08-06",
+    "symbol": "ANET",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 138.77999877929688,
+    "exit_price": 139.27999877929688,
+    "forward_return": 0.0036028246461881075
+  },
+  {
+    "date": "2025-08-06",
+    "symbol": "ANET",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 138.77999877929688,
+    "exit_price": 137.64999389648438,
+    "forward_return": -0.008142418884219405
+  },
+  {
+    "date": "2025-08-06",
+    "symbol": "ANET",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 138.77999877929688,
+    "exit_price": 138.00999450683594,
+    "forward_return": -0.0055483807409847374
+  },
+  {
+    "date": "2025-08-07",
+    "symbol": "ALNY",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 435.1000061035156,
+    "exit_price": 438.92999267578125,
+    "forward_return": 0.008802543136150698
+  },
+  {
+    "date": "2025-08-07",
+    "symbol": "ALNY",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 435.1000061035156,
+    "exit_price": 429.92999267578125,
+    "forward_return": -0.01188235659666792
+  },
+  {
+    "date": "2025-08-07",
+    "symbol": "ALNY",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 435.1000061035156,
+    "exit_price": 442.7300109863281,
+    "forward_return": 0.017536209551321402
+  },
+  {
+    "date": "2025-08-08",
+    "symbol": "APP",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 455.9800109863281,
+    "exit_price": 465.5799865722656,
+    "forward_return": 0.021053500931262015
+  },
+  {
+    "date": "2025-08-08",
+    "symbol": "APP",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 455.9800109863281,
+    "exit_price": 446.3999938964844,
+    "forward_return": -0.02100973038077103
+  },
+  {
+    "date": "2025-08-08",
+    "symbol": "APP",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 455.9800109863281,
+    "exit_price": 438.67999267578125,
+    "forward_return": -0.037940299780083064
+  },
+  {
+    "date": "2025-08-11",
+    "symbol": "APP",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 465.5799865722656,
+    "exit_price": 467.0,
+    "forward_return": 0.003049988119525837
+  },
+  {
+    "date": "2025-08-11",
+    "symbol": "APP",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 465.5799865722656,
+    "exit_price": 433.3399963378906,
+    "forward_return": -0.06924694180206314
+  },
+  {
+    "date": "2025-08-11",
+    "symbol": "APP",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 465.5799865722656,
+    "exit_price": 438.5400085449219,
+    "forward_return": -0.05807805061901372
+  },
+  {
+    "date": "2025-08-12",
+    "symbol": "WSM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 206.97000122070312,
+    "exit_price": 210.1999969482422,
+    "forward_return": 0.0156061057568182
+  },
+  {
+    "date": "2025-08-12",
+    "symbol": "WSM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 206.97000122070312,
+    "exit_price": 203.22999572753906,
+    "forward_return": -0.018070278161596454
+  },
+  {
+    "date": "2025-08-12",
+    "symbol": "WSM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 206.97000122070312,
+    "exit_price": 202.69000244140625,
+    "forward_return": -0.02067931948617463
+  },
+  {
+    "date": "2025-08-13",
+    "symbol": "EBAY",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 100.7699966430664,
+    "exit_price": 98.4800033569336,
+    "forward_return": -0.02272495149765774
+  },
+  {
+    "date": "2025-08-13",
+    "symbol": "EBAY",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 100.7699966430664,
+    "exit_price": 99.02999877929688,
+    "forward_return": -0.017267023139166282
+  },
+  {
+    "date": "2025-08-13",
+    "symbol": "EBAY",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 100.7699966430664,
+    "exit_price": 99.1500015258789,
+    "forward_return": -0.016076165239199303
+  },
+  {
+    "date": "2025-08-14",
+    "symbol": "EBAY",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 98.4800033569336,
+    "exit_price": 100.69999694824219,
+    "forward_return": 0.022542582408962675
+  },
+  {
+    "date": "2025-08-14",
+    "symbol": "EBAY",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 98.4800033569336,
+    "exit_price": 99.88999938964844,
+    "forward_return": 0.01431758717152376
+  },
+  {
+    "date": "2025-08-14",
+    "symbol": "EBAY",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 98.4800033569336,
+    "exit_price": 98.86000061035156,
+    "forward_return": 0.0038586234815680687
+  },
+  {
+    "date": "2025-08-15",
+    "symbol": "HUM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 286.3900146484375,
+    "exit_price": 287.19000244140625,
+    "forward_return": 0.0027933508573991794
+  },
+  {
+    "date": "2025-08-15",
+    "symbol": "HUM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 286.3900146484375,
+    "exit_price": 290.0,
+    "forward_return": 0.012605136935357253
+  },
+  {
+    "date": "2025-08-15",
+    "symbol": "HUM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 286.3900146484375,
+    "exit_price": 299.510009765625,
+    "forward_return": 0.04581163604217542
+  },
+  {
+    "date": "2025-08-18",
+    "symbol": "FIX",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 695.760009765625,
+    "exit_price": 683.9299926757812,
+    "forward_return": -0.017003013860812155
+  },
+  {
+    "date": "2025-08-18",
+    "symbol": "FIX",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 695.760009765625,
+    "exit_price": 694.0,
+    "forward_return": -0.00252962191117867
+  },
+  {
+    "date": "2025-08-18",
+    "symbol": "FIX",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 695.760009765625,
+    "exit_price": 691.1799926757812,
+    "forward_return": -0.006582754147348324
+  },
+  {
+    "date": "2025-08-19",
+    "symbol": "CHRW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 123.81999969482422,
+    "exit_price": 121.08000183105469,
+    "forward_return": -0.02212887958748777
+  },
+  {
+    "date": "2025-08-19",
+    "symbol": "CHRW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 123.81999969482422,
+    "exit_price": 125.18000030517578,
+    "forward_return": 0.010983690952217184
+  },
+  {
+    "date": "2025-08-19",
+    "symbol": "CHRW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 123.81999969482422,
+    "exit_price": 126.9000015258789,
+    "forward_return": 0.024874833133951668
+  },
+  {
+    "date": "2025-08-20",
+    "symbol": "INSM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 129.4499969482422,
+    "exit_price": 132.60000610351562,
+    "forward_return": 0.024333790880913586
+  },
+  {
+    "date": "2025-08-20",
+    "symbol": "INSM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 129.4499969482422,
+    "exit_price": 128.32000732421875,
+    "forward_return": -0.008729159139920561
+  },
+  {
+    "date": "2025-08-20",
+    "symbol": "INSM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 129.4499969482422,
+    "exit_price": 134.52999877929688,
+    "forward_return": 0.039242966016336256
+  },
+  {
+    "date": "2025-08-21",
+    "symbol": "HCA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 404.260009765625,
+    "exit_price": 404.9700012207031,
+    "forward_return": 0.0017562742738015391
+  },
+  {
+    "date": "2025-08-21",
+    "symbol": "HCA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 404.260009765625,
+    "exit_price": 401.9599914550781,
+    "forward_return": -0.0056894529634042845
+  },
+  {
+    "date": "2025-08-21",
+    "symbol": "HCA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 404.260009765625,
+    "exit_price": 407.2799987792969,
+    "forward_return": 0.0074704124591071785
+  },
+  {
+    "date": "2025-08-22",
+    "symbol": "CHRW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 125.18000030517578,
+    "exit_price": 126.41000366210938,
+    "forward_return": 0.009825877567782193
+  },
+  {
+    "date": "2025-08-22",
+    "symbol": "CHRW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 125.18000030517578,
+    "exit_price": 128.05999755859375,
+    "forward_return": 0.023006848109896394
+  },
+  {
+    "date": "2025-08-22",
+    "symbol": "CHRW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 125.18000030517578,
+    "exit_price": 128.6999969482422,
+    "forward_return": 0.028119481023206827
+  },
+  {
+    "date": "2025-08-25",
+    "symbol": "CHRW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 126.41000366210938,
+    "exit_price": 126.9000015258789,
+    "forward_return": 0.0038762585995906207
+  },
+  {
+    "date": "2025-08-25",
+    "symbol": "CHRW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 126.41000366210938,
+    "exit_price": 129.2899932861328,
+    "forward_return": 0.0227829249314917
+  },
+  {
+    "date": "2025-08-25",
+    "symbol": "CHRW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 126.41000366210938,
+    "exit_price": 128.88999938964844,
+    "forward_return": 0.019618666685336184
+  },
+  {
+    "date": "2025-08-26",
+    "symbol": "TER",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 118.61000061035156,
+    "exit_price": 116.98999786376953,
+    "forward_return": -0.013658230657159653
+  },
+  {
+    "date": "2025-08-26",
+    "symbol": "TER",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 118.61000061035156,
+    "exit_price": 118.23999786376953,
+    "forward_return": -0.0031194903016443787
+  },
+  {
+    "date": "2025-08-26",
+    "symbol": "TER",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 118.61000061035156,
+    "exit_price": 119.62999725341797,
+    "forward_return": 0.008599583827819224
+  },
+  {
+    "date": "2025-08-27",
+    "symbol": "CHRW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 128.05999755859375,
+    "exit_price": 129.2899932861328,
+    "forward_return": 0.00960483953606417
+  },
+  {
+    "date": "2025-08-27",
+    "symbol": "CHRW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 128.05999755859375,
+    "exit_price": 128.88999938964844,
+    "forward_return": 0.006481351295317017
+  },
+  {
+    "date": "2025-08-27",
+    "symbol": "CHRW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 128.05999755859375,
+    "exit_price": 127.83999633789062,
+    "forward_return": -0.0017179542784425683
+  },
+  {
+    "date": "2025-08-28",
+    "symbol": "INTC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 24.93000030517578,
+    "exit_price": 24.350000381469727,
+    "forward_return": -0.023265139053593953
+  },
+  {
+    "date": "2025-08-28",
+    "symbol": "INTC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 24.93000030517578,
+    "exit_price": 24.0,
+    "forward_return": -0.037304464251558866
+  },
+  {
+    "date": "2025-08-28",
+    "symbol": "INTC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 24.93000030517578,
+    "exit_price": 24.489999771118164,
+    "forward_return": -0.017649439577674952
+  },
+  {
+    "date": "2025-08-29",
+    "symbol": "SATS",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 61.790000915527344,
+    "exit_price": 65.23999786376953,
+    "forward_return": 0.05583422717469544
+  },
+  {
+    "date": "2025-08-29",
+    "symbol": "SATS",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 61.790000915527344,
+    "exit_price": 67.22000122070312,
+    "forward_return": 0.08787830109598316
+  },
+  {
+    "date": "2025-08-29",
+    "symbol": "SATS",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 61.790000915527344,
+    "exit_price": 80.62999725341797,
+    "forward_return": 0.3049036423166047
+  },
+  {
+    "date": "2025-09-02",
+    "symbol": "SATS",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 65.23999786376953,
+    "exit_price": 63.90999984741211,
+    "forward_return": -0.020386236356638943
+  },
+  {
+    "date": "2025-09-02",
+    "symbol": "SATS",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 65.23999786376953,
+    "exit_price": 67.23999786376953,
+    "forward_return": 0.030656040243537186
+  },
+  {
+    "date": "2025-09-02",
+    "symbol": "SATS",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 65.23999786376953,
+    "exit_price": 83.56999969482422,
+    "forward_return": 0.2809626368984617
+  },
+  {
+    "date": "2025-09-03",
+    "symbol": "INSM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 143.5,
+    "exit_price": 142.52999877929688,
+    "forward_return": -0.006759590388175085
+  },
+  {
+    "date": "2025-09-03",
+    "symbol": "INSM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 143.5,
+    "exit_price": 146.67999267578125,
+    "forward_return": 0.022160227705792623
+  },
+  {
+    "date": "2025-09-03",
+    "symbol": "INSM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 143.5,
+    "exit_price": 145.92999267578125,
+    "forward_return": 0.016933746869555844
+  },
+  {
+    "date": "2025-09-04",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 62.5,
+    "exit_price": 68.55000305175781,
+    "forward_return": 0.0968000488281251
+  },
+  {
+    "date": "2025-09-04",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 62.5,
+    "exit_price": 70.51000213623047,
+    "forward_return": 0.12816003417968758
+  },
+  {
+    "date": "2025-09-04",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 62.5,
+    "exit_price": 84.30000305175781,
+    "forward_return": 0.3488000488281251
+  },
+  {
+    "date": "2025-09-05",
+    "symbol": "LITE",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 149.4600067138672,
+    "exit_price": 149.39999389648438,
+    "forward_return": -0.0004015309426400604
+  },
+  {
+    "date": "2025-09-05",
+    "symbol": "LITE",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 149.4600067138672,
+    "exit_price": 164.8800048828125,
+    "forward_return": 0.10317140021588544
+  },
+  {
+    "date": "2025-09-05",
+    "symbol": "LITE",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 149.4600067138672,
+    "exit_price": 163.02000427246094,
+    "forward_return": 0.0907265954065799
+  },
+  {
+    "date": "2025-09-08",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 70.49500274658203,
+    "exit_price": 70.51000213623047,
+    "forward_return": 0.0002127723819282945
+  },
+  {
+    "date": "2025-09-08",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 70.49500274658203,
+    "exit_price": 84.30000305175781,
+    "forward_return": 0.1958294881525502
+  },
+  {
+    "date": "2025-09-08",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 70.49500274658203,
+    "exit_price": 90.08999633789062,
+    "forward_return": 0.27796287435790856
+  },
+  {
+    "date": "2025-09-09",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 70.51000213623047,
+    "exit_price": 73.91999816894531,
+    "forward_return": 0.04836187674659942
+  },
+  {
+    "date": "2025-09-09",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 70.51000213623047,
+    "exit_price": 86.12999725341797,
+    "forward_return": 0.22152878519289398
+  },
+  {
+    "date": "2025-09-09",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 70.51000213623047,
+    "exit_price": 91.55000305175781,
+    "forward_return": 0.2983973943849345
+  },
+  {
+    "date": "2025-09-10",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 73.91999816894531,
+    "exit_price": 84.30000305175781,
+    "forward_return": 0.1404221474558054
+  },
+  {
+    "date": "2025-09-10",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 73.91999816894531,
+    "exit_price": 90.08999633789062,
+    "forward_return": 0.21874998064784212
+  },
+  {
+    "date": "2025-09-10",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 73.91999816894531,
+    "exit_price": 93.97000122070312,
+    "forward_return": 0.27123922549258217
+  },
+  {
+    "date": "2025-09-11",
+    "symbol": "CIEN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 132.5,
+    "exit_price": 131.27999877929688,
+    "forward_return": -0.009207556382665127
+  },
+  {
+    "date": "2025-09-11",
+    "symbol": "CIEN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 132.5,
+    "exit_price": 137.47999572753906,
+    "forward_return": 0.037584873415389186
+  },
+  {
+    "date": "2025-09-11",
+    "symbol": "CIEN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 132.5,
+    "exit_price": 138.0399932861328,
+    "forward_return": 0.04181127008402119
+  },
+  {
+    "date": "2025-09-12",
+    "symbol": "APP",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 582.0,
+    "exit_price": 593.1400146484375,
+    "forward_return": 0.01914091863992695
+  },
+  {
+    "date": "2025-09-12",
+    "symbol": "APP",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 582.0,
+    "exit_price": 606.6599731445312,
+    "forward_return": 0.04237108787720145
+  },
+  {
+    "date": "2025-09-12",
+    "symbol": "APP",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 582.0,
+    "exit_price": 649.5900268554688,
+    "forward_return": 0.11613406676197369
+  },
+  {
+    "date": "2025-09-15",
+    "symbol": "STX",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 211.1199951171875,
+    "exit_price": 211.1300048828125,
+    "forward_return": 4.7412684049286113e-05
+  },
+  {
+    "date": "2025-09-15",
+    "symbol": "STX",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 211.1199951171875,
+    "exit_price": 216.63999938964844,
+    "forward_return": 0.026146288367413506
+  },
+  {
+    "date": "2025-09-15",
+    "symbol": "STX",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 211.1199951171875,
+    "exit_price": 229.3300018310547,
+    "forward_return": 0.08625429677449192
+  },
+  {
+    "date": "2025-09-16",
+    "symbol": "APP",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 603.7999877929688,
+    "exit_price": 606.6599731445312,
+    "forward_return": 0.004736643606132684
+  },
+  {
+    "date": "2025-09-16",
+    "symbol": "APP",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 603.7999877929688,
+    "exit_price": 649.5900268554688,
+    "forward_return": 0.07583643588644873
+  },
+  {
+    "date": "2025-09-16",
+    "symbol": "APP",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 603.7999877929688,
+    "exit_price": 651.1799926757812,
+    "forward_return": 0.07846970162420441
+  },
+  {
+    "date": "2025-09-17",
+    "symbol": "WBD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 17.989999771118164,
+    "exit_price": 18.700000762939453,
+    "forward_return": 0.039466425839601804
+  },
+  {
+    "date": "2025-09-17",
+    "symbol": "WBD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 17.989999771118164,
+    "exit_price": 19.610000610351562,
+    "forward_return": 0.09005007558889533
+  },
+  {
+    "date": "2025-09-17",
+    "symbol": "WBD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 17.989999771118164,
+    "exit_price": 19.81999969482422,
+    "forward_return": 0.10172317659747865
+  },
+  {
+    "date": "2025-09-18",
+    "symbol": "WDC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 105.1500015258789,
+    "exit_price": 106.62999725341797,
+    "forward_return": 0.014075089929264761
+  },
+  {
+    "date": "2025-09-18",
+    "symbol": "WDC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 105.1500015258789,
+    "exit_price": 110.25,
+    "forward_return": 0.048502124584999695
+  },
+  {
+    "date": "2025-09-18",
+    "symbol": "WDC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 105.1500015258789,
+    "exit_price": 107.20999908447266,
+    "forward_return": 0.01959103688730579
+  },
+  {
+    "date": "2025-09-19",
+    "symbol": "TSLA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 426.07000732421875,
+    "exit_price": 434.2099914550781,
+    "forward_return": 0.019104804353584193
+  },
+  {
+    "date": "2025-09-19",
+    "symbol": "TSLA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 426.07000732421875,
+    "exit_price": 442.7900085449219,
+    "forward_return": 0.0392423802034485
+  },
+  {
+    "date": "2025-09-19",
+    "symbol": "TSLA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 426.07000732421875,
+    "exit_price": 440.3999938964844,
+    "forward_return": 0.03363293901455311
+  },
+  {
+    "date": "2025-09-22",
+    "symbol": "LRCX",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 132.1999969482422,
+    "exit_price": 131.92999267578125,
+    "forward_return": -0.0020423924258231585
+  },
+  {
+    "date": "2025-09-22",
+    "symbol": "LRCX",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 132.1999969482422,
+    "exit_price": 128.1300048828125,
+    "forward_return": -0.030786627529372335
+  },
+  {
+    "date": "2025-09-22",
+    "symbol": "LRCX",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 132.1999969482422,
+    "exit_price": 131.08999633789062,
+    "forward_return": -0.008396373948375668
+  },
+  {
+    "date": "2025-09-23",
+    "symbol": "LRCX",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 131.92999267578125,
+    "exit_price": 128.32000732421875,
+    "forward_return": -0.02736288601511605
+  },
+  {
+    "date": "2025-09-23",
+    "symbol": "LRCX",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 131.92999267578125,
+    "exit_price": 128.3300018310547,
+    "forward_return": -0.027287129876324312
+  },
+  {
+    "date": "2025-09-23",
+    "symbol": "LRCX",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 131.92999267578125,
+    "exit_price": 133.89999389648438,
+    "forward_return": 0.014932171076098122
+  },
+  {
+    "date": "2025-09-24",
+    "symbol": "WDC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 109.69000244140625,
+    "exit_price": 107.20999908447266,
+    "forward_return": -0.022609201401543877
+  },
+  {
+    "date": "2025-09-24",
+    "symbol": "WDC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 109.69000244140625,
+    "exit_price": 116.73999786376953,
+    "forward_return": 0.0642719962207059
+  },
+  {
+    "date": "2025-09-24",
+    "symbol": "WDC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 109.69000244140625,
+    "exit_price": 130.58999633789062,
+    "forward_return": 0.19053690793423628
+  },
+  {
+    "date": "2025-09-25",
+    "symbol": "INTC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 33.9900016784668,
+    "exit_price": 35.5,
+    "forward_return": 0.04442477925765487
+  },
+  {
+    "date": "2025-09-25",
+    "symbol": "INTC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 33.9900016784668,
+    "exit_price": 33.54999923706055,
+    "forward_return": -0.012945055006719719
+  },
+  {
+    "date": "2025-09-25",
+    "symbol": "INTC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 33.9900016784668,
+    "exit_price": 37.29999923706055,
+    "forward_return": 0.09738150618246921
+  },
+  {
+    "date": "2025-09-26",
+    "symbol": "INTC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 35.5,
+    "exit_price": 34.47999954223633,
+    "forward_return": -0.0287324072609485
+  },
+  {
+    "date": "2025-09-26",
+    "symbol": "INTC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 35.5,
+    "exit_price": 35.939998626708984,
+    "forward_return": 0.012394327512929237
+  },
+  {
+    "date": "2025-09-26",
+    "symbol": "INTC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 35.5,
+    "exit_price": 36.83000183105469,
+    "forward_return": 0.03746484031139974
+  },
+  {
+    "date": "2025-09-29",
+    "symbol": "INTC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 34.47999954223633,
+    "exit_price": 33.54999923706055,
+    "forward_return": -0.02697216698151561
+  },
+  {
+    "date": "2025-09-29",
+    "symbol": "INTC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 34.47999954223633,
+    "exit_price": 37.29999923706055,
+    "forward_return": 0.08178653515844325
+  },
+  {
+    "date": "2025-09-29",
+    "symbol": "INTC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 34.47999954223633,
+    "exit_price": 36.59000015258789,
+    "forward_return": 0.06119491410569511
+  },
+  {
+    "date": "2025-09-30",
+    "symbol": "INTC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 33.54999923706055,
+    "exit_price": 35.939998626708984,
+    "forward_return": 0.07123694318920748
+  },
+  {
+    "date": "2025-09-30",
+    "symbol": "INTC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 33.54999923706055,
+    "exit_price": 36.83000183105469,
+    "forward_return": 0.09776461009188142
+  },
+  {
+    "date": "2025-09-30",
+    "symbol": "INTC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 33.54999923706055,
+    "exit_price": 37.16999816894531,
+    "forward_return": 0.10789862933546601
+  },
+  {
+    "date": "2025-10-01",
+    "symbol": "HOOD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 139.13999938964844,
+    "exit_price": 145.6999969482422,
+    "forward_return": 0.047146741320754915
+  },
+  {
+    "date": "2025-10-01",
+    "symbol": "HOOD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 139.13999938964844,
+    "exit_price": 144.25999450683594,
+    "forward_return": 0.03679743524253887
+  },
+  {
+    "date": "2025-10-01",
+    "symbol": "HOOD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 139.13999938964844,
+    "exit_price": 150.8699951171875,
+    "forward_return": 0.08430354879253898
+  },
+  {
+    "date": "2025-10-02",
+    "symbol": "WDC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 131.25999450683594,
+    "exit_price": 131.30999755859375,
+    "forward_return": 0.0003809466238793302
+  },
+  {
+    "date": "2025-10-02",
+    "symbol": "WDC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 131.25999450683594,
+    "exit_price": 119.93000030517578,
+    "forward_return": -0.08631719241059466
+  },
+  {
+    "date": "2025-10-02",
+    "symbol": "WDC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 131.25999450683594,
+    "exit_price": 119.69999694824219,
+    "forward_return": -0.08806946550642825
+  },
+  {
+    "date": "2025-10-03",
+    "symbol": "HOOD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 148.6699981689453,
+    "exit_price": 144.25999450683594,
+    "forward_return": -0.02966303703789608
+  },
+  {
+    "date": "2025-10-03",
+    "symbol": "HOOD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 148.6699981689453,
+    "exit_price": 150.8699951171875,
+    "forward_return": 0.014797854142314382
+  },
+  {
+    "date": "2025-10-03",
+    "symbol": "HOOD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 148.6699981689453,
+    "exit_price": 138.9600067138672,
+    "forward_return": -0.06531238026951414
+  },
+  {
+    "date": "2025-10-06",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 190.9600067138672,
+    "exit_price": 185.69000244140625,
+    "forward_return": -0.027597424000709525
+  },
+  {
+    "date": "2025-10-06",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 190.9600067138672,
+    "exit_price": 192.3300018310547,
+    "forward_return": 0.007174251513513363
+  },
+  {
+    "date": "2025-10-06",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 190.9600067138672,
+    "exit_price": 192.77000427246094,
+    "forward_return": 0.009478411682849464
+  },
+  {
+    "date": "2025-10-07",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 185.69000244140625,
+    "exit_price": 196.5399932861328,
+    "forward_return": 0.05843066779079953
+  },
+  {
+    "date": "2025-10-07",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 185.69000244140625,
+    "exit_price": 181.60000610351562,
+    "forward_return": -0.022025937229341208
+  },
+  {
+    "date": "2025-10-07",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 185.69000244140625,
+    "exit_price": 187.05999755859375,
+    "forward_return": 0.007377861485137194
+  },
+  {
+    "date": "2025-10-08",
+    "symbol": "SMCI",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 58.68000030517578,
+    "exit_price": 57.97999954223633,
+    "forward_return": -0.011929119960786938
+  },
+  {
+    "date": "2025-10-08",
+    "symbol": "SMCI",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 58.68000030517578,
+    "exit_price": 54.75,
+    "forward_return": -0.06697341998529505
+  },
+  {
+    "date": "2025-10-08",
+    "symbol": "SMCI",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 58.68000030517578,
+    "exit_price": 53.939998626708984,
+    "forward_return": -0.08077712429815231
+  },
+  {
+    "date": "2025-10-09",
+    "symbol": "SMCI",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 57.97999954223633,
+    "exit_price": 52.86000061035156,
+    "forward_return": -0.08830629479662266
+  },
+  {
+    "date": "2025-10-09",
+    "symbol": "SMCI",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 57.97999954223633,
+    "exit_price": 53.11000061035156,
+    "forward_return": -0.08399446309648806
+  },
+  {
+    "date": "2025-10-09",
+    "symbol": "SMCI",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 57.97999954223633,
+    "exit_price": 53.84000015258789,
+    "forward_return": -0.07140392242729487
+  },
+  {
+    "date": "2025-10-10",
+    "symbol": "AMAT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 209.9499969482422,
+    "exit_price": 219.47999572753906,
+    "forward_return": 0.04539175478838531
+  },
+  {
+    "date": "2025-10-10",
+    "symbol": "AMAT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 209.9499969482422,
+    "exit_price": 227.5800018310547,
+    "forward_return": 0.08397239885246921
+  },
+  {
+    "date": "2025-10-10",
+    "symbol": "AMAT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 209.9499969482422,
+    "exit_price": 224.99000549316406,
+    "forward_return": 0.07163614557531806
+  },
+  {
+    "date": "2025-10-13",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 179.0,
+    "exit_price": 175.14999389648438,
+    "forward_return": -0.0215084139861208
+  },
+  {
+    "date": "2025-10-13",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 179.0,
+    "exit_price": 177.82000732421875,
+    "forward_return": -0.006592137853526525
+  },
+  {
+    "date": "2025-10-13",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 179.0,
+    "exit_price": 175.72999572753906,
+    "forward_return": -0.018268180293077863
+  },
+  {
+    "date": "2025-10-14",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 175.14999389648438,
+    "exit_price": 180.50999450683594,
+    "forward_return": 0.030602345401846698
+  },
+  {
+    "date": "2025-10-14",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 175.14999389648438,
+    "exit_price": 174.0,
+    "forward_return": -0.006565766123657668
+  },
+  {
+    "date": "2025-10-14",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 175.14999389648438,
+    "exit_price": 174.8000030517578,
+    "forward_return": -0.0019982349810038214
+  },
+  {
+    "date": "2025-10-15",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 180.50999450683594,
+    "exit_price": 177.82000732421875,
+    "forward_return": -0.01490215093056979
+  },
+  {
+    "date": "2025-10-15",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 180.50999450683594,
+    "exit_price": 175.72999572753906,
+    "forward_return": -0.02648052143791879
+  },
+  {
+    "date": "2025-10-15",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 180.50999450683594,
+    "exit_price": 171.58999633789062,
+    "forward_return": -0.04941553620515737
+  },
+  {
+    "date": "2025-10-16",
+    "symbol": "INTC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 36.84000015258789,
+    "exit_price": 37.0099983215332,
+    "forward_return": 0.004614499680814177
+  },
+  {
+    "date": "2025-10-16",
+    "symbol": "INTC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 36.84000015258789,
+    "exit_price": 38.119998931884766,
+    "forward_return": 0.03474480928325829
+  },
+  {
+    "date": "2025-10-16",
+    "symbol": "INTC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 36.84000015258789,
+    "exit_price": 38.15999984741211,
+    "forward_return": 0.03583061046028502
+  },
+  {
+    "date": "2025-10-17",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 140.16000366210938,
+    "exit_price": 148.0399932861328,
+    "forward_return": 0.05622138568874546
+  },
+  {
+    "date": "2025-10-17",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 140.16000366210938,
+    "exit_price": 146.9499969482422,
+    "forward_return": 0.04844458553598341
+  },
+  {
+    "date": "2025-10-17",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 140.16000366210938,
+    "exit_price": 186.16000366210938,
+    "forward_return": 0.3281963384568287
+  },
+  {
+    "date": "2025-10-20",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 206.77000427246094,
+    "exit_price": 202.2899932861328,
+    "forward_return": -0.021666638747198652
+  },
+  {
+    "date": "2025-10-20",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 206.77000427246094,
+    "exit_price": 206.7100067138672,
+    "forward_return": -0.0002901656785512241
+  },
+  {
+    "date": "2025-10-20",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 206.77000427246094,
+    "exit_price": 220.10000610351562,
+    "forward_return": 0.06446777364036671
+  },
+  {
+    "date": "2025-10-21",
+    "symbol": "CRL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 188.25999450683594,
+    "exit_price": 187.0,
+    "forward_return": -0.0066928425772910805
+  },
+  {
+    "date": "2025-10-21",
+    "symbol": "CRL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 188.25999450683594,
+    "exit_price": 197.0399932861328,
+    "forward_return": 0.04663762368790492
+  },
+  {
+    "date": "2025-10-21",
+    "symbol": "CRL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 188.25999450683594,
+    "exit_price": 187.92999267578125,
+    "forward_return": -0.0017529047098888695
+  },
+  {
+    "date": "2025-10-22",
+    "symbol": "CRL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 187.0,
+    "exit_price": 190.97000122070312,
+    "forward_return": 0.02122995305188846
+  },
+  {
+    "date": "2025-10-22",
+    "symbol": "CRL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 187.0,
+    "exit_price": 195.27999877929688,
+    "forward_return": 0.04427806833848602
+  },
+  {
+    "date": "2025-10-22",
+    "symbol": "CRL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 187.0,
+    "exit_price": 180.14999389648438,
+    "forward_return": -0.0366310486819017
+  },
+  {
+    "date": "2025-10-23",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 183.1999969482422,
+    "exit_price": 186.05999755859375,
+    "forward_return": 0.015611357303458862
+  },
+  {
+    "date": "2025-10-23",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 183.1999969482422,
+    "exit_price": 190.57000732421875,
+    "forward_return": 0.04022931494949056
+  },
+  {
+    "date": "2025-10-23",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 183.1999969482422,
+    "exit_price": 193.75999450683594,
+    "forward_return": 0.05764190903112931
+  },
+  {
+    "date": "2025-10-24",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 186.05999755859375,
+    "exit_price": 192.89999389648438,
+    "forward_return": 0.03676231553070175
+  },
+  {
+    "date": "2025-10-24",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 186.05999755859375,
+    "exit_price": 199.27000427246094,
+    "forward_return": 0.07099863961734765
+  },
+  {
+    "date": "2025-10-24",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 186.05999755859375,
+    "exit_price": 192.86000061035156,
+    "forward_return": 0.036547367198671354
+  },
+  {
+    "date": "2025-10-27",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 192.89999389648438,
+    "exit_price": 190.57000732421875,
+    "forward_return": -0.012078728076663214
+  },
+  {
+    "date": "2025-10-27",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 192.89999389648438,
+    "exit_price": 193.75999450683594,
+    "forward_return": 0.004458271838064798
+  },
+  {
+    "date": "2025-10-27",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 192.89999389648438,
+    "exit_price": 191.39999389648438,
+    "forward_return": -0.007776050012759161
+  },
+  {
+    "date": "2025-10-28",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 190.57000732421875,
+    "exit_price": 199.27000427246094,
+    "forward_return": 0.04565249836738894
+  },
+  {
+    "date": "2025-10-28",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 190.57000732421875,
+    "exit_price": 192.86000061035156,
+    "forward_return": 0.012016546141160767
+  },
+  {
+    "date": "2025-10-28",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 190.57000732421875,
+    "exit_price": 180.82000732421875,
+    "forward_return": -0.05116230059965432
+  },
+  {
+    "date": "2025-10-29",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 204.36000061035156,
+    "exit_price": 195.82000732421875,
+    "forward_return": -0.041788966826320495
+  },
+  {
+    "date": "2025-10-29",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 204.36000061035156,
+    "exit_price": 207.00999450683594,
+    "forward_return": 0.012967282680415915
+  },
+  {
+    "date": "2025-10-29",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 204.36000061035156,
+    "exit_price": 216.5,
+    "forward_return": 0.05940496845464138
+  },
+  {
+    "date": "2025-10-30",
+    "symbol": "CIEN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 188.9600067138672,
+    "exit_price": 189.9199981689453,
+    "forward_return": 0.005080394903519414
+  },
+  {
+    "date": "2025-10-30",
+    "symbol": "CIEN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 188.9600067138672,
+    "exit_price": 182.8699951171875,
+    "forward_return": -0.03222910340970453
+  },
+  {
+    "date": "2025-10-30",
+    "symbol": "CIEN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 188.9600067138672,
+    "exit_price": 201.4600067138672,
+    "forward_return": 0.06615156411868739
+  },
+  {
+    "date": "2025-10-31",
+    "symbol": "CIEN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 189.9199981689453,
+    "exit_price": 189.55999755859375,
+    "forward_return": -0.0018955381940943816
+  },
+  {
+    "date": "2025-10-31",
+    "symbol": "CIEN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 189.9199981689453,
+    "exit_price": 195.80999755859375,
+    "forward_return": 0.031013055215011853
+  },
+  {
+    "date": "2025-10-31",
+    "symbol": "CIEN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 189.9199981689453,
+    "exit_price": 199.25999450683594,
+    "forward_return": 0.0491785827081892
+  },
+  {
+    "date": "2025-11-03",
+    "symbol": "LITE",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 199.5800018310547,
+    "exit_price": 188.36000061035156,
+    "forward_return": -0.056218063522220585
+  },
+  {
+    "date": "2025-11-03",
+    "symbol": "LITE",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 199.5800018310547,
+    "exit_price": 239.67999267578125,
+    "forward_return": 0.2009218883496724
+  },
+  {
+    "date": "2025-11-03",
+    "symbol": "LITE",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 199.5800018310547,
+    "exit_price": 259.8900146484375,
+    "forward_return": 0.30218464908340614
+  },
+  {
+    "date": "2025-11-04",
+    "symbol": "WBD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 22.600000381469727,
+    "exit_price": 22.760000228881836,
+    "forward_return": 0.007079639146523986
+  },
+  {
+    "date": "2025-11-04",
+    "symbol": "WBD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 22.600000381469727,
+    "exit_price": 22.670000076293945,
+    "forward_return": 0.0030973315771096743
+  },
+  {
+    "date": "2025-11-04",
+    "symbol": "WBD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 22.600000381469727,
+    "exit_price": 23.049999237060547,
+    "forward_return": 0.019911453451115113
+  },
+  {
+    "date": "2025-11-05",
+    "symbol": "WDC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 160.10000610351562,
+    "exit_price": 163.60000610351562,
+    "forward_return": 0.021861335831161677
+  },
+  {
+    "date": "2025-11-05",
+    "symbol": "WDC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 160.10000610351562,
+    "exit_price": 174.22000122070312,
+    "forward_return": 0.08819484434034286
+  },
+  {
+    "date": "2025-11-05",
+    "symbol": "WDC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 160.10000610351562,
+    "exit_price": 166.11000061035156,
+    "forward_return": 0.037539002359250784
+  },
+  {
+    "date": "2025-11-06",
+    "symbol": "WDC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 163.60000610351562,
+    "exit_price": 162.9600067138672,
+    "forward_return": -0.003911976563396258
+  },
+  {
+    "date": "2025-11-06",
+    "symbol": "WDC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 163.60000610351562,
+    "exit_price": 169.99000549316406,
+    "forward_return": 0.03905867451866274
+  },
+  {
+    "date": "2025-11-06",
+    "symbol": "WDC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 163.60000610351562,
+    "exit_price": 157.16000366210938,
+    "forward_return": -0.03936431663291884
+  },
+  {
+    "date": "2025-11-07",
+    "symbol": "COHR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 154.50999450683594,
+    "exit_price": 166.72000122070312,
+    "forward_return": 0.07902405765296283
+  },
+  {
+    "date": "2025-11-07",
+    "symbol": "COHR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 154.50999450683594,
+    "exit_price": 156.6699981689453,
+    "forward_return": 0.01397970188921227
+  },
+  {
+    "date": "2025-11-07",
+    "symbol": "COHR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 154.50999450683594,
+    "exit_price": 139.3300018310547,
+    "forward_return": -0.09824602430562923
+  },
+  {
+    "date": "2025-11-10",
+    "symbol": "COHR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 166.72000122070312,
+    "exit_price": 158.00999450683594,
+    "forward_return": -0.05224332203750959
+  },
+  {
+    "date": "2025-11-10",
+    "symbol": "COHR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 166.72000122070312,
+    "exit_price": 139.97000122070312,
+    "forward_return": -0.16044865525515728
+  },
+  {
+    "date": "2025-11-10",
+    "symbol": "COHR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 166.72000122070312,
+    "exit_price": 139.07000732421875,
+    "forward_return": -0.1658468911590365
+  },
+  {
+    "date": "2025-11-11",
+    "symbol": "COHR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 158.00999450683594,
+    "exit_price": 156.6699981689453,
+    "forward_return": -0.008480453037625124
+  },
+  {
+    "date": "2025-11-11",
+    "symbol": "COHR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 158.00999450683594,
+    "exit_price": 139.3300018310547,
+    "forward_return": -0.11822032355664125
+  },
+  {
+    "date": "2025-11-11",
+    "symbol": "COHR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 158.00999450683594,
+    "exit_price": 138.14999389648438,
+    "forward_return": -0.12568825581151677
+  },
+  {
+    "date": "2025-11-12",
+    "symbol": "COHR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 156.6699981689453,
+    "exit_price": 139.97000122070312,
+    "forward_return": -0.1065934585014402
+  },
+  {
+    "date": "2025-11-12",
+    "symbol": "COHR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 156.6699981689453,
+    "exit_price": 139.07000732421875,
+    "forward_return": -0.11233797823720904
+  },
+  {
+    "date": "2025-11-12",
+    "symbol": "COHR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 156.6699981689453,
+    "exit_price": 142.94000244140625,
+    "forward_return": -0.08763640702116626
+  },
+  {
+    "date": "2025-11-13",
+    "symbol": "LVS",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 65.5999984741211,
+    "exit_price": 65.37999725341797,
+    "forward_return": -0.0033536772228723866
+  },
+  {
+    "date": "2025-11-13",
+    "symbol": "LVS",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 65.5999984741211,
+    "exit_price": 64.77999877929688,
+    "forward_return": -0.012499995638684425
+  },
+  {
+    "date": "2025-11-13",
+    "symbol": "LVS",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 65.5999984741211,
+    "exit_price": 63.47999954223633,
+    "forward_return": -0.032317057640193325
+  },
+  {
+    "date": "2025-11-14",
+    "symbol": "LLY",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 1025.280029296875,
+    "exit_price": 1021.7000122070312,
+    "forward_return": -0.003491745657329237
+  },
+  {
+    "date": "2025-11-14",
+    "symbol": "LLY",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 1025.280029296875,
+    "exit_price": 1049.5999755859375,
+    "forward_return": 0.023720296498646265
+  },
+  {
+    "date": "2025-11-14",
+    "symbol": "LLY",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 1025.280029296875,
+    "exit_price": 1059.699951171875,
+    "forward_return": 0.03357123994564182
+  },
+  {
+    "date": "2025-11-17",
+    "symbol": "LLY",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 1021.7000122070312,
+    "exit_price": 1030.050048828125,
+    "forward_return": 0.008172689166418223
+  },
+  {
+    "date": "2025-11-17",
+    "symbol": "LLY",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 1021.7000122070312,
+    "exit_price": 1043.2900390625,
+    "forward_return": 0.021131473619963037
+  },
+  {
+    "date": "2025-11-17",
+    "symbol": "LLY",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 1021.7000122070312,
+    "exit_price": 1070.1600341796875,
+    "forward_return": 0.04743077360640835
+  },
+  {
+    "date": "2025-11-18",
+    "symbol": "CAH",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 206.97000122070312,
+    "exit_price": 207.52000427246094,
+    "forward_return": 0.0026574046891525427
+  },
+  {
+    "date": "2025-11-18",
+    "symbol": "CAH",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 206.97000122070312,
+    "exit_price": 209.47999572753906,
+    "forward_return": 0.012127334840953186
+  },
+  {
+    "date": "2025-11-18",
+    "symbol": "CAH",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 206.97000122070312,
+    "exit_price": 213.72999572753906,
+    "forward_return": 0.032661711682686834
+  },
+  {
+    "date": "2025-11-19",
+    "symbol": "ALB",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 125.68000030517578,
+    "exit_price": 116.41999816894531,
+    "forward_return": -0.07367920205080647
+  },
+  {
+    "date": "2025-11-19",
+    "symbol": "ALB",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 125.68000030517578,
+    "exit_price": 115.87999725341797,
+    "forward_return": -0.07797583567760569
+  },
+  {
+    "date": "2025-11-19",
+    "symbol": "ALB",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 125.68000030517578,
+    "exit_price": 126.91000366210938,
+    "forward_return": 0.009786786711862616
+  },
+  {
+    "date": "2025-11-20",
+    "symbol": "CAH",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 207.89999389648438,
+    "exit_price": 209.47999572753906,
+    "forward_return": 0.007599816630304401
+  },
+  {
+    "date": "2025-11-20",
+    "symbol": "CAH",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 207.89999389648438,
+    "exit_price": 213.72999572753906,
+    "forward_return": 0.02804233767297526
+  },
+  {
+    "date": "2025-11-20",
+    "symbol": "CAH",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 207.89999389648438,
+    "exit_price": 212.25999450683594,
+    "forward_return": 0.020971624523098642
+  },
+  {
+    "date": "2025-11-21",
+    "symbol": "REGN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 755.9000244140625,
+    "exit_price": 761.4500122070312,
+    "forward_return": 0.007342224651032181
+  },
+  {
+    "date": "2025-11-21",
+    "symbol": "REGN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 755.9000244140625,
+    "exit_price": 784.6099853515625,
+    "forward_return": 0.03798116154283049
+  },
+  {
+    "date": "2025-11-21",
+    "symbol": "REGN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 755.9000244140625,
+    "exit_price": 750.1099853515625,
+    "forward_return": -0.007659794781708307
+  },
+  {
+    "date": "2025-11-24",
+    "symbol": "REGN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 761.4500122070312,
+    "exit_price": 787.3200073242188,
+    "forward_return": 0.03397464666420369
+  },
+  {
+    "date": "2025-11-24",
+    "symbol": "REGN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 761.4500122070312,
+    "exit_price": 780.1900024414062,
+    "forward_return": 0.024610926435023606
+  },
+  {
+    "date": "2025-11-24",
+    "symbol": "REGN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 761.4500122070312,
+    "exit_price": 742.0,
+    "forward_return": -0.02554338682148838
+  },
+  {
+    "date": "2025-11-25",
+    "symbol": "LITE",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 291.2699890136719,
+    "exit_price": 308.2799987792969,
+    "forward_return": 0.05839945894606591
+  },
+  {
+    "date": "2025-11-25",
+    "symbol": "LITE",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 291.2699890136719,
+    "exit_price": 317.92999267578125,
+    "forward_return": 0.09153021137669626
+  },
+  {
+    "date": "2025-11-25",
+    "symbol": "LITE",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 291.2699890136719,
+    "exit_price": 302.9800109863281,
+    "forward_return": 0.040203324799475304
+  },
+  {
+    "date": "2025-11-26",
+    "symbol": "LITE",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 308.2799987792969,
+    "exit_price": 325.1600036621094,
+    "forward_return": 0.05475543320894194
+  },
+  {
+    "date": "2025-11-26",
+    "symbol": "LITE",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 308.2799987792969,
+    "exit_price": 302.80999755859375,
+    "forward_return": -0.01774361373544442
+  },
+  {
+    "date": "2025-11-26",
+    "symbol": "LITE",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 308.2799987792969,
+    "exit_price": 327.8500061035156,
+    "forward_return": 0.06348127482065191
+  },
+  {
+    "date": "2025-11-28",
+    "symbol": "LITE",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 325.1600036621094,
+    "exit_price": 317.92999267578125,
+    "forward_return": -0.02223524081959727
+  },
+  {
+    "date": "2025-11-28",
+    "symbol": "LITE",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 325.1600036621094,
+    "exit_price": 302.9800109863281,
+    "forward_return": -0.06821254897890094
+  },
+  {
+    "date": "2025-11-28",
+    "symbol": "LITE",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 325.1600036621094,
+    "exit_price": 331.4100036621094,
+    "forward_return": 0.019221306217276135
+  },
+  {
+    "date": "2025-12-01",
+    "symbol": "EXE",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 121.58000183105469,
+    "exit_price": 117.72000122070312,
+    "forward_return": -0.03174864741090688
+  },
+  {
+    "date": "2025-12-01",
+    "symbol": "EXE",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 121.58000183105469,
+    "exit_price": 122.08999633789062,
+    "forward_return": 0.0041947236318076175
+  },
+  {
+    "date": "2025-12-01",
+    "symbol": "EXE",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 121.58000183105469,
+    "exit_price": 119.06999969482422,
+    "forward_return": -0.020644860161445955
+  },
+  {
+    "date": "2025-12-02",
+    "symbol": "COHR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 164.88999938964844,
+    "exit_price": 170.9600067138672,
+    "forward_return": 0.03681246495656065
+  },
+  {
+    "date": "2025-12-02",
+    "symbol": "COHR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 164.88999938964844,
+    "exit_price": 181.7899932861328,
+    "forward_return": 0.10249253416848103
+  },
+  {
+    "date": "2025-12-02",
+    "symbol": "COHR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 164.88999938964844,
+    "exit_price": 192.72999572753906,
+    "forward_return": 0.1688398110312468
+  },
+  {
+    "date": "2025-12-03",
+    "symbol": "CVNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 79.0,
+    "exit_price": 79.7699966430664,
+    "forward_return": 0.00974679295020775
+  },
+  {
+    "date": "2025-12-03",
+    "symbol": "CVNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 79.0,
+    "exit_price": 89.59600067138672,
+    "forward_return": 0.13412659077704703
+  },
+  {
+    "date": "2025-12-03",
+    "symbol": "CVNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 79.0,
+    "exit_price": 93.53399658203125,
+    "forward_return": 0.18397464027887667
+  },
+  {
+    "date": "2025-12-04",
+    "symbol": "COHR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 177.35000610351562,
+    "exit_price": 181.7899932861328,
+    "forward_return": 0.025035167915504086
+  },
+  {
+    "date": "2025-12-04",
+    "symbol": "COHR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 177.35000610351562,
+    "exit_price": 192.72999572753906,
+    "forward_return": 0.08672111133194127
+  },
+  {
+    "date": "2025-12-04",
+    "symbol": "COHR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 177.35000610351562,
+    "exit_price": 198.5,
+    "forward_return": 0.11925567053062047
+  },
+  {
+    "date": "2025-12-05",
+    "symbol": "DG",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 132.3699951171875,
+    "exit_price": 124.2699966430664,
+    "forward_return": -0.06119210374639772
+  },
+  {
+    "date": "2025-12-05",
+    "symbol": "DG",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 132.3699951171875,
+    "exit_price": 125.88999938964844,
+    "forward_return": -0.048953659942363115
+  },
+  {
+    "date": "2025-12-05",
+    "symbol": "DG",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 132.3699951171875,
+    "exit_price": 133.2100067138672,
+    "forward_return": 0.006345936599423618
+  },
+  {
+    "date": "2025-12-08",
+    "symbol": "CVNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 89.59600067138672,
+    "exit_price": 91.26599884033203,
+    "forward_return": 0.01863920438893696
+  },
+  {
+    "date": "2025-12-08",
+    "symbol": "CVNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 89.59600067138672,
+    "exit_price": 94.5459976196289,
+    "forward_return": 0.05524796766763518
+  },
+  {
+    "date": "2025-12-08",
+    "symbol": "CVNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 89.59600067138672,
+    "exit_price": 89.58399963378906,
+    "forward_return": -0.00013394613049388937
+  },
+  {
+    "date": "2025-12-09",
+    "symbol": "CVNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 91.26599884033203,
+    "exit_price": 93.53399658203125,
+    "forward_return": 0.024850412755214935
+  },
+  {
+    "date": "2025-12-09",
+    "symbol": "CVNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 91.26599884033203,
+    "exit_price": 91.13600158691406,
+    "forward_return": -0.001424377698921564
+  },
+  {
+    "date": "2025-12-09",
+    "symbol": "CVNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 91.26599884033203,
+    "exit_price": 91.03600311279297,
+    "forward_return": -0.0025200592823340084
+  },
+  {
+    "date": "2025-12-10",
+    "symbol": "CVNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 93.53399658203125,
+    "exit_price": 94.5459976196289,
+    "forward_return": 0.010819606502221024
+  },
+  {
+    "date": "2025-12-10",
+    "symbol": "CVNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 93.53399658203125,
+    "exit_price": 89.58399963378906,
+    "forward_return": -0.04223060162705605
+  },
+  {
+    "date": "2025-12-10",
+    "symbol": "CVNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 93.53399658203125,
+    "exit_price": 89.24600219726562,
+    "forward_return": -0.04584423355635148
+  },
+  {
+    "date": "2025-12-11",
+    "symbol": "CVNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 94.5459976196289,
+    "exit_price": 91.13600158691406,
+    "forward_return": -0.0360670585595142
+  },
+  {
+    "date": "2025-12-11",
+    "symbol": "CVNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 94.5459976196289,
+    "exit_price": 91.03600311279297,
+    "forward_return": -0.03712472865278882
+  },
+  {
+    "date": "2025-12-11",
+    "symbol": "CVNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 94.5459976196289,
+    "exit_price": 93.14800262451172,
+    "forward_return": -0.014786400591397908
+  },
+  {
+    "date": "2025-12-12",
+    "symbol": "SATS",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 107.37000274658203,
+    "exit_price": 103.93000030517578,
+    "forward_return": -0.03203876644695125
+  },
+  {
+    "date": "2025-12-12",
+    "symbol": "SATS",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 107.37000274658203,
+    "exit_price": 100.88999938964844,
+    "forward_return": -0.06035208336752951
+  },
+  {
+    "date": "2025-12-12",
+    "symbol": "SATS",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 107.37000274658203,
+    "exit_price": 103.91000366210938,
+    "forward_return": -0.032225006947602
+  },
+  {
+    "date": "2025-12-15",
+    "symbol": "WBD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 29.709999084472656,
+    "exit_price": 28.899999618530273,
+    "forward_return": -0.02726353049151431
+  },
+  {
+    "date": "2025-12-15",
+    "symbol": "WBD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 29.709999084472656,
+    "exit_price": 27.610000610351562,
+    "forward_return": -0.07068322244474978
+  },
+  {
+    "date": "2025-12-15",
+    "symbol": "WBD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 29.709999084472656,
+    "exit_price": 28.75,
+    "forward_return": -0.03231232292344233
+  },
+  {
+    "date": "2025-12-16",
+    "symbol": "LUV",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 42.16999816894531,
+    "exit_price": 40.97999954223633,
+    "forward_return": -0.02821908177329069
+  },
+  {
+    "date": "2025-12-16",
+    "symbol": "LUV",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 42.16999816894531,
+    "exit_price": 41.2599983215332,
+    "forward_return": -0.021579319111335593
+  },
+  {
+    "date": "2025-12-16",
+    "symbol": "LUV",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 42.16999816894531,
+    "exit_price": 41.560001373291016,
+    "forward_return": -0.014465184304976009
+  },
+  {
+    "date": "2025-12-17",
+    "symbol": "DG",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 136.97000122070312,
+    "exit_price": 136.67999267578125,
+    "forward_return": -0.002117314319466046
+  },
+  {
+    "date": "2025-12-17",
+    "symbol": "DG",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 136.97000122070312,
+    "exit_price": 137.52000427246094,
+    "forward_return": 0.004015500086559598
+  },
+  {
+    "date": "2025-12-17",
+    "symbol": "DG",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 136.97000122070312,
+    "exit_price": 135.4499969482422,
+    "forward_return": -0.011097351674924205
+  },
+  {
+    "date": "2025-12-18",
+    "symbol": "MRNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 30.950000762939453,
+    "exit_price": 33.79999923706055,
+    "forward_return": 0.09208395489068222
+  },
+  {
+    "date": "2025-12-18",
+    "symbol": "MRNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 30.950000762939453,
+    "exit_price": 32.290000915527344,
+    "forward_return": 0.04329564198888325
+  },
+  {
+    "date": "2025-12-18",
+    "symbol": "MRNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 30.950000762939453,
+    "exit_price": 31.200000762939453,
+    "forward_return": 0.008077544227377054
+  },
+  {
+    "date": "2025-12-19",
+    "symbol": "LULU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 209.4499969482422,
+    "exit_price": 212.3699951171875,
+    "forward_return": 0.013941266228172156
+  },
+  {
+    "date": "2025-12-19",
+    "symbol": "LULU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 209.4499969482422,
+    "exit_price": 210.39999389648438,
+    "forward_return": 0.0045356742042681475
+  },
+  {
+    "date": "2025-12-19",
+    "symbol": "LULU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 209.4499969482422,
+    "exit_price": 212.5399932861328,
+    "forward_return": 0.014752907056160947
+  },
+  {
+    "date": "2025-12-22",
+    "symbol": "LULU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 212.3699951171875,
+    "exit_price": 212.67999267578125,
+    "forward_return": 0.0014597050700251302
+  },
+  {
+    "date": "2025-12-22",
+    "symbol": "LULU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 212.3699951171875,
+    "exit_price": 208.97000122070312,
+    "forward_return": -0.016009765855144575
+  },
+  {
+    "date": "2025-12-22",
+    "symbol": "LULU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 212.3699951171875,
+    "exit_price": 210.6699981689453,
+    "forward_return": -0.008004882927572288
+  },
+  {
+    "date": "2025-12-23",
+    "symbol": "APP",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 728.4500122070312,
+    "exit_price": 727.5,
+    "forward_return": -0.0013041556608022198
+  },
+  {
+    "date": "2025-12-23",
+    "symbol": "APP",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 728.4500122070312,
+    "exit_price": 698.8200073242188,
+    "forward_return": -0.04067541270682473
+  },
+  {
+    "date": "2025-12-23",
+    "symbol": "APP",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 728.4500122070312,
+    "exit_price": 673.8200073242188,
+    "forward_return": -0.07499485752947754
+  },
+  {
+    "date": "2025-12-24",
+    "symbol": "MRNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 32.75,
+    "exit_price": 31.200000762939453,
+    "forward_return": -0.047328220978947955
+  },
+  {
+    "date": "2025-12-24",
+    "symbol": "MRNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 32.75,
+    "exit_price": 30.40999984741211,
+    "forward_return": -0.0714503863385616
+  },
+  {
+    "date": "2025-12-24",
+    "symbol": "MRNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 32.75,
+    "exit_price": 30.860000610351562,
+    "forward_return": -0.05770990502743323
+  },
+  {
+    "date": "2025-12-26",
+    "symbol": "MRNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 31.200000762939453,
+    "exit_price": 31.149999618530273,
+    "forward_return": -0.001602600743156768
+  },
+  {
+    "date": "2025-12-26",
+    "symbol": "MRNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 31.200000762939453,
+    "exit_price": 29.489999771118164,
+    "forward_return": -0.05480772275661261
+  },
+  {
+    "date": "2025-12-26",
+    "symbol": "MRNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 31.200000762939453,
+    "exit_price": 32.16999816894531,
+    "forward_return": 0.031089659688664506
+  },
+  {
+    "date": "2025-12-29",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 294.3699951171875,
+    "exit_price": 292.6300048828125,
+    "forward_return": -0.005910895346797562
+  },
+  {
+    "date": "2025-12-29",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 294.3699951171875,
+    "exit_price": 315.4200134277344,
+    "forward_return": 0.0715087089707187
+  },
+  {
+    "date": "2025-12-29",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 294.3699951171875,
+    "exit_price": 343.42999267578125,
+    "forward_return": 0.16666099932862788
+  },
+  {
+    "date": "2025-12-30",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 292.6300048828125,
+    "exit_price": 285.4100036621094,
+    "forward_return": -0.024672798756895986
+  },
+  {
+    "date": "2025-12-30",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 292.6300048828125,
+    "exit_price": 312.1499938964844,
+    "forward_return": 0.06670535723597082
+  },
+  {
+    "date": "2025-12-30",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 292.6300048828125,
+    "exit_price": 339.54998779296875,
+    "forward_return": 0.16033893355859385
+  },
+  {
+    "date": "2025-12-31",
+    "symbol": "TPR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 127.7699966430664,
+    "exit_price": 129.07000732421875,
+    "forward_return": 0.01017461622687521
+  },
+  {
+    "date": "2025-12-31",
+    "symbol": "TPR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 127.7699966430664,
+    "exit_price": 133.17999267578125,
+    "forward_return": 0.042341677818369394
+  },
+  {
+    "date": "2025-12-31",
+    "symbol": "TPR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 127.7699966430664,
+    "exit_price": 133.52000427246094,
+    "forward_return": 0.04500280019148417
+  },
+  {
+    "date": "2026-01-02",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 315.4200134277344,
+    "exit_price": 312.1499938964844,
+    "forward_return": -0.010367191021628641
+  },
+  {
+    "date": "2026-01-02",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 315.4200134277344,
+    "exit_price": 339.54998779296875,
+    "forward_return": 0.07650108851055126
+  },
+  {
+    "date": "2026-01-02",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 315.4200134277344,
+    "exit_price": 345.0899963378906,
+    "forward_return": 0.0940649979299868
+  },
+  {
+    "date": "2026-01-05",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 312.1499938964844,
+    "exit_price": 343.42999267578125,
+    "forward_return": 0.10020823126996437
+  },
+  {
+    "date": "2026-01-05",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 312.1499938964844,
+    "exit_price": 327.0199890136719,
+    "forward_return": 0.047637339125237155
+  },
+  {
+    "date": "2026-01-05",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 312.1499938964844,
+    "exit_price": 345.8699951171875,
+    "forward_return": 0.1080249940094038
+  },
+  {
+    "date": "2026-01-06",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 343.42999267578125,
+    "exit_price": 339.54998779296875,
+    "forward_return": -0.011297804401362965
+  },
+  {
+    "date": "2026-01-06",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 343.42999267578125,
+    "exit_price": 345.0899963378906,
+    "forward_return": 0.004833601308888991
+  },
+  {
+    "date": "2026-01-06",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 343.42999267578125,
+    "exit_price": 338.1300048828125,
+    "forward_return": -0.015432512902192164
+  },
+  {
+    "date": "2026-01-07",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 339.54998779296875,
+    "exit_price": 327.0199890136719,
+    "forward_return": -0.03690177950156992
+  },
+  {
+    "date": "2026-01-07",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 339.54998779296875,
+    "exit_price": 345.8699951171875,
+    "forward_return": 0.018612892214480592
+  },
+  {
+    "date": "2026-01-07",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 339.54998779296875,
+    "exit_price": 333.3500061035156,
+    "forward_return": -0.018259407781906267
+  },
+  {
+    "date": "2026-01-08",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 334.5400085449219,
+    "exit_price": 377.4100036621094,
+    "forward_return": 0.12814609320915027
+  },
+  {
+    "date": "2026-01-08",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 334.5400085449219,
+    "exit_price": 389.80999755859375,
+    "forward_return": 0.1652118957432569
+  },
+  {
+    "date": "2026-01-08",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 334.5400085449219,
+    "exit_price": 409.239990234375,
+    "forward_return": 0.22329162366665756
+  },
+  {
+    "date": "2026-01-09",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 377.4100036621094,
+    "exit_price": 389.2699890136719,
+    "forward_return": 0.031424671409029825
+  },
+  {
+    "date": "2026-01-09",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 377.4100036621094,
+    "exit_price": 387.80999755859375,
+    "forward_return": 0.02755622213394049
+  },
+  {
+    "date": "2026-01-09",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 377.4100036621094,
+    "exit_price": 413.6199951171875,
+    "forward_return": 0.09594338015347503
+  },
+  {
+    "date": "2026-01-12",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 389.2699890136719,
+    "exit_price": 389.80999755859375,
+    "forward_return": 0.0013872339511455944
+  },
+  {
+    "date": "2026-01-12",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 389.2699890136719,
+    "exit_price": 409.239990234375,
+    "forward_return": 0.05130115802480151
+  },
+  {
+    "date": "2026-01-12",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 389.2699890136719,
+    "exit_price": 453.1199951171875,
+    "forward_return": 0.16402499012394478
+  },
+  {
+    "date": "2026-01-13",
+    "symbol": "MRNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 39.599998474121094,
+    "exit_price": 40.58000183105469,
+    "forward_return": 0.024747560472105468
+  },
+  {
+    "date": "2026-01-13",
+    "symbol": "MRNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 39.599998474121094,
+    "exit_price": 41.83000183105469,
+    "forward_return": 0.05631321825405933
+  },
+  {
+    "date": "2026-01-13",
+    "symbol": "MRNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 39.599998474121094,
+    "exit_price": 49.810001373291016,
+    "forward_return": 0.2578283659743632
+  },
+  {
+    "date": "2026-01-14",
+    "symbol": "MRNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 40.58000183105469,
+    "exit_price": 39.36000061035156,
+    "forward_return": -0.03006409969576429
+  },
+  {
+    "date": "2026-01-14",
+    "symbol": "MRNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 40.58000183105469,
+    "exit_price": 43.0,
+    "forward_return": 0.05963524050640534
+  },
+  {
+    "date": "2026-01-14",
+    "symbol": "MRNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 40.58000183105469,
+    "exit_price": 51.869998931884766,
+    "forward_return": 0.27821578588964413
+  },
+  {
+    "date": "2026-01-15",
+    "symbol": "LRCX",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 217.47000122070312,
+    "exit_price": 222.9600067138672,
+    "forward_return": 0.025244886477893802
+  },
+  {
+    "date": "2026-01-15",
+    "symbol": "LRCX",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 217.47000122070312,
+    "exit_price": 228.38999938964844,
+    "forward_return": 0.05021381389455626
+  },
+  {
+    "date": "2026-01-15",
+    "symbol": "LRCX",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 217.47000122070312,
+    "exit_price": 217.94000244140625,
+    "forward_return": 0.00216122324028567
+  },
+  {
+    "date": "2026-01-16",
+    "symbol": "KLAC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 156.78199768066406,
+    "exit_price": 148.6179962158203,
+    "forward_return": -0.05207231433211046
+  },
+  {
+    "date": "2026-01-16",
+    "symbol": "KLAC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 156.78199768066406,
+    "exit_price": 150.0,
+    "forward_return": -0.04325750265331951
+  },
+  {
+    "date": "2026-01-16",
+    "symbol": "KLAC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 156.78199768066406,
+    "exit_price": 154.30299377441406,
+    "forward_return": -0.015811789254651987
+  },
+  {
+    "date": "2026-01-20",
+    "symbol": "INTC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 48.560001373291016,
+    "exit_price": 54.25,
+    "forward_return": 0.1171745977305223
+  },
+  {
+    "date": "2026-01-20",
+    "symbol": "INTC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 48.560001373291016,
+    "exit_price": 45.06999969482422,
+    "forward_return": -0.07186988426211971
+  },
+  {
+    "date": "2026-01-20",
+    "symbol": "INTC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 48.560001373291016,
+    "exit_price": 43.93000030517578,
+    "forward_return": -0.09534598305554887
+  },
+  {
+    "date": "2026-01-21",
+    "symbol": "MRNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 49.810001373291016,
+    "exit_price": 51.869998931884766,
+    "forward_return": 0.041357107042730545
+  },
+  {
+    "date": "2026-01-21",
+    "symbol": "MRNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 49.810001373291016,
+    "exit_price": 47.9900016784668,
+    "forward_return": -0.03653884048676481
+  },
+  {
+    "date": "2026-01-21",
+    "symbol": "MRNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 49.810001373291016,
+    "exit_price": 45.29999923706055,
+    "forward_return": -0.09054410784756195
+  },
+  {
+    "date": "2026-01-22",
+    "symbol": "MRNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 51.869998931884766,
+    "exit_price": 48.709999084472656,
+    "forward_return": -0.0609215329185141
+  },
+  {
+    "date": "2026-01-22",
+    "symbol": "MRNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 51.869998931884766,
+    "exit_price": 45.45000076293945,
+    "forward_return": -0.12377093312409737
+  },
+  {
+    "date": "2026-01-22",
+    "symbol": "MRNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 51.869998931884766,
+    "exit_price": 46.86000061035156,
+    "forward_return": -0.096587592533254
+  },
+  {
+    "date": "2026-01-23",
+    "symbol": "MRNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 48.709999084472656,
+    "exit_price": 47.9900016784668,
+    "forward_return": -0.014781306087837232
+  },
+  {
+    "date": "2026-01-23",
+    "symbol": "MRNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 48.709999084472656,
+    "exit_price": 45.29999923706055,
+    "forward_return": -0.0700061570828302
+  },
+  {
+    "date": "2026-01-23",
+    "symbol": "MRNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 48.709999084472656,
+    "exit_price": 44.06999969482422,
+    "forward_return": -0.09525763656044772
+  },
+  {
+    "date": "2026-01-26",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 389.0899963378906,
+    "exit_price": 410.239990234375,
+    "forward_return": 0.05435758846423133
+  },
+  {
+    "date": "2026-01-26",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 389.0899963378906,
+    "exit_price": 435.7900085449219,
+    "forward_return": 0.12002367741800368
+  },
+  {
+    "date": "2026-01-26",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 389.0899963378906,
+    "exit_price": 437.79998779296875,
+    "forward_return": 0.12518952405236794
+  },
+  {
+    "date": "2026-01-27",
+    "symbol": "ASML",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 1454.5899658203125,
+    "exit_price": 1422.9200439453125,
+    "forward_return": -0.021772405020778374
+  },
+  {
+    "date": "2026-01-27",
+    "symbol": "ASML",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 1454.5899658203125,
+    "exit_price": 1423.0,
+    "forward_return": -0.02171743691528727
+  },
+  {
+    "date": "2026-01-27",
+    "symbol": "ASML",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 1454.5899658203125,
+    "exit_price": 1395.8800048828125,
+    "forward_return": -0.04036186301092115
+  },
+  {
+    "date": "2026-01-28",
+    "symbol": "STX",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 442.92999267578125,
+    "exit_price": 446.57000732421875,
+    "forward_return": 0.008218036052261457
+  },
+  {
+    "date": "2026-01-28",
+    "symbol": "STX",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 442.92999267578125,
+    "exit_price": 432.95001220703125,
+    "forward_return": -0.02253173330724345
+  },
+  {
+    "date": "2026-01-28",
+    "symbol": "STX",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 442.92999267578125,
+    "exit_price": 418.6300048828125,
+    "forward_return": -0.05486191541505303
+  },
+  {
+    "date": "2026-01-29",
+    "symbol": "KLAC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 168.4709930419922,
+    "exit_price": 142.79400634765625,
+    "forward_return": -0.15241191513565677
+  },
+  {
+    "date": "2026-01-29",
+    "symbol": "KLAC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 168.4709930419922,
+    "exit_price": 135.5540008544922,
+    "forward_return": -0.19538670481567877
+  },
+  {
+    "date": "2026-01-29",
+    "symbol": "KLAC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 168.4709930419922,
+    "exit_price": 133.10299682617188,
+    "forward_return": -0.2099352272886803
+  },
+  {
+    "date": "2026-01-30",
+    "symbol": "LRCX",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 233.4600067138672,
+    "exit_price": 237.5,
+    "forward_return": 0.017304862374497798
+  },
+  {
+    "date": "2026-01-30",
+    "symbol": "LRCX",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 233.4600067138672,
+    "exit_price": 209.77999877929688,
+    "forward_return": -0.10143068300170555
+  },
+  {
+    "date": "2026-01-30",
+    "symbol": "LRCX",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 233.4600067138672,
+    "exit_price": 231.00999450683594,
+    "forward_return": -0.010494355078272677
+  },
+  {
+    "date": "2026-02-02",
+    "symbol": "STX",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 432.95001220703125,
+    "exit_price": 444.45001220703125,
+    "forward_return": 0.026561957906819256
+  },
+  {
+    "date": "2026-02-02",
+    "symbol": "STX",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 432.95001220703125,
+    "exit_price": 405.45001220703125,
+    "forward_return": -0.06351772542935008
+  },
+  {
+    "date": "2026-02-02",
+    "symbol": "STX",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 432.95001220703125,
+    "exit_price": 425.0,
+    "forward_return": -0.018362425182770648
+  },
+  {
+    "date": "2026-02-03",
+    "symbol": "BG",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 116.87999725341797,
+    "exit_price": 117.2300033569336,
+    "forward_return": 0.002994576589155251
+  },
+  {
+    "date": "2026-02-03",
+    "symbol": "BG",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 116.87999725341797,
+    "exit_price": 115.86000061035156,
+    "forward_return": -0.008726870867859948
+  },
+  {
+    "date": "2026-02-03",
+    "symbol": "BG",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 116.87999725341797,
+    "exit_price": 118.37000274658203,
+    "forward_return": 0.012748165025478597
+  },
+  {
+    "date": "2026-02-04",
+    "symbol": "WDC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 269.4100036621094,
+    "exit_price": 260.19000244140625,
+    "forward_return": -0.03422293565708401
+  },
+  {
+    "date": "2026-02-04",
+    "symbol": "WDC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 269.4100036621094,
+    "exit_price": 285.989990234375,
+    "forward_return": 0.06154183715115513
+  },
+  {
+    "date": "2026-02-04",
+    "symbol": "WDC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 269.4100036621094,
+    "exit_price": 273.739990234375,
+    "forward_return": 0.016072107618157583
+  },
+  {
+    "date": "2026-02-05",
+    "symbol": "GLW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 112.79000091552734,
+    "exit_price": 122.16000366210938,
+    "forward_return": 0.08307476434546346
+  },
+  {
+    "date": "2026-02-05",
+    "symbol": "GLW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 112.79000091552734,
+    "exit_price": 128.10000610351562,
+    "forward_return": 0.13573902884755285
+  },
+  {
+    "date": "2026-02-05",
+    "symbol": "GLW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 112.79000091552734,
+    "exit_price": 131.5,
+    "forward_return": 0.16588349084672216
+  },
+  {
+    "date": "2026-02-06",
+    "symbol": "LITE",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 551.989990234375,
+    "exit_price": 577.1500244140625,
+    "forward_return": 0.04558059860651564
+  },
+  {
+    "date": "2026-02-06",
+    "symbol": "LITE",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 551.989990234375,
+    "exit_price": 574.1099853515625,
+    "forward_return": 0.040073181594824536
+  },
+  {
+    "date": "2026-02-06",
+    "symbol": "LITE",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 551.989990234375,
+    "exit_price": 562.739990234375,
+    "forward_return": 0.019474990833503236
+  },
+  {
+    "date": "2026-02-09",
+    "symbol": "LITE",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 577.1500244140625,
+    "exit_price": 561.1300048828125,
+    "forward_return": -0.027757114881029277
+  },
+  {
+    "date": "2026-02-09",
+    "symbol": "LITE",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 577.1500244140625,
+    "exit_price": 583.4600219726562,
+    "forward_return": 0.010933028314431548
+  },
+  {
+    "date": "2026-02-09",
+    "symbol": "LITE",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 577.1500244140625,
+    "exit_price": 600.4199829101562,
+    "forward_return": 0.04031873431820099
+  },
+  {
+    "date": "2026-02-10",
+    "symbol": "TER",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 304.8900146484375,
+    "exit_price": 321.45001220703125,
+    "forward_return": 0.05431466024785614
+  },
+  {
+    "date": "2026-02-10",
+    "symbol": "TER",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 304.8900146484375,
+    "exit_price": 314.6600036621094,
+    "forward_return": 0.032044306288408375
+  },
+  {
+    "date": "2026-02-10",
+    "symbol": "TER",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 304.8900146484375,
+    "exit_price": 314.82000732421875,
+    "forward_return": 0.032569097703089245
+  },
+  {
+    "date": "2026-02-11",
+    "symbol": "GLW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 132.89999389648438,
+    "exit_price": 131.5,
+    "forward_return": -0.010534190826034462
+  },
+  {
+    "date": "2026-02-11",
+    "symbol": "GLW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 132.89999389648438,
+    "exit_price": 130.52000427246094,
+    "forward_return": -0.017908124404258485
+  },
+  {
+    "date": "2026-02-11",
+    "symbol": "GLW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 132.89999389648438,
+    "exit_price": 129.99000549316406,
+    "forward_return": -0.02189607627511936
+  },
+  {
+    "date": "2026-02-12",
+    "symbol": "GLW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 131.5,
+    "exit_price": 133.4600067138672,
+    "forward_return": 0.014904994021803786
+  },
+  {
+    "date": "2026-02-12",
+    "symbol": "GLW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 131.5,
+    "exit_price": 132.00999450683594,
+    "forward_return": 0.0038782852230869747
+  },
+  {
+    "date": "2026-02-12",
+    "symbol": "GLW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 131.5,
+    "exit_price": 139.50999450683594,
+    "forward_return": 0.0609125057554063
+  },
+  {
+    "date": "2026-02-13",
+    "symbol": "GNRC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 224.4499969482422,
+    "exit_price": 233.4600067138672,
+    "forward_return": 0.0401426147833841
+  },
+  {
+    "date": "2026-02-13",
+    "symbol": "GNRC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 224.4499969482422,
+    "exit_price": 227.47000122070312,
+    "forward_return": 0.013455131715405466
+  },
+  {
+    "date": "2026-02-13",
+    "symbol": "GNRC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 224.4499969482422,
+    "exit_price": 227.4499969482422,
+    "forward_return": 0.013366005973668216
+  },
+  {
+    "date": "2026-02-17",
+    "symbol": "GNRC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 233.4600067138672,
+    "exit_price": 228.35000610351562,
+    "forward_return": -0.021888119863778144
+  },
+  {
+    "date": "2026-02-17",
+    "symbol": "GNRC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 233.4600067138672,
+    "exit_price": 229.19000244140625,
+    "forward_return": -0.018290088878881616
+  },
+  {
+    "date": "2026-02-17",
+    "symbol": "GNRC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 233.4600067138672,
+    "exit_price": 235.1699981689453,
+    "forward_return": 0.007324558407872939
+  },
+  {
+    "date": "2026-02-18",
+    "symbol": "TPL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 440.7099914550781,
+    "exit_price": 486.55999755859375,
+    "forward_return": 0.10403668397018673
+  },
+  {
+    "date": "2026-02-18",
+    "symbol": "TPL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 440.7099914550781,
+    "exit_price": 502.8500061035156,
+    "forward_return": 0.14099978637487154
+  },
+  {
+    "date": "2026-02-18",
+    "symbol": "TPL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 440.7099914550781,
+    "exit_price": 510.29998779296875,
+    "forward_return": 0.15790428555551372
+  },
+  {
+    "date": "2026-02-19",
+    "symbol": "TPL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 486.55999755859375,
+    "exit_price": 499.8800048828125,
+    "forward_return": 0.02737587839332134
+  },
+  {
+    "date": "2026-02-19",
+    "symbol": "TPL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 486.55999755859375,
+    "exit_price": 531.9500122070312,
+    "forward_return": 0.09328760045254536
+  },
+  {
+    "date": "2026-02-19",
+    "symbol": "TPL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 486.55999755859375,
+    "exit_price": 512.5399780273438,
+    "forward_return": 0.05339522484197112
+  },
+  {
+    "date": "2026-02-20",
+    "symbol": "TPL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 499.8800048828125,
+    "exit_price": 502.8500061035156,
+    "forward_return": 0.005941428326182718
+  },
+  {
+    "date": "2026-02-20",
+    "symbol": "TPL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 499.8800048828125,
+    "exit_price": 510.29998779296875,
+    "forward_return": 0.020844968409166498
+  },
+  {
+    "date": "2026-02-20",
+    "symbol": "TPL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 499.8800048828125,
+    "exit_price": 524.2899780273438,
+    "forward_return": 0.04883166541188966
+  },
+  {
+    "date": "2026-02-23",
+    "symbol": "TPL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 502.8500061035156,
+    "exit_price": 531.9500122070312,
+    "forward_return": 0.05787015163628162
+  },
+  {
+    "date": "2026-02-23",
+    "symbol": "TPL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 502.8500061035156,
+    "exit_price": 512.5399780273438,
+    "forward_return": 0.019270104019514234
+  },
+  {
+    "date": "2026-02-23",
+    "symbol": "TPL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 502.8500061035156,
+    "exit_price": 531.0900268554688,
+    "forward_return": 0.05615992922179602
+  },
+  {
+    "date": "2026-02-24",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 638.52001953125,
+    "exit_price": 632.3800048828125,
+    "forward_return": -0.009616009616965515
+  },
+  {
+    "date": "2026-02-24",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 638.52001953125,
+    "exit_price": 635.3599853515625,
+    "forward_return": -0.004948997812170952
+  },
+  {
+    "date": "2026-02-24",
+    "symbol": "SNDK",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 638.52001953125,
+    "exit_price": 565.4099731445312,
+    "forward_return": -0.11449922343921226
+  },
+  {
+    "date": "2026-02-25",
+    "symbol": "GLW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 160.42999267578125,
+    "exit_price": 150.3000030517578,
+    "forward_return": -0.06314274192167735
+  },
+  {
+    "date": "2026-02-25",
+    "symbol": "GLW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 160.42999267578125,
+    "exit_price": 157.86000061035156,
+    "forward_return": -0.016019399007413004
+  },
+  {
+    "date": "2026-02-25",
+    "symbol": "GLW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 160.42999267578125,
+    "exit_price": 144.83999633789062,
+    "forward_return": -0.09717632019965872
+  },
+  {
+    "date": "2026-02-26",
+    "symbol": "GLW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 150.3000030517578,
+    "exit_price": 150.3800048828125,
+    "forward_return": 0.0005322809676000517
+  },
+  {
+    "date": "2026-02-26",
+    "symbol": "GLW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 150.3000030517578,
+    "exit_price": 147.57000732421875,
+    "forward_return": -0.01816364385966751
+  },
+  {
+    "date": "2026-02-26",
+    "symbol": "GLW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 150.3000030517578,
+    "exit_price": 134.74000549316406,
+    "forward_return": -0.10352626242619212
+  },
+  {
+    "date": "2026-02-27",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 254.88999938964844,
+    "exit_price": 257.75,
+    "forward_return": 0.01122052892306491
+  },
+  {
+    "date": "2026-02-27",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 254.88999938964844,
+    "exit_price": 251.27999877929688,
+    "forward_return": -0.014162974691027341
+  },
+  {
+    "date": "2026-02-27",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 254.88999938964844,
+    "exit_price": 241.77999877929688,
+    "forward_return": -0.05143395441855059
+  },
+  {
+    "date": "2026-03-02",
+    "symbol": "KEYS",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 313.2699890136719,
+    "exit_price": 302.5400085449219,
+    "forward_return": -0.03425154290244414
+  },
+  {
+    "date": "2026-03-02",
+    "symbol": "KEYS",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 313.2699890136719,
+    "exit_price": 284.510009765625,
+    "forward_return": -0.09180572750871363
+  },
+  {
+    "date": "2026-03-02",
+    "symbol": "KEYS",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 313.2699890136719,
+    "exit_price": 282.0199890136719,
+    "forward_return": -0.09975420913567357
+  },
+  {
+    "date": "2026-03-03",
+    "symbol": "COHR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 280.80999755859375,
+    "exit_price": 274.8599853515625,
+    "forward_return": -0.021188747760982785
+  },
+  {
+    "date": "2026-03-03",
+    "symbol": "COHR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 280.80999755859375,
+    "exit_price": 235.72000122070312,
+    "forward_return": -0.16057119308397183
+  },
+  {
+    "date": "2026-03-03",
+    "symbol": "COHR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 280.80999755859375,
+    "exit_price": 260.6400146484375,
+    "forward_return": -0.07182786612128222
+  },
+  {
+    "date": "2026-03-04",
+    "symbol": "MRNA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 57.79999923706055,
+    "exit_price": 53.83000183105469,
+    "forward_return": -0.06868507713509364
+  },
+  {
+    "date": "2026-03-04",
+    "symbol": "MRNA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 57.79999923706055,
+    "exit_price": 55.7400016784668,
+    "forward_return": -0.03564009663987866
+  },
+  {
+    "date": "2026-03-04",
+    "symbol": "MRNA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 57.79999923706055,
+    "exit_price": 55.970001220703125,
+    "forward_return": -0.03166086575281568
+  },
+  {
+    "date": "2026-03-05",
+    "symbol": "AXON",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 570.489990234375,
+    "exit_price": 574.010009765625,
+    "forward_return": 0.006170168787367869
+  },
+  {
+    "date": "2026-03-05",
+    "symbol": "AXON",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 570.489990234375,
+    "exit_price": 529.969970703125,
+    "forward_return": -0.07102669674292295
+  },
+  {
+    "date": "2026-03-05",
+    "symbol": "AXON",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 570.489990234375,
+    "exit_price": 499.3999938964844,
+    "forward_return": -0.12461217121212709
+  },
+  {
+    "date": "2026-03-06",
+    "symbol": "COIN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 197.22000122070312,
+    "exit_price": 199.7899932861328,
+    "forward_return": 0.01303109243242373
+  },
+  {
+    "date": "2026-03-06",
+    "symbol": "COIN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 197.22000122070312,
+    "exit_price": 198.6300048828125,
+    "forward_return": 0.007149394855400448
+  },
+  {
+    "date": "2026-03-06",
+    "symbol": "COIN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 197.22000122070312,
+    "exit_price": 195.52999877929688,
+    "forward_return": -0.008569122963928089
+  },
+  {
+    "date": "2026-03-09",
+    "symbol": "TRI",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 111.5199966430664,
+    "exit_price": 103.69999694824219,
+    "forward_return": -0.07012195059378545
+  },
+  {
+    "date": "2026-03-09",
+    "symbol": "TRI",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 111.5199966430664,
+    "exit_price": 99.27999877929688,
+    "forward_return": -0.10975608170923068
+  },
+  {
+    "date": "2026-03-09",
+    "symbol": "TRI",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 111.5199966430664,
+    "exit_price": 96.12999725341797,
+    "forward_return": -0.13800215076141042
+  },
+  {
+    "date": "2026-03-10",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 270.05999755859375,
+    "exit_price": 268.260009765625,
+    "forward_return": -0.0066651403734024894
+  },
+  {
+    "date": "2026-03-10",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 270.05999755859375,
+    "exit_price": 258.8800048828125,
+    "forward_return": -0.04139818105921289
+  },
+  {
+    "date": "2026-03-10",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 270.05999755859375,
+    "exit_price": 268.4100036621094,
+    "forward_return": -0.006109730842778327
+  },
+  {
+    "date": "2026-03-11",
+    "symbol": "VRT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 268.260009765625,
+    "exit_price": 265.3800048828125,
+    "forward_return": -0.010735871087638849
+  },
+  {
+    "date": "2026-03-11",
+    "symbol": "VRT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 268.260009765625,
+    "exit_price": 264.739990234375,
+    "forward_return": -0.01312167077875448
+  },
+  {
+    "date": "2026-03-11",
+    "symbol": "VRT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 268.260009765625,
+    "exit_price": 264.7099914550781,
+    "forward_return": -0.013233498029201152
+  },
+  {
+    "date": "2026-03-12",
+    "symbol": "CF",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 136.0,
+    "exit_price": 129.57000732421875,
+    "forward_return": -0.04727935791015625
+  },
+  {
+    "date": "2026-03-12",
+    "symbol": "CF",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 136.0,
+    "exit_price": 123.29000091552734,
+    "forward_return": -0.09345587562112245
+  },
+  {
+    "date": "2026-03-12",
+    "symbol": "CF",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 136.0,
+    "exit_price": 125.55999755859375,
+    "forward_return": -0.07676472383386945
+  },
+  {
+    "date": "2026-03-13",
+    "symbol": "CF",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 129.57000732421875,
+    "exit_price": 122.33000183105469,
+    "forward_return": -0.05587717128893599
+  },
+  {
+    "date": "2026-03-13",
+    "symbol": "CF",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 129.57000732421875,
+    "exit_price": 126.7300033569336,
+    "forward_return": -0.02191868338927161
+  },
+  {
+    "date": "2026-03-13",
+    "symbol": "CF",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 129.57000732421875,
+    "exit_price": 124.9000015258789,
+    "forward_return": -0.036042336454101154
+  },
+  {
+    "date": "2026-03-16",
+    "symbol": "DELL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 156.5399932861328,
+    "exit_price": 153.00999450683594,
+    "forward_return": -0.022550140096432303
+  },
+  {
+    "date": "2026-03-16",
+    "symbol": "DELL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 156.5399932861328,
+    "exit_price": 156.75999450683594,
+    "forward_return": 0.0014053994515061952
+  },
+  {
+    "date": "2026-03-16",
+    "symbol": "DELL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 156.5399932861328,
+    "exit_price": 164.58999633789062,
+    "forward_return": 0.05142457772464293
+  },
+  {
+    "date": "2026-03-17",
+    "symbol": "CF",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 123.29000091552734,
+    "exit_price": 126.7300033569336,
+    "forward_return": 0.027901714785152576
+  },
+  {
+    "date": "2026-03-17",
+    "symbol": "CF",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 123.29000091552734,
+    "exit_price": 124.9000015258789,
+    "forward_return": 0.013058647079211783
+  },
+  {
+    "date": "2026-03-17",
+    "symbol": "CF",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 123.29000091552734,
+    "exit_price": 126.91999816894531,
+    "forward_return": 0.029442754695939044
+  },
+  {
+    "date": "2026-03-18",
+    "symbol": "CF",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 126.7300033569336,
+    "exit_price": 125.55999755859375,
+    "forward_return": -0.009232271501205092
+  },
+  {
+    "date": "2026-03-18",
+    "symbol": "CF",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 126.7300033569336,
+    "exit_price": 120.18000030517578,
+    "forward_return": -0.051684706685517945
+  },
+  {
+    "date": "2026-03-18",
+    "symbol": "CF",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 126.7300033569336,
+    "exit_price": 128.11000061035156,
+    "forward_return": 0.010889270234856863
+  },
+  {
+    "date": "2026-03-19",
+    "symbol": "APA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 38.060001373291016,
+    "exit_price": 39.11000061035156,
+    "forward_return": 0.02758799787635824
+  },
+  {
+    "date": "2026-03-19",
+    "symbol": "APA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 38.060001373291016,
+    "exit_price": 40.79999923706055,
+    "forward_return": 0.07199153349722032
+  },
+  {
+    "date": "2026-03-19",
+    "symbol": "APA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 38.060001373291016,
+    "exit_price": 42.79999923706055,
+    "forward_return": 0.12454013906304984
+  },
+  {
+    "date": "2026-03-20",
+    "symbol": "APA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 39.11000061035156,
+    "exit_price": 39.029998779296875,
+    "forward_return": -0.002045559442755751
+  },
+  {
+    "date": "2026-03-20",
+    "symbol": "APA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 39.11000061035156,
+    "exit_price": 41.31999969482422,
+    "forward_return": 0.05650726284795082
+  },
+  {
+    "date": "2026-03-20",
+    "symbol": "APA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 39.11000061035156,
+    "exit_price": 44.38999938964844,
+    "forward_return": 0.13500380201731255
+  },
+  {
+    "date": "2026-03-23",
+    "symbol": "APA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 39.029998779296875,
+    "exit_price": 40.79999923706055,
+    "forward_return": 0.04534974412303994
+  },
+  {
+    "date": "2026-03-23",
+    "symbol": "APA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 39.029998779296875,
+    "exit_price": 42.79999923706055,
+    "forward_return": 0.09659237959708666
+  },
+  {
+    "date": "2026-03-23",
+    "symbol": "APA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 39.029998779296875,
+    "exit_price": 43.7400016784668,
+    "forward_return": 0.12067648082193383
+  },
+  {
+    "date": "2026-03-24",
+    "symbol": "APA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 40.79999923706055,
+    "exit_price": 41.31999969482422,
+    "forward_return": 0.012745109497240614
+  },
+  {
+    "date": "2026-03-24",
+    "symbol": "APA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 40.79999923706055,
+    "exit_price": 44.38999938964844,
+    "forward_return": 0.08799020146370307
+  },
+  {
+    "date": "2026-03-24",
+    "symbol": "APA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 40.79999923706055,
+    "exit_price": 42.439998626708984,
+    "forward_return": 0.04019606422342159
+  },
+  {
+    "date": "2026-03-25",
+    "symbol": "DELL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 184.00999450683594,
+    "exit_price": 175.82000732421875,
+    "forward_return": -0.0445083823004675
+  },
+  {
+    "date": "2026-03-25",
+    "symbol": "DELL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 184.00999450683594,
+    "exit_price": 164.66000366210938,
+    "forward_return": -0.10515728179105899
+  },
+  {
+    "date": "2026-03-25",
+    "symbol": "DELL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 184.00999450683594,
+    "exit_price": 169.3800048828125,
+    "forward_return": -0.07950649454250125
+  },
+  {
+    "date": "2026-03-26",
+    "symbol": "VLO",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 248.13999938964844,
+    "exit_price": 254.32000732421875,
+    "forward_return": 0.02490532743520313
+  },
+  {
+    "date": "2026-03-26",
+    "symbol": "VLO",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 248.13999938964844,
+    "exit_price": 247.0800018310547,
+    "forward_return": -0.004271772230196813
+  },
+  {
+    "date": "2026-03-26",
+    "symbol": "VLO",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 248.13999938964844,
+    "exit_price": 244.08999633789062,
+    "forward_return": -0.01632144378866618
+  },
+  {
+    "date": "2026-03-27",
+    "symbol": "VLO",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 254.32000732421875,
+    "exit_price": 250.27000427246094,
+    "forward_return": -0.01592483066656525
+  },
+  {
+    "date": "2026-03-27",
+    "symbol": "VLO",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 254.32000732421875,
+    "exit_price": 241.4600067138672,
+    "forward_return": -0.050566216734796776
+  },
+  {
+    "date": "2026-03-27",
+    "symbol": "VLO",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 254.32000732421875,
+    "exit_price": 245.5800018310547,
+    "forward_return": -0.03436617348796278
+  },
+  {
+    "date": "2026-03-30",
+    "symbol": "APA",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 43.7400016784668,
+    "exit_price": 42.439998626708984,
+    "forward_return": -0.02972114773369572
+  },
+  {
+    "date": "2026-03-30",
+    "symbol": "APA",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 43.7400016784668,
+    "exit_price": 42.040000915527344,
+    "forward_return": -0.038866042471515594
+  },
+  {
+    "date": "2026-03-30",
+    "symbol": "APA",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 43.7400016784668,
+    "exit_price": 42.959999084472656,
+    "forward_return": -0.017832706082819727
+  },
+  {
+    "date": "2026-03-31",
+    "symbol": "DOW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 41.650001525878906,
+    "exit_price": 40.689998626708984,
+    "forward_return": -0.023049288451368555
+  },
+  {
+    "date": "2026-03-31",
+    "symbol": "DOW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 41.650001525878906,
+    "exit_price": 40.560001373291016,
+    "forward_return": -0.026170470892074915
+  },
+  {
+    "date": "2026-03-31",
+    "symbol": "DOW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 41.650001525878906,
+    "exit_price": 39.279998779296875,
+    "forward_return": -0.0569028249641107
+  },
+  {
+    "date": "2026-04-01",
+    "symbol": "MRVL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 106.70999908447266,
+    "exit_price": 107.11000061035156,
+    "forward_return": 0.0037484915126113627
+  },
+  {
+    "date": "2026-04-01",
+    "symbol": "MRVL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 106.70999908447266,
+    "exit_price": 109.37999725341797,
+    "forward_return": 0.025021068239647448
+  },
+  {
+    "date": "2026-04-01",
+    "symbol": "MRVL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 106.70999908447266,
+    "exit_price": 119.93000030517578,
+    "forward_return": 0.12388718333919257
+  },
+  {
+    "date": "2026-04-02",
+    "symbol": "DOW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 41.400001525878906,
+    "exit_price": 40.560001373291016,
+    "forward_return": -0.02028985801033878
+  },
+  {
+    "date": "2026-04-02",
+    "symbol": "DOW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 41.400001525878906,
+    "exit_price": 39.279998779296875,
+    "forward_return": -0.0512077939237956
+  },
+  {
+    "date": "2026-04-02",
+    "symbol": "DOW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 41.400001525878906,
+    "exit_price": 39.0099983215332,
+    "forward_return": -0.05772954387095197
+  },
+  {
+    "date": "2026-04-06",
+    "symbol": "LITE",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 772.280029296875,
+    "exit_price": 815.75,
+    "forward_return": 0.05628783479316746
+  },
+  {
+    "date": "2026-04-06",
+    "symbol": "LITE",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 772.280029296875,
+    "exit_price": 894.1300048828125,
+    "forward_return": 0.15777952421853536
+  },
+  {
+    "date": "2026-04-06",
+    "symbol": "LITE",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 772.280029296875,
+    "exit_price": 871.1799926757812,
+    "forward_return": 0.12806230852421496
+  },
+  {
+    "date": "2026-04-07",
+    "symbol": "ARM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 143.86000061035156,
+    "exit_price": 148.91000366210938,
+    "forward_return": 0.03510359398256835
+  },
+  {
+    "date": "2026-04-07",
+    "symbol": "ARM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 143.86000061035156,
+    "exit_price": 148.92999267578125,
+    "forward_return": 0.03524254166494756
+  },
+  {
+    "date": "2026-04-07",
+    "symbol": "ARM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 143.86000061035156,
+    "exit_price": 161.22000122070312,
+    "forward_return": 0.12067288013831967
+  },
+  {
+    "date": "2026-04-08",
+    "symbol": "CIEN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 494.010009765625,
+    "exit_price": 487.3800048828125,
+    "forward_return": -0.013420790574583674
+  },
+  {
+    "date": "2026-04-08",
+    "symbol": "CIEN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 494.010009765625,
+    "exit_price": 479.8999938964844,
+    "forward_return": -0.028562206413256463
+  },
+  {
+    "date": "2026-04-08",
+    "symbol": "CIEN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 494.010009765625,
+    "exit_price": 475.760009765625,
+    "forward_return": -0.03694257128242895
+  },
+  {
+    "date": "2026-04-09",
+    "symbol": "CIEN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 487.3800048828125,
+    "exit_price": 496.0199890136719,
+    "forward_return": 0.01772740786306315
+  },
+  {
+    "date": "2026-04-09",
+    "symbol": "CIEN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 487.3800048828125,
+    "exit_price": 467.19000244140625,
+    "forward_return": -0.041425586275868675
+  },
+  {
+    "date": "2026-04-09",
+    "symbol": "CIEN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 487.3800048828125,
+    "exit_price": 495.1700134277344,
+    "forward_return": 0.01598343893240939
+  },
+  {
+    "date": "2026-04-10",
+    "symbol": "MRVL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 128.49000549316406,
+    "exit_price": 131.3000030517578,
+    "forward_return": 0.02186938624376711
+  },
+  {
+    "date": "2026-04-10",
+    "symbol": "MRVL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 128.49000549316406,
+    "exit_price": 134.60000610351562,
+    "forward_return": 0.04755234142064557
+  },
+  {
+    "date": "2026-04-10",
+    "symbol": "MRVL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 128.49000549316406,
+    "exit_price": 139.69000244140625,
+    "forward_return": 0.0871662889674174
+  },
+  {
+    "date": "2026-04-13",
+    "symbol": "MRVL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 131.3000030517578,
+    "exit_price": 133.8300018310547,
+    "forward_return": 0.019268840217007144
+  },
+  {
+    "date": "2026-04-13",
+    "symbol": "MRVL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 131.3000030517578,
+    "exit_price": 133.3699951171875,
+    "forward_return": 0.01576536189883937
+  },
+  {
+    "date": "2026-04-13",
+    "symbol": "MRVL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 131.3000030517578,
+    "exit_price": 147.83999633789062,
+    "forward_return": 0.12597100458263388
+  },
+  {
+    "date": "2026-04-14",
+    "symbol": "MRVL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 133.8300018310547,
+    "exit_price": 134.60000610351562,
+    "forward_return": 0.005753599805169207
+  },
+  {
+    "date": "2026-04-14",
+    "symbol": "MRVL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 133.8300018310547,
+    "exit_price": 139.69000244140625,
+    "forward_return": 0.043786897782077006
+  },
+  {
+    "date": "2026-04-14",
+    "symbol": "MRVL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 133.8300018310547,
+    "exit_price": 151.30999755859375,
+    "forward_return": 0.1306134311318743
+  },
+  {
+    "date": "2026-04-15",
+    "symbol": "AMD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 258.1199951171875,
+    "exit_price": 278.260009765625,
+    "forward_return": 0.07802578269573357
+  },
+  {
+    "date": "2026-04-15",
+    "symbol": "AMD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 258.1199951171875,
+    "exit_price": 274.95001220703125,
+    "forward_return": 0.06520229896255358
+  },
+  {
+    "date": "2026-04-15",
+    "symbol": "AMD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 258.1199951171875,
+    "exit_price": 303.4599914550781,
+    "forward_return": 0.17565472336734733
+  },
+  {
+    "date": "2026-04-16",
+    "symbol": "AMD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 278.260009765625,
+    "exit_price": 278.3900146484375,
+    "forward_return": 0.0004672064912309981
+  },
+  {
+    "date": "2026-04-16",
+    "symbol": "AMD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 278.260009765625,
+    "exit_price": 284.489990234375,
+    "forward_return": 0.022389061489638484
+  },
+  {
+    "date": "2026-04-16",
+    "symbol": "AMD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 278.260009765625,
+    "exit_price": 305.3299865722656,
+    "forward_return": 0.09728302974416381
+  },
+  {
+    "date": "2026-04-17",
+    "symbol": "ON",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 83.01000213623047,
+    "exit_price": 85.55999755859375,
+    "forward_return": 0.03071913452283015
+  },
+  {
+    "date": "2026-04-17",
+    "symbol": "ON",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 83.01000213623047,
+    "exit_price": 88.98999786376953,
+    "forward_return": 0.07203945998850947
+  },
+  {
+    "date": "2026-04-17",
+    "symbol": "ON",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 83.01000213623047,
+    "exit_price": 98.4000015258789,
+    "forward_return": 0.18539933735203862
+  },
+  {
+    "date": "2026-04-20",
+    "symbol": "ON",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 85.55999755859375,
+    "exit_price": 86.91000366210938,
+    "forward_return": 0.015778472908336783
+  },
+  {
+    "date": "2026-04-20",
+    "symbol": "ON",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 85.55999755859375,
+    "exit_price": 97.77999877929688,
+    "forward_return": 0.1428237677582278
+  },
+  {
+    "date": "2026-04-20",
+    "symbol": "ON",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 85.55999755859375,
+    "exit_price": 98.04000091552734,
+    "forward_return": 0.1458625959916251
+  },
+  {
+    "date": "2026-04-21",
+    "symbol": "ON",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 86.91000366210938,
+    "exit_price": 88.98999786376953,
+    "forward_return": 0.023932736325116277
+  },
+  {
+    "date": "2026-04-21",
+    "symbol": "ON",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 86.91000366210938,
+    "exit_price": 98.4000015258789,
+    "forward_return": 0.13220569991505915
+  },
+  {
+    "date": "2026-04-21",
+    "symbol": "ON",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 86.91000366210938,
+    "exit_price": 93.30000305175781,
+    "forward_return": 0.07352432539862286
+  },
+  {
+    "date": "2026-04-22",
+    "symbol": "ON",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 88.98999786376953,
+    "exit_price": 97.77999877929688,
+    "forward_return": 0.09877515593363118
+  },
+  {
+    "date": "2026-04-22",
+    "symbol": "ON",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 88.98999786376953,
+    "exit_price": 98.04000091552734,
+    "forward_return": 0.10169685660192984
+  },
+  {
+    "date": "2026-04-22",
+    "symbol": "ON",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 88.98999786376953,
+    "exit_price": 98.86000061035156,
+    "forward_return": 0.11091137187902333
+  },
+  {
+    "date": "2026-04-23",
+    "symbol": "MPWR",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 1592.1700439453125,
+    "exit_price": 1632.06005859375,
+    "forward_return": 0.02505386582301994
+  },
+  {
+    "date": "2026-04-23",
+    "symbol": "MPWR",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 1592.1700439453125,
+    "exit_price": 1504.0799560546875,
+    "forward_return": -0.05532706021295464
+  },
+  {
+    "date": "2026-04-23",
+    "symbol": "MPWR",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 1592.1700439453125,
+    "exit_price": 1614.4100341796875,
+    "forward_return": 0.013968351131180334
+  },
+  {
+    "date": "2026-04-24",
+    "symbol": "TXN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 277.1400146484375,
+    "exit_price": 269.5,
+    "forward_return": -0.0275673459068303
+  },
+  {
+    "date": "2026-04-24",
+    "symbol": "TXN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 277.1400146484375,
+    "exit_price": 269.2200012207031,
+    "forward_return": -0.02857766114280258
+  },
+  {
+    "date": "2026-04-24",
+    "symbol": "TXN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 277.1400146484375,
+    "exit_price": 281.0199890136719,
+    "forward_return": 0.014000051093871368
+  },
+  {
+    "date": "2026-04-27",
+    "symbol": "ARM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 215.8800048828125,
+    "exit_price": 198.64999389648438,
+    "forward_return": -0.07981290808141861
+  },
+  {
+    "date": "2026-04-27",
+    "symbol": "ARM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 215.8800048828125,
+    "exit_price": 210.32000732421875,
+    "forward_return": -0.025755037209731046
+  },
+  {
+    "date": "2026-04-27",
+    "symbol": "ARM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 215.8800048828125,
+    "exit_price": 203.25999450683594,
+    "forward_return": -0.05845844955778634
+  },
+  {
+    "date": "2026-04-28",
+    "symbol": "CNC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 49.56999969482422,
+    "exit_price": 53.97999954223633,
+    "forward_return": 0.08896509732826519
+  },
+  {
+    "date": "2026-04-28",
+    "symbol": "CNC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 49.56999969482422,
+    "exit_price": 53.34000015258789,
+    "forward_return": 0.07605407466156011
+  },
+  {
+    "date": "2026-04-28",
+    "symbol": "CNC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 49.56999969482422,
+    "exit_price": 52.97999954223633,
+    "forward_return": 0.06879160517259719
+  },
+  {
+    "date": "2026-04-29",
+    "symbol": "CNC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 53.97999954223633,
+    "exit_price": 53.689998626708984,
+    "forward_return": -0.005372377139433504
+  },
+  {
+    "date": "2026-04-29",
+    "symbol": "CNC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 53.97999954223633,
+    "exit_price": 53.560001373291016,
+    "forward_return": -0.0077806256485180025
+  },
+  {
+    "date": "2026-04-29",
+    "symbol": "CNC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 53.97999954223633,
+    "exit_price": 55.33000183105469,
+    "forward_return": 0.025009305303199447
+  },
+  {
+    "date": "2026-04-30",
+    "symbol": "CNC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 53.689998626708984,
+    "exit_price": 53.34000015258789,
+    "forward_return": -0.006518876570560828
+  },
+  {
+    "date": "2026-04-30",
+    "symbol": "CNC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 53.689998626708984,
+    "exit_price": 52.97999954223633,
+    "forward_return": -0.01322404735766669
+  },
+  {
+    "date": "2026-04-30",
+    "symbol": "CNC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 53.689998626708984,
+    "exit_price": 54.97999954223633,
+    "forward_return": 0.02402683830365393
+  },
+  {
+    "date": "2026-05-01",
+    "symbol": "CNC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 53.34000015258789,
+    "exit_price": 53.560001373291016,
+    "forward_return": 0.004124507312969206
+  },
+  {
+    "date": "2026-05-01",
+    "symbol": "CNC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 53.34000015258789,
+    "exit_price": 55.33000183105469,
+    "forward_return": 0.03730786788102858
+  },
+  {
+    "date": "2026-05-01",
+    "symbol": "CNC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 53.34000015258789,
+    "exit_price": 55.959999084472656,
+    "forward_return": 0.049118839977312145
+  },
+  {
+    "date": "2026-05-04",
+    "symbol": "CNC",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 53.560001373291016,
+    "exit_price": 52.97999954223633,
+    "forward_return": -0.010829010757716695
+  },
+  {
+    "date": "2026-05-04",
+    "symbol": "CNC",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 53.560001373291016,
+    "exit_price": 54.97999954223633,
+    "forward_return": 0.02651228776206538
+  },
+  {
+    "date": "2026-05-04",
+    "symbol": "CNC",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 53.560001373291016,
+    "exit_price": 56.36000061035156,
+    "forward_return": 0.05227780368311996
+  },
+  {
+    "date": "2026-05-05",
+    "symbol": "QCOM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 186.5500030517578,
+    "exit_price": 192.57000732421875,
+    "forward_return": 0.032270191230126644
+  },
+  {
+    "date": "2026-05-05",
+    "symbol": "QCOM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 186.5500030517578,
+    "exit_price": 219.08999633789062,
+    "forward_return": 0.17443040875804594
+  },
+  {
+    "date": "2026-05-05",
+    "symbol": "QCOM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 186.5500030517578,
+    "exit_price": 210.30999755859375,
+    "forward_return": 0.1273652860795922
+  },
+  {
+    "date": "2026-05-06",
+    "symbol": "QCOM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 192.57000732421875,
+    "exit_price": 202.5500030517578,
+    "forward_return": 0.05182528611912196
+  },
+  {
+    "date": "2026-05-06",
+    "symbol": "QCOM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 192.57000732421875,
+    "exit_price": 237.52999877929688,
+    "forward_return": 0.23347348883557784
+  },
+  {
+    "date": "2026-05-06",
+    "symbol": "QCOM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 192.57000732421875,
+    "exit_price": 213.1699981689453,
+    "forward_return": 0.10697403573363107
+  },
+  {
+    "date": "2026-05-07",
+    "symbol": "MU",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 646.6300048828125,
+    "exit_price": 746.8099975585938,
+    "forward_return": 0.15492629775807676
+  },
+  {
+    "date": "2026-05-07",
+    "symbol": "MU",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 646.6300048828125,
+    "exit_price": 766.5800170898438,
+    "forward_return": 0.18550022625190365
+  },
+  {
+    "date": "2026-05-07",
+    "symbol": "MU",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 646.6300048828125,
+    "exit_price": 776.010009765625,
+    "forward_return": 0.2000835159300407
+  },
+  {
+    "date": "2026-05-08",
+    "symbol": "AKAM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 147.7100067138672,
+    "exit_price": 153.00999450683594,
+    "forward_return": 0.035881034134914724
+  },
+  {
+    "date": "2026-05-08",
+    "symbol": "AKAM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 147.7100067138672,
+    "exit_price": 161.13999938964844,
+    "forward_return": 0.09092134632284488
+  },
+  {
+    "date": "2026-05-08",
+    "symbol": "AKAM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 147.7100067138672,
+    "exit_price": 150.8800048828125,
+    "forward_return": 0.021460957449457085
+  },
+  {
+    "date": "2026-05-11",
+    "symbol": "AKAM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 153.00999450683594,
+    "exit_price": 149.55999755859375,
+    "forward_return": -0.022547526776677707
+  },
+  {
+    "date": "2026-05-11",
+    "symbol": "AKAM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 153.00999450683594,
+    "exit_price": 155.6699981689453,
+    "forward_return": 0.01738450923211121
+  },
+  {
+    "date": "2026-05-11",
+    "symbol": "AKAM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 153.00999450683594,
+    "exit_price": 150.77000427246094,
+    "forward_return": -0.014639502743560517
+  },
+  {
+    "date": "2026-05-12",
+    "symbol": "HUM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 295.3500061035156,
+    "exit_price": 304.8500061035156,
+    "forward_return": 0.0321652270312478
+  },
+  {
+    "date": "2026-05-12",
+    "symbol": "HUM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 295.3500061035156,
+    "exit_price": 305.1199951171875,
+    "forward_return": 0.033079359443952905
+  },
+  {
+    "date": "2026-05-12",
+    "symbol": "HUM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 295.3500061035156,
+    "exit_price": 310.54998779296875,
+    "forward_return": 0.051464301253902
+  },
+  {
+    "date": "2026-05-13",
+    "symbol": "DDOG",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 205.30999755859375,
+    "exit_price": 202.83999633789062,
+    "forward_return": -0.012030593980199122
+  },
+  {
+    "date": "2026-05-13",
+    "symbol": "DDOG",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 205.30999755859375,
+    "exit_price": 208.82000732421875,
+    "forward_return": 0.017096146351194053
+  },
+  {
+    "date": "2026-05-13",
+    "symbol": "DDOG",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 205.30999755859375,
+    "exit_price": 212.24000549316406,
+    "forward_return": 0.03375387471130109
+  },
+  {
+    "date": "2026-05-14",
+    "symbol": "AKAM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 155.6699981689453,
+    "exit_price": 150.8800048828125,
+    "forward_return": -0.03077017628621237
+  },
+  {
+    "date": "2026-05-14",
+    "symbol": "AKAM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 155.6699981689453,
+    "exit_price": 141.33999633789062,
+    "forward_return": -0.0920537161920092
+  },
+  {
+    "date": "2026-05-14",
+    "symbol": "AKAM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 155.6699981689453,
+    "exit_price": 146.24000549316406,
+    "forward_return": -0.0605768149720608
+  },
+  {
+    "date": "2026-05-15",
+    "symbol": "PANW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 242.8300018310547,
+    "exit_price": 247.5500030517578,
+    "forward_return": 0.019437471420796548
+  },
+  {
+    "date": "2026-05-15",
+    "symbol": "PANW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 242.8300018310547,
+    "exit_price": 246.66000366210938,
+    "forward_return": 0.015772358449016366
+  },
+  {
+    "date": "2026-05-15",
+    "symbol": "PANW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 242.8300018310547,
+    "exit_price": 260.5799865722656,
+    "forward_return": 0.07309634150379907
+  },
+  {
+    "date": "2026-05-18",
+    "symbol": "CRWD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 618.8300170898438,
+    "exit_price": 616.8800048828125,
+    "forward_return": -0.003151127374527718
+  },
+  {
+    "date": "2026-05-18",
+    "symbol": "CRWD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 618.8300170898438,
+    "exit_price": 648.22998046875,
+    "forward_return": 0.04750894844623854
+  },
+  {
+    "date": "2026-05-18",
+    "symbol": "CRWD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 618.8300170898438,
+    "exit_price": 671.5499877929688,
+    "forward_return": 0.08519297585312668
+  },
+  {
+    "date": "2026-05-19",
+    "symbol": "PANW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 240.1300048828125,
+    "exit_price": 246.66000366210938,
+    "forward_return": 0.027193597828324867
+  },
+  {
+    "date": "2026-05-19",
+    "symbol": "PANW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 240.1300048828125,
+    "exit_price": 260.5799865722656,
+    "forward_return": 0.08516212582193994
+  },
+  {
+    "date": "2026-05-19",
+    "symbol": "PANW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 240.1300048828125,
+    "exit_price": 248.47000122070312,
+    "forward_return": 0.03473117131680681
+  },
+  {
+    "date": "2026-05-20",
+    "symbol": "CRWD",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 650.1099853515625,
+    "exit_price": 648.22998046875,
+    "forward_return": -0.0028918258835785027
+  },
+  {
+    "date": "2026-05-20",
+    "symbol": "CRWD",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 650.1099853515625,
+    "exit_price": 671.5499877929688,
+    "forward_return": 0.03297903881573516
+  },
+  {
+    "date": "2026-05-20",
+    "symbol": "CRWD",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 650.1099853515625,
+    "exit_price": 671.0,
+    "forward_return": 0.03213304689842711
+  },
+  {
+    "date": "2026-05-21",
+    "symbol": "ARM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 298.2300109863281,
+    "exit_price": 306.510009765625,
+    "forward_return": 0.027763801342167493
+  },
+  {
+    "date": "2026-05-21",
+    "symbol": "ARM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 298.2300109863281,
+    "exit_price": 302.7099914550781,
+    "forward_return": 0.015021896870584861
+  },
+  {
+    "date": "2026-05-21",
+    "symbol": "ARM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 298.2300109863281,
+    "exit_price": 353.2900085449219,
+    "forward_return": 0.18462259172541118
+  },
+  {
+    "date": "2026-05-22",
+    "symbol": "ZS",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 182.3699951171875,
+    "exit_price": 184.60000610351562,
+    "forward_return": 0.012227948928194898
+  },
+  {
+    "date": "2026-05-22",
+    "symbol": "ZS",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 182.3699951171875,
+    "exit_price": 130.0399932861328,
+    "forward_return": -0.2869441423049248
+  },
+  {
+    "date": "2026-05-22",
+    "symbol": "ZS",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 182.3699951171875,
+    "exit_price": 155.7100067138672,
+    "forward_return": -0.1461862648304021
+  },
+  {
+    "date": "2026-05-26",
+    "symbol": "DELL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 305.0799865722656,
+    "exit_price": 305.32000732421875,
+    "forward_return": 0.0007867469598707988
+  },
+  {
+    "date": "2026-05-26",
+    "symbol": "DELL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 305.0799865722656,
+    "exit_price": 420.9100036621094,
+    "forward_return": 0.3796709787202204
+  },
+  {
+    "date": "2026-05-26",
+    "symbol": "DELL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 305.0799865722656,
+    "exit_price": 435.30999755859375,
+    "forward_return": 0.4268716950250684
+  },
+  {
+    "date": "2026-05-27",
+    "symbol": "ARM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 302.7099914550781,
+    "exit_price": 335.2699890136719,
+    "forward_return": 0.10756168768028807
+  },
+  {
+    "date": "2026-05-27",
+    "symbol": "ARM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 302.7099914550781,
+    "exit_price": 408.8500061035156,
+    "forward_return": 0.3506326769666226
+  },
+  {
+    "date": "2026-05-27",
+    "symbol": "ARM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 302.7099914550781,
+    "exit_price": 411.8299865722656,
+    "forward_return": 0.3604770182598376
+  },
+  {
+    "date": "2026-05-28",
+    "symbol": "DELL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 317.04998779296875,
+    "exit_price": 420.9100036621094,
+    "forward_return": 0.32758246291736315
+  },
+  {
+    "date": "2026-05-28",
+    "symbol": "DELL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 317.04998779296875,
+    "exit_price": 435.30999755859375,
+    "forward_return": 0.37300114908961257
+  },
+  {
+    "date": "2026-05-28",
+    "symbol": "DELL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 317.04998779296875,
+    "exit_price": 422.04998779296875,
+    "forward_return": 0.3311780603775458
+  },
+  {
+    "date": "2026-05-29",
+    "symbol": "NTAP",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 174.2899932861328,
+    "exit_price": 179.6999969482422,
+    "forward_return": 0.03104024252974602
+  },
+  {
+    "date": "2026-05-29",
+    "symbol": "NTAP",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 174.2899932861328,
+    "exit_price": 181.0800018310547,
+    "forward_return": 0.03895810893614926
+  },
+  {
+    "date": "2026-05-29",
+    "symbol": "NTAP",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 174.2899932861328,
+    "exit_price": 167.0399932861328,
+    "forward_return": -0.041597339372763886
+  },
+  {
+    "date": "2026-06-01",
+    "symbol": "NOW",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 135.86000061035156,
+    "exit_price": 127.6500015258789,
+    "forward_return": -0.06042984725150302
+  },
+  {
+    "date": "2026-06-01",
+    "symbol": "NOW",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 135.86000061035156,
+    "exit_price": 119.36000061035156,
+    "forward_return": -0.12144854943231043
+  },
+  {
+    "date": "2026-06-01",
+    "symbol": "NOW",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 135.86000061035156,
+    "exit_price": 114.19000244140625,
+    "forward_return": -0.15950241477692306
+  },
+  {
+    "date": "2026-06-02",
+    "symbol": "GEN",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 27.530000686645508,
+    "exit_price": 26.5,
+    "forward_return": -0.03741375448439965
+  },
+  {
+    "date": "2026-06-02",
+    "symbol": "GEN",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 27.530000686645508,
+    "exit_price": 26.280000686645508,
+    "forward_return": -0.04540501158092458
+  },
+  {
+    "date": "2026-06-02",
+    "symbol": "GEN",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 27.530000686645508,
+    "exit_price": 24.969999313354492,
+    "forward_return": -0.09298951360116903
+  },
+  {
+    "date": "2026-06-03",
+    "symbol": "MRVL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 301.6499938964844,
+    "exit_price": 316.42999267578125,
+    "forward_return": 0.0489971791094046
+  },
+  {
+    "date": "2026-06-03",
+    "symbol": "MRVL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 301.6499938964844,
+    "exit_price": 288.8500061035156,
+    "forward_return": -0.04243324399788073
+  },
+  {
+    "date": "2026-06-03",
+    "symbol": "MRVL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 301.6499938964844,
+    "exit_price": 252.58999633789062,
+    "forward_return": -0.16263881502158894
+  },
+  {
+    "date": "2026-06-04",
+    "symbol": "MRVL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 316.42999267578125,
+    "exit_price": 263.4700012207031,
+    "forward_return": -0.1673671670856488
+  },
+  {
+    "date": "2026-06-04",
+    "symbol": "MRVL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 316.42999267578125,
+    "exit_price": 266.8800048828125,
+    "forward_return": -0.1565906802132324
+  },
+  {
+    "date": "2026-06-04",
+    "symbol": "MRVL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 316.42999267578125,
+    "exit_price": 280.7099914550781,
+    "forward_return": -0.11288437268113949
+  },
+  {
+    "date": "2026-06-05",
+    "symbol": "FTNT",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 144.67999267578125,
+    "exit_price": 143.0399932861328,
+    "forward_return": -0.011335357151445069
+  },
+  {
+    "date": "2026-06-05",
+    "symbol": "FTNT",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 144.67999267578125,
+    "exit_price": 138.8800048828125,
+    "forward_return": -0.04008838876544707
+  },
+  {
+    "date": "2026-06-05",
+    "symbol": "FTNT",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 144.67999267578125,
+    "exit_price": 146.3000030517578,
+    "forward_return": 0.01119719697254129
+  },
+  {
+    "date": "2026-06-08",
+    "symbol": "CSCO",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 124.1500015258789,
+    "exit_price": 120.36000061035156,
+    "forward_return": -0.030527594594812135
+  },
+  {
+    "date": "2026-06-08",
+    "symbol": "CSCO",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 124.1500015258789,
+    "exit_price": 121.83000183105469,
+    "forward_return": -0.01868706940241649
+  },
+  {
+    "date": "2026-06-08",
+    "symbol": "CSCO",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 124.1500015258789,
+    "exit_price": 120.16999816894531,
+    "forward_return": -0.03205802100698296
+  },
+  {
+    "date": "2026-06-09",
+    "symbol": "HUM",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 363.17999267578125,
+    "exit_price": 364.4599914550781,
+    "forward_return": 0.0035244198609793997
+  },
+  {
+    "date": "2026-06-09",
+    "symbol": "HUM",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 363.17999267578125,
+    "exit_price": 379.2200012207031,
+    "forward_return": 0.044165452030396235
+  },
+  {
+    "date": "2026-06-09",
+    "symbol": "HUM",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 363.17999267578125,
+    "exit_price": 369.489990234375,
+    "forward_return": 0.017374298380546493
+  },
+  {
+    "date": "2026-06-10",
+    "symbol": "ODFL",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 235.9499969482422,
+    "exit_price": 247.75999450683594,
+    "forward_return": 0.05005296762595157
+  },
+  {
+    "date": "2026-06-10",
+    "symbol": "ODFL",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 235.9499969482422,
+    "exit_price": 237.4199981689453,
+    "forward_return": 0.0062301387570078415
+  },
+  {
+    "date": "2026-06-10",
+    "symbol": "ODFL",
+    "horizon": "5d",
+    "horizon_days": 5,
+    "entry_price": 235.9499969482422,
+    "exit_price": 224.19000244140625,
+    "forward_return": -0.049841045386474825
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 1881.510009765625,
+    "exit_price": 1980.0999755859375,
+    "forward_return": 0.05239938416941703
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 1881.510009765625,
+    "exit_price": 1991.550048828125,
+    "forward_return": 0.05848496074501752
+  },
+  {
+    "date": "2026-06-12",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 1980.0999755859375,
+    "exit_price": 2107.860107421875,
+    "forward_return": 0.06452206121467752
+  },
+  {
+    "date": "2026-06-12",
+    "symbol": "SNDK",
+    "horizon": "3d",
+    "horizon_days": 3,
+    "entry_price": 1980.0999755859375,
+    "exit_price": 2016.4130859375,
+    "forward_return": 0.018339028735565144
+  },
+  {
+    "date": "2026-06-15",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 2107.860107421875,
+    "exit_price": 1991.550048828125,
+    "forward_return": -0.05517921145915561
+  },
+  {
+    "date": "2026-06-16",
+    "symbol": "SNDK",
+    "horizon": "1d",
+    "horizon_days": 1,
+    "entry_price": 1991.550048828125,
+    "exit_price": 2016.4130859375,
+    "forward_return": 0.012484264266421574
+  }
+]

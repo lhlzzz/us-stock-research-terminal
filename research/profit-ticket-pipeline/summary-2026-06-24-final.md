@@ -1,0 +1,418 @@
+# XIAOMEI US Profit Ticket Pipeline V0
+
+RESEARCH_ONLY
+NOT_TRADING_ADVICE
+NO_BROKER
+NO_ORDER
+NO_LEDGER
+NO_LIVE_TRADE
+
+- output_date: 2026-06-24-final
+- as_of_date: 2026-06-22
+- market_data_source: EastMoney US historical kline (via akshare) + EastMoney US realtime quote
+- kline_source: EastMoney US historical kline
+- quote_source: EastMoney US realtime/delayed quote + kline
+- data_source_mismatch_threshold: 0.01
+- eastmoney_required_tabs: us_quote_center
+- eastmoney_enhanced_tabs: us_quote_detail, us_quote_news, us_quote_company
+- eastmoney_evidence_domains: market_overview, quote_detail, company_detail, news_detail
+- research_only: true
+- allow_trade: false
+- auto_order: false
+- no_broker_api: true
+- universe_source: explicit
+- source_mode: live
+- data_mode: historical_kline
+- universe_key: explicit
+- universe_total_symbols: 5
+- universe_included_symbols: 5
+- period_used: 1y
+- classification: CANDIDATE_FOR_PAPER_REVIEW
+- candidate_pool_size: 5
+- top_k: 5
+- paper_review_count: 2
+- market_watchlist_count: 3
+- zero_paper_review_is_valid_output: False
+- artifact_summary: /root/hermes/company-ai-system/workspaces/xiaomei/research/profit-ticket-pipeline/summary-2026-06-24-final.md
+- artifact_metrics: /root/hermes/company-ai-system/workspaces/xiaomei/research/profit-ticket-pipeline/metrics-2026-06-24-final.json
+- artifact_candidates: /root/hermes/company-ai-system/workspaces/xiaomei/research/profit-ticket-pipeline/candidates-2026-06-24-final.csv
+- artifact_forward_tracking: /root/hermes/company-ai-system/workspaces/xiaomei/research/profit-ticket-pipeline/forward-tracking-2026-06-24-final.csv
+- artifact_runtime_context: /root/hermes/company-ai-system/workspaces/xiaomei/research/profit-ticket-pipeline/runtime-decision-context-2026-06-24-final.json
+- artifact_runtime_ledger: /root/hermes/company-ai-system/workspaces/xiaomei/research/profit-ticket-pipeline/runtime-decision-ledger.jsonl
+
+## Backtest Feedback Applied
+- feedback_win_rate: 64%
+- symbol_penalties: ADBE, ALNY, CPB, KIM
+
+## Market Regime: BALANCED
+- breadth: 50.0% (stocks with positive 20d return)
+- momentum: +0.00% (median 20d return)
+- volatility: 0.0200 (median daily |return|)
+- advance_ratio: 50.0% (1d advancers)
+- description: Standard accel gate, tighter risk
+- scoring_weights: {'prior_20d_momentum': 0.1, 'five_day_acceleration': -0.15, 'relative_strength_vs_equal_weight': 0.45, 'volume_weighted_momentum': 0.3, 'closing_strength_5d': 0.0, 'volume_confirmation_ratio': 0.0}
+- exhaustion_threshold: -0.15
+- position_cap: 10%
+- min_market_score_gate: 0.55
+- kelly_fraction_cap: 60%
+- stop_loss_multiplier: 0.8x
+- take_profit_multiplier: 1.2x
+- risk_per_trade: 1.5%
+- max_single_position: 8%
+- max_total_exposure: 40%
+- max_consecutive_losses: 2
+- daily_max_loss_r: 2.5R
+- default_stop_loss: 1.2%
+
+## Methodology References
+- UZI-Skill: risk checklist and multi-dimensional review
+- TradingAgents: role-based research synthesis
+- Serenity Skill: theme and supply-chain catalyst mapping
+- Buffett Skills: quality, margin-of-safety, bear-case framing
+- QuantDinger: replay discipline and data-health guardrails
+- Factor Analysis (300-day IC): scoring weight optimization based on historical information coefficient
+
+## Price-Volume Summary
+- equal_weight_20d_benchmark: 0.2556301978733332
+- median_20d_momentum: 0.2557130765975455
+- median_5d_acceleration: -0.15491876918469716
+- median_volume_confirmation: 0.9933267896002531
+- median_relative_strength: 8.287872421230968e-05
+- top_market_score_p90: 0.7439290384356442
+
+## Paper Review Candidates
+|rank|symbol|company|latest|intraday|source_gap|market_score|catalyst_score|ticket_score|narrative|business|gate_status|
+|---|---|---|---|---|---|---|---|---|---|---|---|
+|1|MRNA|Moderna Inc|61.84|0.042042295054343315|0.0|0.9011388492291006|0.2375|1.1586388492291007|found_unrelated|found_relevant|CANDIDATE_FOR_PAPER_REVIEW|
+  - ticket_card: research_only=true allow_trade=false auto_order=false no_broker_api=true
+  - lifecycle_stage: paper_review_candidate
+  - kline_source: EastMoney US historical kline
+  - quote_source: EastMoney US realtime/delayed quote + kline | status=ok | prev_close=59.345 | cross_check_basis=prev_close | gap=0.0 | mismatch=false
+  - eastmoney_tabs: detail=https://quote.eastmoney.com/us/MRNA.html | news=https://quote.eastmoney.com/us/MRNA.html#news | company=https://quote.eastmoney.com/us/MRNA.html#company
+  - catalyst: Moderna just got a signal investors can’t ignore
+|2|GE|GE航空航天|355.69|0.0016050912367651105|0.0|0.5081143222454595|0.525|1.0831143222454596|found_relevant|found_relevant|CANDIDATE_FOR_PAPER_REVIEW|
+  - ticket_card: research_only=true allow_trade=false auto_order=false no_broker_api=true
+  - lifecycle_stage: paper_review_candidate
+  - kline_source: EastMoney US historical kline
+  - quote_source: EastMoney US realtime/delayed quote + kline | status=ok | prev_close=355.12 | cross_check_basis=prev_close | gap=0.0 | mismatch=false
+  - eastmoney_tabs: detail=https://quote.eastmoney.com/us/GE.html | news=https://quote.eastmoney.com/us/GE.html#news | company=https://quote.eastmoney.com/us/GE.html#company
+  - catalyst: General Electric (GE) Stock After 333% Three-Year Surge Is It Too Late To Buy?; GE HealthCare Technologies Set for Further Growth on Strong Backlog, Execution, RBC Says
+
+## Market Watchlist Needs Evidence
+|rank|symbol|company|latest|intraday|source_gap|market_score|catalyst_score|ticket_score|narrative|business|gate_status|
+|---|---|---|---|---|---|---|---|---|---|---|---|
+|3|STX|希捷科技|1018.99|-0.06859895433439356|0.0|0.2843812455990912|0.1875|0.49188124559909124|found_unrelated|found_relevant|MOMENTUM_EXHAUSTION_HARD_BLOCK|
+  - ticket_card: research_only=true allow_trade=false auto_order=false no_broker_api=true
+  - lifecycle_stage: market_watchlist
+  - kline_source: EastMoney US historical kline
+  - quote_source: EastMoney US realtime/delayed quote + kline | status=ok | prev_close=1094.04 | cross_check_basis=prev_close | gap=0.0 | mismatch=false
+  - eastmoney_tabs: detail=https://quote.eastmoney.com/us/STX.html | news=https://quote.eastmoney.com/us/STX.html#news | company=https://quote.eastmoney.com/us/STX.html#company
+  - catalyst: The Billionaire Who Called the 2008 Bubble Just Dumped Google to Buy These 5 AI Hardware Stocks
+|4|TER|泰瑞达|420.21|-0.08050328227571124|0.0|0.24314516918975898|0.1875|0.48064516918975897|found_relevant|found_unrelated|MOMENTUM_EXHAUSTION_HARD_BLOCK|
+  - ticket_card: research_only=true allow_trade=false auto_order=false no_broker_api=true
+  - lifecycle_stage: market_watchlist
+  - kline_source: EastMoney US historical kline
+  - quote_source: EastMoney US realtime/delayed quote + kline | status=ok | prev_close=457.0 | cross_check_basis=prev_close | gap=0.0 | mismatch=false
+  - eastmoney_tabs: detail=https://quote.eastmoney.com/us/TER.html | news=https://quote.eastmoney.com/us/TER.html#news | company=https://quote.eastmoney.com/us/TER.html#company
+  - catalyst: Stocks To Watch Echo AI Theme. GE Vernova Among Five Stocks Near Buy Points.
+|5|SW|Smurfit WestRock plc|44.685|-0.01553205551883674|0.0|0.1288634226283071|0.2375|0.4163634226283071|found_relevant|found_unrelated|MOMENTUM_EXHAUSTION_HARD_BLOCK|
+  - ticket_card: research_only=true allow_trade=false auto_order=false no_broker_api=true
+  - lifecycle_stage: market_watchlist
+  - kline_source: EastMoney US historical kline
+  - quote_source: EastMoney US realtime/delayed quote + kline | status=ok | prev_close=45.39 | cross_check_basis=prev_close | gap=0.0 | mismatch=false
+  - eastmoney_tabs: detail=https://quote.eastmoney.com/us/SW.html | news=https://quote.eastmoney.com/us/SW.html#news | company=https://quote.eastmoney.com/us/SW.html#company
+  - catalyst: Smurfit Westrock Announces the Completion of Delisting from the LSE
+
+## Catalyst Summary
+- candidates_with_narrative_relevant: 3
+- candidates_with_business_relevant: 3
+- top_shared_titles: [["Moderna just got a signal investors can’t ignore", 1], ["General Electric (GE) Stock After 333% Three-Year Surge Is It Too Late To Buy?", 1], ["GE HealthCare Technologies Set for Further Growth on Strong Backlog, Execution, RBC Says", 1], ["The Billionaire Who Called the 2008 Bubble Just Dumped Google to Buy These 5 AI Hardware Stocks", 1], ["Stocks To Watch Echo AI Theme. GE Vernova Among Five Stocks Near Buy Points.", 1]]
+
+## Lifecycle Snapshot
+- paper_review_candidates: 2
+- market_watchlist_candidates: 3
+- blocked_by_risk_candidates: 0
+- best_watch_candidate: STX
+- best_watch_reason: classification=MARKET_WATCHLIST_NEEDS_EVIDENCE; risk=ELEVATED; evidence=MOMENTUM_EXHAUSTION_HARD_BLOCK
+
+## Evidence Gaps
+### 1. MRNA
+- company: Moderna Inc (eastmoney_us)
+- narrative query: MRNA moderna stock catalyst earnings news
+- business query: MRNA moderna orders demand backlog guidance revenue customer contract
+- narrative ranked candidates: 1 | status: found_unrelated | returncode: 0
+- business ranked candidates: 10 | status: found_relevant | returncode: 0
+- evidence gap reason: paper_review_gate_passed
+### 2. GE
+- company: GE航空航天 (eastmoney_us)
+- narrative query: GE ge stock catalyst earnings news
+- business query: GE ge orders demand backlog guidance revenue customer contract
+- narrative ranked candidates: 10 | status: found_relevant | returncode: 0
+- business ranked candidates: 10 | status: found_relevant | returncode: 0
+- evidence gap reason: paper_review_gate_passed
+### 3. STX
+- company: 希捷科技 (eastmoney_us)
+- narrative query: STX 希捷科技 stock catalyst earnings news
+- business query: STX 希捷科技 orders demand backlog guidance revenue customer contract
+- narrative ranked candidates: 1 | status: found_unrelated | returncode: 0
+- business ranked candidates: 10 | status: found_relevant | returncode: 0
+- evidence gap reason: paper_review_gate_passed
+### 4. TER
+- company: 泰瑞达 (eastmoney_us)
+- narrative query: TER 泰瑞达 stock catalyst earnings news
+- business query: TER 泰瑞达 orders demand backlog guidance revenue customer contract
+- narrative ranked candidates: 10 | status: found_relevant | returncode: 0
+- business ranked candidates: 10 | status: found_unrelated | returncode: 0
+- evidence gap reason: paper_review_gate_passed
+### 5. SW
+- company: Smurfit WestRock plc (eastmoney_us)
+- narrative query: SW smurfit westrock stock catalyst earnings news
+- business query: SW smurfit westrock orders demand backlog guidance revenue customer contract
+- narrative ranked candidates: 10 | status: found_relevant | returncode: 0
+- business ranked candidates: 10 | status: found_unrelated | returncode: 0
+- evidence gap reason: paper_review_gate_passed
+
+## Quality Check (Buffett Skills)
+### MRNA: MODERATE (score=0.56)
+  - roe: 0.00
+  - pe_ttm: 1.00
+  - dividend_yield: 0.00
+  - price_position_52w: 0.78
+  - liquidity_amount: 1.00
+### GE: STRONG (score=0.90)
+  - roe: 1.00
+  - pe_ttm: 0.79
+  - dividend_yield: 1.00
+  - price_position_52w: 0.70
+  - liquidity_amount: 1.00
+### STX: MODERATE (score=0.56)
+  - roe: 1.00
+  - pe_ttm: 0.00
+  - dividend_yield: 0.00
+  - price_position_52w: 0.81
+  - liquidity_amount: 1.00
+### TER: STRONG (score=0.91)
+  - roe: 1.00
+  - pe_ttm: 0.78
+  - dividend_yield: 1.00
+  - price_position_52w: 0.78
+  - liquidity_amount: 1.00
+### SW: STRONG (score=0.97)
+  - roe: 1.00
+  - pe_ttm: 1.00
+  - dividend_yield: 1.00
+  - price_position_52w: 0.85
+  - liquidity_amount: 0.98
+
+## Risk Checklist (UZI-Skill)
+### MRNA: WATCH (red=0, yellow=2)
+  - price_extended_vs_52w: [GREEN] latest/52w_high=91.3%
+  - intraday_gap: [GREEN] intraday_pct_chg=4.20%
+  - liquidity: [GREEN] amount=283,736,976
+  - valuation: [GREEN] pe_ttm=3.31
+  - quality_gap: [YELLOW] roe=-1673.00%
+  - price_manipulation: [GREEN] 5d_accel=-0.0667
+  - news_red_flags: [YELLOW] narrative_status=found_unrelated
+  - supply_chain_risk: [GREEN] business_status=found_relevant
+  - short_interest: [GREEN] provider_field_unavailable
+  - dilution_risk: [GREEN] provider_field_unavailable
+  - debt_covenant: [GREEN] provider_field_unavailable
+  - earnings_quality: [GREEN] provider_field_unavailable
+  - insider_selling: [GREEN] provider_field_unavailable
+  - regulatory_risk: [GREEN] provider_field_unavailable
+  - concentration_risk: [GREEN] provider_field_unavailable
+### GE: WATCH (red=0, yellow=2)
+  - price_extended_vs_52w: [YELLOW] latest/52w_high=97.5%
+  - intraday_gap: [GREEN] intraday_pct_chg=0.16%
+  - liquidity: [GREEN] amount=857,820,256
+  - valuation: [GREEN] pe_ttm=20.55
+  - quality_gap: [GREEN] roe=1037.00%
+  - price_manipulation: [YELLOW] 5d_accel=-0.1177
+  - news_red_flags: [GREEN] narrative_status=found_relevant
+  - supply_chain_risk: [GREEN] business_status=found_relevant
+  - short_interest: [GREEN] provider_field_unavailable
+  - dilution_risk: [GREEN] provider_field_unavailable
+  - debt_covenant: [GREEN] provider_field_unavailable
+  - earnings_quality: [GREEN] provider_field_unavailable
+  - insider_selling: [GREEN] provider_field_unavailable
+  - regulatory_risk: [GREEN] provider_field_unavailable
+  - concentration_risk: [GREEN] provider_field_unavailable
+### STX: ELEVATED (red=1, yellow=2)
+  - price_extended_vs_52w: [GREEN] latest/52w_high=89.0%
+  - intraday_gap: [GREEN] intraday_pct_chg=-6.86%
+  - liquidity: [GREEN] amount=3,149,883,312
+  - valuation: [YELLOW] pe_ttm=208.66
+  - quality_gap: [GREEN] roe=58879.00%
+  - price_manipulation: [RED] 5d_accel=-0.1748
+  - news_red_flags: [YELLOW] narrative_status=found_unrelated
+  - supply_chain_risk: [GREEN] business_status=found_relevant
+  - short_interest: [GREEN] provider_field_unavailable
+  - dilution_risk: [GREEN] provider_field_unavailable
+  - debt_covenant: [GREEN] provider_field_unavailable
+  - earnings_quality: [GREEN] provider_field_unavailable
+  - insider_selling: [GREEN] provider_field_unavailable
+  - regulatory_risk: [GREEN] provider_field_unavailable
+  - concentration_risk: [GREEN] provider_field_unavailable
+### TER: ELEVATED (red=1, yellow=2)
+  - price_extended_vs_52w: [GREEN] latest/52w_high=91.5%
+  - intraday_gap: [YELLOW] intraday_pct_chg=-8.05%
+  - liquidity: [GREEN] amount=1,153,549,744
+  - valuation: [GREEN] pe_ttm=20.92
+  - quality_gap: [GREEN] roe=1343.00%
+  - price_manipulation: [RED] 5d_accel=-0.1596
+  - news_red_flags: [GREEN] narrative_status=found_relevant
+  - supply_chain_risk: [YELLOW] business_status=found_unrelated
+  - short_interest: [GREEN] provider_field_unavailable
+  - dilution_risk: [GREEN] provider_field_unavailable
+  - debt_covenant: [GREEN] provider_field_unavailable
+  - earnings_quality: [GREEN] provider_field_unavailable
+  - insider_selling: [GREEN] provider_field_unavailable
+  - regulatory_risk: [GREEN] provider_field_unavailable
+  - concentration_risk: [GREEN] provider_field_unavailable
+### SW: ELEVATED (red=1, yellow=1)
+  - price_extended_vs_52w: [GREEN] latest/52w_high=86.3%
+  - intraday_gap: [GREEN] intraday_pct_chg=-1.55%
+  - liquidity: [GREEN] amount=98,121,013
+  - valuation: [GREEN] pe_ttm=1.30
+  - quality_gap: [GREEN] roe=36.00%
+  - price_manipulation: [RED] 5d_accel=-0.1549
+  - news_red_flags: [GREEN] narrative_status=found_relevant
+  - supply_chain_risk: [YELLOW] business_status=found_unrelated
+  - short_interest: [GREEN] provider_field_unavailable
+  - dilution_risk: [GREEN] provider_field_unavailable
+  - debt_covenant: [GREEN] provider_field_unavailable
+  - earnings_quality: [GREEN] provider_field_unavailable
+  - insider_selling: [GREEN] provider_field_unavailable
+  - regulatory_risk: [GREEN] provider_field_unavailable
+  - concentration_risk: [GREEN] provider_field_unavailable
+
+## Research Panel (TradingAgents)
+### MRNA: NEUTRAL (pos=2, neg=2)
+  - fundamental_analyst: Quality verdict: MODERATE (score=0.56)
+  - news_analyst: News status: found_unrelated, relevance=0.00
+  - sentiment_analyst: Business/sentiment status: found_relevant, relevance=0.95
+  - technical_analyst: Signals: strong_momentum, volume_confirmed
+  - bull_case: Bull points: 3
+  - bear_case: Bear points: 2
+  - risk_manager: Risk: WATCH, Quality: MODERATE, Rec: PROCEED_WITH_MONITORING
+### GE: BEARISH_CONSENSUS (pos=3, neg=3)
+  - fundamental_analyst: Quality verdict: STRONG (score=0.90)
+  - news_analyst: News status: found_relevant, relevance=0.95
+  - sentiment_analyst: Business/sentiment status: found_relevant, relevance=0.95
+  - technical_analyst: Signals: strong_momentum, deceleration_warning, underperforming_market, volume_confirmed
+  - bull_case: Bull points: 5
+  - bear_case: Bear points: 3
+  - risk_manager: Risk: WATCH, Quality: STRONG, Rec: PROCEED_WITH_MONITORING
+### STX: BEARISH_CONSENSUS (pos=2, neg=4)
+  - fundamental_analyst: Quality verdict: MODERATE (score=0.56)
+  - news_analyst: News status: found_unrelated, relevance=0.00
+  - sentiment_analyst: Business/sentiment status: found_relevant, relevance=0.75
+  - technical_analyst: Signals: strong_momentum, deceleration_warning, outperforming_market, volume_confirmed
+  - bull_case: Bull points: 3
+  - bear_case: Bear points: 4
+  - risk_manager: Risk: ELEVATED, Quality: MODERATE, Rec: PROCEED_WITH_CAUTION
+### TER: BEARISH_CONSENSUS (pos=2, neg=3)
+  - fundamental_analyst: Quality verdict: STRONG (score=0.91)
+  - news_analyst: News status: found_relevant, relevance=0.75
+  - sentiment_analyst: Business/sentiment status: found_unrelated, relevance=0.00
+  - technical_analyst: Signals: strong_momentum, deceleration_warning, volume_confirmed
+  - bull_case: Bull points: 4
+  - bear_case: Bear points: 3
+  - risk_manager: Risk: ELEVATED, Quality: STRONG, Rec: PROCEED_WITH_CAUTION
+### SW: BEARISH_CONSENSUS (pos=2, neg=3)
+  - fundamental_analyst: Quality verdict: STRONG (score=0.97)
+  - news_analyst: News status: found_relevant, relevance=0.95
+  - sentiment_analyst: Business/sentiment status: found_unrelated, relevance=0.00
+  - technical_analyst: Signals: strong_momentum, deceleration_warning, underperforming_market
+  - bull_case: Bull points: 3
+  - bear_case: Bear points: 3
+  - risk_manager: Risk: ELEVATED, Quality: STRONG, Rec: PROCEED_WITH_CAUTION
+
+## Supply Chain Map (Serenity Skill)
+- MRNA: no_supply_chain_data | themes=[]
+- GE: no_supply_chain_data | themes=[]
+- STX: no_supply_chain_data | themes=[]
+- TER: no_supply_chain_data | themes=[]
+- SW: no_supply_chain_data | themes=[]
+
+## Replay Hypothesis (QuantDinger)
+- MRNA: Entry=pullback_entry, SL=-3.0%, TP=5.0%, Period=3d_5d, Conf=50%
+- GE: Entry=no_entry, SL=0.0%, TP=0.0%, Period=N/A, Conf=20%
+- STX: Entry=avoid_deceleration, SL=0.0%, TP=0.0%, Period=N/A, Conf=10%
+- TER: Entry=avoid_deceleration, SL=0.0%, TP=0.0%, Period=N/A, Conf=10%
+- SW: Entry=avoid_deceleration, SL=0.0%, TP=0.0%, Period=N/A, Conf=10%
+
+## Risk Management (Cross-Platform Best Practices)
+### MRNA: ALLOWED
+  - stop_loss: $57.96
+  - take_profit: $63.49
+  - risk_reward: 2.00
+  - kelly_fraction: 0.174
+  - risk_score: N/A
+  - confidence: 1.00
+### GE: ALLOWED
+  - stop_loss: $346.85
+  - take_profit: $379.92
+  - risk_reward: 2.00
+  - kelly_fraction: 0.174
+  - risk_score: N/A
+  - confidence: 1.00
+### STX: ALLOWED
+  - stop_loss: $1068.58
+  - take_profit: $1170.43
+  - risk_reward: 2.00
+  - kelly_fraction: 0.174
+  - risk_score: N/A
+  - confidence: 1.00
+### TER: ALLOWED
+  - stop_loss: $446.36
+  - take_profit: $488.91
+  - risk_reward: 2.00
+  - kelly_fraction: 0.174
+  - risk_score: N/A
+  - confidence: 1.00
+### SW: ALLOWED
+  - stop_loss: $44.33
+  - take_profit: $48.56
+  - risk_reward: 2.00
+  - kelly_fraction: 0.174
+  - risk_score: N/A
+  - confidence: 1.00
+
+## Forward Tracking
+|symbol|rank|horizon|due_date|status|
+|---|---|---|---|---|
+|MRNA|1|1d|2026-06-23|pending|
+|MRNA|1|3d|2026-06-25|pending|
+|MRNA|1|5d|2026-06-29|pending|
+|MRNA|1|10d|2026-07-06|pending|
+|GE|2|1d|2026-06-23|pending|
+|GE|2|3d|2026-06-25|pending|
+|GE|2|5d|2026-06-29|pending|
+|GE|2|10d|2026-07-06|pending|
+|STX|3|1d|2026-06-23|pending|
+|STX|3|3d|2026-06-25|pending|
+|STX|3|5d|2026-06-29|pending|
+|STX|3|10d|2026-07-06|pending|
+|TER|4|1d|2026-06-23|pending|
+|TER|4|3d|2026-06-25|pending|
+|TER|4|5d|2026-06-29|pending|
+|TER|4|10d|2026-07-06|pending|
+|SW|5|1d|2026-06-23|pending|
+|SW|5|3d|2026-06-25|pending|
+|SW|5|5d|2026-06-29|pending|
+|SW|5|10d|2026-07-06|pending|
+
+## Market Snapshot Top 10
+- momentum_exhaustion_guard_threshold: -0.15
+- momentum_exhaustion_guard_adjustment: -0.08
+|rank|symbol|raw_market_score|market_score|rule|prior_20d|accel_5d|volume_confirm|closing_strength|vwmomentum|
+|---|---|---|---|---|---|---|---|---|---|
+|1|MRNA|0.9130851063829789|0.9011388492291006||0.2557130765975455|-0.06667280410706256|1.6932672054489761|0.6390387983896992|0.4587835076394849|
+|2|GE|0.3487253765932795|0.5081143222454595||0.17682926829268308|-0.11771802463029113|0.3271229120157162|0.32807946154237755|0.20533124001121714|
+|3|STX|1.0270918468557824|0.2843812455990912|momentum_exhaustion_guard|0.3499000567578905|-0.17482702015366303|1.264873755801918|0.38945666948432767|0.5592894722350429|
+|4|TER|0.7051219512195122|0.24314516918975898|momentum_exhaustion_guard|0.29300588501584435|-0.15957334533330458|0.9933267896002531|0.48998234847077526|0.45027025829646344|
+|5|SW|0.4171232876712329|0.1288634226283071|momentum_exhaustion_guard|0.20270270270270263|-0.15491876918469716|0.26918556693789|0.32792943118351087|0.2317070871891023|
+
+## Final Classification
+- CANDIDATE_FOR_PAPER_REVIEW

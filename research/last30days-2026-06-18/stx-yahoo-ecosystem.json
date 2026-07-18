@@ -1,0 +1,151 @@
+{
+  "topic": "STX stock",
+  "ranked_candidates": [
+    {
+      "title": "Western Digital Stock's Thousand-Percent Question",
+      "snippet": "The data storage giant is on a historic run fueled by an AI super-story, but the market is now pricing in something close to perfection.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Seagate (STX) Stock Rallies As US Iran Ceasefire Lifts Memory Sector Mood",
+      "snippet": "A ceasefire in the US Iran conflict has been agreed, removing a major geopolitical risk for global markets. The peace deal includes reopening the Strait of Hormuz, easing previous concerns around energy and supply chain disruption. Memory and storage stocks, including Seagate Technology Holdings (NasdaqGS:STX), have rallied on the news as investors reassess sector risk. The de escalation between the US and Iran immediately affects how investors look at Seagate Technology Holdings, a key...",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "This Storage Stock Is Now Up More Than 700% in a Year, and the AI Boom Could Push It Even Higher.",
+      "snippet": "The hard-drive specialist's supply and pricing visibility make the stock worth watching despite a huge run.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Seagate (STX) Is Up 9.86% in One Week: What You Should Know",
+      "snippet": "Does Seagate (STX) have what it takes to be a top stock pick for momentum investors? Let's find out.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Seagate Technology Stock: Is STX Outperforming the Technology Sector?",
+      "snippet": "As Seagate Technology has significantly surpassed the technology sector over the past year, Wall Street analysts maintain a strongly optimistic outlook on the stock’s prospects.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "AI Memory Demand Has Turned These 5 S&P 500 Stocks Into Market Leaders",
+      "snippet": "Memory and storage stocks dominate the S&P 500 leaderboard in 2026, with SanDisk, Micron, Western Digital, Seagate, and Intel posting triple-digit gains on AI-driven demand.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Western Digital, Seagate Stocks Keep Soaring. Why They’re Morgan Stanley’s Top Picks.",
+      "snippet": "Morgan Stanley reiterates Overweight ratings on the hard-disk drive makers in a pair of research notes Monday.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Stocks Supported by Lower Crude Oil Prices and Bond Yields",
+      "snippet": "The S&P 500 Index ($SPX ) (SPY ) today is up +0.11%, the Dow Jones Industrial Average ($DOWI ) (DIA ) is up +0.57%, and the Nasdaq 100 Index ($IUXX ) (QQQ ) is down -0.18%. June E-mini S&P futures (ESM26 ) are up +0.09%, and June E-mini Nasdaq futures...",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Western Digital Jumps 7% on Morgan Stanley’s 33% Price-Target Hike, Seagate Gains 5% as the AI Storage Boom Rolls On",
+      "snippet": "Western Digital (NASDAQ:WDC) stock is up 7% in Tuesday morning trading, changing hands near $701 and setting a fresh all-time high. The catalyst is a Morgan Stanley note that reiterated an Overweight rating and lifted its WDC price target by 33%. The upgrade extends a powerful run. Western Digital stock closed Monday up 16.1% at ... Western Digital Jumps 7% on Morgan Stanley’s 33% Price-Target Hike, Seagate Gains 5% as the AI Storage Boom Rolls On",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    },
+    {
+      "title": "Can Seagate's Mozaic HAMR Platform Strengthen Its Competitive Edge?",
+      "snippet": "STX is accelerating Mozaic HAMR adoption with higher-capacity drives and AI-driven storage demand supporting its long-term growth strategy.",
+      "source": "yahoo_finance",
+      "url": "",
+      "score": 0.8
+    }
+  ],
+  "items_by_source": {
+    "yahoo_finance": [
+      {
+        "title": "Western Digital Stock's Thousand-Percent Question",
+        "snippet": "The data storage giant is on a historic run fueled by an AI super-story, but the market is now pricing in something close to perfection.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Seagate (STX) Stock Rallies As US Iran Ceasefire Lifts Memory Sector Mood",
+        "snippet": "A ceasefire in the US Iran conflict has been agreed, removing a major geopolitical risk for global markets. The peace deal includes reopening the Strait of Hormuz, easing previous concerns around energy and supply chain disruption. Memory and storage stocks, including Seagate Technology Holdings (NasdaqGS:STX), have rallied on the news as investors reassess sector risk. The de escalation between the US and Iran immediately affects how investors look at Seagate Technology Holdings, a key...",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "This Storage Stock Is Now Up More Than 700% in a Year, and the AI Boom Could Push It Even Higher.",
+        "snippet": "The hard-drive specialist's supply and pricing visibility make the stock worth watching despite a huge run.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Seagate (STX) Is Up 9.86% in One Week: What You Should Know",
+        "snippet": "Does Seagate (STX) have what it takes to be a top stock pick for momentum investors? Let's find out.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Seagate Technology Stock: Is STX Outperforming the Technology Sector?",
+        "snippet": "As Seagate Technology has significantly surpassed the technology sector over the past year, Wall Street analysts maintain a strongly optimistic outlook on the stock’s prospects.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "AI Memory Demand Has Turned These 5 S&P 500 Stocks Into Market Leaders",
+        "snippet": "Memory and storage stocks dominate the S&P 500 leaderboard in 2026, with SanDisk, Micron, Western Digital, Seagate, and Intel posting triple-digit gains on AI-driven demand.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Western Digital, Seagate Stocks Keep Soaring. Why They’re Morgan Stanley’s Top Picks.",
+        "snippet": "Morgan Stanley reiterates Overweight ratings on the hard-disk drive makers in a pair of research notes Monday.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Stocks Supported by Lower Crude Oil Prices and Bond Yields",
+        "snippet": "The S&P 500 Index ($SPX ) (SPY ) today is up +0.11%, the Dow Jones Industrial Average ($DOWI ) (DIA ) is up +0.57%, and the Nasdaq 100 Index ($IUXX ) (QQQ ) is down -0.18%. June E-mini S&P futures (ESM26 ) are up +0.09%, and June E-mini Nasdaq futures...",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Western Digital Jumps 7% on Morgan Stanley’s 33% Price-Target Hike, Seagate Gains 5% as the AI Storage Boom Rolls On",
+        "snippet": "Western Digital (NASDAQ:WDC) stock is up 7% in Tuesday morning trading, changing hands near $701 and setting a fresh all-time high. The catalyst is a Morgan Stanley note that reiterated an Overweight rating and lifted its WDC price target by 33%. The upgrade extends a powerful run. Western Digital stock closed Monday up 16.1% at ... Western Digital Jumps 7% on Morgan Stanley’s 33% Price-Target Hike, Seagate Gains 5% as the AI Storage Boom Rolls On",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      },
+      {
+        "title": "Can Seagate's Mozaic HAMR Platform Strengthen Its Competitive Edge?",
+        "snippet": "STX is accelerating Mozaic HAMR adoption with higher-capacity drives and AI-driven storage demand supporting its long-term growth strategy.",
+        "source": "yahoo_finance",
+        "url": "",
+        "score": 0.8
+      }
+    ]
+  },
+  "clusters": [],
+  "warnings": []
+}

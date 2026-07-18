@@ -1,0 +1,73 @@
+{
+  "proxy_env": {
+    "HTTP_PROXY": null,
+    "HTTPS_PROXY": null,
+    "http_proxy": null,
+    "https_proxy": null,
+    "ALL_PROXY": null,
+    "all_proxy": null,
+    "NO_PROXY": "192.168.*,172.31.*,172.30.*,172.29.*,172.28.*,172.27.*,172.26.*,172.25.*,172.24.*,172.23.*,172.22.*,172.21.*,172.20.*,172.19.*,172.18.*,172.17.*,172.16.*,10.*,127.*,localhost",
+    "no_proxy": "192.168.*,172.31.*,172.30.*,172.29.*,172.28.*,172.27.*,172.26.*,172.25.*,172.24.*,172.23.*,172.22.*,172.21.*,172.20.*,172.19.*,172.18.*,172.17.*,172.16.*,10.*,127.*,localhost"
+  },
+  "proxy_7897": {
+    "127.0.0.1:7897": "open"
+  },
+  "yfinance_version": "1.4.1",
+  "cache_dir": "/root/.cache/py-yfinance",
+  "cache_files": [
+    "/root/.cache/py-yfinance/cookies.db",
+    "/root/.cache/py-yfinance/tkr-tz.db"
+  ],
+  "endpoint_probes": [
+    {
+      "name": "query1",
+      "status": 403,
+      "content_type": "text/html",
+      "len": 3369,
+      "snippet": "<!DOCTYPE html> <html lang=\"zh\"> <head>     <meta charset=\"utf-8\">     <title>Yahoo</title>     <meta name=\"viewport\" content=\"width=device-width,initial-scale="
+    },
+    {
+      "name": "query2",
+      "status": 403,
+      "content_type": "text/html",
+      "len": 3369,
+      "snippet": "<!DOCTYPE html> <html lang=\"zh\"> <head>     <meta charset=\"utf-8\">     <title>Yahoo</title>     <meta name=\"viewport\" content=\"width=device-width,initial-scale="
+    }
+  ],
+  "aapl_5d": {
+    "error": "YFRateLimitError",
+    "message": "Too Many Requests. Rate limited. Try after a while."
+  },
+  "symbols_6mo": {
+    "AAPL": {
+      "rows": 0,
+      "error": "YFRateLimitError",
+      "message": "Too Many Requests. Rate limited. Try after a while."
+    },
+    "MSFT": {
+      "rows": 0,
+      "error": "YFRateLimitError",
+      "message": "Too Many Requests. Rate limited. Try after a while."
+    },
+    "NVDA": {
+      "rows": 0,
+      "error": "YFRateLimitError",
+      "message": "Too Many Requests. Rate limited. Try after a while."
+    },
+    "META": {
+      "rows": 0,
+      "error": "YFRateLimitError",
+      "message": "Too Many Requests. Rate limited. Try after a while."
+    },
+    "AMZN": {
+      "rows": 0,
+      "error": "YFRateLimitError",
+      "message": "Too Many Requests. Rate limited. Try after a while."
+    },
+    "TSLA": {
+      "rows": 0,
+      "error": "YFRateLimitError",
+      "message": "Too Many Requests. Rate limited. Try after a while."
+    }
+  }
+}

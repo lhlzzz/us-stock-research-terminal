@@ -1,0 +1,82 @@
+{
+  "as_of_date": "2026-06-22",
+  "market_data_source": "EastMoney US historical kline (via akshare) + EastMoney US realtime quote",
+  "kline_source": "EastMoney US historical kline",
+  "quote_source": "EastMoney US realtime/delayed quote + kline",
+  "final_classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+  "top_candidates": [
+    {
+      "symbol": "MRNA",
+      "ticket_rank": 1,
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "lifecycle_stage": "market_watchlist",
+      "ticket_score": 0.7837897705378426,
+      "market_score": 0.7637897705378426,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "evidence_gap_reason": "last30days_returned_zero_ranked_candidates"
+    },
+    {
+      "symbol": "GE",
+      "ticket_rank": 2,
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "lifecycle_stage": "market_watchlist",
+      "ticket_score": 0.6375796902567235,
+      "market_score": 0.6175796902567234,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "evidence_gap_reason": "last30days_returned_zero_ranked_candidates"
+    },
+    {
+      "symbol": "TER",
+      "ticket_rank": 3,
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "lifecycle_stage": "market_watchlist",
+      "ticket_score": 0.633198587877662,
+      "market_score": 0.583198587877662,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "evidence_gap_reason": "last30days_returned_zero_ranked_candidates"
+    },
+    {
+      "symbol": "SW",
+      "ticket_rank": 4,
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "lifecycle_stage": "market_watchlist",
+      "ticket_score": 0.5475676878280142,
+      "market_score": 0.49756768782801425,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "evidence_gap_reason": "last30days_returned_zero_ranked_candidates"
+    },
+    {
+      "symbol": "STX",
+      "ticket_rank": 5,
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "lifecycle_stage": "market_watchlist",
+      "ticket_score": 0.5438232002254129,
+      "market_score": 0.4938232002254128,
+      "strongest_relevance": 0.0,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "evidence_gap_reason": "last30days_returned_zero_ranked_candidates"
+    }
+  ],
+  "best_watch_candidate": {
+    "symbol": "MRNA",
+    "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+    "lifecycle_stage": "market_watchlist",
+    "ticket_score": 0.7837897705378426,
+    "market_score": 0.7637897705378426,
+    "watch_reason": "classification=MARKET_WATCHLIST_NEEDS_EVIDENCE; risk=WATCH; evidence=MARKET_WATCHLIST_NEEDS_EVIDENCE"
+  }
+}

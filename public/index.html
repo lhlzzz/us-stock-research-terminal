@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>US Stock Research Terminal</title>
+<style>body{margin:0;background:#102228;color:#e7efed;font:16px/1.5 system-ui,sans-serif}main{width:min(1100px,calc(100% - 32px));margin:auto;padding:32px 0 72px}.kicker{color:#e08957;font:700 .8rem ui-monospace,monospace;text-transform:uppercase}h1{font-size:clamp(2.8rem,8vw,6rem);line-height:.9;margin:14px 0}p{max-width:62ch;color:#b7c6c4}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:34px 0}.card{border:1px solid #426068;padding:20px;min-height:150px}.card strong{font-size:1.6rem;display:block;color:#fff}.flow{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #426068}.flow span{padding:14px;border-right:1px solid #426068}.flow span:last-child{border:0}.command{font-family:ui-monospace,monospace;background:#071519;padding:16px;overflow:auto}.warn{border-left:4px solid #e08957;padding:12px 16px;background:#18353a}@media(max-width:700px){.grid,.flow{grid-template-columns:1fr}.flow span{border-right:0;border-bottom:1px solid #426068}}</style></head>
+<body><main><div class="kicker">Research only / risk gates</div><h1>US Stock Research Terminal</h1><p>A ticket pipeline that turns an investable universe into research candidates, applies risk policy, tracks forward outcomes, and publishes a lifecycle scoreboard.</p>
+<div class="grid"><div class="card"><strong>Risk gate</strong>Classification, rejection reasons, confidence, freshness, and research-only status remain visible.</div><div class="card"><strong>Ticket</strong>Ranked candidate outputs are a research artifact, never an execution instruction.</div><div class="card"><strong>Scoreboard</strong>Forward tracking closes the feedback loop by horizon and lifecycle stage.</div></div>
+<h2>Workflow</h2><div class="flow"><span>Universe</span><span>Pipeline</span><span>Risk manager</span><span>Forward tracking</span><span>Scoreboard API</span></div>
+<h2>Offline API demo</h2><pre class="command">DEMO_MODE=1 uvicorn scripts.api.main:app --reload
+GET /api/demo
+GET /api/tickets
+GET /api/forward-tracking</pre>
+<p class="warn"><strong>Limit:</strong> This system does not connect to a broker, place orders, or provide investment advice.</p>
+<p><a href="../../portfolio/index.html">Back to portfolio</a> <a href="../README.md">README</a></p></main></body></html>

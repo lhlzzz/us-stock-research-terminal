@@ -1,0 +1,63 @@
+{
+  "artifacts": {
+    "grounding": [],
+    "plan_source": "deterministic",
+    "pre_research_flags_present": false,
+    "resolved": {
+      "context": "",
+      "entity": "WDC Western Digital",
+      "github_repos": [],
+      "github_user": "",
+      "subreddits": [],
+      "x_handle": ""
+    }
+  },
+  "clusters": [],
+  "errors_by_source": {},
+  "generated_at": "2026-06-17T18:37:41.170973+00:00",
+  "items_by_source": {
+    "hackernews": [],
+    "reddit": []
+  },
+  "provider_runtime": {
+    "planner_model": "gpt-5.4-nano",
+    "reasoning_provider": "openai",
+    "rerank_model": "gpt-5.4-nano"
+  },
+  "query_plan": {
+    "cluster_mode": "none",
+    "freshness_mode": "evergreen_ok",
+    "intent": "concept",
+    "notes": [
+      "fallback-plan (LLM error: HTTPError)"
+    ],
+    "raw_topic": "WDC Western Digital",
+    "source_weights": {
+      "github": 0.2,
+      "hackernews": 0.2,
+      "polymarket": 0.2,
+      "reddit": 0.2,
+      "youtube": 0.2
+    },
+    "subqueries": [
+      {
+        "label": "primary",
+        "ranking_query": "What recent evidence from the last 30 days is most relevant to WDC Western Digital?",
+        "search_query": "\"Western Digital\" wdc western digital",
+        "sources": [
+          "hackernews",
+          "reddit"
+        ],
+        "weight": 1.0
+      }
+    ]
+  },
+  "range_from": "2026-05-18",
+  "range_to": "2026-06-17",
+  "ranked_candidates": [],
+  "topic": "WDC Western Digital",
+  "warnings": [
+    "No candidates survived retrieval and ranking.",
+    "Evidence is thin for this topic."
+  ]
+}

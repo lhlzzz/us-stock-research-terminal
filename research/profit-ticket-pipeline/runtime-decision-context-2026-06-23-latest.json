@@ -1,0 +1,82 @@
+{
+  "as_of_date": "2026-06-22",
+  "market_data_source": "EastMoney US historical kline (via akshare) + EastMoney US realtime quote",
+  "kline_source": "EastMoney US historical kline",
+  "quote_source": "EastMoney US realtime/delayed quote + kline",
+  "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+  "top_candidates": [
+    {
+      "symbol": "MRNA",
+      "ticket_rank": 1,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.2917439366215355,
+      "market_score": 0.7467439366215355,
+      "strongest_relevance": 0.95,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "GE",
+      "ticket_rank": 2,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.1724919447072697,
+      "market_score": 0.6274919447072695,
+      "strongest_relevance": 0.95,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "TECH",
+      "ticket_rank": 3,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 1.1391028301196708,
+      "market_score": 0.5641028301196707,
+      "strongest_relevance": 0.95,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "STX",
+      "ticket_rank": 4,
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "lifecycle_stage": "market_watchlist",
+      "ticket_score": 1.1053668429745107,
+      "market_score": 0.6303668429745106,
+      "strongest_relevance": 0.75,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "MOMENTUM_EXHAUSTION_HARD_BLOCK",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    },
+    {
+      "symbol": "SWK",
+      "ticket_rank": 5,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "lifecycle_stage": "paper_review_candidate",
+      "ticket_score": 0.9429117273032044,
+      "market_score": 0.46791172730320435,
+      "strongest_relevance": 0.75,
+      "risk_allowed": true,
+      "risk_block_reason": "",
+      "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+      "evidence_gap_reason": "paper_review_gate_passed"
+    }
+  ],
+  "best_watch_candidate": {
+    "symbol": "STX",
+    "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+    "lifecycle_stage": "market_watchlist",
+    "ticket_score": 1.1053668429745107,
+    "market_score": 0.6303668429745106,
+    "watch_reason": "classification=MARKET_WATCHLIST_NEEDS_EVIDENCE; risk=ELEVATED; evidence=MOMENTUM_EXHAUSTION_HARD_BLOCK"
+  }
+}
