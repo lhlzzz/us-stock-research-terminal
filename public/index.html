@@ -168,77 +168,7 @@ tr:hover td { background: rgba(255,214,231,0.15); }
   </aside>
 
   <!-- Main -->
-  <main class="main">
-    <header class="header">
-      <div>
-        <h1>🌙 Xiaomei 美股投资终端</h1>
-        <p id="date-line">模拟交易 · 交易理由追踪 · 多因子分析</p>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span id="market-status" style="padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;background:#D4F5E9;color:#2D7A52">● 运行中</span>
-        <button onclick="refresh()" style="padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);cursor:pointer;font-weight:600">刷新</button>
-      </div>
-    </header>
-
-    <!-- Stat Grid -->
-    <section class="stat-grid">
-      <div class="stat-card">
-        <div class="label">💰 总权益</div>
-        <div class="value" id="equity">$1,000.00</div>
-        <div class="change" id="pnl-pct">--</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">📈 持仓数</div>
-        <div class="value" id="pos-count">0</div>
-        <div class="change">活跃持仓</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">💵 现金</div>
-        <div class="value" id="cash">$1,000.00</div>
-        <div class="change">可用资金</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">🎯 胜率</div>
-        <div class="value" id="win-rate">--</div>
-        <div class="change">历史统计</div>
-      </div>
-    </section>
-
-    <!-- Positions -->
-    <section class="card" style="margin-bottom:24px">
-      <div class="card-head">
-        <h2>💼 模拟持仓 — 点击查看交易理由</h2>
-        <span class="sub" id="last-update">--</span>
-      </div>
-      <div class="card-body" style="padding:0">
-        <table>
-          <thead><tr>
-            <th>标的</th><th>方向</th><th>入场价</th><th>现价</th><th>变动</th><th>盈亏</th><th>止损</th><th>止盈</th>
-          </tr></thead>
-          <tbody id="positions"><tr><td colspan="8" class="empty">加载中...</td></tr></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Tickets -->
-    <section class="card">
-      <div class="card-head">
-        <h2>🎫 今日出票</h2>
-        <span class="sub" id="ticket-date">--</span>
-      </div>
-      <div class="card-body" style="padding:0">
-        <table>
-          <thead><tr><th>标的</th><th>综合分</th><th>市场分</th><th>催化分</th><th>分类</th><th>风险</th></tr></thead>
-          <tbody id="tickets"><tr><td colspan="6" class="empty">加载中...</td></tr></tbody>
-        </table>
-      </div>
-    </section>
-
-    <footer class="foot">
-      <span>🌸 Financial OS · Xiaomei 美股 AI 投资终端</span>
-      <span>数据源: Pipeline + yfinance · 纸面模拟</span>
-    </footer>
-  </main>
+  <main class="main"></main>
 </div>
 
 <script>
@@ -293,12 +223,148 @@ function updateNavigation() {
   }
 }
 
-// 页面渲染主函数（后续Task实现具体渲染）
+// 模拟交易页面渲染
+function renderSimulationPage() {
+  const main = document.querySelector('.main');
+  main.innerHTML = `
+    <header class="header">
+      <div>
+        <h1>🌙 Xiaomei 美股投资终端</h1>
+        <p id="date-line">模拟交易 · 交易理由追踪 · 多因子分析</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="market-status" style="padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;background:#D4F5E9;color:#2D7A52">● 运行中</span>
+        <button onclick="refresh()" style="padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);cursor:pointer;font-weight:600">刷新</button>
+      </div>
+    </header>
+
+    <!-- Stat Grid -->
+    <section class="stat-grid">
+      <div class="stat-card">
+        <div class="label">💰 总权益</div>
+        <div class="value" id="equity">$1,000.00</div>
+        <div class="change" id="pnl-pct">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">📈 持仓数</div>
+        <div class="value" id="pos-count">0</div>
+        <div class="change">活跃持仓</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">💵 现金</div>
+        <div class="value" id="cash">$1,000.00</div>
+        <div class="change">可用资金</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">🎯 胜率</div>
+        <div class="value" id="win-rate">--</div>
+        <div class="change">历史统计</div>
+      </div>
+    </section>
+
+    <!-- Positions -->
+    <section class="card" style="margin-bottom:24px">
+      <div class="card-head">
+        <h2>💼 模拟持仓 — 点击查看交易理由</h2>
+        <span class="sub" id="last-update">--</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table>
+          <thead><tr>
+            <th>标的</th><th>方向</th><th>入场价</th><th>现价</th><th>变动</th><th>盈亏</th><th>止损</th><th>止盈</th>
+          </tr></thead>
+          <tbody id="positions"><tr><td colspan="8" class="empty">加载中...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>🌸 Financial OS · Xiaomei 美股 AI 投资终端</span>
+      <span>数据来源：Pipeline出票 + yfinance行情 · 纸面模拟</span>
+    </footer>
+  `;
+
+  loadPositions();
+}
+
+// AI出票页面渲染（占位）
+function renderAiPicksPage() {
+  const main = document.querySelector('.main');
+  main.innerHTML = `
+    <header class="header">
+      <div>
+        <h1>🌙 Xiaomei 美股投资终端</h1>
+        <p id="date-line">AI出票 · ${currentSubPage === 'signals' ? 'AI信号' : '出票概览'}</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button onclick="refresh()" style="padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);cursor:pointer;font-weight:600">刷新</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>🎫 今日出票</h2>
+        <span class="sub" id="ticket-date">--</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table>
+          <thead><tr><th>标的</th><th>综合分</th><th>市场分</th><th>催化分</th><th>分类</th><th>风险</th></tr></thead>
+          <tbody id="tickets"><tr><td colspan="6" class="empty">加载中...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>🌸 Financial OS · Xiaomei 美股 AI 投资终端</span>
+      <span>数据源: Pipeline + yfinance</span>
+    </footer>
+  `;
+
+  loadTickets();
+}
+
+// 出票记录页面渲染（占位）
+function renderRecordsPage() {
+  const main = document.querySelector('.main');
+  main.innerHTML = `
+    <header class="header">
+      <div>
+        <h1>🌙 Xiaomei 美股投资终端</h1>
+        <p id="date-line">出票记录 · 历史数据分析</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>📊 历史出票记录</h2>
+      </div>
+      <div class="card-body">
+        <p class="empty">功能开发中...</p>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>🌸 Financial OS · Xiaomei 美股 AI 投资终端</span>
+      <span>数据源: Pipeline + yfinance</span>
+    </footer>
+  `;
+}
+
+// 页面渲染主函数
 function renderPage() {
   updateNavigation();
-  const main = document.querySelector('.main');
-  // 根据currentPage和currentSubPage渲染对应内容
-  // 将在后续Task中实现
+
+  switch(currentPage) {
+    case 'simulation':
+      renderSimulationPage();
+      break;
+    case 'aiPicks':
+      renderAiPicksPage();
+      break;
+    case 'records':
+      renderRecordsPage();
+      break;
+  }
 }
 
 // 初始化路由
@@ -403,11 +469,19 @@ async function loadTickets() {
 }
 
 async function refresh() {
-  await Promise.all([loadPositions(), loadTickets()]);
+  if (currentPage === 'simulation') await loadPositions();
+  else if (currentPage === 'aiPicks') await loadTickets();
+  else renderPage();
 }
 
-refresh();
-setInterval(refresh, 30000);
+// 初始化页面渲染
+renderPage();
+
+// 自动刷新（仅模拟交易页面）
+setInterval(() => {
+  if (currentPage === 'simulation') loadPositions();
+  else if (currentPage === 'aiPicks') loadTickets();
+}, 30000);
 </script>
 </body>
 </html>
