@@ -1,12 +1,366 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>US Stock Research Terminal</title>
-<style>body{margin:0;background:#102228;color:#e7efed;font:16px/1.5 system-ui,sans-serif}main{width:min(1100px,calc(100% - 32px));margin:auto;padding:32px 0 72px}.kicker{color:#e08957;font:700 .8rem ui-monospace,monospace;text-transform:uppercase}h1{font-size:clamp(2.8rem,8vw,6rem);line-height:.9;margin:14px 0}p{max-width:62ch;color:#b7c6c4}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:34px 0}.card{border:1px solid #426068;padding:20px;min-height:150px}.card strong{font-size:1.6rem;display:block;color:#fff}.flow{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #426068}.flow span{padding:14px;border-right:1px solid #426068}.flow span:last-child{border:0}.command{font-family:ui-monospace,monospace;background:#071519;padding:16px;overflow:auto}.warn{border-left:4px solid #e08957;padding:12px 16px;background:#18353a}@media(max-width:700px){.grid,.flow{grid-template-columns:1fr}.flow span{border-right:0;border-bottom:1px solid #426068}}</style></head>
-<body><main><div class="kicker">Research only / risk gates</div><h1>US Stock Research Terminal</h1><p>A ticket pipeline that turns an investable universe into research candidates, applies risk policy, tracks forward outcomes, and publishes a lifecycle scoreboard.</p>
-<div class="grid"><div class="card"><strong>Risk gate</strong>Classification, rejection reasons, confidence, freshness, and research-only status remain visible.</div><div class="card"><strong>Ticket</strong>Ranked candidate outputs are a research artifact, never an execution instruction.</div><div class="card"><strong>Scoreboard</strong>Forward tracking closes the feedback loop by horizon and lifecycle stage.</div></div>
-<h2>Workflow</h2><div class="flow"><span>Universe</span><span>Pipeline</span><span>Risk manager</span><span>Forward tracking</span><span>Scoreboard API</span></div>
-<h2>Offline API demo</h2><pre class="command">DEMO_MODE=1 uvicorn scripts.api.main:app --reload
-GET /api/demo
-GET /api/tickets
-GET /api/forward-tracking</pre>
-<p class="warn"><strong>Limit:</strong> This system does not connect to a broker, place orders, or provide investment advice.</p>
-<p><a href="../../portfolio/index.html">Back to portfolio</a> <a href="../README.md">README</a></p></main></body></html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🌙 Xiaomei · 美股 AI 投资终端</title>
+<style>
+:root {
+  --bg: #FFF7FB; --bg-card: #FFFFFF;
+  --primary: #FF8FB8; --primary-light: #FFD6E7; --primary-dark: #E8709E;
+  --purple: #C8A7FF; --purple-light: #E8D5FF;
+  --green: #A8E6CF; --green-dark: #7BC8A4;
+  --red: #FFB3B3; --red-dark: #FF8A8A;
+  --text: #4A3347; --text-2: #8B7089; --text-3: #BFA8BC;
+  --border: #F5E6F0; --glow: rgba(255,143,184,0.3);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
+
+.shell { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  width: 240px; min-height: 100vh; position: fixed; left: 0; top: 0; z-index: 50;
+  background: linear-gradient(180deg, #FFF0F6 0%, #F5E6F0 100%);
+  border-right: 1px solid var(--border); padding: 20px 12px;
+  display: flex; flex-direction: column;
+}
+.sidebar-brand { display: flex; align-items: center; gap: 8px; padding: 4px 8px; margin-bottom: 20px; }
+.sidebar-brand span.emoji { font-size: 20px; }
+.sidebar-brand span.label { font-size: 13px; font-weight: 600; color: var(--text-3); }
+.sidebar-identity { display: flex; align-items: center; gap: 10px; padding: 0 8px; margin-bottom: 24px; }
+.sidebar-avatar {
+  width: 44px; height: 44px; border-radius: 50%; font-size: 22px;
+  background: linear-gradient(135deg, var(--purple-light) 0%, var(--primary-light) 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.sidebar-name { font-size: 17px; font-weight: 800; }
+.sidebar-sub { font-size: 11px; color: var(--text-3); }
+.sidebar nav { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px;
+  border: none; background: transparent; cursor: pointer; width: 100%; text-align: left;
+  font-size: 14px; color: var(--text-2); transition: all 0.15s;
+}
+.nav-item:hover { background: rgba(255,214,231,0.4); }
+.nav-item.active { background: rgba(255,214,231,0.8); font-weight: 600; color: var(--primary-dark); }
+.nav-item .icon { font-size: 18px; width: 24px; text-align: center; }
+.sidebar-footer { margin-top: auto; padding: 8px; text-align: center; font-size: 11px; color: var(--text-3); }
+
+/* Main */
+.main { flex: 1; margin-left: 240px; padding: 24px 32px; min-height: 100vh; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.header h1 { font-size: 26px; font-weight: 800; }
+.header p { font-size: 14px; color: var(--text-2); margin-top: 4px; }
+
+/* Cards */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(255,143,184,0.08); transition: all 0.25s; animation: fade-in 0.4s ease-out;
+}
+.card:hover { box-shadow: 0 4px 16px rgba(255,143,184,0.15); }
+.card-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.card-head h2 { font-size: 15px; font-weight: 700; }
+.card-head .sub { font-size: 12px; color: var(--text-3); }
+.card-body { padding: 20px; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Stat Grid */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px;
+  box-shadow: 0 2px 8px rgba(255,143,184,0.08); transition: all 0.25s;
+}
+.stat-card:hover { box-shadow: 0 4px 16px rgba(255,143,184,0.15); transform: translateY(-2px); }
+.stat-card .label { font-size: 12px; color: var(--text-3); font-weight: 500; }
+.stat-card .value { font-size: 24px; font-weight: 800; margin-top: 6px; font-family: ui-monospace, monospace; }
+.stat-card .change { font-size: 12px; margin-top: 6px; font-weight: 600; }
+.up { color: var(--green-dark); }
+.down { color: var(--red-dark); }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; }
+th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-3); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.06em; }
+td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+tr:hover td { background: rgba(255,214,231,0.15); }
+.ticker { font-weight: 700; color: var(--purple); font-family: ui-monospace, monospace; font-size: 14px; }
+
+/* Side pill */
+.side-pill { display: inline-flex; min-width: 50px; justify-content: center; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.side-long { background: #D4F5E9; color: #2D7A52; }
+.side-short { background: #FFE0E0; color: #C44; }
+
+/* Position row click */
+.pos-row { cursor: pointer; }
+.reason-detail { padding: 14px 16px; background: var(--primary-light); border-radius: 0; }
+.reason-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.reason-grid div { padding: 8px 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; }
+.reason-grid .kicker { display: block; margin-bottom: 4px; color: var(--primary); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+.reason-grid p { margin: 0; font-size: 12px; line-height: 1.5; }
+.reason-summary { margin-top: 10px; padding: 10px 14px; background: var(--bg-card); border-left: 3px solid var(--primary); border-radius: 0 10px 10px 0; font-size: 12px; line-height: 1.6; }
+
+/* Empty */
+.empty { padding: 32px; text-align: center; color: var(--text-3); }
+
+/* Footer */
+.foot { display: flex; justify-content: space-between; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--text-3); font-size: 11px; }
+
+@media (max-width: 1080px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px; }
+  .stat-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="emoji">🌸</span><span class="label">Financial OS</span></div>
+    <div class="sidebar-identity">
+      <div class="sidebar-avatar">🐱</div>
+      <div><div class="sidebar-name">Xiaomei</div><div class="sidebar-sub">美股 AI 投资助手</div></div>
+    </div>
+    <nav>
+      <button class="nav-item active"><span class="icon">🏠</span>Dashboard</button>
+      <button class="nav-item"><span class="icon">📈</span>Positions</button>
+      <button class="nav-item"><span class="icon">🎫</span>Tickets</button>
+      <button class="nav-item"><span class="icon">📊</span>Journal</button>
+    </nav>
+    <div class="sidebar-footer">🌸 Financial OS v0.1</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="header">
+      <div>
+        <h1>🌙 Xiaomei 美股投资终端</h1>
+        <p id="date-line">模拟交易 · 交易理由追踪 · 多因子分析</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="market-status" style="padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;background:#D4F5E9;color:#2D7A52">● 运行中</span>
+        <button onclick="refresh()" style="padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg-card);cursor:pointer;font-weight:600">刷新</button>
+      </div>
+    </header>
+
+    <!-- Stat Grid -->
+    <section class="stat-grid">
+      <div class="stat-card">
+        <div class="label">💰 总权益</div>
+        <div class="value" id="equity">$1,000.00</div>
+        <div class="change" id="pnl-pct">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">📈 持仓数</div>
+        <div class="value" id="pos-count">0</div>
+        <div class="change">活跃持仓</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">💵 现金</div>
+        <div class="value" id="cash">$1,000.00</div>
+        <div class="change">可用资金</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">🎯 胜率</div>
+        <div class="value" id="win-rate">--</div>
+        <div class="change">历史统计</div>
+      </div>
+    </section>
+
+    <!-- Positions -->
+    <section class="card" style="margin-bottom:24px">
+      <div class="card-head">
+        <h2>💼 模拟持仓 — 点击查看交易理由</h2>
+        <span class="sub" id="last-update">--</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table>
+          <thead><tr>
+            <th>标的</th><th>方向</th><th>入场价</th><th>现价</th><th>变动</th><th>盈亏</th><th>止损</th><th>止盈</th>
+          </tr></thead>
+          <tbody id="positions"><tr><td colspan="8" class="empty">加载中...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tickets -->
+    <section class="card">
+      <div class="card-head">
+        <h2>🎫 今日出票</h2>
+        <span class="sub" id="ticket-date">--</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table>
+          <thead><tr><th>标的</th><th>综合分</th><th>市场分</th><th>催化分</th><th>分类</th><th>风险</th></tr></thead>
+          <tbody id="tickets"><tr><td colspan="6" class="empty">加载中...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>🌸 Financial OS · Xiaomei 美股 AI 投资终端</span>
+      <span>数据源: Pipeline + yfinance · 纸面模拟</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+// 路由状态
+let currentPage = 'simulation';
+let currentSubPage = 'overview';
+
+// 页面配置
+const pages = {
+  simulation: { name: '模拟交易', icon: '💼' },
+  aiPicks: { name: 'AI出票', icon: '🎫', subPages: {
+    overview: { name: '出票概览', icon: '📋' },
+    signals: { name: 'AI信号', icon: '📡' }
+  }},
+  records: { name: '出票记录', icon: '📊' }
+};
+
+// 导航函数
+function navigateTo(page, subPage = null) {
+  currentPage = page;
+  if (subPage) currentSubPage = subPage;
+  window.location.hash = subPage ? `${page}/${subPage}` : page;
+  renderPage();
+}
+
+// 解析hash
+function parseHash() {
+  const hash = window.location.hash.slice(1) || 'simulation';
+  const parts = hash.split('/');
+  currentPage = parts[0] || 'simulation';
+  currentSubPage = parts[1] || (currentPage === 'aiPicks' ? 'overview' : null);
+}
+
+// 监听hash变化
+window.addEventListener('hashchange', () => {
+  parseHash();
+  renderPage();
+});
+
+// 页面渲染主函数（后续Task实现具体渲染）
+function renderPage() {
+  const main = document.querySelector('.main');
+  // 根据currentPage和currentSubPage渲染对应内容
+  // 将在后续Task中实现
+}
+
+// 初始化路由
+parseHash();
+
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = (v) => `$${Number(v||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+const signed = (v,d=2) => `${Number(v||0)>=0?'+':''}${Number(v||0).toFixed(d)}`;
+const cls = (v) => Number(v||0)>=0?'up':'down';
+
+// Detect API prefix (gateway vs direct)
+const API_PREFIX = window.location.pathname.includes('/xiaomei') ? '/xiaomei' : '';
+
+async function loadPositions() {
+  try {
+    const resp = await fetch(`${API_PREFIX}/api/positions`, {cache:'no-store'});
+    if (!resp.ok) return;
+    const d = await resp.json();
+
+    // Update stats
+    $('equity').textContent = money(d.equity);
+    $('equity').className = 'value ' + cls(d.pnl);
+    $('pnl-pct').textContent = `${signed(d.pnl_pct)}% (${money(d.pnl)})`;
+    $('pnl-pct').className = 'change ' + cls(d.pnl);
+    $('pos-count').textContent = d.position_count || 0;
+    $('cash').textContent = money(d.cash);
+
+    // Render positions
+    const positions = d.positions || [];
+    if (!positions.length) {
+      $('positions').innerHTML = '<tr><td colspan="8" class="empty">空仓等待信号</td></tr>';
+      return;
+    }
+
+    $('positions').innerHTML = positions.map((p, i) => {
+      const reasonHtml = p.reason_summary ? `
+        <tr class="reason-row" id="reason-${i}" style="display:none">
+          <td colspan="8" style="padding:0">
+            <div class="reason-detail">
+              <div class="reason-grid">
+                <div><span class="kicker">📊 市场信号</span><p>${esc(p.reason_market||'--')}</p></div>
+                <div><span class="kicker">🔥 催化剂</span><p>${esc(p.reason_catalyst||'--')}</p></div>
+                <div><span class="kicker">🗳️ 情绪/分类</span><p>${esc(p.reason_sentiment||'--')}</p></div>
+                <div><span class="kicker">⚠️ 风险评估</span><p>${esc(p.reason_risk||'--')}</p></div>
+              </div>
+              <div class="reason-summary">${esc(p.reason_summary)}</div>
+            </div>
+          </td>
+        </tr>` : '';
+      return `<tr class="pos-row" onclick="toggleReason(${i})">
+        <td><span class="ticker">${esc(p.symbol)}</span></td>
+        <td><span class="side-pill ${p.direction==='LONG'?'side-long':'side-short'}">${p.direction==='LONG'?'做多':'做空'}</span></td>
+        <td>${p.entry_price.toFixed(2)}</td>
+        <td>${p.current_price.toFixed(2)}</td>
+        <td class="${cls(p.pnl_pct)}">${signed(p.pnl_pct)}%</td>
+        <td class="${cls(p.pnl_dollar)}">${signed(p.pnl_dollar)}</td>
+        <td>${p.stop_loss.toFixed(2)}</td>
+        <td>${p.take_profit.toFixed(2)}</td>
+      </tr>${reasonHtml}`;
+    }).join('');
+
+    $('last-update').textContent = `更新于 ${new Date().toLocaleTimeString('zh-CN',{hour12:false})}`;
+  } catch(e) {
+    console.error('Failed to load positions:', e);
+  }
+}
+
+function toggleReason(i) {
+  const el = document.getElementById('reason-'+i);
+  if (el) el.style.display = el.style.display==='none' ? '' : 'none';
+}
+
+async function loadTickets() {
+  try {
+    const resp = await fetch(`${API_PREFIX}/picks?limit=20`, {cache:'no-store'});
+    if (!resp.ok) return;
+    const tickets = await resp.json();
+
+    if (!tickets.length) {
+      $('tickets').innerHTML = '<tr><td colspan="6" class="empty">暂无出票</td></tr>';
+      return;
+    }
+
+    $('ticket-date').textContent = tickets[0]?.output_date || '--';
+    $('tickets').innerHTML = tickets.map(t => {
+      const ms = Number(t.market_score||0);
+      const cs = Number(t.catalyst_score||0);
+      const riskClass = t.risk_verdict==='CLEAN'?'risk-low':(t.risk_verdict==='ELEVATED'?'risk-high':'risk-med');
+      return `<tr>
+        <td><span class="ticker">${esc(t.symbol)}</span></td>
+        <td>${(t.ticket_score||0).toFixed(3)}</td>
+        <td class="${ms>=0.8?'up':''}">${ms.toFixed(3)}</td>
+        <td class="${cs>=0.1?'up':''}">${cs.toFixed(3)}</td>
+        <td>${esc(t.classification||'--')}</td>
+        <td>${esc(t.risk_verdict||'--')}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    console.error('Failed to load tickets:', e);
+  }
+}
+
+async function refresh() {
+  await Promise.all([loadPositions(), loadTickets()]);
+}
+
+refresh();
+setInterval(refresh, 30000);
+</script>
+</body>
+</html>
