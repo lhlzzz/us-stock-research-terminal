@@ -48,6 +48,22 @@ body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 .nav-item:hover { background: rgba(255,214,231,0.4); }
 .nav-item.active { background: rgba(255,214,231,0.8); font-weight: 600; color: var(--primary-dark); }
 .nav-item .icon { font-size: 18px; width: 24px; text-align: center; }
+.nav-group { position: relative; }
+.sub-nav {
+  display: none;
+  padding-left: 20px;
+  background: rgba(255,214,231,0.2);
+  border-radius: 0 0 12px 12px;
+}
+.nav-group:hover .sub-nav,
+.nav-group.active .sub-nav { display: block; }
+.nav-item.sub {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.nav-item.sub:hover { background: rgba(255,214,231,0.4); }
+.nav-item.sub.active { background: rgba(255,214,231,0.6); color: var(--primary-dark); }
 .sidebar-footer { margin-top: auto; padding: 8px; text-align: center; font-size: 11px; color: var(--text-3); }
 
 /* Main */
@@ -128,10 +144,25 @@ tr:hover td { background: rgba(255,214,231,0.15); }
       <div><div class="sidebar-name">Xiaomei</div><div class="sidebar-sub">美股 AI 投资助手</div></div>
     </div>
     <nav>
-      <button class="nav-item active"><span class="icon">🏠</span>Dashboard</button>
-      <button class="nav-item"><span class="icon">📈</span>Positions</button>
-      <button class="nav-item"><span class="icon">🎫</span>Tickets</button>
-      <button class="nav-item"><span class="icon">📊</span>Journal</button>
+      <button class="nav-item active" onclick="navigateTo('simulation')">
+        <span class="icon">💼</span>模拟交易
+      </button>
+      <div class="nav-group">
+        <button class="nav-item" onclick="navigateTo('aiPicks', 'overview')">
+          <span class="icon">🎫</span>AI出票
+        </button>
+        <div class="sub-nav" id="aiPicks-sub">
+          <button class="nav-item sub" onclick="navigateTo('aiPicks', 'overview')">
+            <span class="icon">📋</span>出票概览
+          </button>
+          <button class="nav-item sub" onclick="navigateTo('aiPicks', 'signals')">
+            <span class="icon">📡</span>AI信号
+          </button>
+        </div>
+      </div>
+      <button class="nav-item" onclick="navigateTo('records')">
+        <span class="icon">📊</span>出票记录
+      </button>
     </nav>
     <div class="sidebar-footer">🌸 Financial OS v0.1</div>
   </aside>
@@ -247,8 +278,24 @@ window.addEventListener('hashchange', () => {
   renderPage();
 });
 
+// 更新导航高亮
+function updateNavigation() {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-group').forEach(el => el.classList.remove('active'));
+  if (currentPage === 'simulation') {
+    document.querySelector('[onclick*="simulation"]').classList.add('active');
+  } else if (currentPage === 'aiPicks') {
+    document.querySelector('.nav-group').classList.add('active');
+    const subBtn = document.querySelector(`[onclick*="${currentSubPage}"]`);
+    if (subBtn) subBtn.classList.add('active');
+  } else if (currentPage === 'records') {
+    document.querySelector('[onclick*="records"]').classList.add('active');
+  }
+}
+
 // 页面渲染主函数（后续Task实现具体渲染）
 function renderPage() {
+  updateNavigation();
   const main = document.querySelector('.main');
   // 根据currentPage和currentSubPage渲染对应内容
   // 将在后续Task中实现
