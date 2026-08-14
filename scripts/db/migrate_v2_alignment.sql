@@ -211,6 +211,19 @@ COMMENT ON TABLE scan_sessions IS 'Scanner session metadata';
 COMMENT ON TABLE pick_case_embeddings IS 'Neural/vector embeddings for case similarity search';
 
 -- 7. Stable research lifecycle links and deterministic outcome attribution.
+CREATE TABLE IF NOT EXISTS research_record_archive (
+    id BIGSERIAL PRIMARY KEY,
+    source_table VARCHAR(64) NOT NULL,
+    source_id BIGINT NOT NULL,
+    archive_reason TEXT NOT NULL,
+    payload JSONB NOT NULL,
+    archived_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(source_table, source_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_research_record_archive_source
+    ON research_record_archive(source_table, source_id);
+
 ALTER TABLE forward_tracking
     ADD COLUMN IF NOT EXISTS outcome_classification VARCHAR(20),
     ADD COLUMN IF NOT EXISTS outcome_reason TEXT;
@@ -220,6 +233,23 @@ ALTER TABLE paper_trades
     ADD COLUMN IF NOT EXISTS ticket_id INTEGER REFERENCES tickets(id);
 ALTER TABLE paper_fills
     ADD COLUMN IF NOT EXISTS ticket_id INTEGER REFERENCES tickets(id);
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM forward_tracking WHERE ticket_id IS NULL) THEN
+        ALTER TABLE forward_tracking
+            ALTER COLUMN ticket_id SET NOT NULL;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM paper_trades WHERE ticket_id IS NULL) THEN
+        ALTER TABLE paper_trades
+            ALTER COLUMN ticket_id SET NOT NULL;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM trade_journal WHERE ticket_id IS NULL) THEN
+        ALTER TABLE trade_journal
+            ALTER COLUMN ticket_id SET NOT NULL;
+    END IF;
+END
+$$;
 
 CREATE INDEX IF NOT EXISTS idx_forward_tracking_ticket_id ON forward_tracking(ticket_id);
 CREATE INDEX IF NOT EXISTS idx_trade_journal_ticket_id ON trade_journal(ticket_id);

@@ -60,3 +60,8 @@
 - [ ] Commit verified implementation and research-state changes in scoped commits.
 - [ ] Leave the worktree clean without discarding source or research evidence.
 - [ ] Verification: tests pass, Git status is clean, and commit identifiers are recorded.
+
+### Task 9: Archive and remove untraceable records
+- [ ] Preserve every record lacking `ticket_id` in one archive table with a reason and original JSON payload.
+- [ ] Remove the archived rows from active tracking, paper-trade, and journal tables.
+- [ ] Verify no active lifecycle row remains without a ticket source.
