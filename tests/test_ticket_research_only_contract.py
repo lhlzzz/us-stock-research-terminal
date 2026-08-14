@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import sys
+from datetime import date, datetime
 from pathlib import Path
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 from us_profit_ticket_pipeline import build_forward_tracking_rows, build_summary_md, quote_cross_check
+from xiaomei_scheduler import BEIJING_TZ, PIPELINE_SCHEDULE_DAYS, closed_us_session_date, is_trading_day
 
 
 def _candidate_row() -> dict:
@@ -136,3 +138,18 @@ def test_summary_ticket_card_is_research_only_without_ashare_or_order_terms():
     assert "Catalyst Summary" in summary
     for forbidden in ["涨停", "连板", "龙虎榜", "place_order", "append_ledger"]:
         assert forbidden not in summary
+
+
+def test_post_close_beijing_time_maps_to_prior_us_session():
+    post_close = datetime(2026, 8, 8, 5, tzinfo=BEIJING_TZ)
+
+    assert closed_us_session_date(post_close) == date(2026, 8, 7)
+    assert is_trading_day(closed_us_session_date(post_close)) is True
+    assert PIPELINE_SCHEDULE_DAYS == "tue-sat"
+
+
+def test_post_close_pipeline_skips_us_market_holidays():
+    post_close_after_independence_day = datetime(2026, 7, 4, 5, tzinfo=BEIJING_TZ)
+
+    assert closed_us_session_date(post_close_after_independence_day) == date(2026, 7, 3)
+    assert is_trading_day(closed_us_session_date(post_close_after_independence_day)) is False

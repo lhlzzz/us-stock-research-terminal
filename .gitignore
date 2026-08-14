@@ -15,6 +15,7 @@ __pycache__/
 .rtk/
 data/social-sentiment-cache/
 research/logs/
+run/
 
 # --- hermes push hygiene (2026-07-18) ---
 data/

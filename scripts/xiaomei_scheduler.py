@@ -21,7 +21,7 @@ import logging
 import os
 import subprocess
 import sys
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -105,15 +105,23 @@ CN_HOLIDAYS: set[date_cls] = {
 }
 
 
-def is_trading_day() -> bool:
-    """Check if today is a US trading day (Mon-Fri, excluding holidays)."""
-    now = datetime.now(BEIJING_TZ)
-    today = now.date()
-    if now.weekday() >= 5:
+PIPELINE_SCHEDULE_DAYS = "tue-sat"
+
+
+def is_trading_day(session_date: date_cls | None = None) -> bool:
+    """Check whether a US market session date is tradable."""
+    session_date = session_date or datetime.now(BEIJING_TZ).date()
+    if session_date.weekday() >= 5:
         return False
-    if today in US_HOLIDAYS:
+    if session_date in US_HOLIDAYS:
         return False
     return True
+
+
+def closed_us_session_date(now: datetime | None = None) -> date_cls:
+    """Map a post-close Beijing timestamp to the US session that just closed."""
+    now = now or datetime.now(BEIJING_TZ)
+    return now.astimezone(BEIJING_TZ).date() - timedelta(days=1)
 
 
 def is_a_share_trading_day() -> bool:
@@ -216,17 +224,18 @@ def morning_health_check():
     return {"healthy": all_ok, "checks": checks}
 
 
-def daily_pipeline_job():
+def daily_pipeline_job(now: datetime | None = None):
     """Daily pipeline job (05:00 Beijing time, after US market close)."""
-    now = datetime.now(BEIJING_TZ)
-
-    if not is_trading_day():
-        logger.info("Not a trading day, skipping pipeline")
-        return
+    now = now or datetime.now(BEIJING_TZ)
 
     # Check if it's safe to run (after US market close)
     if now.hour < 5:
         logger.warning(f"Too early to run pipeline: {now.hour}:00 Beijing time")
+        return
+
+    session_date = closed_us_session_date(now)
+    if not is_trading_day(session_date):
+        logger.info("US session %s was not a trading day, skipping pipeline", session_date)
         return
 
     logger.info("Starting daily pipeline job")
@@ -284,7 +293,7 @@ def run_scheduler():
     # Daily pipeline at 05:00 (after US market close)
     scheduler.add_job(
         daily_pipeline_job,
-        CronTrigger(hour=5, minute=0, day_of_week="mon-fri"),
+        CronTrigger(hour=5, minute=0, day_of_week=PIPELINE_SCHEDULE_DAYS),
         id="daily_pipeline",
         name="Daily Pipeline",
         misfire_grace_time=3600,

@@ -65,3 +65,9 @@
 - [ ] Preserve every record lacking `ticket_id` in one archive table with a reason and original JSON payload.
 - [ ] Remove the archived rows from active tracking, paper-trade, and journal tables.
 - [ ] Verify no active lifecycle row remains without a ticket source.
+
+### Task 10: Restore scheduled US-market lifecycle execution
+- [x] Derive the just-closed US session date from the Beijing-time execution time instead of treating the Beijing calendar date as the market date.
+- [x] Schedule the 05:00 Beijing pipeline for Tuesday through Saturday so Friday's US close is processed on Saturday morning.
+- [x] Make the existing infrastructure startup path launch one scheduler process without duplicate daemons.
+- [x] Verification: scheduler session-date tests pass, one daemon is running, and frontend/API data remains available.

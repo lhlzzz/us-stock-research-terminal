@@ -58,4 +58,26 @@ else
     fi
 fi
 
+SCHEDULER_PID_FILE="$ROOT/run/xiaomei_scheduler.pid"
+SCHEDULER_LOG_FILE="$ROOT/logs/xiaomei_scheduler.log"
+SCHEDULER_PID="$(pgrep -f 'python3 .*scripts/xiaomei_scheduler.py --daemon' | head -n 1 || true)"
+
+if [ -n "$SCHEDULER_PID" ]; then
+    mkdir -p "$(dirname "$SCHEDULER_PID_FILE")"
+    echo "$SCHEDULER_PID" > "$SCHEDULER_PID_FILE"
+    echo "Scheduler: already running (pid $SCHEDULER_PID)"
+else
+    mkdir -p "$(dirname "$SCHEDULER_PID_FILE")" "$(dirname "$SCHEDULER_LOG_FILE")"
+    nohup python3 "$ROOT/scripts/xiaomei_scheduler.py" --daemon >> "$SCHEDULER_LOG_FILE" 2>&1 &
+    SCHEDULER_PID=$!
+    sleep 1
+    if kill -0 "$SCHEDULER_PID" 2>/dev/null; then
+        echo "$SCHEDULER_PID" > "$SCHEDULER_PID_FILE"
+        echo "Scheduler: started (pid $SCHEDULER_PID)"
+    else
+        echo "Scheduler: FAILED to start"
+        exit 1
+    fi
+fi
+
 echo "=== Infrastructure ready (DB $DB_PORT) ==="
