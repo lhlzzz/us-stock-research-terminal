@@ -237,7 +237,11 @@ SELECT
     t.output_date,
     t.symbol,
     NULL::integer AS horizon_days,
-    COALESCE(t.lifecycle_stage, t.classification)::text AS lifecycle_stage,
+    COALESCE(
+        NULLIF(t.lifecycle_stage, ''),
+        NULLIF(t.classification, ''),
+        'ISSUED'
+    )::text AS lifecycle_stage,
     'ISSUED'::text AS record_status,
     NULL::numeric AS forward_return,
     NULL::numeric AS pnl,
@@ -256,7 +260,11 @@ SELECT
     ft.output_date,
     ft.symbol,
     ft.horizon_days,
-    COALESCE(t.lifecycle_stage, t.classification)::text,
+    COALESCE(
+        NULLIF(t.lifecycle_stage, ''),
+        NULLIF(t.classification, ''),
+        'ISSUED'
+    )::text,
     ft.check_status::text,
     ft.forward_return,
     NULL::numeric,
@@ -276,11 +284,14 @@ SELECT
     pt.trade_date,
     pt.symbol,
     NULL::integer,
-    COALESCE(
-        t.lifecycle_stage,
-        t.classification,
-        'UNRESOLVED_NO_TICKET'
-    )::text,
+    CASE
+        WHEN t.id IS NULL THEN 'UNRESOLVED_NO_TICKET'
+        ELSE COALESCE(
+            NULLIF(t.lifecycle_stage, ''),
+            NULLIF(t.classification, ''),
+            'ISSUED'
+        )
+    END::text,
     COALESCE(pt.status, 'UNKNOWN')::text,
     pt.realized_pnl_pct,
     pt.realized_pnl,
@@ -308,11 +319,14 @@ SELECT
     tj.trade_date,
     tj.symbol,
     NULL::integer,
-    COALESCE(
-        t.lifecycle_stage,
-        t.classification,
-        'UNRESOLVED_NO_TICKET'
-    )::text,
+    CASE
+        WHEN t.id IS NULL THEN 'UNRESOLVED_NO_TICKET'
+        ELSE COALESCE(
+            NULLIF(t.lifecycle_stage, ''),
+            NULLIF(t.classification, ''),
+            'ISSUED'
+        )
+    END::text,
     COALESCE(tj.status, 'UNKNOWN')::text,
     tj.pnl_pct,
     tj.pnl_dollar,
