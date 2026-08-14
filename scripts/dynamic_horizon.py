@@ -34,8 +34,8 @@ class HorizonAllocation:
 HIGH_VOL_THRESHOLD = 0.03    # >3% daily ATR = high volatility
 LOW_VOL_THRESHOLD = 0.015    # <1.5% daily ATR = low volatility
 
-# Horizon allocation rules - Updated 2026-07-14
-# Based on win rate analysis: 1d=48%, 3d=58%, 5d=58%, 10d=71%
+# Horizon allocation rules - Updated 2026-07-31
+# Based on win rate analysis: 1d=58.5%, 3d=53.1%, 10d=47.5% (best avg return +1.06%)
 HORIZON_RULES = {
     "high": {
         "horizon": 3,           # High vol → 3d (avoid 1d's 48% win rate)
@@ -44,7 +44,7 @@ HORIZON_RULES = {
         "rr_ratio": 2.5,
     },
     "medium": {
-        "horizon": 5,           # Medium vol → 5d (58% win rate, +0.95% avg)
+        "horizon": 3,           # Medium vol → 3d (53% win rate, best balance)
         "stop_loss_pct": 0.025, # Standard stop (2.5%)
         "take_profit_pct": 0.08, # Moderate profit (8%)
         "rr_ratio": 3.2,
@@ -199,7 +199,6 @@ def format_allocation_report(allocations: dict[str, HorizonAllocation]) -> str:
         "### Horizon Distribution",
         f"- 1d (High Vol): {stats['horizon_distribution']['1d']}",
         f"- 3d (Medium Vol): {stats['horizon_distribution']['3d']}",
-        f"- 5d: {stats['horizon_distribution']['5d']}",
         f"- 10d (Low Vol): {stats['horizon_distribution']['10d']}",
         "",
         "### Volatility Distribution",
@@ -246,7 +245,7 @@ def get_dynamic_tracking_horizons(
         primary = alloc.assigned_horizon
 
         # Always track all horizons for comparison, but primary gets extra weight
-        all_horizons = [1, 3, 5, 10]
+        all_horizons = [1, 3, 10]
         if primary not in all_horizons:
             all_horizons.append(primary)
             all_horizons.sort()

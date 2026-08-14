@@ -1,0 +1,60 @@
+{
+  "total_trades": 5,
+  "wins": 5,
+  "losses": 0,
+  "win_rate": 100.0,
+  "avg_return_pct": 10.83,
+  "avg_win_pct": 10.83,
+  "avg_loss_pct": 0,
+  "total_pnl": 92.39,
+  "initial_capital": 1000.0,
+  "final_equity": 1092.39,
+  "total_return_pct": 9.24,
+  "max_drawdown_pct": 0.0,
+  "sharpe_ratio": 7.94,
+  "avg_days_held": 3.0,
+  "profit_factor": Infinity,
+  "best_trade": 35.97,
+  "worst_trade": 3.12,
+  "by_symbol": {
+    "ALL": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 4.84,
+      "total_pnl": 4.96
+    },
+    "AXON": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 35.97,
+      "total_pnl": 71.94
+    },
+    "DLTR": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 3.12,
+      "total_pnl": 4.99
+    },
+    "EXPE": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 5.57,
+      "total_pnl": 4.57
+    },
+    "PGR": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 4.63,
+      "total_pnl": 5.93
+    }
+  },
+  "config": {
+    "initial_capital": 1000.0,
+    "max_position_pct": 0.2,
+    "horizon": "5d",
+    "stop_loss": 0.08,
+    "take_profit": 0.15,
+    "max_concurrent": 5,
+    "start_date": "all"
+  }
+}

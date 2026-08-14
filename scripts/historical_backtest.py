@@ -200,7 +200,7 @@ def run_backtest(
             continue
 
         date_idx = close_panel.index.get_loc(as_of_date)
-        for horizon, label in [(1, "1d"), (3, "3d"), (5, "5d")]:
+        for horizon, label in [(1, "1d"), (3, "3d"), (10, "10d")]:
             future_idx = date_idx + horizon
             if future_idx >= len(close_panel):
                 continue
@@ -259,7 +259,7 @@ def compute_statistics(trades: list[dict]) -> dict[str, Any]:
             abs(stats["avg_win"] * wins / (stats["avg_loss"] * losses)) if losses else float("inf"), 4
         )
 
-    for horizon in ["1d", "3d", "5d"]:
+    for horizon in ["1d", "3d", "10d"]:
         h_df = df[df["horizon"] == horizon]
         if h_df.empty:
             continue

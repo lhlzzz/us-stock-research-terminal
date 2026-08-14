@@ -14,10 +14,10 @@ bash scripts/start_services.sh
 
 ## 基础设施
 
-- **PostgreSQL**：localhost:**5433**（portfolio 共存；xiaogu 占用 5432），用户 xiaomei，数据库 xiaomei
+- **PostgreSQL**：localhost:**5432**（Windows 宿主 PG 18.4），用户 xiaomei，数据库 xiaomei
 - **Redis 6**：localhost:6379
-- **默认启动**：`bash scripts/start_services.sh` → `docker-compose --profile docker-fallback up -d xiaomei-db`（pgvector 镜像）
-- 连接串：`DATABASE_URL=postgresql://xiaomei:xiaomei2026@localhost:5433/xiaomei`
+- **默认启动**：`bash scripts/start_services.sh`（检查 5432 连通性，Docker 为备用方案）
+- 连接串：`DATABASE_URL=postgresql://xiaomei:***@localhost:5432/xiaomei`
 
 ## 规则
 
@@ -32,8 +32,7 @@ bash scripts/start_services.sh
 
 ## 禁止
 
-- 不碰 A 股逻辑
-- 不碰 xiaogu 任何内容
+- **不碰虚拟币主责**（加密归 `xiaobi`；本 agent 只管美股）
 - 不新增 broker / execution / live-trade
 - 不创建不必要的文件
 - 不偏离工程手册规范

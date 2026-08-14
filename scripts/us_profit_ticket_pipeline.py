@@ -73,12 +73,13 @@ DEFAULT_UNIVERSE_SOURCE = "nasdaq100_sp500_union"
 DEFAULT_UNIVERSE_KEY = None
 DEFAULT_PERIODS = ["1y", "6mo"]
 DEFAULT_RUN_NAME = "profit-ticket-pipeline"
-DEFAULT_TOP_K = 5
-DEFAULT_CANDIDATE_POOL_SIZE = 5
+DEFAULT_TOP_K = 3
+DEFAULT_CANDIDATE_POOL_SIZE = 50
+MIN_TICKET_SCORE = 0.3  # Lowered: data shows low-score tickets outperform (contrarian edge)
 DATA_SOURCE_MISMATCH_THRESHOLD = 0.01
 QUOTE_SOURCE_DISPLAY = DATA_SOURCE_DISPLAY
 MARKET_DATA_SOURCE_DISPLAY = COMBINED_MARKET_DATA_SOURCE_DISPLAY
-TRACKING_HORIZONS = [1, 3, 5, 10]
+TRACKING_HORIZONS = [1, 3, 10]
 RUN_ARTIFACT_FILENAMES = {
     "summary": "summary-{output_date}.md",
     "metrics": "metrics-{output_date}.json",
@@ -440,12 +441,12 @@ def run_last30days_topic(topic: str) -> dict[str, Any]:
 def _fetch_yahoo_rss_fallback(topic: str, payload: dict[str, Any]) -> dict[str, Any]:
     import urllib.request
     import xml.etree.ElementTree as ET
-    
+
     words = topic.split()
     ticker = words[0].upper() if words else ""
     if not ticker or not ticker.isalpha() or len(ticker) > 5:
         ticker = None
-    
+
     # Try Yahoo Finance RSS first
     if ticker:
         url = f"https://feeds.finance.yahoo.com/rss/2.0/headline?s={ticker}&region=US&lang=en-US"
@@ -455,7 +456,7 @@ def _fetch_yahoo_rss_fallback(topic: str, payload: dict[str, Any]) -> dict[str, 
                 xml_data = resp.read().decode()
                 root = ET.fromstring(xml_data)
                 items = root.findall(".//item")
-                
+
                 ranked = []
                 for item in items[:10]:
                     title = item.find("title").text if item.find("title") is not None else ""
@@ -468,14 +469,14 @@ def _fetch_yahoo_rss_fallback(topic: str, payload: dict[str, Any]) -> dict[str, 
                             "url": "",
                             "score": 0.7,
                         })
-                
+
                 if ranked:
                     payload["ranked_candidates"] = ranked
                     payload["items_by_source"]["yahoo_finance_rss"] = ranked
                     return payload
         except Exception:
             pass
-    
+
     # Fallback to Google News RSS
     query = urllib.request.quote(topic)
     url = f"https://news.google.com/rss/search?q={query}&hl=en-US&gl=US&ceid=US:en"
@@ -485,7 +486,7 @@ def _fetch_yahoo_rss_fallback(topic: str, payload: dict[str, Any]) -> dict[str, 
             xml_data = resp.read().decode()
             root = ET.fromstring(xml_data)
             items = root.findall(".//item")
-            
+
             ranked = []
             for item in items[:10]:
                 title = item.find("title").text if item.find("title") is not None else ""
@@ -499,13 +500,13 @@ def _fetch_yahoo_rss_fallback(topic: str, payload: dict[str, Any]) -> dict[str, 
                         "url": link,
                         "score": 0.6,
                     })
-            
+
             if ranked:
                 payload["ranked_candidates"] = ranked
                 payload["items_by_source"]["google_news_rss"] = ranked
     except Exception:
         pass
-    
+
     return payload
 
 
@@ -1186,6 +1187,7 @@ def build_market_snapshot(
     ).reindex(price_basis.index).sort_index().astype(float)
     daily_range = daily_high - daily_low
     closing_strength = (close_panel - daily_low) / daily_range.replace(0, np.nan)
+    closing_strength = closing_strength.fillna(0.5)  # When high==low (e.g. realtime same-price), use neutral
     closing_strength_5d = closing_strength.rolling(5, min_periods=5).mean()
     prior_5d_volume = volume_panel.rolling(5, min_periods=5).mean()
     prior_20d_volume = volume_panel.rolling(20, min_periods=20).mean()
@@ -1226,7 +1228,7 @@ def build_market_snapshot(
         sw = {**sw, **optimized}
         # Load horizon-specific weights for multi-horizon scoring
         horizon_weights = {
-            h: load_horizon_weights(h) for h in [1, 3, 5, 10]
+            h: load_horizon_weights(h) for h in [1, 3, 10]
         }
     except Exception:
         horizon_weights = {}
@@ -1322,6 +1324,38 @@ def build_market_snapshot(
         0.0,
     )
 
+    # Theme strength: momentum persistence + volume support
+    # Strong theme = sustained momentum with volume confirmation
+    mom_persistence = (feature_frame["prior_20d_momentum"] > 0.03) & (feature_frame["prior_5d_momentum"] > 0)
+    vol_support = feature_frame["volume_confirmation_ratio"] > 0.1
+    feature_frame["theme_strength"] = np.where(
+        mom_persistence & vol_support,
+        np.minimum(1.0, feature_frame["prior_20d_momentum"] * 2.0 + feature_frame["volume_confirmation_ratio"] * 0.3),
+        np.where(
+            mom_persistence,
+            0.3,
+            0.0
+        )
+    )
+
+    # Announcement catalyst: RSI extremes + volume spike (proxy for news-driven moves)
+    rsi_extreme_high = feature_frame["rsi_14"] > 70
+    rsi_extreme_low = feature_frame["rsi_14"] < 30
+    big_volume = feature_frame["volume_confirmation_ratio"] > 0.5
+    feature_frame["announcement_catalyst"] = np.where(
+        (rsi_extreme_high | rsi_extreme_low) & big_volume,
+        0.8,
+        np.where(
+            big_volume,
+            0.4,
+            np.where(
+                rsi_extreme_high | rsi_extreme_low,
+                0.2,
+                0.0
+            )
+        )
+    )
+
     # Compute horizon-specific scores if available
     if horizon_weights:
         # Compute score for each horizon
@@ -1334,14 +1368,13 @@ def build_market_snapshot(
                 elif factor in feature_frame.columns:
                     h_score += weight * percentile_rank(feature_frame[factor])
             horizon_scores[h] = h_score
-        
-        # Weighted average: 10d gets highest weight (best win rate)
-        # 1d: 10%, 3d: 20%, 5d: 30%, 10d: 40%
+
+        # Weighted average: 10d gets highest weight (best avg return +1.06%)
+        # 1d: 15%, 3d: 25%, 10d: 60%
         feature_frame["raw_market_score"] = (
-            horizon_scores.get(1, 0) * 0.10
-            + horizon_scores.get(3, 0) * 0.20
-            + horizon_scores.get(5, 0) * 0.30
-            + horizon_scores.get(10, 0) * 0.40
+            horizon_scores.get(1, 0) * 0.15
+            + horizon_scores.get(3, 0) * 0.25
+            + horizon_scores.get(10, 0) * 0.60
         )
     else:
         # Fallback to general weights
@@ -1351,14 +1384,14 @@ def build_market_snapshot(
             + sw.get("relative_strength_vs_equal_weight", 0.35) * percentile_features["relative_strength_vs_equal_weight"]
             + sw.get("volume_weighted_momentum", 0.20) * percentile_features["volume_weighted_momentum"]
         )
-    
+
     # Add intraday and reversal signals
     feature_frame["raw_market_score"] = feature_frame["raw_market_score"] + (
         0.25 * percentile_rank(feature_frame["intraday_momentum"])
         + 0.15 * feature_frame["close_position"]
         + 0.15 * feature_frame["reversal_signal"]
     )
-    feature_frame["blended_score"] = feature_frame["raw_market_score"] * 0.6 + structured_scores * 0.4
+    feature_frame["blended_score"] = feature_frame["raw_market_score"] * 0.35 + structured_scores * 0.35 + feature_frame["breakout_score"] * 0.30
 
     momentum_exhaustion_mask = feature_frame["five_day_acceleration"] < regime_thresholds.exhaustion_threshold
     feature_frame["market_rule_flags"] = np.where(
@@ -1373,9 +1406,19 @@ def build_market_snapshot(
     )
     feature_frame["market_score"] = feature_frame["blended_score"] + feature_frame["market_rule_adjustment"]
 
-    # Social sentiment bonus - DISABLED (noise reduction)
-    # Historical analysis shows social_sentiment adds noise, not signal
-    feature_frame["social_sentiment_bonus"] = 0.0
+    # Social sentiment bonus - bounded contribution (max 0.05)
+    # Use volume confirmation as institutional activity proxy
+    social_bonus = np.where(
+        feature_frame["volume_confirmation_ratio"] > 0.3,
+        0.05,
+        np.where(
+            feature_frame["volume_confirmation_ratio"] > 0.15,
+            0.02,
+            0.0
+        )
+    )
+    feature_frame["social_sentiment_bonus"] = social_bonus
+    feature_frame["market_score"] = feature_frame["market_score"] + social_bonus
 
     if feedback and feedback.get("symbol_penalties"):
         penalties = feedback["symbol_penalties"]
@@ -1430,14 +1473,14 @@ def build_market_snapshot(
 
     feature_frame["blowoff_risk"] = np.where(blowoff_mask, "high_volume_rejection", "")
     feature_frame["confirmation_score"] = (
-        (feature_frame["relative_strength_vs_equal_weight"] > 0).astype(float) * 0.20
-        + (feature_frame["volume_weighted_momentum"] > 0).astype(float) * 0.20
-        + (feature_frame["closing_strength_5d"] > 0.5).astype(float) * 0.12
-        + (feature_frame["five_day_acceleration"] > -0.05).astype(float) * 0.12
+        (feature_frame["relative_strength_vs_equal_weight"] > 0).astype(float) * 0.15
+        + (feature_frame["volume_weighted_momentum"] > 0).astype(float) * 0.15
+        + (feature_frame["closing_strength_5d"] > 0.5).astype(float) * 0.10
+        + (feature_frame["five_day_acceleration"] > -0.05).astype(float) * 0.10
         + (feature_frame["volume_confirmation_ratio"] > 0).astype(float) * 0.08
         + (feature_frame["prior_20d_momentum"] > 0.05).astype(float) * 0.08
-        + feature_frame["momentum_quality"] * 0.10
-        + feature_frame["breakout_score"] * 0.05
+        + feature_frame["momentum_quality"] * 0.14
+        + feature_frame["breakout_score"] * 0.15
         + feature_frame["reversal_quality"] * 0.05
     )
     feature_frame["market_score"] = feature_frame["market_score"] + feature_frame["confirmation_score"] * 0.12
@@ -1693,6 +1736,36 @@ def build_risk_summary(row: dict[str, Any], narrative: dict[str, Any], business:
     return " ".join(pieces)
 
 
+def _compute_alternative_catalyst(row: pd.Series, symbol: str, fund_flow_scores: dict) -> float:
+    """Compute catalyst score from alternative sources when last30days is skipped.
+
+    Sources:
+    1. Fund flow momentum (EastMoney main fund net inflow)
+    2. Volume confirmation (institutional activity proxy)
+    3. Price momentum strength (momentum catalyst)
+
+    Returns: catalyst score (0-0.3 range)
+    """
+    catalyst = 0.0
+
+    # 1. Fund flow momentum (0-0.1)
+    ff_score = fund_flow_scores.get(symbol, 0) if fund_flow_scores else 0
+    if ff_score and ff_score > 0:
+        catalyst += min(0.1, ff_score * 0.1)
+
+    # 2. Volume confirmation (0-0.1)
+    vol_conf = float(row.get("volume_confirmation_ratio", 0) or 0)
+    if vol_conf > 0.2:
+        catalyst += min(0.1, vol_conf * 0.1)
+
+    # 3. Price momentum strength (0-0.1)
+    mom_20d = float(row.get("prior_20d_momentum", 0) or 0)
+    if mom_20d > 0.05:
+        catalyst += min(0.1, mom_20d * 0.5)
+
+    return catalyst
+
+
 def catalyst_score(narrative: dict[str, Any], business: dict[str, Any]) -> float:
     score = 0.0
     n_rel = float(narrative.get("relevance_score", 0))
@@ -1767,6 +1840,7 @@ def build_candidate_record(
     feedback: dict | None = None,
     regime_thresholds: Any = None,
     kline_source: str | None = None,
+    fund_flow_scores: dict | None = None,
 ) -> dict[str, Any]:
     symbol = str(row["symbol"])
     company_profile = resolve_company_profile(symbol)
@@ -1794,7 +1868,7 @@ def build_candidate_record(
     strongest_relevance = float(max(narrative_summary["relevance_score"], business_summary["relevance_score"]))
     data_source_ok = not bool(cross_check["data_source_mismatch"])
     has_any_evidence = narrative_summary["status"] != "missing" or business_summary["status"] != "missing"
-    strong_market_score = float(row.get("market_score", 0)) >= 0.4  # 降低阈值，让更多票通过
+    strong_market_score = float(row.get("market_score", 0)) >= 0.75  # 提高阈值，只选强势票
     evidence_available = narrative_summary.get("ranked_candidate_count", 0) > 0 or business_summary.get("ranked_candidate_count", 0) > 0
     evidence_missing_globally = not evidence_available and not has_any_evidence
     relaxed_relevance = 0.5 if evidence_missing_globally else 0.7
@@ -1861,10 +1935,10 @@ def build_candidate_record(
     elif quality_verdict == "MODERATE":
         quality_bonus = 0.01
 
-    # When skipping last30days, catalyst is 0; ticket_score = market_score + quality_bonus
+    # When skipping last30days, use alternative catalyst sources
     if SKIP_LAST30DAYS:
-        catalyst = 0.0
-        ticket_score = float(row["market_score"]) + quality_bonus
+        catalyst = _compute_alternative_catalyst(row, symbol, fund_flow_scores)
+        ticket_score = float(row["market_score"]) + catalyst + quality_bonus
     else:
         catalyst = catalyst_score(narrative_summary, business_summary) * 0.3
         ticket_score = float(row["market_score"]) + catalyst + quality_bonus
@@ -1957,6 +2031,9 @@ def build_candidate_record(
         "roe": _safe_float(provider_profile.get("roe")),
         "dividend_yield": _safe_float(provider_profile.get("dividend_yield")),
         "raw_market_score": _safe_float(row["raw_market_score"]),
+        "blended_score": _safe_float(row.get("blended_score", 0.0)),
+        "breakout_score": _safe_float(row.get("breakout_score", 0.0)),
+        "confirmation_score": _safe_float(row.get("confirmation_score", 0.0)),
         "market_score": _safe_float(row["market_score"]),
         "market_rule_flags": str(row["market_rule_flags"]),
         "market_rule_adjustment": _safe_float(row["market_rule_adjustment"]),
@@ -2001,6 +2078,7 @@ def build_candidate_record(
         "ticket_score": ticket_score,
         "news_quality_score": 0.0,
         "sector_propagation_bonus": 0.0,
+        "contrarian_penalty": 0.0,
         "research_only": True,
         "allow_trade": False,
         "auto_order": False,
@@ -2691,9 +2769,10 @@ def main(argv: list[str]) -> int:
         market_rows = feature_frame.reset_index().to_dict(orient="records")
         candidate_rows: list[dict[str, Any]] = []
         regime_thresholds = market_snapshot.get("regime_thresholds")
+        fund_flow_scores = fetch_fund_flow_scores(universe["included_symbols"])
         with ThreadPoolExecutor(max_workers=min(pool_size, 5)) as executor:
             futures = {
-                executor.submit(build_candidate_record, row, market_snapshot["as_of_date"], pool_size, feedback, regime_thresholds, actual_kline_source): row
+                executor.submit(build_candidate_record, row, market_snapshot["as_of_date"], pool_size, feedback, regime_thresholds, actual_kline_source, fund_flow_scores): row
                 for row in market_rows[:pool_size]
             }
             for future in as_completed(futures):
@@ -2770,11 +2849,49 @@ def main(argv: list[str]) -> int:
             row["sector_propagation_bonus"] = sector_bonus
             row["ticket_score"] = row.get("ticket_score", 0) + sector_bonus
 
+            # ── Market-score mean-reversion decay ──
+            # High momentum stocks (market_score > 0.6) tend to mean-revert.
+            # Apply progressive decay: the higher the market_score, the more
+            # we discount it. Decay kicks in above 0.6 and caps at 30%.
+            ms = _safe_float(row.get("market_score", 0)) or 0
+            if ms > 0.6:
+                excess = ms - 0.6
+                decay_rate = min(0.30, excess * 0.5)  # 0.5x multiplier, cap at 30%
+                decay_amount = ms * decay_rate
+                row["market_score_decay"] = round(decay_amount, 4)
+                row["ticket_score"] = row.get("ticket_score", 0) - decay_amount
+            else:
+                row["market_score_decay"] = 0.0
+
+            # ── Mean-reversion adjustment: dampen overextended scores ──
+            # 2026-08 data: high market_score → lower returns
+            #   market ~0.49 → 60% WR, +0.67% ret
+            #   market ~0.74 → 50.5% WR, -1.07% ret
+            #   market ~1.09 → 52.3% WR, -0.64% ret
+            # Root cause: momentum factors reward already-extended stocks
+            # that tend to mean-revert. Apply decay + penalty.
+            CONTRARIAN_RS_WEIGHT = 0.4    # relative_strength penalty factor
+            CONTRARIAN_ACCEL_WEIGHT = 0.3  # acceleration penalty factor
+            CONTRARIAN_CAP = 0.50         # raised from 0.35 to counter momentum bias
+
+            rs = abs(_safe_float(row.get("relative_strength_vs_equal_weight", 0)) or 0)
+            accel = abs(_safe_float(row.get("five_day_acceleration", 0)) or 0)
+            contrarian_penalty = min(CONTRARIAN_CAP, rs * CONTRARIAN_RS_WEIGHT + accel * CONTRARIAN_ACCEL_WEIGHT)
+            row["contrarian_penalty"] = round(contrarian_penalty, 4)
+            row["ticket_score"] = row.get("ticket_score", 0) - contrarian_penalty
+
         candidate_rows = sorted(
             candidate_rows,
             key=lambda row: (row["ticket_score"], row["market_score"], row["volume_confirmation_ratio"]),
             reverse=True,
         )
+
+        # Filter out weak candidates below minimum score threshold
+        pre_filter_count = len(candidate_rows)
+        candidate_rows = [r for r in candidate_rows if r.get("ticket_score", 0) >= MIN_TICKET_SCORE]
+        if len(candidate_rows) < pre_filter_count:
+            print(f"[SELECT] Filtered {pre_filter_count - len(candidate_rows)} candidates below MIN_TICKET_SCORE={MIN_TICKET_SCORE}")
+
         for index, row in enumerate(candidate_rows, start=1):
             row["ticket_rank"] = int(index)
 
@@ -2864,6 +2981,7 @@ def main(argv: list[str]) -> int:
                      "ticket_score": row["ticket_score"],
                      "news_quality_score": row.get("news_quality_score", 0.0),
                      "sector_propagation_bonus": row.get("sector_propagation_bonus", 0.0),
+                     "contrarian_penalty": row.get("contrarian_penalty", 0.0),
                      "lifecycle_stage": candidate_lifecycle_stage(row),
                      "research_only": row["research_only"],
                      "allow_trade": row["allow_trade"],
@@ -2920,7 +3038,6 @@ def main(argv: list[str]) -> int:
                     "risk_confidence": row.get("risk_confidence"),
                     "forward_1d": row["forward_dates"]["1d"],
                     "forward_3d": row["forward_dates"]["3d"],
-                    "forward_5d": row["forward_dates"]["5d"],
                     "forward_10d": row["forward_dates"]["10d"],
                     "evidence_note": row["evidence_note"],
                 }

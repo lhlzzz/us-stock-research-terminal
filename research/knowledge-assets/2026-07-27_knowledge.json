@@ -1,0 +1,99 @@
+{
+  "trade_date": "2026-07-27",
+  "exported_at": "2026-07-30T02:32:19.960946",
+  "tickets": [
+    {
+      "symbol": "AAPL",
+      "ticket_score": "0.975183",
+      "market_score": "0.857960",
+      "catalyst_score": "0.107223",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.858 catalyst=0.107 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "IR",
+      "ticket_score": "0.903640",
+      "market_score": "0.851730",
+      "catalyst_score": "0.031910",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.852 catalyst=0.032 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MSFT",
+      "ticket_score": "0.802615",
+      "market_score": "0.729541",
+      "catalyst_score": "0.053074",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.730 catalyst=0.053 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "WFC",
+      "ticket_score": "0.789856",
+      "market_score": "0.700434",
+      "catalyst_score": "0.069422",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.700 catalyst=0.069 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "IR",
+      "ticket_score": "0.774365",
+      "market_score": "0.722455",
+      "catalyst_score": "0.031910",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.722 catalyst=0.032 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AAPL",
+      "ticket_score": "0.724468",
+      "market_score": "0.607245",
+      "catalyst_score": "0.107223",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.607 catalyst=0.107 | panel: MIXED | risk: ELEVATED"
+    }
+  ],
+  "top10": [],
+  "returns": {
+    "AAPL": {
+      "symbol": "AAPL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "IR": {
+      "symbol": "IR",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MSFT": {
+      "symbol": "MSFT",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "WFC": {
+      "symbol": "WFC",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 6,
+  "top10_count": 0
+}

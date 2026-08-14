@@ -1,11 +1,17 @@
 # DECISIONS
 
+## 2026-07-25 market ownership split (crypto → xiaobi)
+
+- `xiaomei` **只管美股**；虚拟币 / 加密主责迁至独立智能体 **`xiaobi`**。
+- 不再在 xiaomei 内扩展 crypto pipeline、交易所数据主链路或加密出票。
+- 若美股研究需要风险偏好/流动性背景，可引用公开宏观叙述，但 **不得** 把 crypto 当作 xiaomei 业务产出。
+- 启动加密工作请用：`xiaobi`。
+
 ## 2026-06-09 xiaomei research-only boundary
 
-- `xiaomei` 是美股 + 加密 research-only workspace。
+- `xiaomei` 是 **美股** research-only workspace（历史文档曾写「美股 + 加密」；自 2026-07-25 起加密归 `xiaobi`）。
 - 美股行情源已迁移为 EastMoney US realtime/delayed quote + kline provider；禁止回退 legacy market-data source。
 - `last30days` 只作为 public-source narrative / social research source，不作为行情源。
-- 加密只做 research-only / macro-liquidity / risk-correlation，不接交易所、钱包或 order API。
 - 禁止接 broker feed / order / ledger / paper-trade / live-trade。
 - 禁止输出 `BUY` / `SELL` / `ORDER`；研究输出只能是 classification / evidence / replay result。
 

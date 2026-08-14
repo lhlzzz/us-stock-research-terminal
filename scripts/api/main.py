@@ -1,4 +1,9 @@
-"""FastAPI application for xiaomei."""
+"""FastAPI application for xiaomei.
+
+DEPRECATED: This module is superseded by scripts/xiaomei_api.py which is the
+single authoritative API server. All endpoints below have been consolidated
+into xiaomei_api.py. This file is kept for reference only — do NOT serve it.
+"""
 from datetime import date
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session

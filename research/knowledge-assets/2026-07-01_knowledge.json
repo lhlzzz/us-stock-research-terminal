@@ -1,0 +1,172 @@
+{
+  "trade_date": "2026-07-01",
+  "exported_at": "2026-07-25T03:08:29.647207",
+  "tickets": [
+    {
+      "symbol": "AMD",
+      "ticket_score": "1.216694",
+      "market_score": "1.196694",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.197 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "PANW",
+      "ticket_score": "0.952179",
+      "market_score": "0.932179",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.932 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.932570",
+      "market_score": "0.912570",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.913 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "GOOG",
+      "ticket_score": "0.756555",
+      "market_score": "0.736555",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.737 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AAPL",
+      "ticket_score": "0.729513",
+      "market_score": "0.709513",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.710 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "AMD",
+      "stock_name": "AMD",
+      "final_score": "1.2167",
+      "market_score": "1.1967",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.196694,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.197 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "PANW",
+      "stock_name": "PANW",
+      "final_score": "0.9522",
+      "market_score": "0.9322",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.932179,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.932 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "stock_name": "TSLA",
+      "final_score": "0.9326",
+      "market_score": "0.9126",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.91257,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.913 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "GOOG",
+      "stock_name": "GOOG",
+      "final_score": "0.7566",
+      "market_score": "0.7366",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.736555,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.737 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AAPL",
+      "stock_name": "AAPL",
+      "final_score": "0.7295",
+      "market_score": "0.7095",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.709513,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.710 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "returns": {
+    "AAPL": {
+      "symbol": "AAPL",
+      "forward_1d": "0.020562",
+      "forward_3d": "0.071056",
+      "forward_5d": "0.087574",
+      "forward_10d": "0.093439"
+    },
+    "AMD": {
+      "symbol": "AMD",
+      "forward_1d": "-0.047229",
+      "forward_3d": "-0.109556",
+      "forward_5d": "-0.110269",
+      "forward_10d": "-0.046859"
+    },
+    "GOOG": {
+      "symbol": "GOOG",
+      "forward_1d": "0.006639",
+      "forward_3d": "0.007154",
+      "forward_5d": "0.014308",
+      "forward_10d": "0.004044"
+    },
+    "PANW": {
+      "symbol": "PANW",
+      "forward_1d": "0.041828",
+      "forward_3d": "0.021663",
+      "forward_5d": "-0.058970",
+      "forward_10d": "0.031511"
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "forward_1d": "0.016937",
+      "forward_3d": "-0.060766",
+      "forward_5d": "-0.059309",
+      "forward_10d": "-0.054034"
+    }
+  },
+  "ticket_count": 5,
+  "top10_count": 5
+}

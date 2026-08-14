@@ -1,0 +1,260 @@
+{
+  "output_date": "2026-07-22",
+  "started_at": "2026-07-22T01:54:52.286464",
+  "steps": {
+    "pipeline": {
+      "status": "ok",
+      "elapsed": 384.6,
+      "result": {
+        "status": "success",
+        "candidates": 5,
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "regime": null
+      }
+    },
+    "backfill": {
+      "status": "ok",
+      "elapsed": 26.4,
+      "result": {
+        "status": "ok",
+        "updated_rows": 26
+      }
+    },
+    "factor_backtest": {
+      "status": "ok",
+      "elapsed": 0.6,
+      "result": {
+        "by_horizon": {
+          "1d": {
+            "factors": {},
+            "ranking": [],
+            "sample_size": 161
+          },
+          "3d": {
+            "factors": {},
+            "ranking": [],
+            "sample_size": 151
+          },
+          "5d": {
+            "factors": {},
+            "ranking": [],
+            "sample_size": 134
+          },
+          "10d": {
+            "factors": {},
+            "ranking": [],
+            "sample_size": 114
+          }
+        },
+        "overall": {
+          "factors": {
+            "prior_5d_momentum": {
+              "ic": 0.0234,
+              "abs_ic": 0.0234,
+              "p_value": 0.5813,
+              "n": 560,
+              "significant": false
+            },
+            "prior_20d_momentum": {
+              "ic": -0.1126,
+              "abs_ic": 0.1126,
+              "p_value": 0.0077,
+              "n": 560,
+              "significant": true
+            },
+            "five_day_acceleration": {
+              "ic": 0.2055,
+              "abs_ic": 0.2055,
+              "p_value": 0.0,
+              "n": 560,
+              "significant": true
+            },
+            "relative_strength": {
+              "ic": -0.1459,
+              "abs_ic": 0.1459,
+              "p_value": 0.0008,
+              "n": 520,
+              "significant": true
+            },
+            "volume_weighted_momentum": {
+              "ic": -0.1372,
+              "abs_ic": 0.1372,
+              "p_value": 0.0011,
+              "n": 560,
+              "significant": true
+            },
+            "volume_confirmation": {
+              "ic": 0.031,
+              "abs_ic": 0.031,
+              "p_value": 0.464,
+              "n": 560,
+              "significant": false
+            },
+            "closing_strength_5d": {
+              "ic": -0.0091,
+              "abs_ic": 0.0091,
+              "p_value": 0.8301,
+              "n": 560,
+              "significant": false
+            },
+            "rsi_14": {
+              "ic": -0.0642,
+              "abs_ic": 0.0642,
+              "p_value": 0.1293,
+              "n": 560,
+              "significant": false
+            },
+            "momentum_quality": {
+              "ic": -0.124,
+              "abs_ic": 0.124,
+              "p_value": 0.0033,
+              "n": 560,
+              "significant": true
+            },
+            "breakout_score": {
+              "ic": 0.0141,
+              "abs_ic": 0.0141,
+              "p_value": 0.7394,
+              "n": 560,
+              "significant": false
+            },
+            "reversal_quality": {
+              "ic": 0.1401,
+              "abs_ic": 0.1401,
+              "p_value": 0.0009,
+              "n": 560,
+              "significant": true
+            },
+            "market_score": {
+              "ic": -0.153,
+              "abs_ic": 0.153,
+              "p_value": 0.0003,
+              "n": 554,
+              "significant": true
+            },
+            "catalyst_score": {
+              "ic": 0.0966,
+              "abs_ic": 0.0966,
+              "p_value": 0.023,
+              "n": 554,
+              "significant": true
+            },
+            "ticket_score": {
+              "ic": -0.0566,
+              "abs_ic": 0.0566,
+              "p_value": 0.1857,
+              "n": 548,
+              "significant": false
+            }
+          },
+          "ranking": [
+            "five_day_acceleration",
+            "market_score",
+            "relative_strength",
+            "reversal_quality",
+            "volume_weighted_momentum",
+            "momentum_quality",
+            "prior_20d_momentum",
+            "catalyst_score",
+            "rsi_14",
+            "ticket_score",
+            "volume_confirmation",
+            "prior_5d_momentum",
+            "breakout_score",
+            "closing_strength_5d"
+          ]
+        },
+        "sample_size": 560
+      }
+    },
+    "weight_optimization": {
+      "status": "ok",
+      "elapsed": 0.0,
+      "result": {
+        "status": "optimized",
+        "new_weights": {
+          "prior_20d_momentum": -0.101,
+          "five_day_acceleration": 0.1843,
+          "relative_strength_vs_equal_weight": -0.1309,
+          "volume_weighted_momentum": -0.1231,
+          "momentum_quality": -0.1112,
+          "reversal_quality": 0.1257,
+          "market_score": -0.1372,
+          "catalyst_score": 0.0866
+        },
+        "old_weights": {
+          "prior_20d_momentum": -0.1064,
+          "five_day_acceleration": 0.1981,
+          "relative_strength_vs_equal_weight": -0.1371,
+          "volume_weighted_momentum": -0.132,
+          "momentum_quality": -0.125,
+          "reversal_quality": 0.1393,
+          "market_score": -0.162
+        },
+        "top_factors": [
+          "five_day_acceleration",
+          "market_score",
+          "relative_strength",
+          "reversal_quality",
+          "volume_weighted_momentum"
+        ],
+        "significant_count": 8
+      }
+    },
+    "scoreboard": {
+      "status": "ok",
+      "elapsed": 0.8,
+      "result": {
+        "status": "ok"
+      }
+    },
+    "degradation_check": {
+      "status": "ok",
+      "elapsed": 0.4,
+      "result": {
+        "recent_30d": {
+          "win_rate": 50.46,
+          "avg_return": -0.1393,
+          "total": 323
+        },
+        "historical": {
+          "win_rate": 50.46,
+          "avg_return": -0.1393,
+          "total": 323
+        },
+        "degradation": [],
+        "action_needed": false
+      }
+    },
+    "pipeline_upgrade": {
+      "status": "ok",
+      "elapsed": 0.0,
+      "result": {
+        "actions": [
+          {
+            "action": "NO_CHANGE",
+            "reason": "System performing within normal range"
+          }
+        ],
+        "degradation_count": 0
+      }
+    }
+  },
+  "completed_at": "2026-07-22T02:01:44.985153",
+  "total_elapsed": 412.7,
+  "summary": {
+    "total_steps": 7,
+    "ok_count": 7,
+    "error_count": 0,
+    "skipped_count": 0,
+    "step_statuses": {
+      "pipeline": "ok",
+      "backfill": "ok",
+      "factor_backtest": "ok",
+      "weight_optimization": "ok",
+      "scoreboard": "ok",
+      "degradation_check": "ok",
+      "pipeline_upgrade": "ok"
+    }
+  }
+}

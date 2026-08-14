@@ -127,7 +127,7 @@ def run_factor_analysis(
             continue
 
         date_idx = close_panel.index.get_loc(as_of_date)
-        for horizon, h_days in [("1d", 1), ("3d", 3), ("5d", 5)]:
+        for horizon, h_days in [("1d", 1), ("3d", 3), ("10d", 10)]:
             future_idx = date_idx + h_days
             if future_idx >= len(close_panel):
                 continue
@@ -163,7 +163,7 @@ def analyze_factors(records: list[dict], factors: list[str]) -> dict[str, Any]:
     df = pd.DataFrame(records)
     results = {}
 
-    for horizon in ["1d", "3d", "5d"]:
+    for horizon in ["1d", "3d", "10d"]:
         h_df = df[df["horizon"] == horizon].copy()
         if h_df.empty:
             continue
@@ -238,7 +238,7 @@ def format_factor_report(analysis: dict) -> str:
         lines.append("- No data")
         return "\n".join(lines)
 
-    for horizon in ["1d", "3d", "5d"]:
+    for horizon in ["1d", "3d", "10d"]:
         h_data = analysis.get(horizon, {})
         if not h_data:
             continue

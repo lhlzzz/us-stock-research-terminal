@@ -1,0 +1,332 @@
+{
+  "trade_date": "2026-07-10",
+  "exported_at": "2026-07-25T03:08:32.436804",
+  "tickets": [
+    {
+      "symbol": "META",
+      "ticket_score": "0.829496",
+      "market_score": "0.809496",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.809 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CMG",
+      "ticket_score": "0.790435",
+      "market_score": "0.770435",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.770 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "ALLE",
+      "ticket_score": "0.788420",
+      "market_score": "0.768420",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.768 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "ABNB",
+      "ticket_score": "0.759028",
+      "market_score": "0.739028",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.739 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "KMB",
+      "ticket_score": "0.756918",
+      "market_score": "0.736918",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.737 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NKE",
+      "ticket_score": "0.437239",
+      "market_score": "0.417239",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.417 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MMM",
+      "ticket_score": "0.390066",
+      "market_score": "0.380066",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.380 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "KO",
+      "ticket_score": "0.384064",
+      "market_score": "0.364064",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.364 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "CCI",
+      "ticket_score": "0.365113",
+      "market_score": "0.355113",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.355 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "MGM",
+      "ticket_score": "0.361258",
+      "market_score": "0.341258",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.341 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "META",
+      "stock_name": "META",
+      "final_score": "0.8295",
+      "market_score": "0.8095",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.809496,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.809 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CMG",
+      "stock_name": "CMG",
+      "final_score": "0.7904",
+      "market_score": "0.7704",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.770435,
+        "risk_verdict": "ELEVATED",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.770 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "ALLE",
+      "stock_name": "ALLE",
+      "final_score": "0.7884",
+      "market_score": "0.7684",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.76842,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.768 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "ABNB",
+      "stock_name": "ABNB",
+      "final_score": "0.7590",
+      "market_score": "0.7390",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.739028,
+        "risk_verdict": "ELEVATED",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.739 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "KMB",
+      "stock_name": "KMB",
+      "final_score": "0.7569",
+      "market_score": "0.7369",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.736918,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.737 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NKE",
+      "stock_name": "NKE",
+      "final_score": "0.4372",
+      "market_score": "0.4172",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.417239,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.417 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MMM",
+      "stock_name": "MMM",
+      "final_score": "0.3901",
+      "market_score": "0.3801",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.380066,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "scores: market=0.380 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "KO",
+      "stock_name": "KO",
+      "final_score": "0.3841",
+      "market_score": "0.3641",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.364064,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.364 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "CCI",
+      "stock_name": "CCI",
+      "final_score": "0.3651",
+      "market_score": "0.3551",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.355113,
+        "risk_verdict": "ELEVATED",
+        "catalyst_score": 0.0,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "scores: market=0.355 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "MGM",
+      "stock_name": "MGM",
+      "final_score": "0.3613",
+      "market_score": "0.3413",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.341258,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.341 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "returns": {
+    "META": {
+      "symbol": "META",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MMM": {
+      "symbol": "MMM",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "ALLE": {
+      "symbol": "ALLE",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "KMB": {
+      "symbol": "KMB",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "CCI": {
+      "symbol": "CCI",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "NKE": {
+      "symbol": "NKE",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "ABNB": {
+      "symbol": "ABNB",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "KO": {
+      "symbol": "KO",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MGM": {
+      "symbol": "MGM",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "CMG": {
+      "symbol": "CMG",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 10,
+  "top10_count": 10
+}

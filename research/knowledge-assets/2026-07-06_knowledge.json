@@ -1,0 +1,172 @@
+{
+  "trade_date": "2026-07-06",
+  "exported_at": "2026-07-25T03:08:30.890283",
+  "tickets": [
+    {
+      "symbol": "REGN",
+      "ticket_score": "1.536339",
+      "market_score": "1.083839",
+      "catalyst_score": "0.212500",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: Will Regeneron (REGN) Beat Estimates Again in Its Next Earnings Report? | business: Will Regeneron (REGN) Beat Estimates Again in Its Next Earnings Report? | scores: market=1.084 catalyst=0.212 | panel: BULLISH_CONSENSUS | risk: CLEAN"
+    },
+    {
+      "symbol": "DLTR",
+      "ticket_score": "1.433429",
+      "market_score": "1.099679",
+      "catalyst_score": "0.093750",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: Dollar Tree (DLTR) Stock Looks Undervalued With A 24% Fair Value Gap | business: Walmart Cuts Food Prices, but Shoppers Are Fed Up | scores: market=1.100 catalyst=0.094 | panel: NEUTRAL | risk: WATCH"
+    },
+    {
+      "symbol": "PYPL",
+      "ticket_score": "1.429070",
+      "market_score": "1.052320",
+      "catalyst_score": "0.118750",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: Salesforce down 30% in 14 straight red days at 10.5x forward earnings. The software massacre has gone completely detached from fundamentals. What is anyone actually doing here? | business: Mastercard Vs. Paypal: The Argument Over Which Undervalued Fintech To Buy Has a Clear Cut Answer | scores: market=1.052 catalyst=0.119 | panel: NEUTRAL | risk: WATCH"
+    },
+    {
+      "symbol": "SHOP",
+      "ticket_score": "1.404499",
+      "market_score": "1.060749",
+      "catalyst_score": "0.093750",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: Salesforce down 30% in 14 straight red days at 10.5x forward earnings. The software massacre has gone completely detached from fundamentals. What is anyone actually doing here? | business: Shopify (SHOP) Among the Best Software Stocks to Buy in 2026 | scores: market=1.061 catalyst=0.094 | panel: NEUTRAL | risk: WATCH"
+    },
+    {
+      "symbol": "WTW",
+      "ticket_score": "1.403711",
+      "market_score": "1.036961",
+      "catalyst_score": "0.118750",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: Willis (WTW) Expands CyMax Cyber Insurance Facility for EMEA Middle-Market Clients | business: Willis (WTW) Expands CyMax Cyber Insurance Facility for EMEA Middle-Market Clients | scores: market=1.037 catalyst=0.119 | panel: NEUTRAL | risk: WATCH"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "REGN",
+      "stock_name": "REGN",
+      "final_score": "1.5363",
+      "market_score": "1.0838",
+      "catalyst_score": "0.2125",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.083839,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.2125,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "catalyst: Will Regeneron (REGN) Beat Estimates Again in Its Next Earnings Report? | business: Will Regeneron (REGN) Beat Estimates Again in Its Next Earnings Report? | scores: market=1.084 catalyst=0.212 | panel: BULLISH_CONSENSUS | risk: CLEAN"
+    },
+    {
+      "symbol": "DLTR",
+      "stock_name": "DLTR",
+      "final_score": "1.4334",
+      "market_score": "1.0997",
+      "catalyst_score": "0.0938",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.099679,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.09375,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "catalyst: Dollar Tree (DLTR) Stock Looks Undervalued With A 24% Fair Value Gap | business: Walmart Cuts Food Prices, but Shoppers Are Fed Up | scores: market=1.100 catalyst=0.094 | panel: NEUTRAL | risk: WATCH"
+    },
+    {
+      "symbol": "PYPL",
+      "stock_name": "PYPL",
+      "final_score": "1.4291",
+      "market_score": "1.0523",
+      "catalyst_score": "0.1188",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.05232,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.11875,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "catalyst: Salesforce down 30% in 14 straight red days at 10.5x forward earnings. The software massacre has gone completely detached from fundamentals. What is anyone actually doing here? | business: Mastercard Vs. Paypal: The Argument Over Which Undervalued Fintech To Buy Has a Clear Cut Answer | scores: market=1.052 catalyst=0.119 | panel: NEUTRAL | risk: WATCH"
+    },
+    {
+      "symbol": "SHOP",
+      "stock_name": "SHOP",
+      "final_score": "1.4045",
+      "market_score": "1.0607",
+      "catalyst_score": "0.0938",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.060749,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.09375,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "catalyst: Salesforce down 30% in 14 straight red days at 10.5x forward earnings. The software massacre has gone completely detached from fundamentals. What is anyone actually doing here? | business: Shopify (SHOP) Among the Best Software Stocks to Buy in 2026 | scores: market=1.061 catalyst=0.094 | panel: NEUTRAL | risk: WATCH"
+    },
+    {
+      "symbol": "WTW",
+      "stock_name": "WTW",
+      "final_score": "1.4037",
+      "market_score": "1.0370",
+      "catalyst_score": "0.1188",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.036961,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.11875,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "catalyst: Willis (WTW) Expands CyMax Cyber Insurance Facility for EMEA Middle-Market Clients | business: Willis (WTW) Expands CyMax Cyber Insurance Facility for EMEA Middle-Market Clients | scores: market=1.037 catalyst=0.119 | panel: NEUTRAL | risk: WATCH"
+    }
+  ],
+  "returns": {
+    "DLTR": {
+      "symbol": "DLTR",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "PYPL": {
+      "symbol": "PYPL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "REGN": {
+      "symbol": "REGN",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "SHOP": {
+      "symbol": "SHOP",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "WTW": {
+      "symbol": "WTW",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 5,
+  "top10_count": 5
+}

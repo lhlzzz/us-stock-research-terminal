@@ -1,0 +1,906 @@
+"""
+xiaomei FastAPI service.
+Standalone API server for xiaomei US stock research system.
+
+Endpoints:
+  /health                          - Health check
+  /picks                           - List tickets/picks
+  /picks/{date}/summary            - Daily pick summary
+  /picks/{date}/detail             - Full pick detail
+  /returns                         - Return records
+  /signals                         - Raw signal values
+  /signals/effectiveness           - Signal effectiveness analysis
+  /stats/overview                  - High-level system stats
+  /stats/performance               - Monthly performance breakdown
+  /daily-candidates/{date}         - Daily candidate analysis
+  /explain/{date}/{symbol}         - Explain a candidate
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+import os
+from datetime import date, datetime
+from typing import Optional
+
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+from pathlib import Path
+from decimal import Decimal
+
+logger = logging.getLogger(__name__)
+
+app = FastAPI(
+    title="xiaomei API",
+    description="美股量化研究系统 API",
+    version="1.0.0",
+)
+
+ROOT = Path(__file__).resolve().parent.parent
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Database connection
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL", "postgresql://xiaomei:***@localhost:5432/xiaomei"
+)
+
+
+def get_engine():
+    from sqlalchemy import create_engine
+    return create_engine(DATABASE_URL)
+
+
+def _num(value, default: float = 0.0) -> float:
+    """Convert database numerics to JSON-friendly floats."""
+    if value is None:
+        return default
+    if isinstance(value, Decimal):
+        return float(value)
+    return float(value)
+
+
+def _load_engine_state() -> dict:
+    engine_state_path = ROOT / "research" / "engine-state.json"
+    if not engine_state_path.exists():
+        return {}
+    try:
+        return json.loads(engine_state_path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        logger.warning("Failed to read engine state: %s", exc)
+        return {}
+
+
+# Models
+class Pick(BaseModel):
+    symbol: str
+    output_date: str
+    ticket_score: Optional[float] = None
+    market_score: Optional[float] = None
+    catalyst_score: Optional[float] = None
+    classification: Optional[str] = None
+    risk_verdict: Optional[str] = None
+    entry_reason: Optional[str] = None
+
+
+class Return(BaseModel):
+    symbol: str
+    output_date: str
+    horizon_days: int
+    forward_return: Optional[float] = None
+    check_status: Optional[str] = None
+
+
+class Signal(BaseModel):
+    trade_date: str
+    symbol: str
+    signal_key: str
+    signal_value: Optional[float] = None
+
+
+class SystemStats(BaseModel):
+    total_tickets: int
+    total_completed: int
+    overall_win_rate: Optional[float] = None
+    overall_avg_return: Optional[float] = None
+    date_range: Optional[dict] = None
+
+
+# Endpoints
+@app.get("/health")
+async def health():
+    """Health check."""
+    try:
+        engine = get_engine()
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT 1"))
+            db_ok = result.scalar() == 1
+    except Exception as e:
+        db_ok = False
+
+    return {
+        "status": "ok" if db_ok else "degraded",
+        "database": "connected" if db_ok else "disconnected",
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard():
+    """Serve the dashboard HTML."""
+    html_path = ROOT / "public" / "index.html"
+    if html_path.exists():
+        return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+    return HTMLResponse(content="<h1>Dashboard not found</h1>", status_code=404)
+
+
+@app.get("/api/positions")
+async def get_positions(trade_date: Optional[str] = Query(None)):
+    """Get current paper trading positions with database journal reasons.
+
+    The current dashboard uses the latest OPEN trade_date in trade_journal so
+    old unclosed review rows do not pollute today's paper simulation snapshot.
+    """
+    from sqlalchemy import text
+
+    state = _load_engine_state()
+    engine = get_engine()
+    positions = []
+    selected_date = trade_date
+
+    with engine.connect() as conn:
+        if not selected_date:
+            selected_date = conn.execute(text("""
+                SELECT MAX(trade_date)::text
+                FROM trade_journal
+                WHERE status = 'OPEN'
+            """)).scalar()
+
+        rows = []
+        if selected_date:
+            result = conn.execute(text("""
+                SELECT trade_date::text, symbol, direction, entry_price, current_price,
+                       quantity, cost_basis, stop_loss, take_profit, pnl_dollar, pnl_pct,
+                       status, ticket_score, market_score, catalyst_score, classification,
+                       risk_verdict, reason_market, reason_catalyst, reason_sentiment,
+                       reason_risk, reason_summary, obsidian_path
+                FROM trade_journal
+                WHERE status = 'OPEN' AND trade_date = :trade_date
+                ORDER BY ticket_score DESC NULLS LAST, symbol
+            """), {"trade_date": selected_date})
+            rows = [dict(row._mapping) for row in result.fetchall()]
+
+    if rows:
+        state_positions = state.get("positions", {}) or {}
+        for row in rows:
+            sym = row["symbol"]
+            state_pos = state_positions.get(sym, {})
+            positions.append({
+                "trade_date": row["trade_date"],
+                "symbol": sym,
+                "direction": row.get("direction") or state_pos.get("side", "LONG"),
+                "entry_price": round(_num(row.get("entry_price") or state_pos.get("avg_price")), 2),
+                "current_price": round(_num(row.get("current_price") or state_pos.get("current_price")), 2),
+                "shares": round(_num(row.get("quantity") or state_pos.get("quantity")), 4),
+                "cost": round(_num(row.get("cost_basis") or state_pos.get("cost_basis")), 2),
+                "pnl_pct": round(_num(row.get("pnl_pct") or state_pos.get("unrealized_pnl_pct")), 2),
+                "pnl_dollar": round(_num(row.get("pnl_dollar") or state_pos.get("unrealized_pnl")), 2),
+                "stop_loss": round(_num(row.get("stop_loss") or state_pos.get("stop_loss_price")), 2),
+                "take_profit": round(_num(row.get("take_profit") or state_pos.get("take_profit_price")), 2),
+                "ticket_score": _num(row.get("ticket_score")),
+                "market_score": _num(row.get("market_score")),
+                "catalyst_score": _num(row.get("catalyst_score")),
+                "classification": row.get("classification") or "",
+                "risk_verdict": row.get("risk_verdict") or "",
+                "reason_market": row.get("reason_market") or "",
+                "reason_catalyst": row.get("reason_catalyst") or "",
+                "reason_sentiment": row.get("reason_sentiment") or "",
+                "reason_risk": row.get("reason_risk") or "",
+                "reason_summary": row.get("reason_summary") or "",
+                "obsidian_path": row.get("obsidian_path") or "",
+            })
+    else:
+        for sym, pos in (state.get("positions", {}) or {}).items():
+            positions.append({
+                "symbol": sym,
+                "direction": pos.get("side", "LONG"),
+                "entry_price": round(_num(pos.get("avg_price")), 2),
+                "current_price": round(_num(pos.get("current_price")), 2),
+                "shares": round(_num(pos.get("quantity")), 4),
+                "cost": round(_num(pos.get("cost_basis")), 2),
+                "pnl_pct": round(_num(pos.get("unrealized_pnl_pct")), 2),
+                "pnl_dollar": round(_num(pos.get("unrealized_pnl")), 2),
+                "stop_loss": round(_num(pos.get("stop_loss_price")), 2),
+                "take_profit": round(_num(pos.get("take_profit_price")), 2),
+                "reason_market": "",
+                "reason_catalyst": "",
+                "reason_sentiment": "",
+                "reason_risk": "",
+                "reason_summary": "",
+                "obsidian_path": "",
+            })
+
+    db_position_symbols = {p["symbol"] for p in positions}
+    state_position_symbols = set((state.get("positions", {}) or {}).keys())
+    state_matches_db = bool(db_position_symbols) and db_position_symbols == state_position_symbols
+    if state and state_matches_db:
+        cash = _num(state.get("cash"))
+        equity = _num(state.get("equity"))
+        pnl = _num(state.get("total_pnl"))
+        pnl_pct = _num(state.get("total_pnl_pct"))
+    else:
+        cost_basis = sum(p["cost"] for p in positions)
+        open_pnl = sum(p["pnl_dollar"] for p in positions)
+        cash = _num(state.get("cash")) if state else 0.0
+        equity = cash + cost_basis + open_pnl
+        pnl = open_pnl
+        pnl_pct = (open_pnl / cost_basis * 100) if cost_basis else 0.0
+
+    return {
+        "positions": positions,
+        "trade_date": selected_date,
+        "source": "trade_journal",
+        "cash": round(cash, 2),
+        "equity": round(equity, 2),
+        "initial_capital": _num(state.get("initial_capital"), 1000.0),
+        "pnl": round(pnl, 2),
+        "pnl_pct": round(pnl_pct, 2),
+        "position_count": len(positions),
+        "halted": state.get("halted", False),
+        "win_rate": state.get("win_rate", 0),
+        "updated_at": state.get("updated_at"),
+    }
+
+
+@app.get("/api/trade-journal")
+async def get_trade_journal(status: str = None, limit: int = 50):
+    """Get trade journal entries with reasons."""
+    from sqlalchemy import text
+    engine = get_engine()
+
+    query = """
+        SELECT trade_date::text, symbol, direction, entry_price, current_price,
+               quantity, cost_basis, stop_loss, take_profit, pnl_dollar, pnl_pct,
+               status, ticket_score, market_score, catalyst_score, classification,
+               risk_verdict, reason_market, reason_catalyst, reason_sentiment,
+               reason_risk, reason_summary, obsidian_path
+        FROM trade_journal
+        WHERE 1=1
+    """
+    params = {}
+    if status:
+        query += " AND status = :status"
+        params["status"] = status
+    query += " ORDER BY trade_date DESC, symbol LIMIT :limit"
+    params["limit"] = limit
+
+    with engine.connect() as conn:
+        result = conn.execute(text(query), params)
+        rows = [dict(row._mapping) for row in result.fetchall()]
+
+    return rows
+
+
+@app.get("/api/trade-traces")
+async def get_trade_traces(
+    trade_date: str | None = None,
+    symbol: str | None = None,
+    record_type: str | None = None,
+    limit: int = 200,
+):
+    """Return the single research lifecycle projection."""
+    from sqlalchemy import text
+
+    conditions = ["1 = 1"]
+    params: dict[str, object] = {"limit": max(1, min(limit, 1000))}
+    if trade_date:
+        conditions.append("output_date = :trade_date")
+        params["trade_date"] = trade_date
+    if symbol:
+        conditions.append("UPPER(symbol) = UPPER(:symbol)")
+        params["symbol"] = symbol
+    if record_type:
+        conditions.append("record_type = :record_type")
+        params["record_type"] = record_type
+
+    query = f"""
+        SELECT record_type, trace_id, record_id, ticket_id, tracking_id,
+               output_date::text, symbol, horizon_days, lifecycle_stage,
+               record_status, forward_return, pnl, selection_reason,
+               outcome_classification, outcome_reason, paper_reason
+        FROM research_trade_trace
+        WHERE {' AND '.join(conditions)}
+        ORDER BY output_date DESC, symbol, record_type, horizon_days NULLS FIRST, record_id
+        LIMIT :limit
+    """
+    with get_engine().connect() as conn:
+        result = conn.execute(text(query), params)
+        return [dict(row._mapping) for row in result.fetchall()]
+
+
+@app.get("/api/obsidian/status")
+async def obsidian_status():
+    """Report Obsidian/database linkage using real synced records."""
+    from sqlalchemy import text
+
+    project_root = Path(os.environ.get(
+        "XIAOMEI_OBSIDIAN_PROJECT", "/mnt/d/obisidian/Obsidian/Project"
+    ))
+    shenlin_root = Path(os.environ.get(
+        "XIAOMEI_OBSIDIAN_SHENLIN", "/mnt/d/obisidian/Obsidian/神临"
+    ))
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        counts = conn.execute(text("""
+            SELECT
+                COUNT(*) AS assets,
+                COALESCE(SUM((metadata->>'repo' = 'project')::int), 0) AS project_assets,
+                COALESCE(SUM((metadata->>'repo' = 'shenlin')::int), 0) AS shenlin_assets,
+                MAX(updated_at)::text AS latest_sync
+            FROM knowledge_assets
+        """)).fetchone()
+        latest_assets = conn.execute(text("""
+            SELECT title, source_path, source_type, updated_at::text
+            FROM knowledge_assets
+            ORDER BY updated_at DESC NULLS LAST, id DESC
+            LIMIT 5
+        """)).fetchall()
+        linked_trades = conn.execute(text("""
+            SELECT COUNT(*) AS linked
+            FROM trade_journal
+            WHERE obsidian_path IS NOT NULL AND obsidian_path <> ''
+        """)).scalar()
+
+    return {
+        "project_path": str(project_root),
+        "project_path_exists": project_root.exists(),
+        "shenlin_path": str(shenlin_root),
+        "shenlin_path_exists": shenlin_root.exists(),
+        "knowledge_assets": int(counts.assets or 0),
+        "project_assets": int(counts.project_assets or 0),
+        "shenlin_assets": int(counts.shenlin_assets or 0),
+        "latest_sync": counts.latest_sync,
+        "linked_trade_notes": int(linked_trades or 0),
+        "latest_assets": [dict(row._mapping) for row in latest_assets],
+    }
+
+
+@app.get("/picks", response_model=list[Pick])
+async def list_picks(
+    date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
+    date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
+    symbol: Optional[str] = Query(None, description="Filter by symbol"),
+    limit: int = Query(50, description="Max results"),
+):
+    """List tickets/picks."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    query = """
+        SELECT symbol, output_date::text, ticket_score, market_score, catalyst_score,
+               classification, risk_verdict, entry_reason
+        FROM tickets
+        WHERE 1=1
+    """
+    params = {}
+
+    if date_from:
+        query += " AND output_date >= :date_from"
+        params["date_from"] = date_from
+    if date_to:
+        query += " AND output_date <= :date_to"
+        params["date_to"] = date_to
+    if symbol:
+        query += " AND symbol = :symbol"
+        params["symbol"] = symbol
+
+    query += " ORDER BY output_date DESC, ticket_score DESC LIMIT :limit"
+    params["limit"] = limit
+
+    with engine.connect() as conn:
+        result = conn.execute(text(query), params)
+        rows = [dict(row._mapping) for row in result.fetchall()]
+
+    return rows
+
+
+@app.get("/picks/{trade_date}/summary")
+async def pick_summary(trade_date: str):
+    """Daily pick summary."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        # Get tickets
+        result = conn.execute(text("""
+            SELECT symbol, ticket_score, market_score, catalyst_score,
+                   classification, risk_verdict, entry_reason
+            FROM tickets
+            WHERE output_date = :trade_date
+            ORDER BY ticket_score DESC
+        """), {"trade_date": trade_date})
+        tickets = [dict(row._mapping) for row in result.fetchall()]
+
+        # Get forward tracking summary
+        result = conn.execute(text("""
+            SELECT
+                COUNT(*) as total_tracking,
+                SUM(CASE WHEN check_status = 'completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN forward_return > 0 THEN 1 ELSE 0 END) as positive_returns,
+                AVG(forward_return) as avg_return
+            FROM forward_tracking ft
+            JOIN tickets t ON ft.ticket_id = t.id
+            WHERE t.output_date = :trade_date
+        """), {"trade_date": trade_date})
+        tracking = dict(result.fetchone()._mapping)
+
+    return {
+        "trade_date": trade_date,
+        "tickets": tickets,
+        "tracking": tracking,
+        "ticket_count": len(tickets),
+    }
+
+
+@app.get("/picks/{trade_date}/detail")
+async def pick_detail(trade_date: str):
+    """Full pick detail with candidates and returns."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        # Get tickets with full details
+        result = conn.execute(text("""
+            SELECT t.symbol, t.ticket_score, t.market_score, t.catalyst_score,
+                   t.classification, t.risk_verdict, t.quality_verdict, t.entry_reason,
+                   ft.horizon_days, ft.forward_return, ft.check_status
+            FROM tickets t
+            LEFT JOIN forward_tracking ft ON t.id = ft.ticket_id
+            WHERE t.output_date = :trade_date
+            ORDER BY t.ticket_score DESC, ft.horizon_days
+        """), {"trade_date": trade_date})
+        rows = [dict(row._mapping) for row in result.fetchall()]
+
+        # Get daily candidates
+        result = conn.execute(text("""
+            SELECT symbol, stock_name, final_score, market_score, catalyst_score,
+                   decision, selection_reason
+            FROM daily_candidates
+            WHERE trade_date = :trade_date
+            ORDER BY final_score DESC NULLS LAST
+            LIMIT 20
+        """), {"trade_date": trade_date})
+        candidates = [dict(row._mapping) for row in result.fetchall()]
+
+    return {
+        "trade_date": trade_date,
+        "tickets": rows,
+        "candidates": candidates,
+    }
+
+
+@app.get("/returns", response_model=list[Return])
+async def list_returns(
+    date_from: Optional[str] = Query(None),
+    date_to: Optional[str] = Query(None),
+    symbol: Optional[str] = Query(None),
+    horizon: Optional[int] = Query(None, description="Filter by horizon days"),
+    limit: int = Query(100),
+):
+    """Return records."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    query = """
+        SELECT t.symbol, t.output_date::text, ft.horizon_days,
+               ft.forward_return, ft.check_status
+        FROM forward_tracking ft
+        JOIN tickets t ON ft.ticket_id = t.id
+        WHERE 1=1
+    """
+    params = {}
+
+    if date_from:
+        query += " AND t.output_date >= :date_from"
+        params["date_from"] = date_from
+    if date_to:
+        query += " AND t.output_date <= :date_to"
+        params["date_to"] = date_to
+    if symbol:
+        query += " AND t.symbol = :symbol"
+        params["symbol"] = symbol
+    if horizon:
+        query += " AND ft.horizon_days = :horizon"
+        params["horizon"] = horizon
+
+    query += " ORDER BY t.output_date DESC, t.symbol, ft.horizon_days LIMIT :limit"
+    params["limit"] = limit
+
+    with engine.connect() as conn:
+        result = conn.execute(text(query), params)
+        rows = [dict(row._mapping) for row in result.fetchall()]
+
+    return rows
+
+
+@app.get("/signals", response_model=list[Signal])
+async def list_signals(
+    trade_date: Optional[str] = Query(None),
+    symbol: Optional[str] = Query(None),
+    signal_key: Optional[str] = Query(None),
+    limit: int = Query(100),
+):
+    """Raw signal values."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    query = """
+        SELECT trade_date::text, symbol, signal_key, signal_value
+        FROM signals
+        WHERE 1=1
+    """
+    params = {}
+
+    if trade_date:
+        query += " AND trade_date = :trade_date"
+        params["trade_date"] = trade_date
+    if symbol:
+        query += " AND symbol = :symbol"
+        params["symbol"] = symbol
+    if signal_key:
+        query += " AND signal_key = :signal_key"
+        params["signal_key"] = signal_key
+
+    query += " ORDER BY trade_date DESC, symbol, signal_key LIMIT :limit"
+    params["limit"] = limit
+
+    with engine.connect() as conn:
+        result = conn.execute(text(query), params)
+        rows = [dict(row._mapping) for row in result.fetchall()]
+
+    return rows
+
+
+@app.get("/signals/effectiveness")
+async def signal_effectiveness(
+    date_from: Optional[str] = Query(None),
+    date_to: Optional[str] = Query(None),
+):
+    """Signal effectiveness analysis."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    query = """
+        SELECT analysis_date::text, signal_key, present_count, win_rate,
+               avg_return, weight_suggestion, ic_score, p_value
+        FROM signal_effectiveness
+        WHERE 1=1
+    """
+    params = {}
+
+    if date_from:
+        query += " AND analysis_date >= :date_from"
+        params["date_from"] = date_from
+    if date_to:
+        query += " AND analysis_date <= :date_to"
+        params["date_to"] = date_to
+
+    query += " ORDER BY analysis_date DESC, signal_key"
+
+    with engine.connect() as conn:
+        result = conn.execute(text(query), params)
+        rows = [dict(row._mapping) for row in result.fetchall()]
+
+    return rows
+
+
+@app.get("/stats/overview", response_model=SystemStats)
+async def stats_overview():
+    """High-level system stats."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT
+                COUNT(DISTINCT output_date) as total_dates,
+                COUNT(*) as total_tickets,
+                MIN(output_date)::text as earliest_date,
+                MAX(output_date)::text as latest_date
+            FROM tickets
+        """))
+        ticket_stats = dict(result.fetchone()._mapping)
+
+        result = conn.execute(text("""
+            SELECT
+                COUNT(*) as total_completed,
+                SUM(CASE WHEN forward_return > 0 THEN 1 ELSE 0 END) as positive_returns,
+                AVG(forward_return) as avg_return
+            FROM forward_tracking
+            WHERE check_status = 'completed'
+        """))
+        return_stats = dict(result.fetchone()._mapping)
+
+    win_rate = None
+    if return_stats["total_completed"] and return_stats["total_completed"] > 0:
+        win_rate = return_stats["positive_returns"] / return_stats["total_completed"]
+
+    return {
+        "total_tickets": ticket_stats["total_tickets"],
+        "total_completed": return_stats["total_completed"],
+        "overall_win_rate": win_rate,
+        "overall_avg_return": return_stats["avg_return"],
+        "date_range": {
+            "earliest": ticket_stats["earliest_date"],
+            "latest": ticket_stats["latest_date"],
+        },
+    }
+
+
+@app.get("/stats/performance")
+async def stats_performance():
+    """Monthly performance breakdown."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT
+                DATE_TRUNC('month', t.output_date)::text as month,
+                COUNT(DISTINCT t.output_date) as trading_days,
+                COUNT(*) as tickets,
+                SUM(CASE WHEN ft.forward_return > 0 THEN 1 ELSE 0 END)::float /
+                    NULLIF(COUNT(ft.id), 0) as win_rate,
+                AVG(ft.forward_return) as avg_return
+            FROM tickets t
+            LEFT JOIN forward_tracking ft ON t.id = ft.ticket_id AND ft.check_status = 'completed'
+            GROUP BY DATE_TRUNC('month', t.output_date)
+            ORDER BY month DESC
+        """))
+        rows = [dict(row._mapping) for row in result.fetchall()]
+
+    return rows
+
+
+@app.get("/daily-candidates/{trade_date}")
+async def daily_candidates(trade_date: str):
+    """Daily candidate analysis."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT symbol, stock_name, final_score, market_score, catalyst_score,
+                   decision, is_official_pick, selection_reason, candidate_entry_reason
+            FROM daily_candidates
+            WHERE trade_date = :trade_date
+            ORDER BY final_score DESC NULLS LAST
+        """), {"trade_date": trade_date})
+        rows = [dict(row._mapping) for row in result.fetchall()]
+
+    return {
+        "trade_date": trade_date,
+        "candidates": rows,
+        "count": len(rows),
+    }
+
+
+@app.get("/explain/{trade_date}/{symbol}")
+async def explain_candidate(trade_date: str, symbol: str):
+    """Explain a candidate using persisted fields."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        # Get ticket
+        result = conn.execute(text("""
+            SELECT symbol, ticket_score, market_score, catalyst_score,
+                   classification, risk_verdict, quality_verdict, entry_reason
+            FROM tickets
+            WHERE output_date = :trade_date AND symbol = :symbol
+        """), {"trade_date": trade_date, "symbol": symbol})
+        ticket = result.fetchone()
+
+        # Get daily candidate
+        result = conn.execute(text("""
+            SELECT symbol, stock_name, final_score, market_score, catalyst_score,
+                   decision, selection_reason, candidate_entry_reason,
+                   factor_snapshot, ranking_basis
+            FROM daily_candidates
+            WHERE trade_date = :trade_date AND symbol = :symbol
+        """), {"trade_date": trade_date, "symbol": symbol})
+        candidate = result.fetchone()
+
+        # Get returns
+        result = conn.execute(text("""
+            SELECT ft.horizon_days, ft.forward_return, ft.check_status
+            FROM forward_tracking ft
+            JOIN tickets t ON ft.ticket_id = t.id
+            WHERE t.output_date = :trade_date AND t.symbol = :symbol
+            ORDER BY ft.horizon_days
+        """), {"trade_date": trade_date, "symbol": symbol})
+        returns = [dict(row._mapping) for row in result.fetchall()]
+
+    if not ticket and not candidate:
+        raise HTTPException(status_code=404, detail=f"No data for {symbol} on {trade_date}")
+
+    return {
+        "trade_date": trade_date,
+        "symbol": symbol,
+        "ticket": dict(ticket._mapping) if ticket else None,
+        "candidate": dict(candidate._mapping) if candidate else None,
+        "returns": returns,
+    }
+
+
+# ─── Consolidated endpoints (merged from scripts/api/main.py) ───
+
+@app.get("/api/universe")
+async def list_universe():
+    """List all symbols in the universe."""
+    from sqlalchemy import text
+    engine = get_engine()
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT symbol, name, sector FROM universe ORDER BY symbol LIMIT 5000"))
+        return [dict(zip(result.keys(), row)) for row in result.fetchall()]
+
+
+@app.get("/api/klines/{symbol}")
+async def get_klines(symbol: str, start: Optional[str] = Query(None), end: Optional[str] = Query(None)):
+    """Get daily klines for a symbol."""
+    from sqlalchemy import text
+    engine = get_engine()
+    conditions = ["symbol = :symbol"]
+    params: dict = {"symbol": symbol.upper()}
+    if start:
+        conditions.append("trade_date >= :start")
+        params["start"] = start
+    if end:
+        conditions.append("trade_date <= :end")
+        params["end"] = end
+    where = " AND ".join(conditions)
+    with engine.connect() as conn:
+        result = conn.execute(text(f"SELECT trade_date::text as date, open, high, low, close, volume FROM daily_klines WHERE {where} ORDER BY trade_date"), params)
+        return [dict(zip(result.keys(), row)) for row in result.fetchall()]
+
+
+@app.get("/api/scoreboard")
+async def get_scoreboard():
+    """Get latest lifecycle scoreboard."""
+    from sqlalchemy import text
+    engine = get_engine()
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT overall, by_horizon, by_stage, generated_at::text FROM lifecycle_scoreboard ORDER BY generated_at DESC LIMIT 1"))
+        rows = [dict(zip(result.keys(), row)) for row in result.fetchall()]
+        return rows[0] if rows else {"overall": {}, "by_horizon": {}}
+
+
+@app.get("/api/factors")
+async def get_factors(trade_date: str = None, symbol: str = None, limit: int = 100):
+    """Get factor snapshots. Optionally filter by date and/or symbol."""
+    from sqlalchemy import text
+    engine = get_engine()
+    conditions, params = [], {"limit": limit}
+    if trade_date:
+        conditions.append("trade_date = :td"); params["td"] = trade_date
+    if symbol:
+        conditions.append("symbol = :sym"); params["sym"] = symbol.upper()
+    where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+    with engine.connect() as conn:
+        result = conn.execute(text(f"""
+            SELECT trade_date::text, symbol,
+                prior_5d_momentum, prior_20d_momentum, five_day_acceleration,
+                relative_strength, volume_weighted_momentum, volume_confirmation,
+                rsi_14, momentum_quality, breakout_score, reversal_quality,
+                closing_strength_5d, market_score, announcement_catalyst, theme_strength, regime
+            FROM factor_snapshots {where}
+            ORDER BY trade_date DESC, symbol LIMIT :limit
+        """), params)
+        return [dict(zip(result.keys(), row)) for row in result.fetchall()]
+
+
+@app.get("/api/market-regime")
+async def get_market_regime(limit: int = 30):
+    """Get market regime history."""
+    from sqlalchemy import text
+    engine = get_engine()
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT trade_date::text, regime, breadth, momentum, volatility,
+                   advance_ratio, universe_count
+            FROM market_snapshots ORDER BY trade_date DESC LIMIT :limit
+        """), {"limit": limit})
+        return [dict(zip(result.keys(), row)) for row in result.fetchall()]
+
+
+@app.get("/api/scoring-config")
+async def get_scoring_config():
+    """Get current scoring weight configuration."""
+    import json as _json
+    from pathlib import Path
+    weights_file = Path(__file__).resolve().parent.parent / "data" / "scoring_weights.json"
+    if weights_file.exists():
+        try:
+            return _json.loads(weights_file.read_text())
+        except Exception:
+            pass
+    return {"weights": {}, "ic_scores": {}}
+
+
+@app.get("/api/degradation")
+async def get_degradation():
+    """Run degradation detection and return results."""
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from meta_loop import run_meta_loop
+    return run_meta_loop()
+
+
+@app.get("/api/forward-tracking/stats")
+async def get_forward_tracking_stats():
+    """Get forward tracking stats by horizon with win rate and avg return."""
+    from sqlalchemy import text
+    engine = get_engine()
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT
+                horizon_days,
+                COUNT(*) as total,
+                COUNT(CASE WHEN forward_return > 0 THEN 1 END) as wins,
+                ROUND(AVG(forward_return)::numeric, 6) as avg_return,
+                ROUND(AVG(CASE WHEN forward_return > 0 THEN forward_return END)::numeric, 6) as avg_win,
+                ROUND(AVG(CASE WHEN forward_return <= 0 THEN forward_return END)::numeric, 6) as avg_loss,
+                MIN(forward_return) as worst,
+                MAX(forward_return) as best
+            FROM forward_tracking
+            WHERE check_status = 'completed' AND forward_return IS NOT NULL
+            GROUP BY horizon_days ORDER BY horizon_days
+        """))
+        rows = [dict(zip(result.keys(), row)) for row in result.fetchall()]
+        for r in rows:
+            total = r.get("total", 0)
+            wins = r.get("wins", 0)
+            r["win_rate"] = round(wins / total, 4) if total > 0 else 0
+        return rows
+
+
+@app.get("/api/symbols/{symbol}/detail")
+async def get_symbol_detail(symbol: str):
+    """Get comprehensive detail for a symbol: tickets, tracking, factors."""
+    from sqlalchemy import text
+    engine = get_engine()
+    sym = symbol.upper()
+    with engine.connect() as conn:
+        result = conn.execute(text(
+            "SELECT output_date::text, ticket_score, market_score, catalyst_score, classification, risk_verdict FROM tickets WHERE symbol=:s ORDER BY output_date DESC LIMIT 10"
+        ), {"s": sym})
+        cols = list(result.keys())
+        tickets = [dict(zip(cols, row)) for row in result.fetchall()]
+
+        result2 = conn.execute(text(
+            "SELECT output_date::text, horizon_days, check_status, forward_return FROM forward_tracking WHERE symbol=:s ORDER BY output_date DESC LIMIT 20"
+        ), {"s": sym})
+        cols2 = list(result2.keys())
+        tracking = [dict(zip(cols2, row)) for row in result2.fetchall()]
+
+        return {"symbol": sym, "tickets": tickets, "tracking": tracking}
+
+
+if __name__ == "__main__":
+    raise SystemExit(
+        "xiaomei no longer starts an independent HTTP server; "
+        "use the shared Hermes Financial OS gateway at http://localhost:3000"
+    )

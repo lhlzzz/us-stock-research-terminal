@@ -1,0 +1,62 @@
+{
+  "trade_date": "2026-07-29",
+  "exported_at": "2026-07-30T02:32:20.162002",
+  "tickets": [
+    {
+      "symbol": "MSFT",
+      "ticket_score": "0.877200",
+      "market_score": "0.799066",
+      "catalyst_score": "0.058135",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.799 catalyst=0.058 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AAPL",
+      "ticket_score": "0.773221",
+      "market_score": "0.646685",
+      "catalyst_score": "0.116536",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.647 catalyst=0.117 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "META",
+      "ticket_score": "0.719047",
+      "market_score": "0.613201",
+      "catalyst_score": "0.085846",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.613 catalyst=0.086 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "top10": [],
+  "returns": {
+    "AAPL": {
+      "symbol": "AAPL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "META": {
+      "symbol": "META",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MSFT": {
+      "symbol": "MSFT",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 3,
+  "top10_count": 0
+}

@@ -487,8 +487,8 @@ def build_scoreboard_from_db(completed_only: bool = False) -> dict[str, Any]:
 
     db = SessionLocal()
     try:
-        # Overall stats
-        where = "WHERE check_status = 'completed'" if completed_only else ""
+        # Overall stats - always filter to completed rows for meaningful statistics
+        where = "WHERE check_status = 'completed'"
         overall = db.execute(text(f"""
             SELECT COUNT(*) as total,
                    COUNT(CASE WHEN forward_return > 0 THEN 1 END) as wins,
@@ -506,13 +506,14 @@ def build_scoreboard_from_db(completed_only: bool = False) -> dict[str, Any]:
             "median_forward_return": round(float(overall[3]) * 100, 6) if overall and overall[3] else 0,
         }
 
-        # By horizon
+        # By horizon - always filter to completed rows
         horizon_rows = db.execute(text(f"""
             SELECT horizon_days, COUNT(*) as total,
                    COUNT(CASE WHEN forward_return > 0 THEN 1 END) as wins,
                    AVG(forward_return) as avg_return,
                    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY forward_return) as median_return
-            FROM forward_tracking {where}
+            FROM forward_tracking
+            WHERE check_status = 'completed'
             GROUP BY horizon_days ORDER BY horizon_days
         """)).fetchall()
 
@@ -526,12 +527,13 @@ def build_scoreboard_from_db(completed_only: bool = False) -> dict[str, Any]:
                 "median_forward_return": round(float(row[4]) * 100, 6) if row[4] else 0,
             })
 
-        # By symbol
+        # By symbol - always filter to completed rows
         symbol_rows = db.execute(text(f"""
             SELECT symbol, COUNT(*) as total,
                    COUNT(CASE WHEN forward_return > 0 THEN 1 END) as wins,
                    AVG(forward_return) as avg_return
-            FROM forward_tracking {where}
+            FROM forward_tracking
+            WHERE check_status = 'completed'
             GROUP BY symbol ORDER BY total DESC
         """)).fetchall()
 

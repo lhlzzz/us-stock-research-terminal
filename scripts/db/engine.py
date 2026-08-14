@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
-    "postgresql://xiaomei:xiaomei2026@localhost:5433/xiaomei",
+    "postgresql://xiaomei:xiaomei2026@localhost:5432/xiaomei",
 )
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_size=5)

@@ -84,6 +84,36 @@ def upsert_forward_tracking(db: Session, track_key: str, **kwargs) -> ForwardTra
     return obj
 
 
+def link_unlinked_forward_tracking(db: Session) -> int:
+    """Attach legacy tracking rows to one deterministic ticket identity."""
+    result = db.execute(text("""
+        WITH ranked AS (
+            SELECT
+                ft.id AS tracking_id,
+                t.id AS ticket_id,
+                ROW_NUMBER() OVER (
+                    PARTITION BY ft.id
+                    ORDER BY
+                        CASE WHEN t.as_of_date = ft.as_of_date THEN 0 ELSE 1 END,
+                        t.created_at DESC NULLS LAST,
+                        t.id DESC
+                ) AS rank
+            FROM forward_tracking ft
+            JOIN tickets t
+              ON t.symbol = ft.symbol
+             AND t.output_date = ft.output_date
+            WHERE ft.ticket_id IS NULL
+        )
+        UPDATE forward_tracking ft
+           SET ticket_id = ranked.ticket_id
+          FROM ranked
+         WHERE ranked.rank = 1
+           AND ft.id = ranked.tracking_id
+    """))
+    db.commit()
+    return int(result.rowcount or 0)
+
+
 def get_pending_forward_tracking(db: Session, due_date: date = None):
     q = db.query(ForwardTracking).filter_by(check_status="pending")
     if due_date:
@@ -168,3 +198,23 @@ def create_celery_task(db: Session, task_id: str, task_name: str = None, **kwarg
     db.add(obj)
     db.commit()
     return obj
+
+
+def upsert_signal(db: Session, trade_date: date, symbol: str, signal_key: str, signal_value: float):
+    """Upsert a signal value into the signals table."""
+    result = db.execute(
+        text("SELECT id FROM signals WHERE trade_date = :td AND symbol = :sym AND signal_key = :sk"),
+        {"td": trade_date, "sym": symbol, "sk": signal_key}
+    )
+    row = result.fetchone()
+    if row:
+        db.execute(
+            text("UPDATE signals SET signal_value = :sv WHERE id = :id"),
+            {"sv": signal_value, "id": row[0]}
+        )
+    else:
+        db.execute(
+            text("INSERT INTO signals (trade_date, symbol, signal_key, signal_value) VALUES (:td, :sym, :sk, :sv)"),
+            {"td": trade_date, "sym": symbol, "sk": signal_key, "sv": signal_value}
+        )
+    return True

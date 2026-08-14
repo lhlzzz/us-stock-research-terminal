@@ -1,0 +1,172 @@
+{
+  "trade_date": "2026-07-09",
+  "exported_at": "2026-07-25T03:08:32.120398",
+  "tickets": [
+    {
+      "symbol": "CASY",
+      "ticket_score": "1.285316",
+      "market_score": "1.143850",
+      "catalyst_score": "0.121466",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.144 catalyst=0.121 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AAPL",
+      "ticket_score": "1.183911",
+      "market_score": "1.109019",
+      "catalyst_score": "0.054892",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.109 catalyst=0.055 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TXN",
+      "ticket_score": "1.076437",
+      "market_score": "1.006784",
+      "catalyst_score": "0.049652",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.007 catalyst=0.050 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "PDD",
+      "ticket_score": "1.057207",
+      "market_score": "0.984527",
+      "catalyst_score": "0.052680",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.985 catalyst=0.053 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "DLTR",
+      "ticket_score": "1.056356",
+      "market_score": "0.986745",
+      "catalyst_score": "0.049611",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.987 catalyst=0.050 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "CASY",
+      "stock_name": "CASY",
+      "final_score": "1.2853",
+      "market_score": "1.1439",
+      "catalyst_score": "0.1215",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.14385,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.121466,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.144 catalyst=0.121 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AAPL",
+      "stock_name": "AAPL",
+      "final_score": "1.1839",
+      "market_score": "1.1090",
+      "catalyst_score": "0.0549",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.109019,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.054892,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.109 catalyst=0.055 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TXN",
+      "stock_name": "TXN",
+      "final_score": "1.0764",
+      "market_score": "1.0068",
+      "catalyst_score": "0.0497",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.006784,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.049652,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.007 catalyst=0.050 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "PDD",
+      "stock_name": "PDD",
+      "final_score": "1.0572",
+      "market_score": "0.9845",
+      "catalyst_score": "0.0527",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.984527,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.05268,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.985 catalyst=0.053 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "DLTR",
+      "stock_name": "DLTR",
+      "final_score": "1.0564",
+      "market_score": "0.9867",
+      "catalyst_score": "0.0496",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.986745,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.049611,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.987 catalyst=0.050 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "returns": {
+    "AAPL": {
+      "symbol": "AAPL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "CASY": {
+      "symbol": "CASY",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "DLTR": {
+      "symbol": "DLTR",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "PDD": {
+      "symbol": "PDD",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "TXN": {
+      "symbol": "TXN",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 5,
+  "top10_count": 5
+}

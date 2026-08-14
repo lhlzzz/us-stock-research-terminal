@@ -1,0 +1,644 @@
+{
+  "trade_date": "2026-07-03",
+  "exported_at": "2026-07-25T03:08:30.288439",
+  "tickets": [
+    {
+      "symbol": "CMG",
+      "ticket_score": "1.245793",
+      "market_score": "1.180075",
+      "catalyst_score": "0.045719",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.180 catalyst=0.046 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "JNJ",
+      "ticket_score": "1.240829",
+      "market_score": "1.192946",
+      "catalyst_score": "0.027882",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.193 catalyst=0.028 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AON",
+      "ticket_score": "1.205945",
+      "market_score": "1.177496",
+      "catalyst_score": "0.008449",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.177 catalyst=0.008 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GOOGL",
+      "ticket_score": "1.191598",
+      "market_score": "1.116785",
+      "catalyst_score": "0.054813",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.117 catalyst=0.055 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AJG",
+      "ticket_score": "1.180826",
+      "market_score": "1.151306",
+      "catalyst_score": "0.009520",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.151 catalyst=0.010 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "ABBV",
+      "ticket_score": "1.168249",
+      "market_score": "1.149292",
+      "catalyst_score": "0.008957",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=1.149 catalyst=0.009 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "VRTX",
+      "ticket_score": "1.165420",
+      "market_score": "1.145420",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.145 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "PODD",
+      "ticket_score": "1.163537",
+      "market_score": "1.097937",
+      "catalyst_score": "0.045600",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.098 catalyst=0.046 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "KMB",
+      "ticket_score": "1.158646",
+      "market_score": "1.129323",
+      "catalyst_score": "0.009323",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.129 catalyst=0.009 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "WELL",
+      "ticket_score": "1.157178",
+      "market_score": "1.109231",
+      "catalyst_score": "0.027946",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.109 catalyst=0.028 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "MA",
+      "ticket_score": "1.153678",
+      "market_score": "1.123856",
+      "catalyst_score": "0.009822",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.124 catalyst=0.010 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AAPL",
+      "ticket_score": "1.083517",
+      "market_score": "1.011157",
+      "catalyst_score": "0.052360",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.011 catalyst=0.052 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AAPL",
+      "ticket_score": "1.083517",
+      "market_score": "1.011157",
+      "catalyst_score": "0.052360",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.011 catalyst=0.052 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AAPL",
+      "ticket_score": "1.075673",
+      "market_score": "1.003313",
+      "catalyst_score": "0.052360",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.003 catalyst=0.052 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "GOOGL",
+      "ticket_score": "0.852779",
+      "market_score": "0.777966",
+      "catalyst_score": "0.054813",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.778 catalyst=0.055 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "GOOGL",
+      "ticket_score": "0.852779",
+      "market_score": "0.777966",
+      "catalyst_score": "0.054813",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.778 catalyst=0.055 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.759143",
+      "market_score": "0.695580",
+      "catalyst_score": "0.043563",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.696 catalyst=0.044 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.758227",
+      "market_score": "0.693224",
+      "catalyst_score": "0.045003",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.693 catalyst=0.045 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.753038",
+      "market_score": "0.688035",
+      "catalyst_score": "0.045003",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.688 catalyst=0.045 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.742050",
+      "market_score": "0.686307",
+      "catalyst_score": "0.035743",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.686 catalyst=0.036 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.739201",
+      "market_score": "0.683458",
+      "catalyst_score": "0.035743",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.683 catalyst=0.036 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MSFT",
+      "ticket_score": "0.652892",
+      "market_score": "0.581371",
+      "catalyst_score": "0.051521",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.581 catalyst=0.052 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "MSFT",
+      "ticket_score": "0.623000",
+      "market_score": "0.551478",
+      "catalyst_score": "0.051521",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.551 catalyst=0.052 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "MSFT",
+      "ticket_score": "0.623000",
+      "market_score": "0.551478",
+      "catalyst_score": "0.051521",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.551 catalyst=0.052 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.620775",
+      "market_score": "0.555772",
+      "catalyst_score": "0.045003",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.556 catalyst=0.045 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.620775",
+      "market_score": "0.555772",
+      "catalyst_score": "0.045003",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.556 catalyst=0.045 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.620446",
+      "market_score": "0.484955",
+      "catalyst_score": "0.115491",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.485 catalyst=0.115 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.618482",
+      "market_score": "0.482991",
+      "catalyst_score": "0.115491",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.483 catalyst=0.115 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.588010",
+      "market_score": "0.471829",
+      "catalyst_score": "0.096181",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.472 catalyst=0.096 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.587107",
+      "market_score": "0.472336",
+      "catalyst_score": "0.094771",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.472 catalyst=0.095 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.583454",
+      "market_score": "0.467273",
+      "catalyst_score": "0.096181",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.467 catalyst=0.096 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.574733",
+      "market_score": "0.429470",
+      "catalyst_score": "0.125262",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.429 catalyst=0.125 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.573226",
+      "market_score": "0.428053",
+      "catalyst_score": "0.125172",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.428 catalyst=0.125 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.572070",
+      "market_score": "0.426897",
+      "catalyst_score": "0.125172",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.427 catalyst=0.125 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.484182",
+      "market_score": "0.419179",
+      "catalyst_score": "0.045003",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.419 catalyst=0.045 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.475457",
+      "market_score": "0.396045",
+      "catalyst_score": "0.059412",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.396 catalyst=0.059 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.423324",
+      "market_score": "0.343912",
+      "catalyst_score": "0.059412",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.344 catalyst=0.059 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "CMG",
+      "stock_name": "CMG",
+      "final_score": "1.2458",
+      "market_score": "1.1801",
+      "catalyst_score": "0.0457",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.180075,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.045719,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.180 catalyst=0.046 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "JNJ",
+      "stock_name": "JNJ",
+      "final_score": "1.2408",
+      "market_score": "1.1929",
+      "catalyst_score": "0.0279",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.192946,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.027882,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.193 catalyst=0.028 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AON",
+      "stock_name": "AON",
+      "final_score": "1.2059",
+      "market_score": "1.1775",
+      "catalyst_score": "0.0084",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.177496,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.008449,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.177 catalyst=0.008 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GOOGL",
+      "stock_name": "GOOGL",
+      "final_score": "1.1916",
+      "market_score": "1.1168",
+      "catalyst_score": "0.0548",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.116785,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.054813,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.117 catalyst=0.055 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AJG",
+      "stock_name": "AJG",
+      "final_score": "1.1808",
+      "market_score": "1.1513",
+      "catalyst_score": "0.0095",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.151306,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.00952,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.151 catalyst=0.010 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "ABBV",
+      "stock_name": "ABBV",
+      "final_score": "1.1682",
+      "market_score": "1.1493",
+      "catalyst_score": "0.0090",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.149292,
+        "risk_verdict": "ELEVATED",
+        "catalyst_score": 0.008957,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "scores: market=1.149 catalyst=0.009 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "VRTX",
+      "stock_name": "VRTX",
+      "final_score": "1.1654",
+      "market_score": "1.1454",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.14542,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.145 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "PODD",
+      "stock_name": "PODD",
+      "final_score": "1.1635",
+      "market_score": "1.0979",
+      "catalyst_score": "0.0456",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.097937,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0456,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.098 catalyst=0.046 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "KMB",
+      "stock_name": "KMB",
+      "final_score": "1.1586",
+      "market_score": "1.1293",
+      "catalyst_score": "0.0093",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.129323,
+        "risk_verdict": "ELEVATED",
+        "catalyst_score": 0.009323,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.129 catalyst=0.009 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "WELL",
+      "stock_name": "WELL",
+      "final_score": "1.1572",
+      "market_score": "1.1092",
+      "catalyst_score": "0.0279",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.109231,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.027946,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.109 catalyst=0.028 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "returns": {
+    "AAPL": {
+      "symbol": "AAPL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "AJG": {
+      "symbol": "AJG",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MSFT": {
+      "symbol": "MSFT",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "WELL": {
+      "symbol": "WELL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "AMD": {
+      "symbol": "AMD",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "AON": {
+      "symbol": "AON",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "PODD": {
+      "symbol": "PODD",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MA": {
+      "symbol": "MA",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "GOOGL": {
+      "symbol": "GOOGL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "KMB": {
+      "symbol": "KMB",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "VRTX": {
+      "symbol": "VRTX",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "JNJ": {
+      "symbol": "JNJ",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "ABBV": {
+      "symbol": "ABBV",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "CMG": {
+      "symbol": "CMG",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 37,
+  "top10_count": 10
+}

@@ -1,0 +1,344 @@
+{
+  "trade_date": "2026-07-07",
+  "exported_at": "2026-07-25T03:08:31.328072",
+  "tickets": [
+    {
+      "symbol": "FTNT",
+      "ticket_score": "1.256036",
+      "market_score": "1.131645",
+      "catalyst_score": "0.104391",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.132 catalyst=0.104 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "FTNT",
+      "ticket_score": "1.239021",
+      "market_score": "1.124630",
+      "catalyst_score": "0.104391",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=1.125 catalyst=0.104 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "FTNT",
+      "ticket_score": "1.237513",
+      "market_score": "1.123122",
+      "catalyst_score": "0.104391",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=1.123 catalyst=0.104 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "FTNT",
+      "ticket_score": "1.237166",
+      "market_score": "1.122775",
+      "catalyst_score": "0.104391",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=1.123 catalyst=0.104 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "1.212626",
+      "market_score": "1.144763",
+      "catalyst_score": "0.047863",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.145 catalyst=0.048 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "AXON",
+      "ticket_score": "1.189770",
+      "market_score": "1.134700",
+      "catalyst_score": "0.035070",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.135 catalyst=0.035 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AXON",
+      "ticket_score": "1.171820",
+      "market_score": "1.116750",
+      "catalyst_score": "0.035070",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.117 catalyst=0.035 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AXON",
+      "ticket_score": "1.171610",
+      "market_score": "1.116540",
+      "catalyst_score": "0.035070",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.117 catalyst=0.035 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CRWD",
+      "ticket_score": "1.170151",
+      "market_score": "1.120758",
+      "catalyst_score": "0.039392",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=1.121 catalyst=0.039 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AXON",
+      "ticket_score": "1.169747",
+      "market_score": "1.114677",
+      "catalyst_score": "0.035070",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.115 catalyst=0.035 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CRWD",
+      "ticket_score": "1.165124",
+      "market_score": "1.105731",
+      "catalyst_score": "0.039392",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.106 catalyst=0.039 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "CRWD",
+      "ticket_score": "1.163987",
+      "market_score": "1.104595",
+      "catalyst_score": "0.039392",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.105 catalyst=0.039 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "MELI",
+      "ticket_score": "1.159872",
+      "market_score": "1.086691",
+      "catalyst_score": "0.053181",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.087 catalyst=0.053 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CRWD",
+      "ticket_score": "1.159117",
+      "market_score": "1.099725",
+      "catalyst_score": "0.039392",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.100 catalyst=0.039 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "MELI",
+      "ticket_score": "1.154908",
+      "market_score": "1.081727",
+      "catalyst_score": "0.053181",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.082 catalyst=0.053 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MELI",
+      "ticket_score": "1.147536",
+      "market_score": "1.074355",
+      "catalyst_score": "0.053181",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.074 catalyst=0.053 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MELI",
+      "ticket_score": "1.146236",
+      "market_score": "1.073055",
+      "catalyst_score": "0.053181",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.073 catalyst=0.053 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "1.137283",
+      "market_score": "1.063605",
+      "catalyst_score": "0.053678",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.064 catalyst=0.054 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "1.132873",
+      "market_score": "1.059194",
+      "catalyst_score": "0.053678",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.059 catalyst=0.054 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "1.127066",
+      "market_score": "1.053388",
+      "catalyst_score": "0.053678",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.053 catalyst=0.054 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "FTNT",
+      "stock_name": "FTNT",
+      "final_score": "1.2560",
+      "market_score": "1.1316",
+      "catalyst_score": "0.1044",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.131645,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.104391,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.132 catalyst=0.104 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AMD",
+      "stock_name": "AMD",
+      "final_score": "1.2126",
+      "market_score": "1.1448",
+      "catalyst_score": "0.0479",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.144763,
+        "risk_verdict": "ELEVATED",
+        "catalyst_score": 0.047863,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.145 catalyst=0.048 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "AXON",
+      "stock_name": "AXON",
+      "final_score": "1.1898",
+      "market_score": "1.1347",
+      "catalyst_score": "0.0351",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.1347,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.03507,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.135 catalyst=0.035 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CRWD",
+      "stock_name": "CRWD",
+      "final_score": "1.1702",
+      "market_score": "1.1208",
+      "catalyst_score": "0.0394",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.120758,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.039392,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "scores: market=1.121 catalyst=0.039 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "MELI",
+      "stock_name": "MELI",
+      "final_score": "1.1599",
+      "market_score": "1.0867",
+      "catalyst_score": "0.0532",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.086691,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.053181,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.087 catalyst=0.053 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "TSLA",
+      "stock_name": "TSLA",
+      "final_score": "1.1329",
+      "market_score": "1.0592",
+      "catalyst_score": "0.0537",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.059194,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.053678,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.059 catalyst=0.054 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "returns": {
+    "AXON": {
+      "symbol": "AXON",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "CRWD": {
+      "symbol": "CRWD",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "AMD": {
+      "symbol": "AMD",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MELI": {
+      "symbol": "MELI",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "FTNT": {
+      "symbol": "FTNT",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 20,
+  "top10_count": 6
+}

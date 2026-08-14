@@ -1,0 +1,62 @@
+{
+  "trade_date": "2026-08-03",
+  "exported_at": "2026-08-14T20:23:18.954083",
+  "tickets": [
+    {
+      "symbol": "MSFT",
+      "ticket_score": "0.891396",
+      "market_score": "0.754111",
+      "catalyst_score": "0.256336",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.754 catalyst=0.256 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "HII",
+      "ticket_score": "0.875078",
+      "market_score": "0.726949",
+      "catalyst_score": "0.223131",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.727 catalyst=0.223 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMZN",
+      "ticket_score": "0.772547",
+      "market_score": "0.680142",
+      "catalyst_score": "0.161099",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.680 catalyst=0.161 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "top10": [],
+  "returns": {
+    "AMZN": {
+      "symbol": "AMZN",
+      "forward_1d": "0.021504",
+      "forward_3d": "0.002504",
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "HII": {
+      "symbol": "HII",
+      "forward_1d": "-0.010384",
+      "forward_3d": "-0.014367",
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MSFT": {
+      "symbol": "MSFT",
+      "forward_1d": "0.060445",
+      "forward_3d": "0.075615",
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 3,
+  "top10_count": 0
+}

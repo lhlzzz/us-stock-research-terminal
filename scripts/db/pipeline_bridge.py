@@ -105,6 +105,7 @@ def save_pipeline_to_db(
     )
 
     counts = {"tickets": 0, "forward_tracking": 0, "runtime_decisions": 0}
+    ticket_ids: dict[tuple[str, str], int] = {}
 
     # Save research run
     run = create_research_run(
@@ -165,7 +166,7 @@ def save_pipeline_to_db(
                 entry_parts.append(f"risk: {risk_verdict_detail}")
             entry_reason = " | ".join(entry_parts)
 
-            create_ticket(
+            ticket = create_ticket(
                 db,
                 output_date=output_date,
                 symbol=row["symbol"],
@@ -191,9 +192,13 @@ def save_pipeline_to_db(
                 social_sentiment_score=row.get("social_sentiment_score"),
                 raw_market_score=row.get("raw_market_score"),
                 blended_score=row.get("blended_score"),
+                breakout_score=row.get("breakout_score"),
                 risk_penalty=row.get("risk_penalty"),
                 confirmation_score=row.get("confirmation_score"),
             )
+            as_of_date = row.get("as_of_date", output_date)
+            ticket_ids[(row["symbol"], str(as_of_date))] = ticket.id
+            ticket_ids.setdefault((row["symbol"], str(output_date)), ticket.id)
             counts["tickets"] += 1
         except Exception as e:
             print(f"  DB ticket save error for {row.get('symbol', 'UNKNOWN')}: {e}")
@@ -202,6 +207,12 @@ def save_pipeline_to_db(
     for ft in forward_tracking_rows:
         try:
             track_key = ft.get("track_key") or f"{output_date}:{ft['symbol']}:{ft.get('horizon_days', '')}d"
+            as_of_date = ft.get("as_of_date", output_date)
+            ticket_id = ft.get("ticket_id")
+            if ticket_id is None:
+                ticket_id = ticket_ids.get((ft["symbol"], str(as_of_date)))
+            if ticket_id is None:
+                ticket_id = ticket_ids.get((ft["symbol"], str(output_date)))
             upsert_forward_tracking(
                 db,
                 track_key=track_key,
@@ -212,6 +223,7 @@ def save_pipeline_to_db(
                 due_date=ft.get("due_date"),
                 as_of_close=ft.get("as_of_close"),
                 check_status="pending",
+                ticket_id=ticket_id,
             )
             counts["forward_tracking"] += 1
         except Exception as e:
@@ -279,10 +291,37 @@ def save_pipeline_to_db(
                     dollar_volume_20d=row.get("median_dollar_volume_20d"),
                     market_score=row.get("market_score"),
                     blended_score=row.get("blended_score"),
+                    theme_strength=row.get("theme_strength"),
+                    announcement_catalyst=row.get("announcement_catalyst"),
                     regime=regime,
                 )
         except Exception as e:
             print(f"  DB factor_snapshot save error for {row.get('symbol', 'UNKNOWN')}: {e}")
+
+    # Save signals for top candidates
+    SIGNAL_FIELDS = [
+        "market_score", "catalyst_score", "ticket_score",
+        "prior_20d_momentum", "five_day_acceleration",
+        "relative_strength_vs_equal_weight", "volume_weighted_momentum",
+        "volume_confirmation_ratio", "closing_strength_5d",
+        "rsi_14", "momentum_quality", "breakout_score", "reversal_quality",
+        "theme_strength", "announcement_catalyst",
+    ]
+    for row in top_candidates:
+        try:
+            row = normalize_ticket(row)
+            as_of = row.get("as_of_date")
+            if not as_of:
+                continue
+            trade_date = date.fromisoformat(as_of) if isinstance(as_of, str) else as_of
+            symbol = row["symbol"]
+            for signal_key in SIGNAL_FIELDS:
+                signal_value = row.get(signal_key)
+                if signal_value is not None:
+                    from scripts.db.crud import upsert_signal
+                    upsert_signal(db, trade_date, symbol, signal_key, float(signal_value))
+        except Exception as e:
+            print(f"  DB signal save error for {row.get('symbol', 'UNKNOWN')}: {e}")
 
     db.commit()
     return counts

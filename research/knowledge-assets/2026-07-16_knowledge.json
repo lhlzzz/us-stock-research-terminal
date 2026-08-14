@@ -1,0 +1,332 @@
+{
+  "trade_date": "2026-07-16",
+  "exported_at": "2026-07-25T03:08:34.428778",
+  "tickets": [
+    {
+      "symbol": "DE",
+      "ticket_score": "0.509409",
+      "market_score": "0.489409",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.489 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "WFC",
+      "ticket_score": "0.501042",
+      "market_score": "0.481042",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.481 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MDT",
+      "ticket_score": "0.496062",
+      "market_score": "0.476062",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.476 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "BIIB",
+      "ticket_score": "0.479268",
+      "market_score": "0.459268",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.459 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GOOG",
+      "ticket_score": "0.477868",
+      "market_score": "0.457868",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.458 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "VTRS",
+      "ticket_score": "0.475980",
+      "market_score": "0.455980",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.456 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "APP",
+      "ticket_score": "0.471189",
+      "market_score": "0.461189",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.461 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CL",
+      "ticket_score": "0.470062",
+      "market_score": "0.450062",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.450 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "ASML",
+      "ticket_score": "0.461751",
+      "market_score": "0.451751",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.452 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "HCA",
+      "ticket_score": "0.455184",
+      "market_score": "0.455184",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "WEAK",
+      "entry_reason": "scores: market=0.455 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "DE",
+      "stock_name": "DE",
+      "final_score": "0.5094",
+      "market_score": "0.4894",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.489409,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.489 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "WFC",
+      "stock_name": "WFC",
+      "final_score": "0.5010",
+      "market_score": "0.4810",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.481042,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.481 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MDT",
+      "stock_name": "MDT",
+      "final_score": "0.4961",
+      "market_score": "0.4761",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.476062,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.476 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "BIIB",
+      "stock_name": "BIIB",
+      "final_score": "0.4793",
+      "market_score": "0.4593",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.459268,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.459 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GOOG",
+      "stock_name": "GOOG",
+      "final_score": "0.4779",
+      "market_score": "0.4579",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.457868,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.458 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "VTRS",
+      "stock_name": "VTRS",
+      "final_score": "0.4760",
+      "market_score": "0.4560",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.45598,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.456 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "APP",
+      "stock_name": "APP",
+      "final_score": "0.4712",
+      "market_score": "0.4612",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.461189,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "scores: market=0.461 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CL",
+      "stock_name": "CL",
+      "final_score": "0.4701",
+      "market_score": "0.4501",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.450062,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.450 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "ASML",
+      "stock_name": "ASML",
+      "final_score": "0.4618",
+      "market_score": "0.4518",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.451751,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "scores: market=0.452 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "HCA",
+      "stock_name": "HCA",
+      "final_score": "0.4552",
+      "market_score": "0.4552",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.455184,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "WEAK"
+      },
+      "selection_reason": "scores: market=0.455 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "returns": {
+    "ASML": {
+      "symbol": "ASML",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "CL": {
+      "symbol": "CL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "VTRS": {
+      "symbol": "VTRS",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "WFC": {
+      "symbol": "WFC",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "GOOG": {
+      "symbol": "GOOG",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "APP": {
+      "symbol": "APP",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "HCA": {
+      "symbol": "HCA",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "DE": {
+      "symbol": "DE",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MDT": {
+      "symbol": "MDT",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "BIIB": {
+      "symbol": "BIIB",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 10,
+  "top10_count": 10
+}

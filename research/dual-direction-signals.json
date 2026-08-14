@@ -1,0 +1,49 @@
+{
+  "date": "2026-07-30",
+  "generated_at": "2026-07-30T03:56:19.478833",
+  "bullish_count": 1,
+  "bearish_count": 6,
+  "signals": [
+    {
+      "symbol": "MSFT",
+      "direction": "LONG",
+      "entry_price": 390.9729919433594,
+      "ticket_score": 0.872946,
+      "market_score": 0.795489,
+      "catalyst_score": 0.057458,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "stop_loss_price": 371.42,
+      "take_profit_price": 430.07
+    },
+    {
+      "symbol": "NBIS",
+      "direction": "SHORT",
+      "entry_price": 148.49989318847656,
+      "week_change_pct": -32.8,
+      "month_change_pct": -43.14,
+      "bearish_score": 7.59,
+      "stop_loss_price": 155.92,
+      "take_profit_price": 133.65
+    },
+    {
+      "symbol": "AMD",
+      "direction": "SHORT",
+      "entry_price": 432.6000061035156,
+      "week_change_pct": -19.84,
+      "month_change_pct": -19.81,
+      "bearish_score": 3.97,
+      "stop_loss_price": 454.23,
+      "take_profit_price": 389.34
+    },
+    {
+      "symbol": "STX",
+      "direction": "SHORT",
+      "entry_price": 771.6649780273438,
+      "week_change_pct": -15.51,
+      "month_change_pct": -20.33,
+      "bearish_score": 3.58,
+      "stop_loss_price": 810.25,
+      "take_profit_price": 694.5
+    }
+  ]
+}

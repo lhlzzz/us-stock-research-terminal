@@ -187,6 +187,14 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
 
     db = SessionLocal()
     try:
+        from db.crud import link_unlinked_forward_tracking
+
+        linked = link_unlinked_forward_tracking(db)
+        if linked:
+            print(f"Linked {linked} legacy tracking rows to tickets")
+        attributed = _backfill_completed_attribution(db)
+        if attributed:
+            print(f"Attributed {attributed} completed tracking rows")
         target_dates = infer_target_dates(anchor_date, lookback_business_days)
         print(f"DB backfill for dates: {target_dates}")
 
@@ -196,7 +204,7 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
             "t.narrative_title, t.risk_verdict, t.quality_verdict, t.panel_verdict, "
             "t.market_score, t.catalyst_score "
             "FROM forward_tracking ft "
-            "LEFT JOIN tickets t ON ft.symbol = t.symbol AND ft.output_date = t.output_date "
+            "LEFT JOIN tickets t ON ft.ticket_id = t.id "
             "WHERE ft.check_status = 'pending' AND ft.due_date <= :max_date"
         ), {"max_date": max(target_dates)}).fetchall()
 
@@ -206,8 +214,16 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
             (row_id, track_key, symbol, as_of_date, horizon_days, due_date, as_of_close,
              narrative_title, risk_verdict, quality_verdict, panel_verdict,
              market_score, catalyst_score) = row
+
+            # Fetch as_of_close if missing
             if as_of_close is None:
-                continue
+                as_of_close = fetch_close_price(symbol, as_of_date)
+                if as_of_close is None:
+                    continue
+                # Update as_of_close in DB
+                db.execute(text(
+                    "UPDATE forward_tracking SET as_of_close = :close WHERE id = :id"
+                ), {"close": float(as_of_close), "id": row_id})
 
             price = fetch_close_price(symbol, due_date)
             if price is None:
@@ -217,7 +233,8 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
             ret = (price - as_of) / as_of if as_of else 0
 
             # 生成盈亏理由
-            loss_reason = _generate_return_reason(
+            outcome_classification = _return_classification(ret)
+            outcome_reason = _generate_return_reason(
                 symbol=symbol,
                 horizon_days=horizon_days,
                 forward_return=ret,
@@ -230,19 +247,26 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
                 market_score=float(market_score) if market_score else 0,
                 catalyst_score=float(catalyst_score) if catalyst_score else 0,
             )
-            loss_reason = _analyze_loss_context(
+            outcome_reason = _analyze_loss_context(
                 symbol=symbol,
                 as_of_date=as_of_date,
                 due_date=due_date,
                 stock_return=ret,
-                loss_reason=loss_reason,
+                loss_reason=outcome_reason,
             )
 
             db.execute(text(
                 "UPDATE forward_tracking SET due_close = :close, forward_return = :ret, "
                 "check_status = 'completed', completed_at = NOW(), "
-                "loss_reason = :reason WHERE id = :id"
-            ), {"close": price, "ret": ret, "reason": loss_reason, "id": row_id})
+                "loss_reason = :reason, outcome_classification = :classification, "
+                "outcome_reason = :reason WHERE id = :id"
+            ), {
+                "close": price,
+                "ret": ret,
+                "reason": outcome_reason,
+                "classification": outcome_classification,
+                "id": row_id,
+            })
             updated += 1
             direction = "profit" if ret > 0 else "LOSS" if ret < 0 else "flat"
             print(f"  {symbol} {horizon_days}d: {as_of:.2f} -> {price:.2f} ({ret:+.4f}) [{direction}]")
@@ -252,6 +276,57 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
         return updated
     finally:
         db.close()
+
+
+def _return_classification(forward_return: float) -> str:
+    if forward_return >= 0.03:
+        return "STRONG_WIN"
+    if forward_return > 0:
+        return "WIN"
+    if forward_return <= -0.03:
+        return "HEAVY_LOSS"
+    if forward_return < 0:
+        return "LOSS"
+    return "FLAT"
+
+
+def _backfill_completed_attribution(db) -> int:
+    """Fill missing outcome explanations without fabricating missing tickets."""
+    from sqlalchemy import text
+
+    result = db.execute(text("""
+        UPDATE forward_tracking ft
+           SET outcome_classification = CASE
+                   WHEN ft.forward_return >= 0.03 THEN 'STRONG_WIN'
+                   WHEN ft.forward_return > 0 THEN 'WIN'
+                   WHEN ft.forward_return <= -0.03 THEN 'HEAVY_LOSS'
+                   WHEN ft.forward_return < 0 THEN 'LOSS'
+                   ELSE 'FLAT'
+               END,
+               outcome_reason = COALESCE(
+                   ft.outcome_reason,
+                   ft.loss_reason,
+                   CONCAT(
+                       CASE
+                           WHEN ft.forward_return >= 0.03 THEN 'STRONG_WIN'
+                           WHEN ft.forward_return > 0 THEN 'WIN'
+                           WHEN ft.forward_return <= -0.03 THEN 'HEAVY_LOSS'
+                           WHEN ft.forward_return < 0 THEN 'LOSS'
+                           ELSE 'FLAT'
+                       END,
+                       ' ',
+                       ROUND((ft.forward_return * 100)::numeric, 2),
+                       '% | thesis: ',
+                       COALESCE(NULLIF(t.entry_reason, ''), 'unavailable')
+                   )
+               )
+          FROM tickets t
+         WHERE t.id = ft.ticket_id
+           AND ft.check_status = 'completed'
+           AND ft.forward_return IS NOT NULL
+    """))
+    db.commit()
+    return int(result.rowcount or 0)
 
 
 def _analyze_loss_context(

@@ -1,0 +1,310 @@
+{
+  "trade_date": "2026-07-21",
+  "exported_at": "2026-07-25T03:08:35.285968",
+  "tickets": [
+    {
+      "symbol": "PGR",
+      "ticket_score": "0.572175",
+      "market_score": "0.552175",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.552 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "MO",
+      "ticket_score": "0.571694",
+      "market_score": "0.571694",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "WEAK",
+      "entry_reason": "scores: market=0.572 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "FIX",
+      "ticket_score": "0.543650",
+      "market_score": "0.523650",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.524 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "ISRG",
+      "ticket_score": "0.535531",
+      "market_score": "0.515531",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.516 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "ABT",
+      "ticket_score": "0.517131",
+      "market_score": "0.507131",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.507 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AKAM",
+      "ticket_score": "0.464039",
+      "market_score": "0.444039",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.444 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "ISRG",
+      "ticket_score": "0.462832",
+      "market_score": "0.442832",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.443 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GOOG",
+      "ticket_score": "0.448258",
+      "market_score": "0.428258",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.428 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MSFT",
+      "ticket_score": "0.430690",
+      "market_score": "0.410690",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.411 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GOOGL",
+      "ticket_score": "0.429941",
+      "market_score": "0.409941",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.410 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "PGR",
+      "stock_name": "PGR",
+      "final_score": "0.5722",
+      "market_score": "0.5522",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.552175,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.552 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "MO",
+      "stock_name": "MO",
+      "final_score": "0.5717",
+      "market_score": "0.5717",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.571694,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "WEAK"
+      },
+      "selection_reason": "scores: market=0.572 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "FIX",
+      "stock_name": "FIX",
+      "final_score": "0.5437",
+      "market_score": "0.5237",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.52365,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.524 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "ABT",
+      "stock_name": "ABT",
+      "final_score": "0.5171",
+      "market_score": "0.5071",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.507131,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "scores: market=0.507 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AKAM",
+      "stock_name": "AKAM",
+      "final_score": "0.4640",
+      "market_score": "0.4440",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.444039,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.444 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "ISRG",
+      "stock_name": "ISRG",
+      "final_score": "0.4628",
+      "market_score": "0.4428",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.442832,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.443 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GOOG",
+      "stock_name": "GOOG",
+      "final_score": "0.4483",
+      "market_score": "0.4283",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.428258,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.428 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MSFT",
+      "stock_name": "MSFT",
+      "final_score": "0.4307",
+      "market_score": "0.4107",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.41069,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.411 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GOOGL",
+      "stock_name": "GOOGL",
+      "final_score": "0.4299",
+      "market_score": "0.4099",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.409941,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.410 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "returns": {
+    "GOOGL": {
+      "symbol": "GOOGL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "PGR": {
+      "symbol": "PGR",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MSFT": {
+      "symbol": "MSFT",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MO": {
+      "symbol": "MO",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "GOOG": {
+      "symbol": "GOOG",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "AKAM": {
+      "symbol": "AKAM",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "FIX": {
+      "symbol": "FIX",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "ISRG": {
+      "symbol": "ISRG",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "ABT": {
+      "symbol": "ABT",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 10,
+  "top10_count": 9
+}

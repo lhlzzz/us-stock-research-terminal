@@ -1,0 +1,78 @@
+{
+  "total_trades": 8,
+  "wins": 7,
+  "losses": 1,
+  "win_rate": 87.5,
+  "avg_return_pct": 3.62,
+  "avg_win_pct": 4.47,
+  "avg_loss_pct": -2.31,
+  "total_pnl": 43.65,
+  "initial_capital": 1000.0,
+  "final_equity": 1043.65,
+  "total_return_pct": 4.37,
+  "max_drawdown_pct": 0.0,
+  "sharpe_ratio": 7.94,
+  "avg_days_held": 1.9,
+  "profit_factor": 12.28,
+  "best_trade": 13.43,
+  "worst_trade": -2.31,
+  "by_symbol": {
+    "ALL": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 3.45,
+      "total_pnl": 3.53
+    },
+    "AMD": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 0.69,
+      "total_pnl": 0.92
+    },
+    "AXON": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 13.43,
+      "total_pnl": 26.85
+    },
+    "DLTR": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 3.87,
+      "total_pnl": 6.2
+    },
+    "EXPE": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 6.65,
+      "total_pnl": 5.45
+    },
+    "PANW": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 0.63,
+      "total_pnl": 1.31
+    },
+    "PGR": {
+      "trades": 1,
+      "win_rate": 100.0,
+      "avg_return": 2.55,
+      "total_pnl": 3.26
+    },
+    "TSLA": {
+      "trades": 1,
+      "win_rate": 0.0,
+      "avg_return": -2.31,
+      "total_pnl": -3.87
+    }
+  },
+  "config": {
+    "initial_capital": 1000.0,
+    "max_position_pct": 0.2,
+    "horizon": "3d",
+    "stop_loss": 0.08,
+    "take_profit": 0.15,
+    "max_concurrent": 5,
+    "start_date": "all"
+  }
+}

@@ -93,6 +93,7 @@ class Ticket(Base):
     social_sentiment_score = Column(Numeric(8, 6))
     raw_market_score = Column(Numeric(8, 6))
     blended_score = Column(Numeric(8, 6))
+    breakout_score = Column(Numeric(8, 6))
     risk_penalty = Column(Numeric(8, 6))
     confirmation_score = Column(Numeric(8, 6))
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
@@ -115,6 +116,8 @@ class ForwardTracking(Base):
     ticket_id = Column(Integer, ForeignKey("tickets.id"))
     # 亏损/收益分析
     loss_reason = Column(Text)
+    outcome_classification = Column(String(20))
+    outcome_reason = Column(Text)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
 
 
@@ -191,6 +194,8 @@ class FactorSnapshot(Base):
     market_score = Column(Numeric(8, 6))
     structured_score = Column(Numeric(8, 6))
     blended_score = Column(Numeric(8, 6))
+    theme_strength = Column(Numeric(8, 6))
+    announcement_catalyst = Column(Numeric(8, 6))
     regime = Column(String(20))
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     __table_args__ = (

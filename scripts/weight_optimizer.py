@@ -35,6 +35,7 @@ FACTORS = [
     "relative_strength", "volume_weighted_momentum",
     "closing_strength_5d", "volume_confirmation", "rsi_14",
     "momentum_quality", "breakout_score", "reversal_quality",
+    "theme_strength", "announcement_catalyst",
 ]
 
 
@@ -76,7 +77,7 @@ def compute_factor_ic(session, lookback_days: int = 60) -> dict[str, float]:
 
 
 def compute_optimal_weights(ic_scores: dict[str, float]) -> dict[str, float]:
-    """Convert IC scores to normalized weights."""
+    """Convert IC scores to normalized weights with minimum floor."""
     if not ic_scores:
         return DEFAULT_WEIGHTS.copy()
 
@@ -90,12 +91,28 @@ def compute_optimal_weights(ic_scores: dict[str, float]) -> dict[str, float]:
     if total == 0:
         return DEFAULT_WEIGHTS.copy()
 
-    weights = {}
+    # First pass: raw weights from IC
+    raw_weights = {}
     for factor in FACTORS:
         ic = valid_ic.get(factor, 0)
         abs_val = abs_ic.get(factor, 0)
         raw_weight = abs_val / total
-        weights[factor] = round(raw_weight * (1 if ic >= 0 else -1), 4)
+        raw_weights[factor] = raw_weight * (1 if ic >= 0 else -1)
+
+    # Apply minimum floor (5%) to avoid single-factor concentration
+    MIN_WEIGHT = 0.05
+    weights = {}
+    for factor in FACTORS:
+        w = raw_weights.get(factor, 0)
+        if abs(w) < MIN_WEIGHT and w != 0:
+            w = MIN_WEIGHT if w > 0 else -MIN_WEIGHT
+        weights[factor] = round(w, 4)
+
+    # Re-normalize to sum to 1.0
+    total_abs = sum(abs(v) for v in weights.values())
+    if total_abs > 0:
+        for factor in weights:
+            weights[factor] = round(weights[factor] / total_abs, 4)
 
     return weights
 
@@ -103,10 +120,27 @@ def compute_optimal_weights(ic_scores: dict[str, float]) -> dict[str, float]:
 def save_weights(weights: dict[str, float], ic_scores: dict[str, float]):
     """Save weights and IC scores to file."""
     WEIGHTS_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+    # Map database column names to pipeline expected names
+    COLUMN_MAPPING = {
+        "relative_strength": "relative_strength_vs_equal_weight",
+        "volume_confirmation": "volume_confirmation_ratio",
+    }
+
+    mapped_weights = {}
+    for k, v in weights.items():
+        mapped_key = COLUMN_MAPPING.get(k, k)
+        mapped_weights[mapped_key] = v
+
+    mapped_ic = {}
+    for k, v in ic_scores.items():
+        mapped_key = COLUMN_MAPPING.get(k, k)
+        mapped_ic[mapped_key] = v
+
     data = {
         "updated_at": date.today().isoformat(),
-        "weights": weights,
-        "ic_scores": ic_scores,
+        "weights": mapped_weights,
+        "ic_scores": mapped_ic,
         "source": "weekly_ic_analysis",
     }
     WEIGHTS_FILE.write_text(json.dumps(data, indent=2))
@@ -123,13 +157,12 @@ def load_weights() -> dict[str, float]:
     return DEFAULT_WEIGHTS.copy()
 
 
-def load_horizon_weights(horizon: int = 5) -> dict[str, float]:
+def load_horizon_weights(horizon: int = 3) -> dict[str, float]:
     """Load horizon-specific weights from file, fallback to general weights.
-    
+
     Different horizons have different optimal factors:
     - 1d: relative_strength dominant (IC=-0.708)
     - 3d: relative_strength + closing_strength
-    - 5d: volume_weighted_momentum + closing_strength
     - 10d: closing_strength dominant (IC=-0.419)
     """
     if WEIGHTS_FILE.exists():

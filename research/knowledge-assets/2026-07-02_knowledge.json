@@ -1,0 +1,382 @@
+{
+  "trade_date": "2026-07-02",
+  "exported_at": "2026-07-25T03:08:29.959839",
+  "tickets": [
+    {
+      "symbol": "PANW",
+      "ticket_score": "1.105353",
+      "market_score": "1.080760",
+      "catalyst_score": "0.004593",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.081 catalyst=0.005 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "PANW",
+      "ticket_score": "1.073455",
+      "market_score": "1.053455",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.053 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "PANW",
+      "ticket_score": "1.059421",
+      "market_score": "1.039421",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.039 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "1.044727",
+      "market_score": "1.024727",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.025 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "PANW",
+      "ticket_score": "1.021905",
+      "market_score": "1.001905",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=1.002 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.964326",
+      "market_score": "0.944326",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.944 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.886683",
+      "market_score": "0.866683",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.867 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.881205",
+      "market_score": "0.861205",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.861 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.812155",
+      "market_score": "0.792155",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.792 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.804852",
+      "market_score": "0.784852",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.785 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.803372",
+      "market_score": "0.783372",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.783 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.741947",
+      "market_score": "0.721947",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.722 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.721786",
+      "market_score": "0.701786",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.702 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.718459",
+      "market_score": "0.691443",
+      "catalyst_score": "0.007016",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.691 catalyst=0.007 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "ticket_score": "0.709501",
+      "market_score": "0.689501",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.690 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.703686",
+      "market_score": "0.683686",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.684 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.686530",
+      "market_score": "0.666530",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.667 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.680319",
+      "market_score": "0.644896",
+      "catalyst_score": "0.015423",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.645 catalyst=0.015 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.663654",
+      "market_score": "0.643654",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.644 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.592812",
+      "market_score": "0.572812",
+      "catalyst_score": "0.000000",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.573 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.591821",
+      "market_score": "0.571821",
+      "catalyst_score": "0.000000",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.572 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.590990",
+      "market_score": "0.570990",
+      "catalyst_score": "0.000000",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.571 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.540747",
+      "market_score": "0.520747",
+      "catalyst_score": "0.000000",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.521 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.534678",
+      "market_score": "0.499935",
+      "catalyst_score": "0.014742",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.500 catalyst=0.015 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.497168",
+      "market_score": "0.477168",
+      "catalyst_score": "0.000000",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.477 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "CRM",
+      "ticket_score": "0.462878",
+      "market_score": "0.442878",
+      "catalyst_score": "0.000000",
+      "classification": "NEED_MORE_EVIDENCE",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.443 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "PANW",
+      "stock_name": "PANW",
+      "final_score": "1.0219",
+      "market_score": "1.0019",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 1.001905,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=1.002 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "TSLA",
+      "stock_name": "TSLA",
+      "final_score": "0.7095",
+      "market_score": "0.6895",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.689501,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.690 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "AMD",
+      "stock_name": "AMD",
+      "final_score": "0.6865",
+      "market_score": "0.6665",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.66653,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.667 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "NVDA",
+      "stock_name": "NVDA",
+      "final_score": "0.4972",
+      "market_score": "0.4772",
+      "catalyst_score": "0.0000",
+      "decision": "NEED_MORE_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.477168,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.477 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "CRM",
+      "stock_name": "CRM",
+      "final_score": "0.4629",
+      "market_score": "0.4429",
+      "catalyst_score": "0.0000",
+      "decision": "NEED_MORE_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.442878,
+        "risk_verdict": "ELEVATED",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.443 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    }
+  ],
+  "returns": {
+    "NVDA": {
+      "symbol": "NVDA",
+      "forward_1d": "-0.023090",
+      "forward_3d": "-0.014343",
+      "forward_5d": "0.027277",
+      "forward_10d": "0.053347"
+    },
+    "CRM": {
+      "symbol": "CRM",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "forward_1d": "-0.073815",
+      "forward_3d": "-0.023139",
+      "forward_5d": "-0.073345",
+      "forward_10d": "-0.066243"
+    },
+    "PANW": {
+      "symbol": "PANW",
+      "forward_1d": "-0.015285",
+      "forward_3d": "0.006261",
+      "forward_5d": "-0.095911",
+      "forward_10d": "0.001466"
+    },
+    "AMD": {
+      "symbol": "AMD",
+      "forward_1d": "-0.059659",
+      "forward_3d": "0.006855",
+      "forward_5d": "-0.059195",
+      "forward_10d": "-0.041558"
+    }
+  },
+  "ticket_count": 26,
+  "top10_count": 5
+}

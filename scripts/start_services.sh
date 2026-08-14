@@ -1,6 +1,6 @@
 #!/bin/bash
 # xiaomei infrastructure startup
-# Portfolio coexistence: PostgreSQL on 5433 (xiaogu owns 5432).
+# Portfolio coexistence: PostgreSQL on 5432 (xiaogu owns 5432).
 # Prefer docker-fallback xiaomei-db; Redis still native 6379.
 
 set -e
@@ -9,8 +9,8 @@ cd "$ROOT"
 
 echo "=== xiaomei infrastructure startup ==="
 
-DB_URL="${DATABASE_URL:-postgresql://xiaomei:xiaomei2026@localhost:5433/xiaomei}"
-DB_PORT=5433
+DB_URL="${DATABASE_URL:-postgresql://xiaomei:xiaomei2026@localhost:5432/xiaomei}"
+DB_PORT=5432
 
 if pg_isready -h 127.0.0.1 -p "$DB_PORT" -q 2>/dev/null; then
     echo "PostgreSQL: already accepting on $DB_PORT"

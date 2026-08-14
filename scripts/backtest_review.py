@@ -115,7 +115,7 @@ def compute_feedback(df: pd.DataFrame) -> dict:
             }
 
     d3 = feedback["by_horizon"].get("3d", {})
-    d5 = feedback["by_horizon"].get("5d", {})
+    d10 = feedback["by_horizon"].get("10d", {})
 
     if d3.get("count", 0) >= 3:
         d3_avg = d3["avg_return"]
@@ -132,9 +132,9 @@ def compute_feedback(df: pd.DataFrame) -> dict:
                 f"3d avg return {d3_avg:+.2%} is positive; loosening exhaustion threshold to {new_threshold}"
             )
 
-    if d5.get("count", 0) >= 3:
-        d5_avg = d5["avg_return"]
-        if d5_avg < -0.03:
+    if d10.get("count", 0) >= 3:
+        d10_avg = d10["avg_return"]
+        if d10_avg < -0.03:
             feedback["adjusted_scoring_weights"] = {
                 "prior_20d_momentum": 0.30,
                 "five_day_acceleration": 0.15,
@@ -142,7 +142,7 @@ def compute_feedback(df: pd.DataFrame) -> dict:
                 "relative_strength_vs_equal_weight": 0.30,
             }
             feedback["risk_insights"].append(
-                f"5d avg return {d5_avg:+.2%} negative; shifting weight from acceleration to relative_strength"
+                f"10d avg return {d10_avg:+.2%} negative; shifting weight from acceleration to relative_strength"
             )
 
     if feedback["total_completed"] >= 5:

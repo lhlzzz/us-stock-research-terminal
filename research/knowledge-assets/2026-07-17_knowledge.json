@@ -1,0 +1,172 @@
+{
+  "trade_date": "2026-07-17",
+  "exported_at": "2026-07-25T03:08:34.999835",
+  "tickets": [
+    {
+      "symbol": "GEHC",
+      "ticket_score": "0.512215",
+      "market_score": "0.492215",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.492 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CMCSA",
+      "ticket_score": "0.480597",
+      "market_score": "0.460597",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.461 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AWK",
+      "ticket_score": "0.468295",
+      "market_score": "0.448295",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.448 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "BIIB",
+      "ticket_score": "0.462051",
+      "market_score": "0.442051",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.442 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MCK",
+      "ticket_score": "0.443861",
+      "market_score": "0.443861",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "WEAK",
+      "entry_reason": "scores: market=0.444 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "GEHC",
+      "stock_name": "GEHC",
+      "final_score": "0.5122",
+      "market_score": "0.4922",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.492215,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.492 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "CMCSA",
+      "stock_name": "CMCSA",
+      "final_score": "0.4806",
+      "market_score": "0.4606",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.460597,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.461 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AWK",
+      "stock_name": "AWK",
+      "final_score": "0.4683",
+      "market_score": "0.4483",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.448295,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.448 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "BIIB",
+      "stock_name": "BIIB",
+      "final_score": "0.4621",
+      "market_score": "0.4421",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.442051,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.442 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "MCK",
+      "stock_name": "MCK",
+      "final_score": "0.4439",
+      "market_score": "0.4439",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.443861,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "WEAK"
+      },
+      "selection_reason": "scores: market=0.444 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "returns": {
+    "AWK": {
+      "symbol": "AWK",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "BIIB": {
+      "symbol": "BIIB",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "CMCSA": {
+      "symbol": "CMCSA",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "GEHC": {
+      "symbol": "GEHC",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MCK": {
+      "symbol": "MCK",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 5,
+  "top10_count": 5
+}

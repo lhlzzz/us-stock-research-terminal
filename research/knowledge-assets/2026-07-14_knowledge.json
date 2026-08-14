@@ -1,0 +1,172 @@
+{
+  "trade_date": "2026-07-14",
+  "exported_at": "2026-07-25T03:08:33.804552",
+  "tickets": [
+    {
+      "symbol": "MRNA",
+      "ticket_score": "0.070640",
+      "market_score": "0.070640",
+      "catalyst_score": "0.000000",
+      "classification": null,
+      "risk_verdict": "CLEAN",
+      "quality_verdict": null,
+      "entry_reason": null
+    },
+    {
+      "symbol": "TTWO",
+      "ticket_score": "0.045294",
+      "market_score": "0.045294",
+      "catalyst_score": "0.000000",
+      "classification": null,
+      "risk_verdict": "CLEAN",
+      "quality_verdict": null,
+      "entry_reason": null
+    },
+    {
+      "symbol": "FFIV",
+      "ticket_score": "0.041996",
+      "market_score": "0.041996",
+      "catalyst_score": "0.000000",
+      "classification": null,
+      "risk_verdict": "CLEAN",
+      "quality_verdict": null,
+      "entry_reason": null
+    },
+    {
+      "symbol": "TECH",
+      "ticket_score": "0.040052",
+      "market_score": "0.040052",
+      "catalyst_score": "0.000000",
+      "classification": null,
+      "risk_verdict": "CLEAN",
+      "quality_verdict": null,
+      "entry_reason": null
+    },
+    {
+      "symbol": "HOOD",
+      "ticket_score": "0.036650",
+      "market_score": "0.036650",
+      "catalyst_score": "0.000000",
+      "classification": null,
+      "risk_verdict": "CLEAN",
+      "quality_verdict": null,
+      "entry_reason": null
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "MRNA",
+      "stock_name": "MRNA",
+      "final_score": "0.0706",
+      "market_score": "0.0706",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE",
+      "candidate_entry_reason": {
+        "market_score": 0.07064,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": null
+      },
+      "selection_reason": null
+    },
+    {
+      "symbol": "TTWO",
+      "stock_name": "TTWO",
+      "final_score": "0.0453",
+      "market_score": "0.0453",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE",
+      "candidate_entry_reason": {
+        "market_score": 0.045294,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": null
+      },
+      "selection_reason": null
+    },
+    {
+      "symbol": "FFIV",
+      "stock_name": "FFIV",
+      "final_score": "0.0420",
+      "market_score": "0.0420",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE",
+      "candidate_entry_reason": {
+        "market_score": 0.041996,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": null
+      },
+      "selection_reason": null
+    },
+    {
+      "symbol": "TECH",
+      "stock_name": "TECH",
+      "final_score": "0.0401",
+      "market_score": "0.0401",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE",
+      "candidate_entry_reason": {
+        "market_score": 0.040052,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": null
+      },
+      "selection_reason": null
+    },
+    {
+      "symbol": "HOOD",
+      "stock_name": "HOOD",
+      "final_score": "0.0367",
+      "market_score": "0.0367",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE",
+      "candidate_entry_reason": {
+        "market_score": 0.03665,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": null
+      },
+      "selection_reason": null
+    }
+  ],
+  "returns": {
+    "FFIV": {
+      "symbol": "FFIV",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "HOOD": {
+      "symbol": "HOOD",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "MRNA": {
+      "symbol": "MRNA",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "TECH": {
+      "symbol": "TECH",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "TTWO": {
+      "symbol": "TTWO",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 5,
+  "top10_count": 5
+}

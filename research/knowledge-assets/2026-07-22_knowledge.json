@@ -1,0 +1,332 @@
+{
+  "trade_date": "2026-07-22",
+  "exported_at": "2026-07-25T03:08:35.763600",
+  "tickets": [
+    {
+      "symbol": "WFC",
+      "ticket_score": "0.589309",
+      "market_score": "0.569309",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.569 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "IR",
+      "ticket_score": "0.575247",
+      "market_score": "0.555247",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.555 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GS",
+      "ticket_score": "0.559133",
+      "market_score": "0.539133",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.539 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AVGO",
+      "ticket_score": "0.547437",
+      "market_score": "0.527437",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.527 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "UNH",
+      "ticket_score": "0.543668",
+      "market_score": "0.523668",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.524 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "ticket_score": "0.542995",
+      "market_score": "0.522995",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.523 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "EME",
+      "ticket_score": "0.542724",
+      "market_score": "0.522724",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.523 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NBIS",
+      "ticket_score": "0.529694",
+      "market_score": "0.509694",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.510 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "NFLX",
+      "ticket_score": "0.525705",
+      "market_score": "0.505705",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.506 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.494903",
+      "market_score": "0.484903",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.485 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "WFC",
+      "stock_name": "WFC",
+      "final_score": "0.5893",
+      "market_score": "0.5693",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.569309,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.569 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "IR",
+      "stock_name": "IR",
+      "final_score": "0.5752",
+      "market_score": "0.5552",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.555247,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.555 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "GS",
+      "stock_name": "GS",
+      "final_score": "0.5591",
+      "market_score": "0.5391",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.539133,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.539 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AVGO",
+      "stock_name": "AVGO",
+      "final_score": "0.5474",
+      "market_score": "0.5274",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.527437,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.527 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "UNH",
+      "stock_name": "UNH",
+      "final_score": "0.5437",
+      "market_score": "0.5237",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.523668,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.524 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMD",
+      "stock_name": "AMD",
+      "final_score": "0.5430",
+      "market_score": "0.5230",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.522995,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.523 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "EME",
+      "stock_name": "EME",
+      "final_score": "0.5427",
+      "market_score": "0.5227",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.522724,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.523 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "NBIS",
+      "stock_name": "NBIS",
+      "final_score": "0.5297",
+      "market_score": "0.5097",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.509694,
+        "risk_verdict": "ELEVATED",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.510 catalyst=0.000 | panel: MIXED | risk: ELEVATED"
+    },
+    {
+      "symbol": "NFLX",
+      "stock_name": "NFLX",
+      "final_score": "0.5257",
+      "market_score": "0.5057",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.505705,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.506 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "NVDA",
+      "stock_name": "NVDA",
+      "final_score": "0.4949",
+      "market_score": "0.4849",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.484903,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "scores: market=0.485 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "returns": {
+    "IR": {
+      "symbol": "IR",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "NBIS": {
+      "symbol": "NBIS",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "UNH": {
+      "symbol": "UNH",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "AMD": {
+      "symbol": "AMD",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "NFLX": {
+      "symbol": "NFLX",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "GS": {
+      "symbol": "GS",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "WFC": {
+      "symbol": "WFC",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "AVGO": {
+      "symbol": "AVGO",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "EME": {
+      "symbol": "EME",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 10,
+  "top10_count": 10
+}

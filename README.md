@@ -6,10 +6,10 @@ Research-only US stock ticket pipeline with candidate screening, risk gates, for
 
 ```bash
 pip install -r requirements.txt
-DEMO_MODE=1 uvicorn scripts.api.main:app --reload
 ```
 
-Open `http://127.0.0.1:8000/api/demo` for fixed sample tickets without credentials, data providers, or a database.
+Open `http://localhost:3000/dashboard/xiaomei` through the shared Hermes Financial OS gateway.
+The xiaomei workspace no longer starts an independent HTTP server.
 
 ## Architecture
 
@@ -40,4 +40,3 @@ python scripts/daily_scheduler.py --dry-run
 ## Limits
 
 The system is intentionally research-only. A public release must remove the tracked `.env`, review data artifacts, and attach a GitHub remote only after the workspace publication audit is cleared.
-

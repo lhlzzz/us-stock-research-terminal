@@ -88,15 +88,45 @@ def chunked(items: list[str], chunk_size: int) -> list[list[str]]:
     return [items[index : index + chunk_size] for index in range(0, len(items), chunk_size)]
 
 
+def _load_cached_universe() -> list[str] | None:
+    """Load symbols from cached universe file as fallback."""
+    candidates = [
+        project_root() / "data" / "universe_517.txt",
+        Path(__file__).resolve().parent.parent / "data" / "universe_517.txt",
+        Path("data/universe_517.txt"),
+    ]
+    for cached in candidates:
+        if cached.exists():
+            text = cached.read_text().strip()
+            symbols = [s for s in text.split() if s and s.isalpha()]
+            if len(symbols) > 50:
+                return symbols
+    return None
+
+
 def load_wikipedia_constituents(source_name: str) -> dict[str, Any]:
     source = WIKIPEDIA_INDEX_SOURCES[source_name]
-    response = requests.get(
-        source["url"],
-        headers={"User-Agent": "Mozilla/5.0"},
-        timeout=30,
-    )
-    response.raise_for_status()
-    tables = pd.read_html(io.StringIO(response.text))
+    try:
+        response = requests.get(
+            source["url"],
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=30,
+        )
+        response.raise_for_status()
+        tables = pd.read_html(io.StringIO(response.text))
+    except Exception:
+        cached = _load_cached_universe()
+        if cached:
+            return {
+                "source_name": source_name,
+                "source_url": "cached://data/universe_517.txt",
+                "table_index": 0,
+                "row_count": len(cached),
+                "symbol_column": "cached",
+                "symbols": cached,
+                "candidate_tables": [],
+            }
+        raise
 
     candidates: list[dict[str, Any]] = []
     for table_index, table in enumerate(tables):
@@ -121,6 +151,17 @@ def load_wikipedia_constituents(source_name: str) -> dict[str, Any]:
         )
 
     if not candidates:
+        cached = _load_cached_universe()
+        if cached:
+            return {
+                "source_name": source_name,
+                "source_url": "cached://data/universe_517.txt",
+                "table_index": 0,
+                "row_count": len(cached),
+                "symbol_column": "cached",
+                "symbols": cached,
+                "candidate_tables": [],
+            }
         raise RuntimeError(f"unable to locate constituents table for {source_name}")
 
     chosen = max(candidates, key=lambda item: item["row_count"])

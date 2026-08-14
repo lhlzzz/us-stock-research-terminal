@@ -1,0 +1,172 @@
+{
+  "trade_date": "2026-06-27",
+  "exported_at": "2026-07-25T03:08:08.511694",
+  "tickets": [
+    {
+      "symbol": "AXON",
+      "ticket_score": "1.521398",
+      "market_score": "1.115898",
+      "catalyst_score": "0.157500",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: Here is What to Know Beyond Why Axon Enterprise, Inc (AXON) is a Trending Stock | business: Does Axon’s Upgraded Outlook and AI Push Reshape The Bull Case For Axon Enterprise (AXON)? | scores: market=1.116 catalyst=0.158 | panel: BULLISH_CONSENSUS | risk: WATCH"
+    },
+    {
+      "symbol": "DLTR",
+      "ticket_score": "1.492100",
+      "market_score": "1.165850",
+      "catalyst_score": "0.056250",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: Dollar Tree Announces Secondary Block Trade by Selling Stockholders and Share Buyback | business: This might have contributed to the selloff today. Kraft, McDonald’s, Whirlpool CEOs all issue same dire warning about US consumers. | scores: market=1.166 catalyst=0.056 | panel: NEUTRAL | risk: WATCH"
+    },
+    {
+      "symbol": "PGR",
+      "ticket_score": "1.480935",
+      "market_score": "1.113435",
+      "catalyst_score": "0.127500",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: 4 P&C Insurers Stocks Poised to Weather 2026 Hurricane Season | business: How Investors May Respond To Progressive (PGR) Leadership Shuffle Paired With Strong Recent Underwriting Results | scores: market=1.113 catalyst=0.128 | panel: BULLISH_CONSENSUS | risk: CLEAN"
+    },
+    {
+      "symbol": "ALL",
+      "ticket_score": "1.474258",
+      "market_score": "1.096758",
+      "catalyst_score": "0.127500",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: Salesforce down 30% in 14 straight red days at 10.5x forward earnings. The software massacre has gone completely detached from fundamentals. What is anyone actually doing here? | business: 3 Top-Rated Stocks Wall Street Loves in June | scores: market=1.097 catalyst=0.128 | panel: BULLISH_CONSENSUS | risk: WATCH"
+    },
+    {
+      "symbol": "EXPE",
+      "ticket_score": "1.450322",
+      "market_score": "1.092822",
+      "catalyst_score": "0.127500",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "catalyst: Why Expedia (EXPE) Stock Is Up Today | business: Expedia Group Research Finds Fully Connected Hotels Eliminate Friction and Improve Revenue Performance | scores: market=1.093 catalyst=0.128 | panel: BULLISH_CONSENSUS | risk: WATCH"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "AXON",
+      "stock_name": "AXON",
+      "final_score": "1.5214",
+      "market_score": "1.1159",
+      "catalyst_score": "0.1575",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.115898,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.1575,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "catalyst: Here is What to Know Beyond Why Axon Enterprise, Inc (AXON) is a Trending Stock | business: Does Axon’s Upgraded Outlook and AI Push Reshape The Bull Case For Axon Enterprise (AXON)? | scores: market=1.116 catalyst=0.158 | panel: BULLISH_CONSENSUS | risk: WATCH"
+    },
+    {
+      "symbol": "DLTR",
+      "stock_name": "DLTR",
+      "final_score": "1.4921",
+      "market_score": "1.1659",
+      "catalyst_score": "0.0563",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.16585,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.05625,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "catalyst: Dollar Tree Announces Secondary Block Trade by Selling Stockholders and Share Buyback | business: This might have contributed to the selloff today. Kraft, McDonald’s, Whirlpool CEOs all issue same dire warning about US consumers. | scores: market=1.166 catalyst=0.056 | panel: NEUTRAL | risk: WATCH"
+    },
+    {
+      "symbol": "PGR",
+      "stock_name": "PGR",
+      "final_score": "1.4809",
+      "market_score": "1.1134",
+      "catalyst_score": "0.1275",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.113435,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.1275,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "catalyst: 4 P&C Insurers Stocks Poised to Weather 2026 Hurricane Season | business: How Investors May Respond To Progressive (PGR) Leadership Shuffle Paired With Strong Recent Underwriting Results | scores: market=1.113 catalyst=0.128 | panel: BULLISH_CONSENSUS | risk: CLEAN"
+    },
+    {
+      "symbol": "ALL",
+      "stock_name": "ALL",
+      "final_score": "1.4743",
+      "market_score": "1.0968",
+      "catalyst_score": "0.1275",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.096758,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.1275,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "catalyst: Salesforce down 30% in 14 straight red days at 10.5x forward earnings. The software massacre has gone completely detached from fundamentals. What is anyone actually doing here? | business: 3 Top-Rated Stocks Wall Street Loves in June | scores: market=1.097 catalyst=0.128 | panel: BULLISH_CONSENSUS | risk: WATCH"
+    },
+    {
+      "symbol": "EXPE",
+      "stock_name": "EXPE",
+      "final_score": "1.4503",
+      "market_score": "1.0928",
+      "catalyst_score": "0.1275",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 1.092822,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.1275,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "catalyst: Why Expedia (EXPE) Stock Is Up Today | business: Expedia Group Research Finds Fully Connected Hotels Eliminate Friction and Improve Revenue Performance | scores: market=1.093 catalyst=0.128 | panel: BULLISH_CONSENSUS | risk: WATCH"
+    }
+  ],
+  "returns": {
+    "ALL": {
+      "symbol": "ALL",
+      "forward_1d": "0.027461",
+      "forward_3d": "0.034521",
+      "forward_5d": "0.048446",
+      "forward_10d": "0.084499"
+    },
+    "AXON": {
+      "symbol": "AXON",
+      "forward_1d": "0.050986",
+      "forward_3d": "0.134261",
+      "forward_5d": "0.359724",
+      "forward_10d": "0.348683"
+    },
+    "DLTR": {
+      "symbol": "DLTR",
+      "forward_1d": "0.050926",
+      "forward_3d": "0.038745",
+      "forward_5d": "0.031173",
+      "forward_10d": "0.045681"
+    },
+    "EXPE": {
+      "symbol": "EXPE",
+      "forward_1d": "0.043475",
+      "forward_3d": "0.066507",
+      "forward_5d": "0.055748",
+      "forward_10d": "0.037298"
+    },
+    "PGR": {
+      "symbol": "PGR",
+      "forward_1d": "0.030830",
+      "forward_3d": "0.025471",
+      "forward_5d": "0.046349",
+      "forward_10d": "0.080542"
+    }
+  },
+  "ticket_count": 5,
+  "top10_count": 5
+}

@@ -1,0 +1,108 @@
+{
+  "trade_date": "2026-07-24",
+  "exported_at": "2026-07-25T03:08:36.314351",
+  "tickets": [
+    {
+      "symbol": "IR",
+      "ticket_score": "0.937505",
+      "market_score": "0.917505",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.918 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "WFC",
+      "ticket_score": "0.667351",
+      "market_score": "0.647351",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.647 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AAPL",
+      "ticket_score": "0.614209",
+      "market_score": "0.594209",
+      "catalyst_score": "0.000000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.594 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "IR",
+      "stock_name": "IR",
+      "final_score": "0.9375",
+      "market_score": "0.9175",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.917505,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.918 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "WFC",
+      "stock_name": "WFC",
+      "final_score": "0.6674",
+      "market_score": "0.6474",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.647351,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.647 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AAPL",
+      "stock_name": "AAPL",
+      "final_score": "0.6142",
+      "market_score": "0.5942",
+      "catalyst_score": "0.0000",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "market_score": 0.594209,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.594 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    }
+  ],
+  "returns": {
+    "AAPL": {
+      "symbol": "AAPL",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "IR": {
+      "symbol": "IR",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "WFC": {
+      "symbol": "WFC",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 3,
+  "top10_count": 3
+}

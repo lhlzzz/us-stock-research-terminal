@@ -1,72 +1,105 @@
 # STATE
 
-完成：
-- **全循环系统（Full Cycle）** — 2026-07-10
-  - `full_cycle.py`：出票→回填→因子回测→权重优化→记分板→退化检测→链路升级
-  - `candidate_factors.py`：10 个候选因子
-  - `backfill_kline_factors.py`：回填 43 个股票历史 kline + 候选因子
-  - `daily_loop.py` / `daily_scheduler.py`：全循环集成
+## 全量对齐完成 — 2026-07-24
 
-- **因子回测**（257 条记录，43 symbols * 10 dates）
-  - volume_confirmation: IC = +0.2375 (p<0.05) — 唯一显著正向因子
-  - momentum_quality: IC = -0.1283 (p<0.05) — 弱负向
-  - 之前反向动量效应在更大样本中消失
+### 新增模块（对齐 xiaogu 架构）
 
-- **IC 优化权重** — 2026-07-10
-  - volume_confirmation_ratio: 0.2375（主导）
-  - five_day_acceleration: 0.0978
-  - relative_strength_vs_equal_weight: -0.1225
-  - closing_strength_5d: -0.0823
-  - volume_weighted_momentum: -0.0439
-  - prior_20d_momentum: -0.0018
+**Phase 1: 数据库对齐（6张新表）**
+- `daily_candidates` - 全量候选池（400+行/天）
+- `scoring_config` - 可调参数（20个配置项）
+- `signal_effectiveness` - 每日信号分析快照
+- `signals` - 逐股原始信号快照
+- `scan_sessions` - 扫描器会话元数据
+- `pick_case_embeddings` - 神经向量案例（384维，HNSW）
 
-- **DataProvider 多源架构**
-- **DB ticket save error 修复**
-- **Scrapy 高性能采集器**
+**Phase 2: 神经向量升级**
+- `neural_vector_store.py` - sentence-transformers 384维
+- 模型: paraphrase-multilingual-MiniLM-L12-v2
+- HNSW cosine 索引，支持相似案例检索
+- Fallback: structured 64维（确定性哈希）
 
-当前位置：
-- **07-16 出票（新权重）**：DE, WFC, BIIB, ASML, HCA (Paper Review: 5)
-- **07-15 出票（分周期权重）**：MRNA, TTWO, FFIV, TECH, HOOD (Watchlist: 5)
-- **07-14 出票（分周期权重）**：MRNA, TTWO, FFIV, TECH, HOOD (Watchlist: 5)
-- **07-13 出票（新权重）**：CRM, CCI, CASY, ADBE, MSFT (Watchlist: 5)
-- **权重优化** — 2026-07-16（扩展因子集）
-  - five_day_acceleration: IC=+0.1937（最强正向因子）
-  - market_score: IC=-0.1746（负向因子）
-  - relative_strength: IC=-0.1605（负向因子）
-  - volume_weighted_momentum: IC=-0.1532（负向因子）
-  - momentum_quality: IC=-0.1524（负向因子）
-  - prior_20d_momentum: IC=-0.1238（负向因子）
-  - catalyst_score: IC=+0.098（正向因子）
-  - 新增因子：reversal_quality, rsi_14, momentum_quality, breakout_score, market_score, catalyst_score
-- **因子回测**（442 条记录）
-  - 7 个显著因子（p<0.05）
-  - five_day_acceleration 成为最强预测因子
-- **盈利 vs 亏损因子差异**
-  - volume_confirmation: 盈利 0.3574 vs 亏损 0.1937（p=0.0029）
-  - reversal_quality: 盈利 0.0116 vs 亏损 0.0060（p=0.0056）
-  - five_day_acceleration: 盈利 0.0033 vs 亏损 -0.0251（p=0.0312）
-- **回填完成**：30 行 pending 数据已回填
-- **记分板**：233 张已完成票，52.79% 胜率，-0.089% 平均收益
-- DB：本机 PostgreSQL 14（端口 5432）
-- Daily klines: 222,584 rows (43 symbols)
-- Factor snapshots: 464 rows
-- **数据源状态**：东财批量 API 可用（3472 只美股）
-- **Universe 扩展**：从 164 扩展到 3095 只（Russell 3000）
+**Phase 3: 知识资产导出（Obsidian 第二大脑）**
+- `knowledge_asset_export.py` - 主动写入 Obsidian
+- 输出: Summary JSON + Obsidian 笔记 + pgvector TOP10
+- 路径: `/mnt/d/obisidian/Obsidian/Project/美股/inbox/`
 
-文件清单：
-- scripts/full_cycle.py — 全循环编排器
-- scripts/candidate_factors.py — 候选因子计算
-- scripts/backfill_kline_factors.py — kline + 候选因子回填
-- scripts/daily_loop.py — 日循环编排器
-- scripts/daily_scheduler.py — 调度器
-- scripts/us_profit_ticket_pipeline.py — 主 pipeline
-- scripts/lifecycle_scoreboard.py — 记分板
-- scripts/meta_loop.py — 退化检测
-- scripts/weight_optimizer.py — 权重优化（支持分周期）
-- scripts/dynamic_horizon.py — 动态持仓周期
-- data/scoring_weights.json — IC 优化权重（含分周期权重）
-- data/horizon_weights.json — 分周期权重配置
+**Phase 4: 日闭环脚本 + 时区调度器**
+- `daily_pipeline.sh` - 8步单入口链
+- `xiaomei_scheduler.py` - 时区感知 APScheduler
+- 时间表: 05:00(美股收盘后) / 09:00(开盘前) / 20:00(信号分析)
 
-东财 API 状态：
+**Phase 5: API 层**
+- `xiaomei_api.py` - 兼容模块；对外访问统一由 `http://localhost:3000` 提供
+- 端点: /picks, /returns, /signals, /stats, /explain
+
+**Phase 6: 自进化 + 证据卡**
+- `xiaomei_self_evolve.py` - 有界参数调整（7个可调knob）
+- `xiaomei_evidence_card.py` - 紧凑决策证据卡
+
+### 时间线约束
+
+```
+美股收盘 = 北京时间 04:00（夏令时）
+出票必须在 04:00 之后
+回填收益也必须在 04:00 之后
+```
+
+### 当前状态
+
+- **数据库**: 24张表（14核心 + 4向量 + 2信号 + 4纸面模拟）
+- **神经向量**: sentence-transformers 384维，HNSW cosine
+- **知识资产**: Obsidian 第二大脑（主动写入）197条
+- **自进化**: 有界参数调整（7个可调knob）
+- **API**: 统一由 Financial OS 的 `http://localhost:3000/api/workspaces/xiaomei/overview` 提供（18个字段）
+- **调度器**: 时区感知（A股/美股分离）
+- **评分系统**: 双重过滤（门槛0.55 + top-k=3）
+- **Universe**: 3095只（Russell 3000）
+- **前端**: Financial OS 仪表盘全量真实数据（无硬编码）+ Standalone HTML
+
+### 07-27 出票
+
+| 代码 | 总分 | 市场分 | 催化分 | 分类 |
+|------|------|--------|--------|------|
+| AAPL | 0.975 | 0.858 | 0.107 | CANDIDATE_FOR_PAPER_REVIEW |
+| IR | 0.904 | 0.852 | 0.032 | CANDIDATE_FOR_PAPER_REVIEW |
+| MSFT | 0.803 | 0.730 | 0.053 | MARKET_WATCHLIST_NEEDS_EVIDENCE |
+| WFC | 0.790 | 0.700 | 0.069 | MARKET_WATCHLIST_NEEDS_EVIDENCE |
+
+### 因子权重（最新 07-27）
+
+- catalyst_score: IC=+0.1899（最强正向）→ 权重 0.3171
+- five_day_acceleration: IC=+0.1615（正向）→ 权重 0.2697
+- breakout_score: IC=+0.1311（正向）→ 权重 0.2189
+- reversal_quality: IC=+0.1163（正向）→ 权重 0.1942
+- prior_5d_momentum: IC=+0.1203（正向）→ 纳入优化
+
+### 记分板统计（08-02）
+
+- 已完成：881 张
+- 胜率：49.83%
+- 平均收益：-0.65%
+- 待回填：251 条（pending）
+
+### 文件清单
+
+```
+scripts/
+├── neural_vector_store.py       # 神经向量存储
+├── knowledge_asset_export.py    # 知识资产导出
+├── daily_pipeline.sh            # 日闭环脚本
+├── xiaomei_scheduler.py         # 时区感知调度器
+├── xiaomei_api.py               # FastAPI 服务
+├── xiaomei_self_evolve.py       # 有界自进化
+├── xiaomei_evidence_card.py     # 证据卡生成器
+├── us_profit_ticket_pipeline.py # 主 pipeline
+├── backfill_forward_tracking.py # 回填
+├── lifecycle_scoreboard.py      # 记分板
+├── signal_effectiveness.py      # 信号分析
+├── weight_optimizer.py          # 因子权重优化
+└── db/migrate_v2_alignment.sql  # v2 对齐迁移
+```
+
+### 东财 API 状态
+
 - kline: blocked（push2his 被封，用 akshare/yfinance fallback）
 - batch_quote: available（push2delay clist API，一次拉全部美股行情，~9s）

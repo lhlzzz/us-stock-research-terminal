@@ -1,440 +1,1384 @@
 {
-  "overall": {
-    "runtime_records": 0,
-    "tracking_rows": 424,
-    "completed_rows": 424,
-    "win_rate": 34.2,
-    "avg_forward_return": -0.145843,
-    "median_forward_return": 0.1592
+  "status": "OK",
+  "generated_at": "2026-08-14T20:20:20.320768",
+  "completed_only": false,
+  "runtime_records": 55,
+  "tracking_rows": 616,
+  "completed_rows": 160,
+  "win_rate": 0.55,
+  "avg_forward_return": 0.004747,
+  "by_output_date": [
+    {
+      "output_date": "2026-06-21-final-v2",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 5,
+      "market_watchlist_count": 0,
+      "best_watch_candidate": "IP",
+      "top_symbols": [
+        {
+          "symbol": "SW",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "GE",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "TECH",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "TER",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 15,
+      "avg_forward_return": -0.006855,
+      "win_rate": 0.333333
+    },
+    {
+      "output_date": "2026-06-21-final-v3",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 5,
+      "market_watchlist_count": 0,
+      "best_watch_candidate": "UAL",
+      "top_symbols": [
+        {
+          "symbol": "TECH",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "SW",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "TER",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "SWK",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 10,
+      "avg_forward_return": -0.012294,
+      "win_rate": 0.4
+    },
+    {
+      "output_date": "2026-06-23-final",
+      "final_classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "paper_review_count": 0,
+      "market_watchlist_count": 5,
+      "best_watch_candidate": "MRNA",
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "GE",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "TER",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "SW",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "STX",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 15,
+      "avg_forward_return": -0.008793,
+      "win_rate": 0.533333
+    },
+    {
+      "output_date": "2026-06-23-fixed",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 5,
+      "market_watchlist_count": 0,
+      "best_watch_candidate": "AAPL",
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "STX",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "GE",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "TECH",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "TER",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 15,
+      "avg_forward_return": 0.013682,
+      "win_rate": 0.6
+    },
+    {
+      "output_date": "2026-06-23-full",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 1,
+      "market_watchlist_count": 2,
+      "best_watch_candidate": "TER",
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "TER",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "SW",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 3
+        }
+      ],
+      "completed_rows": 9,
+      "avg_forward_return": 0.013058,
+      "win_rate": 0.555556
+    },
+    {
+      "output_date": "2026-06-23-latest",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 4,
+      "market_watchlist_count": 1,
+      "best_watch_candidate": "STX",
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "GE",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "TECH",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "STX",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "SWK",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 15,
+      "avg_forward_return": 0.040196,
+      "win_rate": 0.733333
+    },
+    {
+      "output_date": "2026-06-23-v2",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 2,
+      "market_watchlist_count": 3,
+      "best_watch_candidate": "STX",
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "STX",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "GE",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "TER",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "SW",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 15,
+      "avg_forward_return": -0.008793,
+      "win_rate": 0.533333
+    },
+    {
+      "output_date": "2026-06-23-v3",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 5,
+      "market_watchlist_count": 0,
+      "best_watch_candidate": "AAPL",
+      "top_symbols": [
+        {
+          "symbol": "STX",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "GE",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "TER",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "SW",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 15,
+      "avg_forward_return": -0.008793,
+      "win_rate": 0.533333
+    },
+    {
+      "output_date": "2026-06-24",
+      "final_classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "paper_review_count": 0,
+      "market_watchlist_count": 5,
+      "best_watch_candidate": "MRNA",
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "GE",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "STX",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "TER",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "SW",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 15,
+      "avg_forward_return": -0.008793,
+      "win_rate": 0.533333
+    },
+    {
+      "output_date": "2026-06-24-final",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 2,
+      "market_watchlist_count": 3,
+      "best_watch_candidate": "STX",
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "GE",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "STX",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "TER",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "SW",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 15,
+      "avg_forward_return": -0.008654,
+      "win_rate": 0.533333
+    },
+    {
+      "output_date": "2026-06-24-test2",
+      "final_classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "paper_review_count": 0,
+      "market_watchlist_count": 1,
+      "best_watch_candidate": "MRNA",
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 1
+        }
+      ],
+      "completed_rows": 3,
+      "avg_forward_return": 0.141461,
+      "win_rate": 1.0
+    },
+    {
+      "output_date": "2026-06-24-test3",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 1,
+      "market_watchlist_count": 0,
+      "best_watch_candidate": null,
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        }
+      ],
+      "completed_rows": 3,
+      "avg_forward_return": 0.141461,
+      "win_rate": 1.0
+    },
+    {
+      "output_date": "2026-06-24-v4",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 2,
+      "market_watchlist_count": 3,
+      "best_watch_candidate": "TER",
+      "top_symbols": [
+        {
+          "symbol": "MRNA",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 1
+        },
+        {
+          "symbol": "GE",
+          "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+          "lifecycle_stage": "paper_review_candidate",
+          "ticket_rank_runtime": 2
+        },
+        {
+          "symbol": "TER",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 3
+        },
+        {
+          "symbol": "STX",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 4
+        },
+        {
+          "symbol": "SW",
+          "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+          "lifecycle_stage": "market_watchlist",
+          "ticket_rank_runtime": 5
+        }
+      ],
+      "completed_rows": 15,
+      "avg_forward_return": -0.008793,
+      "win_rate": 0.533333
+    }
+  ],
+  "by_horizon": {
+    "10d": {
+      "count": 45,
+      "win_rate": 0.644444,
+      "avg_forward_return": 0.05216,
+      "median_forward_return": 0.005508
+    },
+    "1d": {
+      "count": 50,
+      "win_rate": 0.44,
+      "avg_forward_return": -0.017633,
+      "median_forward_return": 0.0
+    },
+    "3d": {
+      "count": 55,
+      "win_rate": 0.563636,
+      "avg_forward_return": -0.013493,
+      "median_forward_return": 0.018114
+    },
+    "5d": {
+      "count": 10,
+      "win_rate": 0.6,
+      "avg_forward_return": 0.003599,
+      "median_forward_return": 0.016137
+    }
   },
-  "by_horizon": [
+  "by_lifecycle_stage": {
+    "market_watchlist": {
+      "count": 69,
+      "win_rate": 0.391304,
+      "avg_forward_return": -0.035886
+    },
+    "paper_review_candidate": {
+      "count": 91,
+      "win_rate": 0.67033,
+      "avg_forward_return": 0.035556
+    }
+  },
+  "by_symbol": {
+    "GE": {
+      "count": 27,
+      "win_rate": 0.925926,
+      "avg_forward_return": 0.030412,
+      "best_output_date": "2026-06-21-final-v2"
+    },
+    "MRNA": {
+      "count": 38,
+      "win_rate": 0.868421,
+      "avg_forward_return": 0.117871,
+      "best_output_date": "2026-06-21-final-v2"
+    },
+    "STX": {
+      "count": 24,
+      "win_rate": 0.0,
+      "avg_forward_return": -0.117338,
+      "best_output_date": "2026-06-23-final"
+    },
+    "SW": {
+      "count": 26,
+      "win_rate": 0.692308,
+      "avg_forward_return": 0.006974,
+      "best_output_date": "2026-06-21-final-v2"
+    },
+    "SWK": {
+      "count": 5,
+      "win_rate": 0.6,
+      "avg_forward_return": 0.016383,
+      "best_output_date": "2026-06-21-final-v3"
+    },
+    "TECH": {
+      "count": 11,
+      "win_rate": 0.818182,
+      "avg_forward_return": 0.060519,
+      "best_output_date": "2026-06-21-final-v2"
+    },
+    "TER": {
+      "count": 29,
+      "win_rate": 0.0,
+      "avg_forward_return": -0.091505,
+      "best_output_date": "2026-06-21-final-v2"
+    }
+  },
+  "by_metrics_summary": [
     {
-      "horizon": "1d",
-      "count": 106,
-      "win_rate": 41.51,
-      "avg_forward_return": -1.255383,
-      "median_forward_return": 0.03945
+      "output_date": "2026-06-09",
+      "run_name": "historical-replay-baseline",
+      "run_group": "historical-replay-baseline",
+      "run_category": "replay_baseline",
+      "task": null,
+      "data_mode": null,
+      "source_mode": null,
+      "regime": "active",
+      "regime_source": "rule_based_rebuild",
+      "final_classification_metrics": "REJECTED_FOR_INSTABILITY",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-09.json"
     },
     {
-      "horizon": "3d",
-      "count": 106,
-      "win_rate": 34.91,
-      "avg_forward_return": -0.635004,
-      "median_forward_return": -0.2124
+      "output_date": "2026-06-09",
+      "run_name": "universe-expansion-replay",
+      "run_group": "universe-expansion-replay",
+      "run_category": "replay_expansion",
+      "task": null,
+      "data_mode": null,
+      "source_mode": null,
+      "regime": "active",
+      "regime_source": "rule_based_rebuild",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-09.json"
     },
     {
-      "horizon": "5d",
-      "count": 106,
-      "win_rate": 38.68,
-      "avg_forward_return": 0.308256,
-      "median_forward_return": 0.4514
+      "output_date": "2026-06-10",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": null,
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-10.json"
     },
     {
-      "horizon": "10d",
-      "count": 106,
-      "win_rate": 21.7,
-      "avg_forward_return": 2.434421,
-      "median_forward_return": 1.26895
+      "output_date": "2026-06-10-open",
+      "run_name": "profit-ticket-pipeline-opening-guard-smoke",
+      "run_group": "profit-ticket-pipeline-opening-guard-smoke",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": null,
+      "source_mode": "cached_local",
+      "regime": "unsupported",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-10-open.json"
+    },
+    {
+      "output_date": "2026-06-10-open",
+      "run_name": "profit-ticket-pipeline-opening",
+      "run_group": "profit-ticket-pipeline-opening",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": null,
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-10-open.json"
+    },
+    {
+      "output_date": "2026-06-11-open",
+      "run_name": "profit-ticket-pipeline-opening",
+      "run_group": "profit-ticket-pipeline-opening",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": null,
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-11-open.json"
+    },
+    {
+      "output_date": "2026-06-11-open-v2",
+      "run_name": "profit-ticket-pipeline-opening",
+      "run_group": "profit-ticket-pipeline-opening",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": null,
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-11-open-v2.json"
+    },
+    {
+      "output_date": "2026-06-11-research-test",
+      "run_name": "profit-ticket-pipeline-opening",
+      "run_group": "profit-ticket-pipeline-opening",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": null,
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-11-research-test.json"
+    },
+    {
+      "output_date": "2026-06-12-open",
+      "run_name": "profit-ticket-pipeline-opening",
+      "run_group": "profit-ticket-pipeline-opening",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": null,
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-12-open.json"
+    },
+    {
+      "output_date": "2026-06-13-realtime-test",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "realtime_intraday",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-13-realtime-test.json"
+    },
+    {
+      "output_date": "2026-06-14-yahoo-eastmoney-smoke",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-14-yahoo-eastmoney-smoke.json"
+    },
+    {
+      "output_date": "2026-06-16",
+      "run_name": "profit-ticket-pipeline-daily",
+      "run_group": "profit-ticket-pipeline-daily",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-16.json"
+    },
+    {
+      "output_date": "2026-06-16-feedback",
+      "run_name": "profit-ticket-pipeline-feedback",
+      "run_group": "profit-ticket-pipeline-feedback",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-16-feedback.json"
+    },
+    {
+      "output_date": "2026-06-16-live",
+      "run_name": "profit-ticket-pipeline-live",
+      "run_group": "profit-ticket-pipeline-live",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-16-live.json"
+    },
+    {
+      "output_date": "2026-06-16-regime",
+      "run_name": "profit-ticket-pipeline-regime",
+      "run_group": "profit-ticket-pipeline-regime",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-16-regime.json"
+    },
+    {
+      "output_date": "2026-06-16-regime-v2",
+      "run_name": "profit-ticket-pipeline-regime-v2",
+      "run_group": "profit-ticket-pipeline-regime-v2",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-16-regime-v2.json"
+    },
+    {
+      "output_date": "2026-06-16-regime-v3",
+      "run_name": "profit-ticket-pipeline-regime-v3",
+      "run_group": "profit-ticket-pipeline-regime-v3",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-16-regime-v3.json"
+    },
+    {
+      "output_date": "2026-06-18",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-18.json"
+    },
+    {
+      "output_date": "2026-06-18-evidence",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-18-evidence.json"
+    },
+    {
+      "output_date": "2026-06-18-final",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-18-final.json"
+    },
+    {
+      "output_date": "2026-06-18-smoke",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-18-smoke.json"
+    },
+    {
+      "output_date": "2026-06-18-smoke-v2",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-18-smoke-v2.json"
+    },
+    {
+      "output_date": "2026-06-18-smoke-v3",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-18-smoke-v3.json"
+    },
+    {
+      "output_date": "2026-06-18-smoke-v4",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-18-smoke-v4.json"
+    },
+    {
+      "output_date": "2026-06-19-final",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-19-final.json"
+    },
+    {
+      "output_date": "2026-06-21-final",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-21-final.json"
+    },
+    {
+      "output_date": "2026-06-21-final-v2",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 5,
+      "tracking_rows": 20,
+      "completed_rows": 15,
+      "win_rate": 0.333333,
+      "avg_forward_return": -0.006855,
+      "metrics_file": "metrics-2026-06-21-final-v2.json"
+    },
+    {
+      "output_date": "2026-06-21-final-v3",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 5,
+      "tracking_rows": 20,
+      "completed_rows": 10,
+      "win_rate": 0.4,
+      "avg_forward_return": -0.012294,
+      "metrics_file": "metrics-2026-06-21-final-v3.json"
+    },
+    {
+      "output_date": "2026-06-23-final",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "paper_review_count": 0,
+      "tracking_rows": 20,
+      "completed_rows": 15,
+      "win_rate": 0.533333,
+      "avg_forward_return": -0.008793,
+      "metrics_file": "metrics-2026-06-23-final.json"
+    },
+    {
+      "output_date": "2026-06-23-fixed",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 5,
+      "tracking_rows": 20,
+      "completed_rows": 15,
+      "win_rate": 0.6,
+      "avg_forward_return": 0.013682,
+      "metrics_file": "metrics-2026-06-23-fixed.json"
+    },
+    {
+      "output_date": "2026-06-23-full",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "balanced",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 1,
+      "tracking_rows": 12,
+      "completed_rows": 9,
+      "win_rate": 0.555556,
+      "avg_forward_return": 0.013058,
+      "metrics_file": "metrics-2026-06-23-full.json"
+    },
+    {
+      "output_date": "2026-06-23-latest",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 4,
+      "tracking_rows": 20,
+      "completed_rows": 15,
+      "win_rate": 0.733333,
+      "avg_forward_return": 0.040196,
+      "metrics_file": "metrics-2026-06-23-latest.json"
+    },
+    {
+      "output_date": "2026-06-23-v2",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "balanced",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 2,
+      "tracking_rows": 20,
+      "completed_rows": 15,
+      "win_rate": 0.533333,
+      "avg_forward_return": -0.008793,
+      "metrics_file": "metrics-2026-06-23-v2.json"
+    },
+    {
+      "output_date": "2026-06-23-v3",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 5,
+      "tracking_rows": 20,
+      "completed_rows": 15,
+      "win_rate": 0.533333,
+      "avg_forward_return": -0.008793,
+      "metrics_file": "metrics-2026-06-23-v3.json"
+    },
+    {
+      "output_date": "2026-06-24",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "balanced",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "paper_review_count": 0,
+      "tracking_rows": 20,
+      "completed_rows": 15,
+      "win_rate": 0.533333,
+      "avg_forward_return": -0.008793,
+      "metrics_file": "metrics-2026-06-24.json"
+    },
+    {
+      "output_date": "2026-06-24-final",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "balanced",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 2,
+      "tracking_rows": 20,
+      "completed_rows": 15,
+      "win_rate": 0.533333,
+      "avg_forward_return": -0.008654,
+      "metrics_file": "metrics-2026-06-24-final.json"
+    },
+    {
+      "output_date": "2026-06-24-test2",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "balanced",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "final_classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "paper_review_count": 0,
+      "tracking_rows": 4,
+      "completed_rows": 3,
+      "win_rate": 1.0,
+      "avg_forward_return": 0.141461,
+      "metrics_file": "metrics-2026-06-24-test2.json"
+    },
+    {
+      "output_date": "2026-06-24-test3",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "balanced",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 1,
+      "tracking_rows": 4,
+      "completed_rows": 3,
+      "win_rate": 1.0,
+      "avg_forward_return": 0.141461,
+      "metrics_file": "metrics-2026-06-24-test3.json"
+    },
+    {
+      "output_date": "2026-06-24-v4",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "balanced",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "paper_review_count": 2,
+      "tracking_rows": 20,
+      "completed_rows": 15,
+      "win_rate": 0.533333,
+      "avg_forward_return": -0.008793,
+      "metrics_file": "metrics-2026-06-24-v4.json"
+    },
+    {
+      "output_date": "2026-06-25-final",
+      "run_name": "profit-ticket-pipeline",
+      "run_group": "profit-ticket-pipeline",
+      "run_category": "pipeline",
+      "task": "XIAOMEI_US_PROFIT_TICKET_PIPELINE_V0",
+      "data_mode": "historical_kline",
+      "source_mode": "cached_local",
+      "regime": "active",
+      "regime_source": "market_snapshot",
+      "final_classification_metrics": "CANDIDATE_FOR_PAPER_REVIEW",
+      "final_classification": null,
+      "paper_review_count": null,
+      "tracking_rows": 0,
+      "completed_rows": 0,
+      "win_rate": null,
+      "avg_forward_return": null,
+      "metrics_file": "metrics-2026-06-25-final.json"
     }
   ],
-  "by_symbol": [
-    {
-      "symbol": "AMD",
-      "count": 20,
-      "win_rate": 30.0,
-      "avg_forward_return": -2.719268
-    },
-    {
-      "symbol": "DLTR",
-      "count": 16,
-      "win_rate": 81.25,
-      "avg_forward_return": 2.669969
-    },
-    {
-      "symbol": "AAPL",
-      "count": 16,
-      "win_rate": 87.5,
-      "avg_forward_return": 5.437607
-    },
-    {
-      "symbol": "TSLA",
-      "count": 16,
-      "win_rate": 18.75,
-      "avg_forward_return": -4.024333
-    },
-    {
-      "symbol": "ADBE",
-      "count": 16,
-      "win_rate": 31.25,
-      "avg_forward_return": -15.097888
-    },
-    {
-      "symbol": "MSFT",
-      "count": 12,
-      "win_rate": 58.33,
-      "avg_forward_return": 2.554263
-    },
-    {
-      "symbol": "META",
-      "count": 12,
-      "win_rate": 33.33,
-      "avg_forward_return": 1.94928
-    },
-    {
-      "symbol": "NVDA",
-      "count": 12,
-      "win_rate": 50.0,
-      "avg_forward_return": 0.628673
-    },
-    {
-      "symbol": "PANW",
-      "count": 12,
-      "win_rate": 66.67,
-      "avg_forward_return": 0.629292
-    },
-    {
-      "symbol": "GOOG",
-      "count": 8,
-      "win_rate": 50.0,
-      "avg_forward_return": -0.2061
-    },
-    {
-      "symbol": "PYPL",
-      "count": 8,
-      "win_rate": 50.0,
-      "avg_forward_return": 1.745167
-    },
-    {
-      "symbol": "SHOP",
-      "count": 8,
-      "win_rate": 50.0,
-      "avg_forward_return": 0.944933
-    },
-    {
-      "symbol": "AXON",
-      "count": 8,
-      "win_rate": 50.0,
-      "avg_forward_return": 9.305514
-    },
-    {
-      "symbol": "WTW",
-      "count": 8,
-      "win_rate": 25.0,
-      "avg_forward_return": -0.4809
-    },
-    {
-      "symbol": "FFIV",
-      "count": 8,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "HOOD",
-      "count": 8,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "CCI",
-      "count": 8,
-      "win_rate": 25.0,
-      "avg_forward_return": 0.274
-    },
-    {
-      "symbol": "KMB",
-      "count": 8,
-      "win_rate": 12.5,
-      "avg_forward_return": -3.1563
-    },
-    {
-      "symbol": "TECH",
-      "count": 8,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "CMG",
-      "count": 8,
-      "win_rate": 37.5,
-      "avg_forward_return": -0.764529
-    },
-    {
-      "symbol": "MRNA",
-      "count": 8,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "REGN",
-      "count": 8,
-      "win_rate": 0.0,
-      "avg_forward_return": -2.131433
-    },
-    {
-      "symbol": "TTWO",
-      "count": 8,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "BIIB",
-      "count": 8,
-      "win_rate": 12.5,
-      "avg_forward_return": 5.3944
-    },
-    {
-      "symbol": "CASY",
-      "count": 8,
-      "win_rate": 25.0,
-      "avg_forward_return": 0.244367
-    },
-    {
-      "symbol": "GOOGL",
-      "count": 8,
-      "win_rate": 50.0,
-      "avg_forward_return": 0.311475
-    },
-    {
-      "symbol": "JNJ",
-      "count": 4,
-      "win_rate": 50.0,
-      "avg_forward_return": -1.443225
-    },
-    {
-      "symbol": "FTNT",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -1.886533
-    },
-    {
-      "symbol": "AMZN",
-      "count": 4,
-      "win_rate": 75.0,
-      "avg_forward_return": 1.814775
-    },
-    {
-      "symbol": "HCA",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": 1.9269
-    },
-    {
-      "symbol": "ABBV",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": -2.4772
-    },
-    {
-      "symbol": "DE",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": 0.9432
-    },
-    {
-      "symbol": "MMM",
-      "count": 4,
-      "win_rate": 50.0,
-      "avg_forward_return": 0.796433
-    },
-    {
-      "symbol": "ASML",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -1.2268
-    },
-    {
-      "symbol": "MA",
-      "count": 4,
-      "win_rate": 50.0,
-      "avg_forward_return": -0.363775
-    },
-    {
-      "symbol": "APP",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -3.7078
-    },
-    {
-      "symbol": "PGR",
-      "count": 4,
-      "win_rate": 100.0,
-      "avg_forward_return": 4.5798
-    },
-    {
-      "symbol": "CL",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": 2.2617
-    },
-    {
-      "symbol": "AMAT",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -4.4865
-    },
-    {
-      "symbol": "ERIE",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "AJG",
-      "count": 4,
-      "win_rate": 100.0,
-      "avg_forward_return": 1.73455
-    },
-    {
-      "symbol": "MDT",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": 3.0958
-    },
-    {
-      "symbol": "MCK",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "ALL",
-      "count": 4,
-      "win_rate": 100.0,
-      "avg_forward_return": 4.873175
-    },
-    {
-      "symbol": "CRWD",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -4.831933
-    },
-    {
-      "symbol": "KO",
-      "count": 4,
-      "win_rate": 50.0,
-      "avg_forward_return": 0.620233
-    },
-    {
-      "symbol": "CRM",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "CMCSA",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "WELL",
-      "count": 4,
-      "win_rate": 50.0,
-      "avg_forward_return": 0.09115
-    },
-    {
-      "symbol": "NKE",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": -0.9565
-    },
-    {
-      "symbol": "ABNB",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -1.3518
-    },
-    {
-      "symbol": "EXPE",
-      "count": 4,
-      "win_rate": 100.0,
-      "avg_forward_return": 5.0757
-    },
-    {
-      "symbol": "AON",
-      "count": 4,
-      "win_rate": 100.0,
-      "avg_forward_return": 1.632775
-    },
-    {
-      "symbol": "MGM",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -1.351833
-    },
-    {
-      "symbol": "TXN",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -0.7556
-    },
-    {
-      "symbol": "PODD",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": -2.008075
-    },
-    {
-      "symbol": "PDD",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": 0.533
-    },
-    {
-      "symbol": "KDP",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -1.463767
-    },
-    {
-      "symbol": "STX",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": -9.592733
-    },
-    {
-      "symbol": "ALLE",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": -0.446067
-    },
-    {
-      "symbol": "WFC",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": 0.5634
-    },
-    {
-      "symbol": "VTRS",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": 4.8441
-    },
-    {
-      "symbol": "VRTX",
-      "count": 4,
-      "win_rate": 25.0,
-      "avg_forward_return": -4.6969
-    },
-    {
-      "symbol": "GEHC",
-      "count": 4,
-      "win_rate": 0.0,
-      "avg_forward_return": 0
-    },
-    {
-      "symbol": "MELI",
-      "count": 4,
-      "win_rate": 75.0,
-      "avg_forward_return": 2.394933
+  "by_metrics_variant": [
+    {
+      "run_group": "profit-ticket-pipeline",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "active",
+      "completed_rows": 85,
+      "win_rate": 0.529412,
+      "avg_forward_return": 0.003749,
+      "median_forward_return": 0.00362
+    },
+    {
+      "run_group": "profit-ticket-pipeline",
+      "data_mode": "historical_kline",
+      "source_mode": "live",
+      "regime": "balanced",
+      "completed_rows": 75,
+      "win_rate": 0.573333,
+      "avg_forward_return": 0.005878,
+      "median_forward_return": 0.005508
     }
   ],
-  "by_stage": [
+  "by_regime_source": [
     {
-      "stage": null,
-      "count": 92,
-      "win_rate": 69.57,
-      "avg_forward_return": 2.361686
+      "regime_source": "market_snapshot",
+      "run_category": "pipeline",
+      "regime": "active",
+      "completed_rows": 85,
+      "win_rate": 0.529412,
+      "avg_forward_return": 0.003749,
+      "median_forward_return": 0.00362
+    },
+    {
+      "regime_source": "market_snapshot",
+      "run_category": "pipeline",
+      "regime": "balanced",
+      "completed_rows": 75,
+      "win_rate": 0.573333,
+      "avg_forward_return": 0.005878,
+      "median_forward_return": 0.005508
     }
   ]
 }

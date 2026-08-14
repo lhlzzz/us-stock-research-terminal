@@ -191,7 +191,7 @@ def step_factor_backtest(backtest_days: int = 200) -> dict:
 
         results = {"by_horizon": {}, "overall": {}, "sample_size": len(merged)}
 
-        for horizon in [1, 3, 5, 10]:
+        for horizon in [1, 3, 10]:
             h_df = merged[merged["horizon_days"] == horizon].copy()
             if len(h_df) < 5:
                 continue
@@ -268,8 +268,16 @@ def step_factor_backtest(backtest_days: int = 200) -> dict:
 
 
 # ─── Step 4: Weight Optimization ────────────────────────────────
+# EMA smoothing factor: 0.3 = 30% new + 70% old (prevents oscillation)
+WEIGHT_EMA_ALPHA = 0.3
+# Maximum weight for any single factor (prevents concentration)
+MAX_SINGLE_FACTOR_WEIGHT = 0.35
+# Minimum sample size for IC to be considered stable
+MIN_IC_SAMPLE_SIZE = 10
+
+
 def step_weight_optimization(factor_backtest: dict) -> dict:
-    """Compute optimal weights from IC analysis."""
+    """Compute optimal weights from IC analysis with stability constraints."""
     if factor_backtest.get("status") in ("NO_DATA", "INSUFFICIENT_DATA"):
         return {"status": "skipped", "reason": "no factor backtest data"}
 
@@ -296,29 +304,60 @@ def step_weight_optimization(factor_backtest: dict) -> dict:
         "catalyst_score": "catalyst_score",
     }
 
-    # Compute weights from IC
-    valid_factors = {k: v for k, v in factors.items() if v.get("significant") and k in factor_key_map}
+    # ── Filter: only factors with sufficient samples + significance ──
+    stable_factors = {}
+    for k, v in factors.items():
+        if k not in factor_key_map:
+            continue
+        if v.get("n", 0) < MIN_IC_SAMPLE_SIZE:
+            continue  # Too few observations — IC unreliable
+        if not v.get("significant", False):
+            continue  # Not statistically significant
+        stable_factors[k] = v
 
-    if not valid_factors:
-        # Use all available factors even if not significant
-        valid_factors = {k: v for k, v in factors.items() if k in factor_key_map}
+    # Fallback: if no factors pass stability filter, use top 5 by abs_ic
+    if not stable_factors:
+        ranked = sorted(
+            [(k, v) for k, v in factors.items() if k in factor_key_map],
+            key=lambda x: x[1].get("abs_ic", 0),
+            reverse=True,
+        )
+        stable_factors = dict(ranked[:5])
 
-    if not valid_factors:
+    if not stable_factors:
         return {"status": "skipped", "reason": "no matching pipeline factors"}
 
     # Weight by abs IC, signed by IC direction
-    abs_ic_sum = sum(v["abs_ic"] for v in valid_factors.values())
+    abs_ic_sum = sum(v["abs_ic"] for v in stable_factors.values())
     if abs_ic_sum == 0:
         return {"status": "skipped", "reason": "all ICs are zero"}
 
-    new_weights = {}
-    for factor_name, ic_data in valid_factors.items():
+    # First pass: raw weights from IC
+    raw_weights = {}
+    for factor_name, ic_data in stable_factors.items():
         pipeline_key = factor_key_map[factor_name]
         raw_weight = ic_data["abs_ic"] / abs_ic_sum
         sign = 1 if ic_data["ic"] >= 0 else -1
-        new_weights[pipeline_key] = round(raw_weight * sign, 4)
+        raw_weights[pipeline_key] = raw_weight * sign
 
-    # Load current weights
+    # Apply minimum floor (5%) and maximum cap
+    MIN_WEIGHT = 0.05
+    new_weights = {}
+    for pipeline_key, w in raw_weights.items():
+        if abs(w) < MIN_WEIGHT and w != 0:
+            w = MIN_WEIGHT if w > 0 else -MIN_WEIGHT
+        # Cap single factor weight
+        if abs(w) > MAX_SINGLE_FACTOR_WEIGHT:
+            w = MAX_SINGLE_FACTOR_WEIGHT if w > 0 else -MAX_SINGLE_FACTOR_WEIGHT
+        new_weights[pipeline_key] = round(w, 4)
+
+    # Re-normalize to sum to 1.0
+    total_abs = sum(abs(v) for v in new_weights.values())
+    if total_abs > 0:
+        for pipeline_key in new_weights:
+            new_weights[pipeline_key] = round(new_weights[pipeline_key] / total_abs, 4)
+
+    # Load current weights for EMA smoothing
     current_weights = {}
     if WEIGHTS_FILE.exists():
         try:
@@ -326,6 +365,27 @@ def step_weight_optimization(factor_backtest: dict) -> dict:
             current_weights = current_data.get("weights", {})
         except Exception:
             pass
+
+    # ── EMA Smoothing: blend new with old ──────────────────────────
+    if current_weights:
+        all_keys = set(list(new_weights.keys()) + list(current_weights.keys()))
+        smoothed = {}
+        for key in all_keys:
+            old_w = current_weights.get(key, 0.0)
+            new_w = new_weights.get(key, 0.0)
+            smoothed[key] = round(
+                WEIGHT_EMA_ALPHA * new_w + (1 - WEIGHT_EMA_ALPHA) * old_w, 4
+            )
+        # Re-cap after smoothing (EMA can push weights past the cap)
+        for key in smoothed:
+            if abs(smoothed[key]) > MAX_SINGLE_FACTOR_WEIGHT:
+                smoothed[key] = MAX_SINGLE_FACTOR_WEIGHT if smoothed[key] > 0 else -MAX_SINGLE_FACTOR_WEIGHT
+        # Re-normalize after smoothing + capping
+        total_abs = sum(abs(v) for v in smoothed.values())
+        if total_abs > 0:
+            for key in smoothed:
+                smoothed[key] = round(smoothed[key] / total_abs, 4)
+        new_weights = smoothed
 
     # Save new weights
     WEIGHTS_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -336,6 +396,12 @@ def step_weight_optimization(factor_backtest: dict) -> dict:
         "source": "full_cycle_optimization",
         "significant_factors": [k for k, v in factors.items() if v.get("significant")],
         "ranking": ranking[:5],
+        "ema_alpha": WEIGHT_EMA_ALPHA,
+        "stability_filter": {
+            "min_sample_size": MIN_IC_SAMPLE_SIZE,
+            "max_single_weight": MAX_SINGLE_FACTOR_WEIGHT,
+            "factors_passing_filter": list(stable_factors.keys()),
+        },
     }
     WEIGHTS_FILE.write_text(json.dumps(weight_data, indent=2))
 
@@ -343,7 +409,9 @@ def step_weight_optimization(factor_backtest: dict) -> dict:
         "status": "optimized",
         "new_weights": new_weights,
         "old_weights": current_weights,
+        "ema_smoothed": bool(current_weights),
         "top_factors": ranking[:5],
+        "stable_factors": list(stable_factors.keys()),
         "significant_count": sum(1 for v in factors.values() if v.get("significant")),
     }
 
@@ -382,16 +450,29 @@ def step_pipeline_upgrade(degradation: dict, weight_result: dict) -> dict:
 
     # Check degradation
     degradation_list = degradation.get("degradation", [])
+    critical = [d for d in degradation_list if d.get("severity") == "CRITICAL"]
     high_severity = [d for d in degradation_list if d.get("severity") == "HIGH"]
+
+    if critical:
+        actions.append({
+            "action": "STOP_PIPELINE",
+            "reason": f"CRITICAL degradation: {len(critical)} critical issues",
+            "details": [d.get("message", "") for d in critical],
+        })
 
     if high_severity:
         actions.append({
             "action": "ALERT",
-            "reason": f"Performance degradation detected: {len(high_severity)} high-severity issues",
+            "reason": f"Performance degradation: {len(high_severity)} high-severity issues",
             "details": [d.get("message", "") for d in high_severity],
         })
 
-    # Check if weights changed significantly
+    # Add recommended actions from meta_loop
+    for rec in degradation.get("recommended_actions", []):
+        if rec.startswith("REDUCE_UNIVERSE") or rec.startswith("RAISE_SCORE_GATE"):
+            actions.append({"action": "CONFIG_CHANGE", "reason": rec})
+
+    # Check if weights changed significantly (after EMA, threshold is lower)
     old_w = weight_result.get("old_weights", {})
     new_w = weight_result.get("new_weights", {})
     if old_w and new_w:
@@ -402,15 +483,26 @@ def step_pipeline_upgrade(degradation: dict, weight_result: dict) -> dict:
         if max_diff > 0.1:
             actions.append({
                 "action": "WEIGHTS_UPDATED",
-                "reason": f"Significant weight change detected (max diff: {max_diff:.2%})",
+                "reason": f"Weight change detected (max diff: {max_diff:.2%})",
                 "old": old_w,
                 "new": new_w,
             })
 
+    # Note EMA smoothing status
+    if weight_result.get("ema_smoothed"):
+        actions.append({
+            "action": "EMA_APPLIED",
+            "reason": "Weights EMA-smoothed to prevent oscillation",
+        })
+
     if not actions:
         actions.append({"action": "NO_CHANGE", "reason": "System performing within normal range"})
 
-    return {"actions": actions, "degradation_count": len(degradation_list)}
+    return {
+        "actions": actions,
+        "degradation_count": len(degradation_list),
+        "has_critical": bool(critical),
+    }
 
 
 # ─── Main Orchestrator ──────────────────────────────────────────

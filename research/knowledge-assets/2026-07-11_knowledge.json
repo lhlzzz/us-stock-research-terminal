@@ -1,0 +1,172 @@
+{
+  "trade_date": "2026-07-11",
+  "exported_at": "2026-07-25T03:08:33.091276",
+  "tickets": [
+    {
+      "symbol": "META",
+      "ticket_score": "0.590164",
+      "market_score": "0.570164",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.570 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "NVDA",
+      "ticket_score": "0.582138",
+      "market_score": "0.562138",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.562 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMAT",
+      "ticket_score": "0.557893",
+      "market_score": "0.537893",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.538 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "STX",
+      "ticket_score": "0.555492",
+      "market_score": "0.545492",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.545 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "KDP",
+      "ticket_score": "0.553344",
+      "market_score": "0.533344",
+      "catalyst_score": "0.000000",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "CLEAN",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.533 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "META",
+      "stock_name": "META",
+      "final_score": "0.5902",
+      "market_score": "0.5702",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.570164,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.570 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "NVDA",
+      "stock_name": "NVDA",
+      "final_score": "0.5821",
+      "market_score": "0.5621",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.562138,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.562 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "AMAT",
+      "stock_name": "AMAT",
+      "final_score": "0.5579",
+      "market_score": "0.5379",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.537893,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.538 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    },
+    {
+      "symbol": "STX",
+      "stock_name": "STX",
+      "final_score": "0.5555",
+      "market_score": "0.5455",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.545492,
+        "risk_verdict": "WATCH",
+        "catalyst_score": 0.0,
+        "quality_verdict": "MODERATE"
+      },
+      "selection_reason": "scores: market=0.545 catalyst=0.000 | panel: MIXED | risk: WATCH"
+    },
+    {
+      "symbol": "KDP",
+      "stock_name": "KDP",
+      "final_score": "0.5533",
+      "market_score": "0.5333",
+      "catalyst_score": "0.0000",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "market_score": 0.533344,
+        "risk_verdict": "CLEAN",
+        "catalyst_score": 0.0,
+        "quality_verdict": "STRONG"
+      },
+      "selection_reason": "scores: market=0.533 catalyst=0.000 | panel: MIXED | risk: CLEAN"
+    }
+  ],
+  "returns": {
+    "AMAT": {
+      "symbol": "AMAT",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "KDP": {
+      "symbol": "KDP",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "META": {
+      "symbol": "META",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    },
+    "STX": {
+      "symbol": "STX",
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_5d": null,
+      "forward_10d": null
+    }
+  },
+  "ticket_count": 5,
+  "top10_count": 5
+}

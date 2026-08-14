@@ -7,7 +7,7 @@
 - `last30days` 只做 Reddit / HN / Polymarket / GitHub / YouTube 等社交 / 公开资料研究。
 - `last30days` 不提供正式行情价格，也不作为行情源。
 - 不默认接其他行情源；禁止回退到 legacy market-data source。
-- crypto 只做 research-only / macro-liquidity / risk correlation / data-health。
+- **只管美股**；虚拟币 / 加密归 `xiaobi`，不在本 workspace 扩展 crypto 主链路。
 - close-to-close replay。
 - 每个 replay_date 只选 Top 1。
 - no broker / no order / no ledger / no paper-trade / no live-trade。

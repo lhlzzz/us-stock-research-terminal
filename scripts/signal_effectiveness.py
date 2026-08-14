@@ -38,7 +38,7 @@ def analyze_signal_effectiveness(min_samples: int = 3) -> dict:
             fs.relative_strength, fs.volume_weighted_momentum,
             fs.volume_confirmation, fs.closing_strength_5d
         FROM forward_tracking f
-        LEFT JOIN tickets t ON t.symbol = f.symbol
+        JOIN tickets t ON t.id = f.ticket_id
         LEFT JOIN factor_snapshots fs ON fs.symbol = f.symbol AND fs.trade_date = f.output_date
         WHERE f.check_status = 'completed' AND f.forward_return IS NOT NULL
     """)
@@ -58,7 +58,7 @@ def analyze_signal_effectiveness(min_samples: int = 3) -> dict:
         "avg_return": round(avg_return * 100, 4),
     }
 
-    for horizon in [1, 3, 5, 10]:
+    for horizon in [1, 3, 10]:
         h_rows = [r for r in rows if r["horizon_days"] == horizon]
         if not h_rows:
             continue
@@ -133,15 +133,73 @@ def main():
     parser = argparse.ArgumentParser(description="Signal effectiveness analysis")
     parser.add_argument("--min-samples", type=int, default=3)
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--db", action="store_true", help="Store results in database")
     args = parser.parse_args()
 
     results = analyze_signal_effectiveness(min_samples=args.min_samples)
 
+    if args.db:
+        store_results_db(results)
+
     if args.json:
         import json
-        print(json.dumps(results, indent=2, ensure_ascii=False))
+        print(json.dumps(results, indent=2, ensure_ascii=False, default=float))
     else:
         print(format_report(results))
+
+
+def store_results_db(results: dict):
+    """Store signal effectiveness results in database."""
+    from db.engine import SessionLocal
+    from sqlalchemy import text
+
+    # Map suggestions to numeric weights
+    SUGGESTION_WEIGHTS = {
+        "INCREASE": 1.1,
+        "MAINTAIN": 1.0,
+        "DECREASE": 0.9,
+    }
+
+    db = SessionLocal()
+    try:
+        analysis_date = date.today()
+
+        # Store by_signal results
+        stored = 0
+        for signal_key, data in results.get("by_signal", {}).items():
+            if data.get("status") == "INSUFFICIENT_DATA":
+                continue
+
+            suggestion = data.get("suggestion", "MAINTAIN")
+            weight = SUGGESTION_WEIGHTS.get(suggestion, 1.0)
+
+            db.execute(text("""
+                INSERT INTO signal_effectiveness
+                    (analysis_date, signal_key, present_count, win_rate, avg_return, weight_suggestion)
+                VALUES
+                    (:date, :key, :count, :win_rate, :avg_return, :suggestion)
+                ON CONFLICT (analysis_date, signal_key) DO UPDATE SET
+                    present_count = EXCLUDED.present_count,
+                    win_rate = EXCLUDED.win_rate,
+                    avg_return = EXCLUDED.avg_return,
+                    weight_suggestion = EXCLUDED.weight_suggestion
+            """), {
+                "date": analysis_date,
+                "key": signal_key,
+                "count": data.get("count", 0),
+                "win_rate": data.get("high_return_rate", 0) / 100,
+                "avg_return": data.get("avg_return", 0) / 100,
+                "suggestion": weight,
+            })
+            stored += 1
+
+        db.commit()
+        print(f"Stored {stored} signal effectiveness records to DB")
+    except Exception as e:
+        print(f"Error storing results: {e}")
+        db.rollback()
+    finally:
+        db.close()
 
 
 if __name__ == "__main__":

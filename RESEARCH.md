@@ -4,7 +4,7 @@
 
 - Market data: EastMoney US realtime/delayed quote + kline provider（`scripts/eastmoney_us.py`，当前唯一美股行情源）。
 - Social/research source: `last30days`，仅 public-source，用于 narrative/context 验证，不作行情价格源。
-- Crypto: research-only，不接交易所、钱包、账户、订单或 execution/broker 流程。
+- Crypto：主责已迁至 `xiaobi`（2026-07-25）。xiaomei 只管美股；不再扩展加密主链路。
 - 禁止输出交易意图词：`BUY` / `SELL` / `ORDER`。
 - 允许产物包括 replay、forward tracking、pipeline summary / metrics / csv。
 

@@ -1,0 +1,88 @@
+{
+  "date": "2026-07-30",
+  "initial_capital": 1000.0,
+  "signals": [
+    {
+      "symbol": "MSFT",
+      "ticket_score": 0.872946,
+      "market_score": 0.795489,
+      "catalyst_score": 0.057458,
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "entry_price": 396.89,
+      "open_price": 393.4,
+      "current_change_pct": 0.8871377732587721,
+      "stop_loss_price": 377.04549999999995,
+      "take_profit_price": 436.579,
+      "position_size": 200,
+      "shares": 0.503917962155761
+    },
+    {
+      "symbol": "AAPL",
+      "ticket_score": 0.771738,
+      "market_score": 0.636134,
+      "catalyst_score": 0.115603,
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "entry_price": 341.79,
+      "open_price": 339.69,
+      "current_change_pct": 0.6182107215402345,
+      "stop_loss_price": 324.7005,
+      "take_profit_price": 375.96900000000005,
+      "position_size": 200,
+      "shares": 0.5851546271102138
+    },
+    {
+      "symbol": "IR",
+      "ticket_score": 0.676849,
+      "market_score": 0.613014,
+      "catalyst_score": 0.043835,
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "entry_price": 84.42,
+      "open_price": 85.37,
+      "current_change_pct": -1.1128030924212284,
+      "stop_loss_price": 80.199,
+      "take_profit_price": 92.86200000000001,
+      "position_size": 200,
+      "shares": 2.369106846718787
+    }
+  ],
+  "cash": 450.0,
+  "positions_value": 550.0,
+  "total_equity": 1000.0,
+  "unrealized_pnl": 0.0,
+  "unrealized_pnl_pct": 0.0,
+  "monitor_results": [
+    {
+      "symbol": "MSFT",
+      "entry": 396.89,
+      "current": 396.0098876953125,
+      "pnl_pct": -0.2217521995231642,
+      "pnl_dollar": -0.4435043990463284,
+      "status": "HOLD",
+      "high": 401.25,
+      "low": 388.7430114746094
+    },
+    {
+      "symbol": "AAPL",
+      "entry": 341.79,
+      "current": 341.5299987792969,
+      "pnl_pct": -0.07607045867437476,
+      "pnl_dollar": -0.1521409173487495,
+      "status": "HOLD",
+      "high": 344.56988525390625,
+      "low": 339.5199890136719
+    },
+    {
+      "symbol": "IR",
+      "entry": 84.42,
+      "current": 84.44000244140625,
+      "pnl_pct": 0.0236939604433171,
+      "pnl_dollar": 0.0473879208866342,
+      "status": "HOLD",
+      "high": 86.2300033569336,
+      "low": 84.0999984741211
+    }
+  ],
+  "total_pnl": -0.5482573955084437,
+  "current_equity": 999.4517426044915,
+  "last_check": "2026-07-30T03:30:01.021156"
+}

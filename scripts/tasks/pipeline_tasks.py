@@ -1,6 +1,11 @@
 """Pipeline tasks."""
+import os
 from datetime import date
+from pathlib import Path
+
 from scripts.tasks.celery_app import app
+
+PROJECT_DIR = str(Path(os.environ.get('XIAOMEI_HOME') or Path(__file__).resolve().parents[2]))
 
 
 @app.task(bind=True, max_retries=2)
@@ -23,7 +28,7 @@ def run_pipeline(self, output_date: str = None):
              "--output-date", f"{target_date}-final",
              "--skip-last30days"],
             capture_output=True, text=True, timeout=600,
-            cwd="/workspace/hermes-workspaces/xiaomei"
+            cwd=PROJECT_DIR
         )
 
         if result.returncode == 0:

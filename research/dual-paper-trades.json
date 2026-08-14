@@ -1,0 +1,118 @@
+{
+  "date": "2026-07-30",
+  "initial_capital": 1000.0,
+  "positions": [
+    {
+      "symbol": "AAPL",
+      "direction": "LONG",
+      "entry_price": 341.79,
+      "shares": 0.5851546271102138,
+      "cost": 200,
+      "stop_loss_price": 324.7005,
+      "take_profit_price": 410.15
+    },
+    {
+      "symbol": "IR",
+      "direction": "LONG",
+      "entry_price": 84.42,
+      "shares": 2.369106846718787,
+      "cost": 200,
+      "stop_loss_price": 80.199,
+      "take_profit_price": 101.3
+    },
+    {
+      "symbol": "DLR",
+      "direction": "LONG",
+      "entry_price": 193.21,
+      "shares": 0.8887428186946846,
+      "cost": 171.71400000000003,
+      "stop_loss_price": 183.55,
+      "take_profit_price": 231.85
+    },
+    {
+      "symbol": "HII",
+      "direction": "LONG",
+      "entry_price": 299.83,
+      "shares": 0.5727045325684555,
+      "cost": 171.71400000000003,
+      "stop_loss_price": 284.84,
+      "take_profit_price": 359.8
+    },
+    {
+      "symbol": "FFIV",
+      "direction": "LONG",
+      "entry_price": 389.86,
+      "shares": 0.44045041809880475,
+      "cost": 171.71400000000003,
+      "stop_loss_price": 370.37,
+      "take_profit_price": 467.83
+    }
+  ],
+  "cash": 57.23799999999994,
+  "total_position_value": 915.1420000000002,
+  "long_exposure": 915.1420000000002,
+  "short_exposure": 0,
+  "created_at": "2026-07-30T23:25:29.646249",
+  "monitor_results": [
+    {
+      "symbol": "AAPL",
+      "direction": "long",
+      "entry": 341.79,
+      "current": 333.010009765625,
+      "pnl_pct": -2.568825955813517,
+      "pnl_dollar": -5.137651911627034,
+      "status": "HOLD",
+      "high": 334.4800109863281,
+      "low": 329.5899963378906
+    },
+    {
+      "symbol": "IR",
+      "direction": "long",
+      "entry": 84.42,
+      "current": 84.13999938964844,
+      "pnl_pct": -0.33167568153466503,
+      "pnl_dollar": -0.6633513630693301,
+      "status": "HOLD",
+      "high": 86.625,
+      "low": 82.83999633789062
+    },
+    {
+      "symbol": "DLR",
+      "direction": "long",
+      "entry": 193.21,
+      "current": 193.44509887695312,
+      "pnl_pct": 0.12168049115113971,
+      "pnl_dollar": 0.20894243857526806,
+      "status": "HOLD",
+      "high": 196.2100067138672,
+      "low": 191.8300018310547
+    },
+    {
+      "symbol": "HII",
+      "direction": "long",
+      "entry": 299.83,
+      "current": 316.7900085449219,
+      "pnl_pct": 5.6565415551885705,
+      "pnl_dollar": 9.713073766076503,
+      "status": "HOLD",
+      "high": 317.3399963378906,
+      "low": 296.6600036621094
+    },
+    {
+      "symbol": "FFIV",
+      "direction": "long",
+      "entry": 389.86,
+      "current": 391.29998779296875,
+      "pnl_pct": 0.3693602300745745,
+      "pnl_dollar": 0.634243225470255,
+      "status": "HOLD",
+      "high": 393.5799865722656,
+      "low": 386.010009765625
+    }
+  ],
+  "total_pnl": 4.755256155425663,
+  "long_pnl": 4.755256155425663,
+  "short_pnl": 0,
+  "current_equity": 1004.7552561554256,
+  "last_check": "2026-07-31T02:30:21.080020"
+}
