@@ -7,7 +7,18 @@ from pathlib import Path
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from us_profit_ticket_pipeline import build_forward_tracking_rows, build_summary_md, quote_cross_check
+import numpy as np
+import pandas as pd
+
+import us_profit_ticket_pipeline as ticket_pipeline
+from market_regime import get_regime_thresholds
+from us_profit_ticket_pipeline import (
+    build_candidate_record,
+    build_forward_tracking_rows,
+    build_structured_scores,
+    build_summary_md,
+    quote_cross_check,
+)
 from scripts.db.pipeline_bridge import _candidate_source_layers, normalize_ticket
 from xiaomei_scheduler import BEIJING_TZ, PIPELINE_SCHEDULE_DAYS, closed_us_session_date, is_trading_day
 
@@ -158,6 +169,114 @@ def test_candidate_source_layers_do_not_invent_institutional_flow_or_social_sent
     assert source_layers["capital_flow_proxy"]["status"] == "UNAVAILABLE"
     assert "not verified institutional order flow" in source_layers["capital_flow_proxy"]["definition"]
     assert source_layers["social_sentiment"]["status"] == "UNAVAILABLE"
+
+
+def test_observable_footprint_reduces_confidence_for_missing_inputs():
+    frame = pd.DataFrame(
+        {
+            "volume_trend_20d": [1.4, 1.4],
+            "prior_20d_momentum": [0.12, 0.12],
+            "closing_strength_5d": [0.85, np.nan],
+            "breakout_score": [0.8, 0.8],
+            "median_dollar_volume_20d": [2_000_000, 2_000_000],
+            "relative_strength_vs_equal_weight": [0.05, 0.05],
+        },
+        index=["COMPLETE", "MISSING_CLOSE"],
+    )
+
+    scores = build_structured_scores(frame)
+
+    assert frame.loc["COMPLETE", "footprint_factor_coverage"] == 1.0
+    assert frame.loc["MISSING_CLOSE", "footprint_factor_coverage"] < 1.0
+    assert np.isnan(frame.loc["MISSING_CLOSE", "footprint_factor_contributions"]["close_strength"])
+    assert scores["MISSING_CLOSE"] < scores["COMPLETE"]
+
+
+def test_missing_public_catalyst_cannot_create_paper_review_candidate(monkeypatch):
+    monkeypatch.setattr(ticket_pipeline, "SKIP_LAST30DAYS", True)
+    monkeypatch.setattr(
+        ticket_pipeline,
+        "resolve_company_profile",
+        lambda symbol: {
+            "symbol": symbol,
+            "company_name": "NVIDIA Corp",
+            "company_query_name": "NVIDIA",
+            "company_name_source": "fixture",
+            "provider_profile": {"latest_price": 100.0, "prev_close": 100.0},
+        },
+    )
+    monkeypatch.setattr(
+        ticket_pipeline,
+        "run_full_research_panel",
+        lambda *_args: {
+            "risk_checklist": {"risk_verdict": "CLEAN"},
+            "quality_check": {"quality_verdict": "MODERATE"},
+            "research_panel": {"panel_verdict": "MIXED"},
+            "supply_chain_map": {},
+            "replay_hypothesis": {},
+        },
+    )
+    monkeypatch.setattr(
+        ticket_pipeline,
+        "quote_cross_check",
+        lambda *_args, **_kwargs: {
+            "kline_source": "fixture",
+            "quote_source": "fixture",
+            "quote_cross_check_basis": "prev_close",
+            "quote_cross_check_price": 100.0,
+            "quote_cross_check_gap_pct": 0.0,
+            "data_source_mismatch": False,
+            "data_source_mismatch_reason": "ok",
+        },
+    )
+    monkeypatch.setattr(
+        ticket_pipeline,
+        "candidate_enhanced_urls",
+        lambda symbol: {"quote_detail": symbol, "news_detail": symbol, "company_detail": symbol},
+    )
+    monkeypatch.setattr(ticket_pipeline, "information_coverage_audit", lambda symbol: {"symbol": symbol})
+
+    row = {
+        "symbol": "NVDA",
+        "close": 100.0,
+        "adj_close": 100.0,
+        "volume": 1_000_000.0,
+        "raw_market_score": 0.9,
+        "blended_score": 0.9,
+        "large_participant_footprint_score": 0.9,
+        "footprint_factor_coverage": 1.0,
+        "footprint_factor_contributions": {"relative_volume_expansion": 1.0},
+        "market_participation_score": 0.7,
+        "breakout_score": 0.8,
+        "confirmation_score": 1.0,
+        "market_score": 0.9,
+        "market_rule_flags": "",
+        "market_rule_adjustment": 0.0,
+        "market_rank": 1,
+        "prior_5d_momentum": 0.08,
+        "prior_20d_momentum": 0.12,
+        "five_day_acceleration": 0.02,
+        "relative_strength_vs_equal_weight": 0.05,
+        "volume_confirmation_ratio": 0.4,
+        "median_dollar_volume_20d": 2_000_000.0,
+        "closing_strength_5d": 0.8,
+        "volume_weighted_momentum": 0.16,
+        "volume_trend_20d": 1.4,
+        "risk_penalty": 0.0,
+    }
+
+    candidate = build_candidate_record(
+        row,
+        pd.Timestamp("2026-08-14"),
+        market_cutoff=3,
+        regime_thresholds=get_regime_thresholds("active"),
+        kline_source="fixture",
+    )
+
+    assert candidate["classification"] == "MARKET_WATCHLIST_NEEDS_EVIDENCE"
+    assert candidate["evidence_gate_pass"] is False
+    assert candidate["catalyst_score"] == 0.0
+    assert candidate["capital_flow_status"] == "OBSERVED_PRICE_VOLUME_FOOTPRINT"
 
 
 def test_post_close_beijing_time_maps_to_prior_us_session():

@@ -96,3 +96,24 @@
 - [x] Keep no broker or execution path.
 - [x] Do not emit a short candidate until a separately measured short-side model exists; show the missing validation explicitly.
 - [x] Define ranking as historical expected return and downside-aware evidence, never a profit guarantee.
+
+## Observable Footprint Closure
+
+### Task 16: Make market-data transport auditable and single-owner
+- [x] Route the existing `DataProvider` API requests through one Scrapy-owned transport with bounded retries, timeouts, per-domain concurrency, request deduplication, and response audit records.
+- [x] Use the Yahoo Finance chart API only as an optional historical source; preserve explicit rate-limit or unavailable status and then use the existing approved fallbacks.
+- [x] Remove direct market-data requests from the profit-ticket pipeline and retain source, freshness, and fallback-attempt metadata with every provider result.
+- [x] Verification: a local API fixture proves Scrapy transport deduplication and HTTP-status recording; provider tests prove rate-limited Yahoo falls back explicitly.
+
+### Task 17: Replace unsupported main-force claims with an observable footprint strategy
+- [x] Replace “main fund,” “institutional interest,” and social-sentiment defaults with a deterministic public-observation model.
+- [x] Rank only from price-volume footprint, liquidity, relative strength, breakout acceptance, close strength, independently observed catalyst evidence, market participation, and explicit risk penalties.
+- [x] Treat unavailable inputs as unavailable and confidence-reducing; never assign a neutral score merely because data is missing.
+- [x] Persist factor values, contributions, coverage, risk penalties, source availability, and ranking version for every candidate and ticket.
+- [x] Verification: focused strategy tests prove missing evidence cannot create an official paper-review candidate and that factor contributions survive the database payload.
+
+### Task 18: Export full lifecycle records as reusable research cases
+- [x] Extend the existing knowledge exporter with research-run revision/configuration, source layers, factor/ranking snapshots, full tracking horizons, and deterministic outcome attribution.
+- [x] Generate concise reusable case text for selection thesis, evidence availability, observable footprint, win/loss/pending outcome, and reason.
+- [x] Upsert the existing `pick_case_embeddings` store only; do not create a parallel knowledge store or fabricate unavailable historical evidence.
+- [x] Verification: export one controlled historical date, inspect the JSON content, and verify its case vector upsert.

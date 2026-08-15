@@ -49,18 +49,6 @@ def fetch_close_price_akshare(symbol: str, target_date: date) -> float | None:
         return None
 
 
-def fetch_close_price_eastmoney_realtime(symbol: str) -> float | None:
-    """Fallback: use EastMoney realtime quote for latest price."""
-    try:
-        from eastmoney_us import fetch_realtime_quotes
-        quotes = fetch_realtime_quotes([symbol])
-        if quotes and symbol in quotes:
-            return float(quotes[symbol].get("latest_price"))
-        return None
-    except Exception:
-        return None
-
-
 def fetch_close_price(symbol: str, target_date: date) -> float | None:
     """Fetch closing price using DataProvider with fallback chain.
 

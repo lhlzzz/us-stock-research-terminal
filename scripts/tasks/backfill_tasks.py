@@ -8,18 +8,19 @@ def backfill_tracking(self, target_date: str = None):
     """Backfill forward tracking rows with actual close prices."""
     from scripts.db.engine import SessionLocal
     from scripts.db.crud import get_pending_forward_tracking, complete_forward_tracking
-    from scripts.eastmoney_us_cdp import fetch_realtime_quote
+    from scripts.data_provider import get_provider
 
     db = SessionLocal()
     try:
         target = date.fromisoformat(target_date) if target_date else date.today()
         pending = get_pending_forward_tracking(db, due_date=target)
+        provider = get_provider()
 
         filled = 0
         for row in pending:
             if row.due_date > target:
                 continue
-            q = fetch_realtime_quote(row.symbol)
+            q, _source, _metadata = provider.fetch_realtime_quote(row.symbol)
             if q and q.get("latest_price") and row.as_of_close:
                 close = float(q["latest_price"])
                 as_of = float(row.as_of_close)

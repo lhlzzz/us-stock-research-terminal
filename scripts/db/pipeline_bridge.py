@@ -5,6 +5,7 @@ runtime_decisions, and research_runs to the database.
 """
 from datetime import date, datetime
 import json
+import math
 from pathlib import Path
 import subprocess
 from typing import Any
@@ -36,14 +37,27 @@ def _safe_format_float(val: Any, fmt: str = ".3f", default: float = 0.0) -> str:
 
 def _json_default(value: Any) -> Any:
     if hasattr(value, "item"):
-        return value.item()
+        return _json_default(value.item())
     if isinstance(value, (date, datetime)):
         return value.isoformat()
     return str(value)
 
 
 def _json_snapshot(value: Any) -> Any:
-    return json.loads(json.dumps(value, default=_json_default))
+    def normalize(item: Any) -> Any:
+        if hasattr(item, "item"):
+            return normalize(item.item())
+        if isinstance(item, float):
+            return item if math.isfinite(item) else None
+        if isinstance(item, (date, datetime)):
+            return item.isoformat()
+        if isinstance(item, dict):
+            return {str(key): normalize(val) for key, val in item.items()}
+        if isinstance(item, (list, tuple)):
+            return [normalize(val) for val in item]
+        return item
+
+    return json.loads(json.dumps(normalize(value), default=_json_default, allow_nan=False))
 
 
 def _current_git_commit() -> str | None:
@@ -82,7 +96,8 @@ def _candidate_source_layers(row: dict[str, Any]) -> dict[str, Any]:
         "capital_flow_proxy": {
             "status": row.get("capital_flow_status", "UNAVAILABLE"),
             "score": capital_score,
-            "definition": "Public price-volume or EastMoney flow proxy; not verified institutional order flow.",
+            "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+            "factor_coverage": row.get("footprint_factor_coverage"),
         },
         "social_sentiment": {
             "status": row.get("social_sentiment_status", "UNAVAILABLE"),
@@ -90,9 +105,16 @@ def _candidate_source_layers(row: dict[str, Any]) -> dict[str, Any]:
         },
         "price_volume": {
             "status": "OBSERVED",
+            "large_participant_footprint_score": row.get("large_participant_footprint_score"),
+            "factor_contributions": row.get("footprint_factor_contributions") or {},
             "volume_confirmation_ratio": row.get("volume_confirmation_ratio"),
             "volume_weighted_momentum": row.get("volume_weighted_momentum"),
             "median_dollar_volume_20d": row.get("median_dollar_volume_20d"),
+        },
+        "market_participation": {
+            "status": "OBSERVED",
+            "score": row.get("market_participation_score"),
+            "definition": "Cross-sectional breadth and advance ratio; not social sentiment.",
         },
     }
 
@@ -106,6 +128,10 @@ def _candidate_factor_snapshot(row: dict[str, Any]) -> dict[str, Any]:
         "volume_confirmation_ratio",
         "volume_weighted_momentum",
         "closing_strength_5d",
+        "volume_trend_20d",
+        "large_participant_footprint_score",
+        "footprint_factor_coverage",
+        "market_participation_score",
         "rsi_14",
         "momentum_quality",
         "breakout_score",
@@ -117,7 +143,10 @@ def _candidate_factor_snapshot(row: dict[str, Any]) -> dict[str, Any]:
         "ticket_score",
         "contrarian_penalty",
     )
-    return {field: row.get(field) for field in fields if row.get(field) is not None}
+    snapshot = {field: row.get(field) for field in fields if row.get(field) is not None}
+    if row.get("footprint_factor_contributions") is not None:
+        snapshot["footprint_factor_contributions"] = row["footprint_factor_contributions"]
+    return snapshot
 
 
 def _persist_daily_candidates(
@@ -136,6 +165,7 @@ def _persist_daily_candidates(
             "evidence_gate_status": row.get("evidence_gate_status"),
             "evidence_gap_reason": row.get("evidence_gap_reason"),
             "risk_summary": row.get("risk_summary"),
+            "footprint_factor_coverage": row.get("footprint_factor_coverage"),
         }
         auxiliary_evidence = {
             "narrative": narrative,
@@ -231,7 +261,7 @@ def _persist_daily_candidates(
                         else {"status": "NOT_OFFICIAL_PICK", "classification": row.get("classification")}
                     )
                 ),
-                "fund_flow_momentum": row.get("capital_flow_proxy_score"),
+                "fund_flow_momentum": None,
                 "sector_catalyst_score": row.get("sector_propagation_bonus"),
                 "market_score": row.get("market_score"),
                 "catalyst_score": row.get("catalyst_score"),
@@ -245,6 +275,9 @@ def _persist_daily_candidates(
                         {
                             "ranking_metric": "ticket_score",
                             "score": row.get("ticket_score"),
+                            "strategy_version": "observable_footprint_v1",
+                            "formula": "0.75 * market_score + 0.25 * catalyst_score",
+                            "factor_coverage": row.get("footprint_factor_coverage"),
                             "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL",
                             "profit_guarantee": False,
                         }
@@ -349,6 +382,7 @@ def save_pipeline_to_db(
         "data_as_of": metrics.get("as_of_date"),
         "generated_at": metrics.get("generated_at"),
         "source_mode": metrics.get("source_mode"),
+        "strategy_version": metrics.get("strategy_version", "observable_footprint_v1"),
         "scoring_config": _scoring_config_snapshot(db),
     }
     run = create_research_run(
@@ -442,7 +476,7 @@ def save_pipeline_to_db(
                 panel_verdict=panel_verdict,
                 market_regime=market_regime,
                 entry_reason=entry_reason,
-                institutional_flow_score=row.get("capital_flow_proxy_score"),
+                institutional_flow_score=None,
                 social_sentiment_score=None,
                 raw_market_score=row.get("raw_market_score"),
                 blended_score=row.get("blended_score"),

@@ -16,7 +16,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import requests
-from eastmoney_us import normalize_us_symbol, fetch_klines_period, klines_to_dataframe
+from eastmoney_us import normalize_us_symbol
 
 
 DEFAULT_UNIVERSE = ["AAPL", "MSFT", "NVDA", "META", "AMZN", "TSLA"]
@@ -265,8 +265,8 @@ def load_universe_source(source_name: str, explicit_universe: list[str] | None =
     raise ValueError(f"unknown universe source: {source_name}")
 
 
-def _fetch_akshare_us_kline(normalized: str, period: str) -> SymbolFetchResult | None:
-    """Fetch US stock daily klines via DataProvider (multi-source with fallback)."""
+def _fetch_provider_us_kline(normalized: str, period: str) -> SymbolFetchResult | None:
+    """Fetch US-stock daily klines through the sole DataProvider owner."""
     try:
         from data_provider import get_provider
 
@@ -288,23 +288,15 @@ def _fetch_akshare_us_kline(normalized: str, period: str) -> SymbolFetchResult |
 def history_frame(symbol: str, period: str) -> SymbolFetchResult:
     normalized = normalize_us_symbol(symbol)
 
-    akshare_result = _fetch_akshare_us_kline(normalized, period)
-    if akshare_result is not None and akshare_result.rows > 0:
-        return akshare_result
-
-    try:
-        rows = fetch_klines_period(normalized, period, retries=2)
-        if rows:
-            df = klines_to_dataframe(normalized, rows)
-            if df is not None and not df.empty:
-                return frame_to_symbol_fetch_result(normalized, period, df, source=EASTMONEY_HISTORICAL_SOURCE_DISPLAY)
-        error = "EastMoney kline returned empty data for US stock"
-    except Exception as exc:  # noqa: BLE001
-        error = f"EastMoney kline {exc.__class__.__name__}: {exc}"
+    provider_result = _fetch_provider_us_kline(normalized, period)
+    if provider_result is not None and provider_result.rows > 0:
+        return provider_result
 
     return SymbolFetchResult(
         symbol=normalized, period=period, rows=0, adj_close_available=False,
-        error=error, frame=None, source="unavailable",
+        error="DataProvider returned no usable US-stock kline rows",
+        frame=None,
+        source="unavailable",
     )
 
 

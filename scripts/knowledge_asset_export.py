@@ -15,6 +15,7 @@ import logging
 import os
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,58 @@ def _format_return(ret: float) -> str:
     return f"{sign}{ret*100:.2f}%"
 
 
+def _as_dict(value: Any) -> dict[str, Any]:
+    if isinstance(value, dict):
+        return value
+    if isinstance(value, str):
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError:
+            return {}
+        return parsed if isinstance(parsed, dict) else {}
+    return {}
+
+
+def _build_case_text(ticket: dict[str, Any]) -> str:
+    """Make one self-contained, retrieval-ready research case."""
+    factor_snapshot = _as_dict(ticket.get("factor_snapshot"))
+    source_layers = _as_dict(ticket.get("source_layers"))
+    outcomes = ticket.get("outcomes") or {}
+    factor_names = [
+        "large_participant_footprint_score",
+        "footprint_factor_coverage",
+        "market_participation_score",
+        "breakout_score",
+        "relative_strength_vs_equal_weight",
+        "volume_confirmation_ratio",
+        "closing_strength_5d",
+        "risk_penalty",
+    ]
+    factor_text = ", ".join(
+        f"{name}={factor_snapshot[name]}"
+        for name in factor_names
+        if factor_snapshot.get(name) is not None
+    ) or "unavailable"
+    outcome_text = "; ".join(
+        f"{horizon}: status={item.get('status')}, return={_format_return(item.get('forward_return'))}, "
+        f"outcome={item.get('outcome_classification') or 'PENDING'}, "
+        f"reason={item.get('outcome_reason') or 'unavailable'}"
+        for horizon, item in sorted(outcomes.items())
+    ) or "no forward-tracking record"
+    return "\n".join(
+        [
+            f"US research case: {ticket.get('symbol', 'unknown')}",
+            f"Selection: {ticket.get('entry_reason') or ticket.get('selection_reason') or 'unavailable'}",
+            f"Classification: {ticket.get('classification') or 'unavailable'}",
+            f"Research run: {ticket.get('research_run_id') or 'UNAVAILABLE_HISTORICAL'}; "
+            f"commit: {ticket.get('git_commit') or 'UNAVAILABLE_HISTORICAL'}",
+            f"Observable footprint: {factor_text}",
+            f"Evidence availability: {json.dumps(source_layers, ensure_ascii=False, default=str)}",
+            f"Lifecycle outcome: {outcome_text}",
+        ]
+    )
+
+
 def _build_ticket_section(ticket: dict, returns: dict = None) -> str:
     """Build markdown section for a ticket."""
     symbol = ticket.get("symbol", "unknown")
@@ -71,12 +124,31 @@ def _build_ticket_section(ticket: dict, returns: dict = None) -> str:
     if entry_reason:
         lines.append(f"- **Reason**: {entry_reason[:200]}")
 
+    lines.append(
+        f"- **Research version**: run={ticket.get('research_run_id') or 'UNAVAILABLE_HISTORICAL'}, "
+        f"commit={ticket.get('git_commit') or 'UNAVAILABLE_HISTORICAL'}"
+    )
+    factor_snapshot = _as_dict(ticket.get("factor_snapshot"))
+    if factor_snapshot:
+        lines.append(
+            "- **Observable footprint**: "
+            f"score={factor_snapshot.get('large_participant_footprint_score', 'N/A')}, "
+            f"coverage={factor_snapshot.get('footprint_factor_coverage', 'N/A')}, "
+            f"risk_penalty={factor_snapshot.get('risk_penalty', 'N/A')}"
+        )
+
     if returns:
         lines.append("- **Returns**:")
         for horizon in [1, 3, 5, 10]:
             ret = returns.get(f"forward_{horizon}d")
             if ret is not None:
                 lines.append(f"  - {horizon}d: {_format_return(ret)}")
+    for horizon, outcome in sorted((ticket.get("outcomes") or {}).items()):
+        lines.append(
+            f"- **{horizon} attribution**: "
+            f"{outcome.get('outcome_classification') or outcome.get('status') or 'PENDING'}; "
+            f"{outcome.get('outcome_reason') or 'unavailable'}"
+        )
 
     return "\n".join(lines)
 
@@ -110,14 +182,33 @@ def export_daily_knowledge(
     """
     from sqlalchemy import text
 
-    # 1. Fetch tickets for the date
+    # 1. Fetch tickets with their immutable run, evidence, and factor context.
     with engine.connect() as conn:
         result = conn.execute(text("""
-            SELECT symbol, ticket_score, market_score, catalyst_score,
-                   classification, risk_verdict, quality_verdict, entry_reason
-            FROM tickets
-            WHERE output_date = :trade_date
-            ORDER BY ticket_score DESC
+            SELECT
+                t.id AS ticket_id,
+                t.symbol,
+                t.ticket_score,
+                t.market_score,
+                t.catalyst_score,
+                t.classification,
+                t.risk_verdict,
+                t.quality_verdict,
+                t.entry_reason,
+                t.research_run_id,
+                rr.git_commit,
+                rr.config AS research_config,
+                dc.source_layers,
+                dc.factor_snapshot,
+                dc.ranking_basis,
+                dc.selection_reason
+            FROM tickets t
+            LEFT JOIN research_runs rr ON rr.run_id = t.research_run_id
+            LEFT JOIN daily_candidates dc
+              ON dc.trade_date = t.output_date
+             AND dc.symbol = t.symbol
+            WHERE t.output_date = :trade_date
+            ORDER BY t.ticket_score DESC
         """), {"trade_date": trade_date})
         tickets = [dict(row._mapping) for row in result.fetchall()]
 
@@ -125,11 +216,12 @@ def export_daily_knowledge(
         logger.warning(f"No tickets found for {trade_date}")
         return {"error": "no tickets"}
 
-    # 2. Fetch daily_candidates (top10)
+    # 2. Fetch candidates with their reproducible ranking context.
     with engine.connect() as conn:
         result = conn.execute(text("""
             SELECT symbol, stock_name, final_score, market_score, catalyst_score,
-                   decision, candidate_entry_reason, selection_reason
+                   decision, candidate_entry_reason, selection_reason,
+                   source_layers, factor_snapshot, ranking_basis, research_run_id
             FROM daily_candidates
             WHERE trade_date = :trade_date
             ORDER BY final_score DESC NULLS LAST
@@ -137,28 +229,70 @@ def export_daily_knowledge(
         """), {"trade_date": trade_date})
         top10 = [dict(row._mapping) for row in result.fetchall()]
 
-    # 3. Fetch forward_tracking returns
+    # 3. Fetch complete forward-tracking outcomes for every ticket.
     with engine.connect() as conn:
         result = conn.execute(text("""
-            SELECT t.symbol,
-                   MAX(CASE WHEN ft.horizon_days = 1 THEN ft.forward_return END) as forward_1d,
-                   MAX(CASE WHEN ft.horizon_days = 3 THEN ft.forward_return END) as forward_3d,
-                   MAX(CASE WHEN ft.horizon_days = 5 THEN ft.forward_return END) as forward_5d,
-                   MAX(CASE WHEN ft.horizon_days = 10 THEN ft.forward_return END) as forward_10d
+            SELECT
+                t.id AS ticket_id,
+                t.symbol,
+                ft.horizon_days,
+                ft.check_status,
+                ft.forward_return,
+                ft.outcome_classification,
+                ft.outcome_reason,
+                ft.due_date
             FROM tickets t
             LEFT JOIN forward_tracking ft ON t.id = ft.ticket_id
             WHERE t.output_date = :trade_date
-            GROUP BY t.symbol
+            ORDER BY t.symbol, ft.horizon_days
         """), {"trade_date": trade_date})
-        returns_map = {row[0]: dict(row._mapping) for row in result.fetchall()}
+        tracking_rows = [dict(row._mapping) for row in result.fetchall()]
 
-    # 4. Build summary JSON
+    outcomes_by_ticket: dict[int, dict[str, dict[str, Any]]] = {}
+    returns_map: dict[str, dict[str, Any]] = {}
+    for tracking in tracking_rows:
+        if tracking.get("horizon_days") is None:
+            continue
+        horizon = f"{tracking['horizon_days']}d"
+        outcome = {
+            "status": tracking.get("check_status"),
+            "forward_return": tracking.get("forward_return"),
+            "outcome_classification": tracking.get("outcome_classification"),
+            "outcome_reason": tracking.get("outcome_reason"),
+            "due_date": tracking.get("due_date"),
+        }
+        outcomes_by_ticket.setdefault(int(tracking["ticket_id"]), {})[horizon] = outcome
+        returns_map.setdefault(str(tracking["symbol"]), {})[f"forward_{tracking['horizon_days']}d"] = tracking.get("forward_return")
+
+    # 4. Include non-return paper and journal records from the single trace view.
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT ticket_id, record_type, record_status, horizon_days,
+                   forward_return, pnl, outcome_classification, outcome_reason, paper_reason
+            FROM research_trade_trace
+            WHERE output_date = :trade_date
+              AND ticket_id IS NOT NULL
+            ORDER BY ticket_id, record_type, horizon_days NULLS FIRST
+        """), {"trade_date": trade_date})
+        traces_by_ticket: dict[int, list[dict[str, Any]]] = {}
+        for row in result.fetchall():
+            trace = dict(row._mapping)
+            traces_by_ticket.setdefault(int(trace["ticket_id"]), []).append(trace)
+
+    for ticket in tickets:
+        ticket_id = int(ticket["ticket_id"])
+        ticket["outcomes"] = outcomes_by_ticket.get(ticket_id, {})
+        ticket["trace_records"] = traces_by_ticket.get(ticket_id, [])
+        ticket["research_case_text"] = _build_case_text(ticket)
+
+    # 5. Build summary JSON.
     summary = {
         "trade_date": trade_date.isoformat(),
         "exported_at": datetime.now().isoformat(),
         "tickets": tickets,
         "top10": top10,
         "returns": returns_map,
+        "tracking": tracking_rows,
         "ticket_count": len(tickets),
         "top10_count": len(top10),
     }
@@ -168,7 +302,7 @@ def export_daily_knowledge(
     summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False, default=str))
     logger.info(f"Summary written: {summary_path}")
 
-    # 5. Write Obsidian project note
+    # 6. Write Obsidian project note
     obsidian_project_path = None
     if os.path.exists(OBSIDIAN_PROJECT_PATH):
         inbox_dir = _ensure_dir(Path(OBSIDIAN_PROJECT_PATH) / "美股" / "inbox")
@@ -246,7 +380,7 @@ def export_daily_knowledge(
             status_path.write_text(status_content)
             logger.info(f"Obsidian status updated: {status_path}")
 
-    # 6. Write 神临 pointer note
+    # 7. Write 神临 pointer note
     obsidian_shenlin_path = None
     if os.path.exists(OBSIDIAN_SHENLIN_PATH):
         ideas_dir = _ensure_dir(Path(OBSIDIAN_SHENLIN_PATH) / "想法池")
@@ -278,11 +412,23 @@ LIMIT 5;
         obsidian_shenlin_path = str(pointer_path)
         logger.info(f"Obsidian shenlin pointer written: {pointer_path}")
 
-    # 7. Upsert TOP10 vectors
+    # 8. Upsert full official-ticket lifecycle cases in the existing vector store.
     vector_count = 0
     try:
-        from neural_vector_store import upsert_top10_cases_from_db
-        vector_count = upsert_top10_cases_from_db(engine, trade_date)
+        from neural_vector_store import upsert_pick_case, upsert_top10_cases_from_db
+
+        for ticket in tickets:
+            first_return = (ticket.get("outcomes") or {}).get("1d", {}).get("forward_return")
+            upsert_pick_case(
+                engine,
+                trade_date,
+                ticket["symbol"],
+                "TICKET_LIFECYCLE",
+                ticket,
+                t1_return=first_return,
+            )
+            vector_count += 1
+        vector_count += upsert_top10_cases_from_db(engine, trade_date)
     except Exception as e:
         logger.warning(f"Failed to upsert TOP10 vectors: {e}")
 

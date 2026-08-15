@@ -12,7 +12,8 @@ from scripts.db.models import (
     LifecycleScoreboard, CeleryTask,
 )
 from scripts.db.crud import upsert_universe, upsert_realtime_quote, upsert_fund_flow
-from scripts.eastmoney_us_cdp import fetch_realtime_quote, fetch_fund_flow
+from scripts.data_provider import get_provider
+from scripts.eastmoney_us_cdp import fetch_fund_flow
 from sqlalchemy import text
 
 
@@ -116,9 +117,10 @@ def populate_realtime_quotes(db):
 
     now = datetime.utcnow()
     total = 0
+    provider = get_provider()
     for sym in symbols[:30]:
         try:
-            q = fetch_realtime_quote(sym)
+            q, _source, _metadata = provider.fetch_realtime_quote(sym)
             if q and q.get("latest_price"):
                 upsert_realtime_quote(db, sym, now,
                     latest_price=q.get("latest_price"),

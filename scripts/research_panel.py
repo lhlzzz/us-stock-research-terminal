@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from eastmoney_us import fetch_realtime_quote
+from data_provider import get_provider
 
 LAST30DAYS_SCRIPT = Path("/root/.agents/skills/last30days/scripts/last30days.py")
 LAST30DAYS_PYTHON = Path("/root/.local/share/hermes-tools/last30days-py312/bin/python")
@@ -42,7 +42,8 @@ def _provider_profile(symbol: str, profile: dict[str, Any] | None = None) -> dic
         provider_profile = profile.get("provider_profile") if isinstance(profile.get("provider_profile"), dict) else profile
         if provider_profile:
             return provider_profile
-    return fetch_realtime_quote(symbol) or {}
+    quote, _provider, _metadata = get_provider().fetch_realtime_quote(symbol)
+    return quote or {}
 
 
 def _score_range(value: float | None, low: float, high: float, invert: bool = False) -> float | None:

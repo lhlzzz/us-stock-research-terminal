@@ -66,6 +66,10 @@ def _numeric_as_text(value: float, name: str) -> str:
 
 def case_text_from_ticket(ticket: dict) -> str:
     """Serialize ticket data into text for embedding."""
+    reusable_case_text = ticket.get("research_case_text")
+    if reusable_case_text:
+        return str(reusable_case_text)
+
     parts = []
 
     # Basic info
@@ -168,6 +172,21 @@ def get_embedding_dim(backend: str = None) -> int:
     return STRUCTURED_DIM
 
 
+def _stored_embedding_dim(engine) -> int | None:
+    """Return the existing pgvector dimension when the case table exists."""
+    from sqlalchemy import text
+
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT atttypmod
+            FROM pg_attribute
+            WHERE attrelid = 'pick_case_embeddings'::regclass
+              AND attname = 'embedding'
+        """))
+        value = result.scalar()
+    return int(value) if value else None
+
+
 def ensure_case_embedding_table(engine, backend: str = None) -> int:
     """Create or align pick_case_embeddings table with current backend dimension.
 
@@ -216,8 +235,8 @@ def ensure_case_embedding_table(engine, backend: str = None) -> int:
                 "WHERE attrelid = 'pick_case_embeddings'::regclass AND attname = 'embedding'"
             ))
             current_dim = result.scalar()
-            if current_dim and current_dim - 4 != dim:
-                logger.warning(f"Dimension mismatch: table={current_dim - 4}, backend={dim}. Consider migration.")
+            if current_dim and current_dim != dim:
+                logger.warning(f"Dimension mismatch: table={current_dim}, backend={dim}. Consider migration.")
 
     return dim
 
@@ -239,6 +258,14 @@ def upsert_pick_case(
 
     case_text = case_text_from_ticket(ticket_data)
     embedding, actual_backend = embed_text(case_text, backend)
+    stored_dim = _stored_embedding_dim(engine)
+    if stored_dim and len(embedding) != stored_dim:
+        if actual_backend == "structured":
+            embedding = _structured_embedding(case_text, dim=stored_dim)
+        else:
+            raise RuntimeError(
+                f"Embedding dimension mismatch: generated={len(embedding)}, stored={stored_dim}"
+            )
     dim = len(embedding)
 
     # Convert to pgvector format

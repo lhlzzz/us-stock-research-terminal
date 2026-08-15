@@ -1,8 +1,18 @@
 # NEXT_ACTION
 
 **当前待办：**
-1. **策略质量修正**：1d/3d/5d 完成收益仍为负（分别约 -0.60%/-0.42%/-1.25%），10d 约 +2.95%；不要把纸面结果当实盘能力
+1. **策略质量验证**：新的 `observable_footprint_v1` 仅重构未来研究运行；必须积累独立样本后再判断 1d/3d/5d/10d 结果，不能把已有纸面收益当作实盘能力或策略证明。
 2. **历史版本边界**：446 张历史票缺少可唯一推导的 `research_run_id`，其新闻、资金代理和情绪快照均保持历史缺失；不得补造。
+3. **数据源运行边界**：Yahoo Chart API 在 2026-08-15 的真实 smoke 返回 403，EastMoney K 线未成功；`DataProvider` 已明确记录后回退到 Akshare。仅在来源、时间戳和 fallback 链均已保存时使用行情。
+
+**已验证（2026-08-15，行情、策略与知识资产重构）：**
+- `scripts/data_provider.py` 现在是行情 API 的唯一 transport owner：Scrapy 长生命周期 bridge 提供请求去重、超时、重试、域名并发、响应 hash 和 audit；Yahoo Chart API 为有界可选 K 线源，限流/不可用状态不会被掩盖，EastMoney 与 Akshare fallback 会写入 `source_attempts`
+- 历史 K 线、出票实时行情、研究面板、回填任务和 K 线任务均已收口到 `DataProvider`；没有新增 broker、execution 或 live-trade 路径
+- 出票策略版本为 `observable_footprint_v1`：公开价格成交量足迹、流动性、相对强弱、突破接受度、收盘强度、市场宽度/涨跌家数、独立催化证据和风险惩罚；不再把 EastMoney 字段描述为主力资金/机构流，缺失项不会使用 `0.5` 中性分数
+- 公共催化证据缺失时只能产生 `MARKET_WATCHLIST_NEEDS_EVIDENCE`，不能进入 `CANDIDATE_FOR_PAPER_REVIEW`；`social_sentiment` 保持 `UNAVAILABLE_NO_VALIDATED_CORPUS`
+- `daily_candidates` 现保存足迹因子贡献、因子覆盖率、市场参与度、来源层、排名公式与版本；非有限数值规范化为 JSON `null`
+- 2026-08-15 的知识资产 JSON 已扩展为研究 run/commit/config、来源层、因子与排名快照、全周期 tracking、唯一 `research_trade_trace` 归因和可复用 case text；LITE、NBIS、NTAP 已写入现有 `pick_case_embeddings`，使用结构化 384 维 fallback
+- 验证：本地 Scrapy fixture、Yahoo rate-limit fallback 测试、策略门槛测试通过；`python3 -m pytest -q tests` 为 32 passed，`python3 -m compileall -q scripts`、`bash -n scripts/daily_pipeline.sh`、数据库向量查询和真实 NVDA 行情 smoke 通过
 
 **已验证（2026-08-15，研究证据与前端收口）：**
 - 新研究运行会写入 Git 提交、评分配置快照、数据截至时间和完整候选池；每张新票通过 `research_run_id` 连接到唯一研究运行

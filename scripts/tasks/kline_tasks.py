@@ -8,7 +8,7 @@ def fetch_daily_klines(self, symbols: list[str] = None):
     """Fetch daily klines for universe symbols and store in PostgreSQL."""
     from scripts.db.engine import SessionLocal
     from scripts.db.crud import upsert_kline
-    from scripts.eastmoney_us_cdp import fetch_realtime_quote
+    from scripts.data_provider import get_provider
 
     db = SessionLocal()
     try:
@@ -18,9 +18,10 @@ def fetch_daily_klines(self, symbols: list[str] = None):
 
         today = date.today()
         fetched = 0
+        provider = get_provider()
         for sym in symbols:
             try:
-                q = fetch_realtime_quote(sym)
+                q, source, _metadata = provider.fetch_realtime_quote(sym)
                 if q and q.get("latest_price") and q.get("prev_close"):
                     upsert_kline(db, sym, today,
                                  open=q.get("open"),
@@ -31,7 +32,7 @@ def fetch_daily_klines(self, symbols: list[str] = None):
                                  volume=int(q.get("volume", 0)),
                                  amount=q.get("amount"),
                                  pct_chg=q.get("pct_chg"),
-                                 source="eastmoney_cdp")
+                                 source=source)
                     fetched += 1
             except Exception as e:
                 print(f"Error fetching {sym}: {e}")

@@ -19,7 +19,6 @@ import numpy as np
 import pandas as pd
 
 from historical_replay_baseline import (
-    COMBINED_MARKET_DATA_SOURCE_DISPLAY,
     DEFAULT_BATCH_SIZE,
     DEFAULT_MIN_HISTORY_DAYS,
     DEFAULT_MIN_MEDIAN_DOLLAR_VOLUME,
@@ -37,15 +36,14 @@ from historical_replay_baseline import (
     write_text,
 )
 from eastmoney_us import (
-    DATA_SOURCE_DISPLAY,
     candidate_enhanced_urls,
-    fetch_realtime_quote,
     information_coverage_audit,
     normalize_us_symbol,
 )
+from data_provider import get_provider
 
-EASTMONEY_HISTORICAL_SOURCE_DISPLAY = "EastMoney US historical kline"
-AKSHARE_HISTORICAL_SOURCE_DISPLAY = "EastMoney US historical kline (via akshare)"
+EASTMONEY_HISTORICAL_SOURCE_DISPLAY = "DataProvider historical OHLCV"
+AKSHARE_HISTORICAL_SOURCE_DISPLAY = "DataProvider fallback historical OHLCV"
 from research_panel import run_full_research_panel
 from risk_manager import (
     DEFAULT_RISK_PER_TRADE,
@@ -77,8 +75,8 @@ DEFAULT_TOP_K = 3
 DEFAULT_CANDIDATE_POOL_SIZE = 50
 MIN_TICKET_SCORE = 0.3  # Lowered: data shows low-score tickets outperform (contrarian edge)
 DATA_SOURCE_MISMATCH_THRESHOLD = 0.01
-QUOTE_SOURCE_DISPLAY = DATA_SOURCE_DISPLAY
-MARKET_DATA_SOURCE_DISPLAY = COMBINED_MARKET_DATA_SOURCE_DISPLAY
+QUOTE_SOURCE_DISPLAY = "DataProvider realtime quote (Scrapy-owned API transport)"
+MARKET_DATA_SOURCE_DISPLAY = "DataProvider historical OHLCV + realtime quote"
 TRACKING_HORIZONS = [1, 3, 10]
 RUN_ARTIFACT_FILENAMES = {
     "summary": "summary-{output_date}.md",
@@ -91,12 +89,25 @@ RUN_ARTIFACT_FILENAMES = {
 NARRATIVE_QUERY_SUFFIX = "stock catalyst earnings news"
 LAST30DAYS_TIMEOUT_SECONDS = 20
 LAST30DAYS_CACHE_DIR = Path(__file__).resolve().parent.parent / "data" / "last30days-cache"
-# Default to skipping last30days social/news data (noise reduction)
-# Set XIAOMEI_SKIP_LAST30DAYS=0 to re-enable
-SKIP_LAST30DAYS = os.environ.get("XIAOMEI_SKIP_LAST30DAYS", "1") == "1"
+# Public catalyst evidence is required for an official paper-review candidate.
+# Set XIAOMEI_SKIP_LAST30DAYS=1 only for a watchlist-only research run.
+SKIP_LAST30DAYS = os.environ.get("XIAOMEI_SKIP_LAST30DAYS", "0") == "1"
 
 RESEARCH_DIR = Path(__file__).resolve().parent.parent / "research"
 FEEDBACK_JSON = RESEARCH_DIR / "backtest-review-feedback.json"
+
+
+def fetch_realtime_quote(symbol: str) -> dict[str, Any] | None:
+    """Return one quote through DataProvider and preserve explicit source state."""
+    quote, provider_name, metadata = get_provider().fetch_realtime_quote(symbol)
+    if quote is None:
+        return None
+    return {
+        **quote,
+        "provider": provider_name,
+        "source_status": metadata.get("provider_status", "unavailable"),
+        "source_attempts": metadata.get("source_attempts", []),
+    }
 
 
 def load_feedback() -> dict | None:
@@ -1000,149 +1011,41 @@ def _detect_volume_anomalies(results: dict, volume_threshold: float = 2.0) -> li
     return anomalies
 
 
-def fetch_fund_flow_scores(symbols: list[str]) -> dict[str, float]:
-    """Fetch EastMoney fund flow momentum for US stocks (f178 field).
-
-    Returns dict of symbol -> fund_flow_score (0-1 scale).
-    Positive net inflow over 5 days = high score.
-    """
-    from concurrent.futures import ThreadPoolExecutor, as_completed
-
-    def _fetch_one(symbol: str) -> tuple[str, float] | None:
-        try:
-            from eastmoney_us import normalize_us_symbol, secid_candidates, _eastmoney_get, _fnum
-            normalized = normalize_us_symbol(symbol)
-            for candidate_secid in secid_candidates(normalized):
-                params = {
-                    "ut": "fa5fd1943c7b386f172d6893dbfba10b",
-                    "fltt": "2",
-                    "invt": "2",
-                    "fields": "f178",
-                    "secid": candidate_secid,
-                }
-                payload = _eastmoney_get(
-                    "https://push2delay.eastmoney.com/api/qt/stock/get",
-                    params, retries=1, timeout=5,
-                )
-                if not payload or payload.get("data") is None:
-                    continue
-                raw = payload["data"].get("f178")
-                if not raw:
-                    continue
-                if isinstance(raw, str):
-                    flow_data = json.loads(raw)
-                else:
-                    flow_data = raw
-                if not isinstance(flow_data, list) or len(flow_data) == 0:
-                    continue
-                net_flows = [_fnum(str(item.get("mainNetAmt", 0))) or 0 for item in flow_data]
-                total_net = sum(net_flows)
-                positive_days = sum(1 for f in net_flows if f > 0)
-                score = min(1.0, max(0.0, (total_net / 1e9 + 1) / 2)) if total_net != 0 else 0.5
-                score = min(1.0, positive_days / len(net_flows) * 0.6 + score * 0.4)
-                return (normalized, score)
-        except Exception:
-            pass
-        return None
-
-    scores = {}
-    max_workers = min(16, max(1, len(symbols)))
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(_fetch_one, s): s for s in symbols}
-        for future in as_completed(futures):
-            result = future.result()
-            if result:
-                scores[result[0]] = result[1]
-    return scores
-
-
 def build_structured_scores(
     feature_frame: pd.DataFrame,
-    fund_flow_scores: dict[str, float] | None = None,
-    evidence_summaries: dict[str, dict] | None = None,
-    sector_map: dict[str, str] | None = None,
-    sector_evidence_density: dict[str, float] | None = None,
 ) -> pd.Series:
-    """Structured scoring signals inspired by xiaogu's blended approach.
+    """Score observable large-participant footprint proxies only.
 
-    Components (each 0-1):
-    - volume_price_alignment: volume trend confirms price trend
-    - closing_consistency: consistent strong closes
-    - momentum_health: positive acceleration with reasonable magnitude
-    - dollar_volume_quality: high dollar volume = institutional interest
-    - trend_stability: low volatility relative to momentum
-    - fund_flow_momentum: EastMoney main fund net inflow (xiaogu pattern)
-    - news_quality: evidence source diversity and relevance
-    - sector_propagation: sector-level momentum + evidence density
+    This is not a claim about verified institutional ownership or order flow.
+    A missing public observation stays unavailable and reduces confidence rather
+    than receiving a neutral value.
     """
     scores = pd.DataFrame(index=feature_frame.index)
 
-    vol_up = (feature_frame["volume_confirmation_ratio"] > 0).astype(float)
-    price_up = (feature_frame["prior_20d_momentum"] > 0).astype(float)
-    scores["volume_price_alignment"] = (vol_up * 0.5 + price_up * 0.5)
+    volume_trend = feature_frame["volume_trend_20d"]
+    momentum = feature_frame["prior_20d_momentum"]
+    scores["relative_volume_expansion"] = percentile_rank(volume_trend)
+    scores["volume_price_alignment"] = np.select(
+        [
+            volume_trend.notna() & momentum.notna() & (volume_trend > 1.0) & (momentum > 0),
+            volume_trend.notna() & momentum.notna() & ((volume_trend > 1.0) | (momentum > 0)),
+            volume_trend.notna() & momentum.notna(),
+        ],
+        [1.0, 0.5, 0.0],
+        default=np.nan,
+    )
+    scores["close_strength"] = feature_frame["closing_strength_5d"].clip(0, 1)
+    breakout_score = feature_frame.get(
+        "breakout_score",
+        pd.Series(np.nan, index=feature_frame.index, dtype=float),
+    )
+    scores["breakout_acceptance"] = breakout_score.clip(0, 1)
+    scores["liquidity_quality"] = percentile_rank(feature_frame["median_dollar_volume_20d"])
+    scores["relative_strength"] = percentile_rank(feature_frame["relative_strength_vs_equal_weight"])
 
-    scores["closing_consistency"] = feature_frame["closing_strength_5d"].clip(0, 1)
-
-    accel_positive = (feature_frame["five_day_acceleration"] > -0.03).astype(float)
-    accel_moderate = ((feature_frame["five_day_acceleration"] > -0.10) & (feature_frame["five_day_acceleration"] <= -0.03)).astype(float) * 0.6
-    accel_weak = ((feature_frame["five_day_acceleration"] > -0.18) & (feature_frame["five_day_acceleration"] <= -0.10)).astype(float) * 0.2
-    scores["momentum_health"] = accel_positive * 1.0 + accel_moderate + accel_weak
-
-    dollar_vol_rank = percentile_rank(feature_frame["median_dollar_volume_20d"])
-    scores["dollar_volume_quality"] = dollar_vol_rank
-
-    vwm_positive = (feature_frame["volume_weighted_momentum"] > 0).astype(float)
-    rs_positive = (feature_frame["relative_strength_vs_equal_weight"] > 0).astype(float)
-    scores["trend_stability"] = vwm_positive * 0.5 + rs_positive * 0.5
-
-    if fund_flow_scores:
-        scores["fund_flow_momentum"] = feature_frame.index.map(
-            lambda s: fund_flow_scores.get(s, 0.5)
-        )
-    else:
-        scores["fund_flow_momentum"] = 0.5
-
-    if evidence_summaries:
-        def _news_quality(symbol: str) -> float:
-            ev = evidence_summaries.get(symbol, {})
-            source_div = min(1.0, ev.get("source_diversity", 0) / 3.0)
-            cluster_bonus = min(0.3, ev.get("cluster_count", 0) * 0.1)
-            candidate_bonus = min(0.3, ev.get("ranked_candidate_count", 0) * 0.05)
-            relevance = ev.get("relevance_score", 0.0)
-            return min(1.0, source_div * 0.3 + cluster_bonus + candidate_bonus + relevance * 0.4)
-        scores["news_quality"] = feature_frame.index.map(_news_quality)
-    else:
-        scores["news_quality"] = 0.5
-
-    if sector_map:
-        sector_price_momentum: dict[str, float] = {}
-        for sym in feature_frame.index:
-            sector = sector_map.get(sym, "Unknown")
-            if sector not in sector_price_momentum:
-                sector_syms = [s for s, sec in sector_map.items() if sec == sector and s in feature_frame.index]
-                if sector_syms:
-                    sector_price_momentum[sector] = float(feature_frame.loc[sector_syms, "prior_20d_momentum"].mean())
-                else:
-                    sector_price_momentum[sector] = 0.0
-        sector_price_rank = percentile_rank(pd.Series(sector_price_momentum))
-
-        if sector_evidence_density:
-            sector_ev_rank = percentile_rank(pd.Series(sector_evidence_density))
-        else:
-            sector_ev_rank = pd.Series(0.5, index=sector_price_momentum.keys())
-
-        def _sector_propagation(symbol: str) -> float:
-            sector = sector_map.get(symbol, "Unknown")
-            price_score = sector_price_rank.get(sector, 0.5)
-            ev_score = sector_ev_rank.get(sector, 0.5)
-            return price_score * 0.6 + ev_score * 0.4
-
-        scores["sector_propagation"] = feature_frame.index.map(_sector_propagation)
-    else:
-        scores["sector_propagation"] = 0.5
-
-    structured = scores.mean(axis=1)
-    return structured
+    feature_frame["footprint_factor_coverage"] = scores.notna().mean(axis=1)
+    feature_frame["footprint_factor_contributions"] = scores.to_dict(orient="index")
+    return scores.mean(axis=1, skipna=True) * feature_frame["footprint_factor_coverage"]
 
 
 def build_market_snapshot(
@@ -1187,7 +1090,6 @@ def build_market_snapshot(
     ).reindex(price_basis.index).sort_index().astype(float)
     daily_range = daily_high - daily_low
     closing_strength = (close_panel - daily_low) / daily_range.replace(0, np.nan)
-    closing_strength = closing_strength.fillna(0.5)  # When high==low (e.g. realtime same-price), use neutral
     closing_strength_5d = closing_strength.rolling(5, min_periods=5).mean()
     prior_5d_volume = volume_panel.rolling(5, min_periods=5).mean()
     prior_20d_volume = volume_panel.rolling(20, min_periods=20).mean()
@@ -1208,6 +1110,7 @@ def build_market_snapshot(
             "median_dollar_volume_20d": median_dollar_volume_20d.loc[as_of_date].reindex(selected_universe).values,
             "closing_strength_5d": closing_strength_5d.loc[as_of_date].reindex(selected_universe).values,
             "volume_weighted_momentum": volume_weighted_momentum.loc[as_of_date].reindex(selected_universe).values,
+            "volume_trend_20d": volume_trend.loc[as_of_date].reindex(selected_universe).values,
         }
     ).set_index("symbol")
 
@@ -1232,8 +1135,6 @@ def build_market_snapshot(
         }
     except Exception:
         horizon_weights = {}
-
-    fund_flow_scores = fetch_fund_flow_scores(selected_universe)
 
     sector_keywords = {
         "Technology": ["tech", "software", "semiconductor", "chip", "cloud", "cyber", "saas", "data", "digital", "ai", "network", "apple", "microsoft", "google", "meta", "nvidia", "amd", "intel", "cisco", "oracle", "salesforce", "adobe", "vmware", "paypal", "shopify", "zoom", "slack", "snowflake", "crowdstrike", "palo alto", "fortinet", "marvell", "broadcom", "qualcomm", "texas instruments", "micron", "applied materials", "lam research", "kla corp", "entegris", "on semiconductor", "analog devices", "xilinx", "altera"],
@@ -1260,7 +1161,7 @@ def build_market_snapshot(
             assigned = "Technology" if sym in {"AAPL","MSFT","GOOGL","GOOG","AMZN","META","NVDA","TSLA","AVGO","CSCO","ORCL","CRM","ADBE","INTC","AMD","QCOM","TXN","INTU","NOW","AMAT","LRCX","KLAC","ADI","MRVL","SNPS","CDNS","FTNT","PANW","CRWD","ZS","DDOG","NET","SNOW","COIN","SHOP","SQ","PYPL","ROKU","UBER","LYFT","ABNB","NFLX","DIS","CHTR","TMUS","VZ","T","CMCSA"} else "Unknown"
         sector_map[sym] = assigned
 
-    structured_scores = build_structured_scores(feature_frame, fund_flow_scores, sector_map=sector_map)
+    structured_scores = build_structured_scores(feature_frame)
     feature_frame["structured_score"] = structured_scores
 
     intraday_data = {}
@@ -1284,10 +1185,10 @@ def build_market_snapshot(
             pass
 
     feature_frame["intraday_momentum"] = feature_frame.index.map(
-        lambda s: intraday_data.get(s, {}).get("intraday_momentum", 0.0)
+        lambda s: intraday_data.get(s, {}).get("intraday_momentum", np.nan)
     )
     feature_frame["close_position"] = feature_frame.index.map(
-        lambda s: intraday_data.get(s, {}).get("close_position", 0.5)
+        lambda s: intraday_data.get(s, {}).get("close_position", np.nan)
     )
 
     accel_neg = feature_frame["five_day_acceleration"] < 0
@@ -1299,7 +1200,7 @@ def build_market_snapshot(
         lambda x: 100.0 - 100.0 / (1.0 + x[x > 0].sum() / max(1e-9, abs(x[x < 0].sum()))),
         raw=True,
     )
-    feature_frame["rsi_14"] = rsi_14.loc[as_of_date].reindex(selected_universe).fillna(50.0).values
+    feature_frame["rsi_14"] = rsi_14.loc[as_of_date].reindex(selected_universe).values
 
     price_up_5d = (prior_5d.loc[as_of_date].reindex(selected_universe) > 0).values
     vol_up_5d = (volume_trend.loc[as_of_date].reindex(selected_universe) > 1.0).values
@@ -1315,6 +1216,9 @@ def build_market_snapshot(
         np.minimum(1.0, feature_frame["prior_20d_momentum"] * 3.0 + feature_frame["volume_confirmation_ratio"] * 0.5),
         0.0,
     )
+    structured_scores = build_structured_scores(feature_frame)
+    feature_frame["structured_score"] = structured_scores
+    feature_frame["large_participant_footprint_score"] = structured_scores
 
     oversold = feature_frame["rsi_14"] < 35
     vol_spike = feature_frame["volume_confirmation_ratio"] > 0.3
@@ -1356,42 +1260,18 @@ def build_market_snapshot(
         )
     )
 
-    # Compute horizon-specific scores if available
-    if horizon_weights:
-        # Compute score for each horizon
-        horizon_scores = {}
-        for h, hw in horizon_weights.items():
-            h_score = pd.Series(0.0, index=feature_frame.index)
-            for factor, weight in hw.items():
-                if factor in percentile_features:
-                    h_score += weight * percentile_features[factor]
-                elif factor in feature_frame.columns:
-                    h_score += weight * percentile_rank(feature_frame[factor])
-            horizon_scores[h] = h_score
-
-        # Weighted average: 10d gets highest weight (best avg return +1.06%)
-        # 1d: 15%, 3d: 25%, 10d: 60%
-        feature_frame["raw_market_score"] = (
-            horizon_scores.get(1, 0) * 0.15
-            + horizon_scores.get(3, 0) * 0.25
-            + horizon_scores.get(10, 0) * 0.60
-        )
-    else:
-        # Fallback to general weights
-        feature_frame["raw_market_score"] = (
-            sw.get("prior_20d_momentum", 0.10) * percentile_features["prior_20d_momentum"]
-            + sw.get("five_day_acceleration", -0.10) * percentile_features["five_day_acceleration"]
-            + sw.get("relative_strength_vs_equal_weight", 0.35) * percentile_features["relative_strength_vs_equal_weight"]
-            + sw.get("volume_weighted_momentum", 0.20) * percentile_features["volume_weighted_momentum"]
-        )
-
-    # Add intraday and reversal signals
-    feature_frame["raw_market_score"] = feature_frame["raw_market_score"] + (
-        0.25 * percentile_rank(feature_frame["intraday_momentum"])
-        + 0.15 * feature_frame["close_position"]
-        + 0.15 * feature_frame["reversal_signal"]
+    # Market participation is the observable cross-sectional environment, not
+    # social sentiment. It is a small context term beside the stock footprint.
+    market_participation = min(
+        1.0,
+        max(0.0, (float(regime.breadth) + float(regime.advance_ratio)) / 200.0),
     )
-    feature_frame["blended_score"] = feature_frame["raw_market_score"] * 0.35 + structured_scores * 0.35 + feature_frame["breakout_score"] * 0.30
+    feature_frame["market_participation_score"] = market_participation
+    feature_frame["raw_market_score"] = feature_frame["large_participant_footprint_score"]
+    feature_frame["blended_score"] = (
+        feature_frame["large_participant_footprint_score"] * 0.85
+        + feature_frame["market_participation_score"] * 0.15
+    )
 
     momentum_exhaustion_mask = feature_frame["five_day_acceleration"] < regime_thresholds.exhaustion_threshold
     feature_frame["market_rule_flags"] = np.where(
@@ -1405,20 +1285,7 @@ def build_market_snapshot(
         0.0,
     )
     feature_frame["market_score"] = feature_frame["blended_score"] + feature_frame["market_rule_adjustment"]
-
-    # Social sentiment bonus - bounded contribution (max 0.05)
-    # Use volume confirmation as institutional activity proxy
-    social_bonus = np.where(
-        feature_frame["volume_confirmation_ratio"] > 0.3,
-        0.05,
-        np.where(
-            feature_frame["volume_confirmation_ratio"] > 0.15,
-            0.02,
-            0.0
-        )
-    )
-    feature_frame["social_sentiment_bonus"] = social_bonus
-    feature_frame["market_score"] = feature_frame["market_score"] + social_bonus
+    feature_frame["social_sentiment_bonus"] = 0.0
 
     if feedback and feedback.get("symbol_penalties"):
         penalties = feedback["symbol_penalties"]
@@ -1472,18 +1339,7 @@ def build_market_snapshot(
     feature_frame["market_score"] = feature_frame["market_score"] - feature_frame["risk_penalty"]
 
     feature_frame["blowoff_risk"] = np.where(blowoff_mask, "high_volume_rejection", "")
-    feature_frame["confirmation_score"] = (
-        (feature_frame["relative_strength_vs_equal_weight"] > 0).astype(float) * 0.15
-        + (feature_frame["volume_weighted_momentum"] > 0).astype(float) * 0.15
-        + (feature_frame["closing_strength_5d"] > 0.5).astype(float) * 0.10
-        + (feature_frame["five_day_acceleration"] > -0.05).astype(float) * 0.10
-        + (feature_frame["volume_confirmation_ratio"] > 0).astype(float) * 0.08
-        + (feature_frame["prior_20d_momentum"] > 0.05).astype(float) * 0.08
-        + feature_frame["momentum_quality"] * 0.14
-        + feature_frame["breakout_score"] * 0.15
-        + feature_frame["reversal_quality"] * 0.05
-    )
-    feature_frame["market_score"] = feature_frame["market_score"] + feature_frame["confirmation_score"] * 0.12
+    feature_frame["confirmation_score"] = feature_frame["footprint_factor_coverage"]
     feature_frame["market_rank"] = feature_frame["market_score"].rank(
         method="first",
         ascending=False,
@@ -1736,51 +1592,26 @@ def build_risk_summary(row: dict[str, Any], narrative: dict[str, Any], business:
     return " ".join(pieces)
 
 
-def _compute_alternative_catalyst(row: pd.Series, symbol: str, fund_flow_scores: dict) -> float:
-    """Compute catalyst score from alternative sources when last30days is skipped.
-
-    Sources:
-    1. Fund flow momentum (EastMoney main fund net inflow)
-    2. Volume confirmation (institutional activity proxy)
-    3. Price momentum strength (momentum catalyst)
-
-    Returns: catalyst score (0-0.3 range)
-    """
-    catalyst = 0.0
-
-    # 1. Fund flow momentum (0-0.1)
-    ff_score = fund_flow_scores.get(symbol, 0) if fund_flow_scores else 0
-    if ff_score and ff_score > 0:
-        catalyst += min(0.1, ff_score * 0.1)
-
-    # 2. Volume confirmation (0-0.1)
-    vol_conf = float(row.get("volume_confirmation_ratio", 0) or 0)
-    if vol_conf > 0.2:
-        catalyst += min(0.1, vol_conf * 0.1)
-
-    # 3. Price momentum strength (0-0.1)
-    mom_20d = float(row.get("prior_20d_momentum", 0) or 0)
-    if mom_20d > 0.05:
-        catalyst += min(0.1, mom_20d * 0.5)
-
-    return catalyst
-
-
 def catalyst_score(narrative: dict[str, Any], business: dict[str, Any]) -> float:
-    score = 0.0
-    n_rel = float(narrative.get("relevance_score", 0))
-    b_rel = float(business.get("relevance_score", 0))
+    """Score independently observed public catalyst evidence, or zero if absent."""
+    n_rel = _safe_float(narrative.get("relevance_score")) or 0.0
+    b_rel = _safe_float(business.get("relevance_score")) or 0.0
     n_ok = narrative["status"] == "found_relevant" and n_rel >= 0.7
     b_ok = business["status"] == "found_relevant" and b_rel >= 0.7
-    if n_ok:
-        score += min(0.25, n_rel * 0.25)
-    if b_ok:
-        score += min(0.25, b_rel * 0.25)
-    if n_ok and b_ok:
-        score += 0.05
-    if narrative["status"] == "found_unrelated" and business["status"] == "found_unrelated":
-        score = 0.0
-    return score
+    if not (n_ok or b_ok):
+        return 0.0
+    strongest_relevance = max(n_rel if n_ok else 0.0, b_rel if b_ok else 0.0)
+    source_diversity = max(
+        int(narrative.get("source_diversity", 0) or 0),
+        int(business.get("source_diversity", 0) or 0),
+    )
+    corroborated = 1.0 if n_ok and b_ok else 0.0
+    return min(
+        1.0,
+        strongest_relevance * 0.70
+        + min(1.0, source_diversity / 3.0) * 0.15
+        + corroborated * 0.15,
+    )
 
 
 def evidence_bonus(narrative: dict[str, Any], business: dict[str, Any]) -> float:
@@ -1840,7 +1671,6 @@ def build_candidate_record(
     feedback: dict | None = None,
     regime_thresholds: Any = None,
     kline_source: str | None = None,
-    fund_flow_scores: dict | None = None,
 ) -> dict[str, Any]:
     symbol = str(row["symbol"])
     company_profile = resolve_company_profile(symbol)
@@ -1868,16 +1698,12 @@ def build_candidate_record(
     strongest_relevance = float(max(narrative_summary["relevance_score"], business_summary["relevance_score"]))
     data_source_ok = not bool(cross_check["data_source_mismatch"])
     has_any_evidence = narrative_summary["status"] != "missing" or business_summary["status"] != "missing"
-    strong_market_score = float(row.get("market_score", 0)) >= 0.75  # 提高阈值，只选强势票
-    evidence_available = narrative_summary.get("ranked_candidate_count", 0) > 0 or business_summary.get("ranked_candidate_count", 0) > 0
-    evidence_missing_globally = not evidence_available and not has_any_evidence
-    relaxed_relevance = 0.5 if evidence_missing_globally else 0.7
-    gate_pass = bool(market_evidence_pass and has_relevant_evidence and strongest_relevance >= relaxed_relevance and data_source_ok)
-    if not gate_pass and evidence_missing_globally and market_evidence_pass and strong_market_score:
-        gate_pass = True
-    # 当使用 --skip-last30days 时，如果市场分数足够高，直接通过
-    if SKIP_LAST30DAYS and not gate_pass and market_evidence_pass and strong_market_score:
-        gate_pass = True
+    gate_pass = bool(
+        market_evidence_pass
+        and has_relevant_evidence
+        and strongest_relevance >= 0.7
+        and data_source_ok
+    )
     watchlist_pass = bool(market_evidence_pass and not gate_pass)
 
     risk_verdict = research["risk_checklist"].get("risk_verdict", "UNAVAILABLE")
@@ -1929,19 +1755,8 @@ def build_candidate_record(
     if bool(cross_check["data_source_mismatch"]):
         evidence_gap_reason = ";".join(dict.fromkeys(["DATA_SOURCE_MISMATCH", evidence_gap_reason]))
 
-    quality_bonus = 0.0
-    if quality_verdict == "STRONG":
-        quality_bonus = 0.02
-    elif quality_verdict == "MODERATE":
-        quality_bonus = 0.01
-
-    # When skipping last30days, use alternative catalyst sources
-    if SKIP_LAST30DAYS:
-        catalyst = _compute_alternative_catalyst(row, symbol, fund_flow_scores)
-        ticket_score = float(row["market_score"]) + catalyst + quality_bonus
-    else:
-        catalyst = catalyst_score(narrative_summary, business_summary) * 0.3
-        ticket_score = float(row["market_score"]) + catalyst + quality_bonus
+    catalyst = catalyst_score(narrative_summary, business_summary)
+    ticket_score = float(row["market_score"]) * 0.75 + catalyst * 0.25
     forward_dates = {
         f"{horizon}d": bday_date(pd.Timestamp(as_of_date), horizon)
         for horizon in TRACKING_HORIZONS
@@ -2032,6 +1847,10 @@ def build_candidate_record(
         "dividend_yield": _safe_float(provider_profile.get("dividend_yield")),
         "raw_market_score": _safe_float(row["raw_market_score"]),
         "blended_score": _safe_float(row.get("blended_score", 0.0)),
+        "large_participant_footprint_score": _safe_float(row.get("large_participant_footprint_score")),
+        "footprint_factor_coverage": _safe_float(row.get("footprint_factor_coverage")),
+        "footprint_factor_contributions": row.get("footprint_factor_contributions") or {},
+        "market_participation_score": _safe_float(row.get("market_participation_score")),
         "breakout_score": _safe_float(row.get("breakout_score", 0.0)),
         "confirmation_score": _safe_float(row.get("confirmation_score", 0.0)),
         "market_score": _safe_float(row["market_score"]),
@@ -2046,6 +1865,7 @@ def build_candidate_record(
         "median_dollar_volume_20d": _safe_float(row["median_dollar_volume_20d"]),
         "closing_strength_5d": _safe_float(row.get("closing_strength_5d")),
         "volume_weighted_momentum": _safe_float(row.get("volume_weighted_momentum")),
+        "volume_trend_20d": _safe_float(row.get("volume_trend_20d")),
         "risk_penalty": _safe_float(row.get("risk_penalty", 0.0)),
         "market_evidence_pass": market_evidence_pass,
         "strongest_relevance": strongest_relevance,
@@ -2076,9 +1896,12 @@ def build_candidate_record(
         "replay_hypothesis": research["replay_hypothesis"],
         "catalyst_score": catalyst,
         "ticket_score": ticket_score,
-        "news_quality_score": 0.0,
+        "news_quality_score": catalyst,
         "sector_propagation_bonus": 0.0,
         "contrarian_penalty": 0.0,
+        "capital_flow_proxy_score": _safe_float(row.get("large_participant_footprint_score")),
+        "capital_flow_status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+        "social_sentiment_status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
         "research_only": True,
         "allow_trade": False,
         "auto_order": False,
@@ -2096,6 +1919,7 @@ def build_candidate_record(
             f"relevant_pass={has_relevant_evidence}; strongest_relevance={strongest_relevance}; "
             f"data_source_ok={data_source_ok}; data_source_mismatch={cross_check['data_source_mismatch']}; "
             f"quote_cross_check_gap_pct={cross_check['quote_cross_check_gap_pct']}; "
+            f"footprint_coverage={_safe_float(row.get('footprint_factor_coverage'))}; "
             f"narrative={narrative_summary['status']}; business={business_summary['status']}; "
             f"quality={quality_verdict}; risk={risk_verdict}; panel={panel_verdict}"
         ),
@@ -2770,10 +2594,17 @@ def main(argv: list[str]) -> int:
         market_rows = feature_frame.reset_index().to_dict(orient="records")
         candidate_rows: list[dict[str, Any]] = []
         regime_thresholds = market_snapshot.get("regime_thresholds")
-        fund_flow_scores = fetch_fund_flow_scores(universe["included_symbols"])
         with ThreadPoolExecutor(max_workers=min(pool_size, 5)) as executor:
             futures = {
-                executor.submit(build_candidate_record, row, market_snapshot["as_of_date"], pool_size, feedback, regime_thresholds, actual_kline_source, fund_flow_scores): row
+                executor.submit(
+                    build_candidate_record,
+                    row,
+                    market_snapshot["as_of_date"],
+                    pool_size,
+                    feedback,
+                    regime_thresholds,
+                    actual_kline_source,
+                ): row
                 for row in market_rows[:pool_size]
             }
             for future in as_completed(futures):
@@ -2840,8 +2671,6 @@ def main(argv: list[str]) -> int:
             return min(1.0, source_div * 0.3 + cluster_bonus + candidate_bonus + relevance * 0.4)
 
         for row in candidate_rows:
-            nq = _news_quality_score(row["symbol"])
-            row["news_quality_score"] = nq
             row["news_evidence_status"] = (
                 "OBSERVED"
                 if max(
@@ -2850,51 +2679,8 @@ def main(argv: list[str]) -> int:
                 ) > 0
                 else "UNAVAILABLE"
             )
-            row["capital_flow_proxy_score"] = fund_flow_scores.get(row["symbol"])
-            row["capital_flow_status"] = (
-                "OBSERVED_EXTERNAL_PROXY"
-                if row["symbol"] in fund_flow_scores
-                else "UNAVAILABLE"
-            )
-            row["social_sentiment_status"] = "UNAVAILABLE"
-            row["ticket_score"] = row.get("ticket_score", 0) + nq * 0.1
-
-            sector = sector_map.get(row["symbol"], "Unknown") if sector_map else "Unknown"
-            sector_ev_density = sector_evidence_density.get(sector, 0.0)
-            sector_bonus = min(0.15, sector_ev_density * 0.2)
-            row["sector_propagation_bonus"] = sector_bonus
-            row["ticket_score"] = row.get("ticket_score", 0) + sector_bonus
-
-            # ── Market-score mean-reversion decay ──
-            # High momentum stocks (market_score > 0.6) tend to mean-revert.
-            # Apply progressive decay: the higher the market_score, the more
-            # we discount it. Decay kicks in above 0.6 and caps at 30%.
-            ms = _safe_float(row.get("market_score", 0)) or 0
-            if ms > 0.6:
-                excess = ms - 0.6
-                decay_rate = min(0.30, excess * 0.5)  # 0.5x multiplier, cap at 30%
-                decay_amount = ms * decay_rate
-                row["market_score_decay"] = round(decay_amount, 4)
-                row["ticket_score"] = row.get("ticket_score", 0) - decay_amount
-            else:
-                row["market_score_decay"] = 0.0
-
-            # ── Mean-reversion adjustment: dampen overextended scores ──
-            # 2026-08 data: high market_score → lower returns
-            #   market ~0.49 → 60% WR, +0.67% ret
-            #   market ~0.74 → 50.5% WR, -1.07% ret
-            #   market ~1.09 → 52.3% WR, -0.64% ret
-            # Root cause: momentum factors reward already-extended stocks
-            # that tend to mean-revert. Apply decay + penalty.
-            CONTRARIAN_RS_WEIGHT = 0.4    # relative_strength penalty factor
-            CONTRARIAN_ACCEL_WEIGHT = 0.3  # acceleration penalty factor
-            CONTRARIAN_CAP = 0.50         # raised from 0.35 to counter momentum bias
-
-            rs = abs(_safe_float(row.get("relative_strength_vs_equal_weight", 0)) or 0)
-            accel = abs(_safe_float(row.get("five_day_acceleration", 0)) or 0)
-            contrarian_penalty = min(CONTRARIAN_CAP, rs * CONTRARIAN_RS_WEIGHT + accel * CONTRARIAN_ACCEL_WEIGHT)
-            row["contrarian_penalty"] = round(contrarian_penalty, 4)
-            row["ticket_score"] = row.get("ticket_score", 0) - contrarian_penalty
+            row["market_score_decay"] = 0.0
+            row["contrarian_penalty"] = 0.0
 
         candidate_rows = sorted(
             candidate_rows,
@@ -2991,6 +2777,10 @@ def main(argv: list[str]) -> int:
                     "dividend_yield": row["dividend_yield"],
                     "raw_market_score": row["raw_market_score"],
                     "market_score": row["market_score"],
+                    "large_participant_footprint_score": row.get("large_participant_footprint_score"),
+                    "footprint_factor_coverage": row.get("footprint_factor_coverage"),
+                    "footprint_factor_contributions": row.get("footprint_factor_contributions"),
+                    "market_participation_score": row.get("market_participation_score"),
                     "market_rule_flags": row["market_rule_flags"],
                     "market_rule_adjustment": row["market_rule_adjustment"],
                     "catalyst_score": row["catalyst_score"],
@@ -3012,6 +2802,7 @@ def main(argv: list[str]) -> int:
                     "median_dollar_volume_20d": row["median_dollar_volume_20d"],
                     "closing_strength_5d": row.get("closing_strength_5d"),
                     "volume_weighted_momentum": row.get("volume_weighted_momentum"),
+                    "volume_trend_20d": row.get("volume_trend_20d"),
                     "risk_penalty": row.get("risk_penalty", 0.0),
                     "market_evidence_pass": row["market_evidence_pass"],
                     "strongest_relevance": row["strongest_relevance"],
@@ -3162,6 +2953,11 @@ def main(argv: list[str]) -> int:
             "regime_volatility": getattr(regime_snapshot, "volatility", None),
             "regime_advance_ratio": getattr(regime_snapshot, "advance_ratio", None),
             "data_mode": universe.get("data_mode", "historical_kline"),
+            "strategy_version": "observable_footprint_v1",
+            "strategy_definition": (
+                "public price-volume footprint, catalyst evidence, market participation, "
+                "and explicit risk penalties; no verified institutional-flow inference"
+            ),
             "not_trading_advice": True,
             "market_data_source": MARKET_DATA_SOURCE_DISPLAY,
             "kline_source": actual_kline_source,

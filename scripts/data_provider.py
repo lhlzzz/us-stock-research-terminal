@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
-"""Multi-source data provider for US stock klines and quotes.
+"""Auditable multi-source market-data provider for US-stock research.
 
-Provider priority:
-1. EastmoneyDirectProvider - 直接调用东财 push2his API (主源)
-2. AkshareProvider - akshare fallback (当前实际主源)
-3. YFinanceProvider - emergency fallback
+Only this module owns market-data API transport. Its Scrapy bridge provides
+bounded retries, timeout, per-domain concurrency, request de-duplication, and
+response audit records. Provider fallbacks are explicit in returned metadata.
 
-Features:
-- Bounded concurrency for batch operations
-- Incremental kline fetching (only fetch missing/stale data)
-- Retry queue with YFinance fallback
-- Provider metrics tracking
-- Trading calendar awareness
-- EastmoneyDirect cooldown monitoring
+Historical priority:
+1. Yahoo Finance chart API (bounded optional source)
+2. EastMoney API
+3. Akshare fallback
 
 Usage:
     provider = DataProvider()
@@ -23,9 +19,12 @@ Usage:
     results = provider.fetch_klines_batch(symbols, "2025-01-01", "2026-07-03")
 """
 import json
+import hashlib
 import os
+import re
+import threading
 import time
-import urllib.request
+from urllib.parse import urlencode
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field, asdict
 from datetime import date, datetime, timedelta
@@ -35,11 +34,26 @@ from typing import Any
 import pandas as pd
 import numpy as np
 
+try:
+    from scrapy import Request, Spider, signals
+    from scrapy.crawler import CrawlerProcess
+    from scrapy.exceptions import DontCloseSpider
+    from twisted.internet import reactor
+
+    SCRAPY_AVAILABLE = True
+except ImportError:  # pragma: no cover - runtime dependency check
+    SCRAPY_AVAILABLE = False
+
 # Configuration from environment
 AKSHARE_KLINE_CONCURRENCY = int(os.environ.get("AKSHARE_KLINE_CONCURRENCY", "5"))
 AKSHARE_KLINE_BATCH_SIZE = int(os.environ.get("AKSHARE_KLINE_BATCH_SIZE", "50"))
 EASTMONEY_COOLDOWN_SECONDS = int(os.environ.get("EASTMONEY_COOLDOWN_SECONDS", "1800"))  # 30 min
+YAHOO_COOLDOWN_SECONDS = int(os.environ.get("YAHOO_COOLDOWN_SECONDS", "900"))
 MAX_RETRY_COUNT = 2
+SCRAPY_DOWNLOAD_TIMEOUT = int(os.environ.get("MARKET_DATA_DOWNLOAD_TIMEOUT", "12"))
+SCRAPY_RETRY_TIMES = int(os.environ.get("MARKET_DATA_RETRY_TIMES", "1"))
+SCRAPY_CONCURRENT_REQUESTS = int(os.environ.get("MARKET_DATA_CONCURRENT_REQUESTS", "8"))
+SCRAPY_CONCURRENT_PER_DOMAIN = int(os.environ.get("MARKET_DATA_CONCURRENT_PER_DOMAIN", "2"))
 
 # Cache directory
 CACHE_DIR = Path(__file__).resolve().parent.parent / "data" / "provider-cache"
@@ -48,13 +62,12 @@ METRICS_DIR = Path(__file__).resolve().parent.parent / "data" / "provider-metric
 # EastMoney API endpoints
 KLINE_URL = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
 STOCK_GET_URL = "https://push2delay.eastmoney.com/api/qt/stock/get"
+YAHOO_CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
     "Referer": "https://quote.eastmoney.com/",
 }
-
-DIRECT_OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
 KLINE_FIELDS1 = "f1,f2,f3,f4,f5,f6"
 KLINE_FIELDS2 = "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61"
@@ -93,18 +106,242 @@ def secid_candidates(symbol: str) -> list[str]:
     return [f"105.{normalized}", f"106.{normalized}"]
 
 
-def _eastmoney_get(url: str, params: dict, retries: int = 3, timeout: int = 10) -> dict | None:
-    query = "&".join(f"{k}={v}" for k, v in params.items())
-    full_url = f"{url}?{query}"
-    for attempt in range(retries):
+def _url_with_query(url: str, params: dict[str, Any]) -> str:
+    return f"{url}?{urlencode(params)}"
+
+
+class MarketDataHttpError(RuntimeError):
+    """A completed non-success HTTP response from the Scrapy transport."""
+
+    def __init__(self, status: int | None, url: str):
+        self.status = status
+        self.url = url
+        super().__init__(f"MARKET_DATA_HTTP_{status or 'FAILED'}: {url}")
+
+
+@dataclass
+class _ScrapyRequestState:
+    url: str
+    event: threading.Event = field(default_factory=threading.Event)
+    body: str | None = None
+    error: Exception | None = None
+
+
+def market_data_scrapy_settings() -> dict[str, Any]:
+    """Return the sole network policy for public market-data API requests."""
+    return {
+        "BOT_NAME": "xiaomei_market_data",
+        "DOWNLOAD_TIMEOUT": SCRAPY_DOWNLOAD_TIMEOUT,
+        "RETRY_TIMES": SCRAPY_RETRY_TIMES,
+        "RETRY_HTTP_CODES": [408, 429, 500, 502, 503, 504],
+        "CONCURRENT_REQUESTS": SCRAPY_CONCURRENT_REQUESTS,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": SCRAPY_CONCURRENT_PER_DOMAIN,
+        "TWISTED_REACTOR": os.environ.get(
+            "MARKET_DATA_TWISTED_REACTOR",
+            "twisted.internet.epollreactor.EPollReactor",
+        ),
+        "LOG_ENABLED": False,
+        "TELNETCONSOLE_ENABLED": False,
+    }
+
+
+class _MarketDataApiSpider(Spider if SCRAPY_AVAILABLE else object):
+    name = "xiaomei_market_data_api"
+
+    def __init__(self, bridge=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.bridge = bridge
+        self._crawler = None
+
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super().from_crawler(crawler, *args, **kwargs)
+        spider._crawler = crawler
+        crawler.signals.connect(spider._on_opened, signal=signals.spider_opened)
+        crawler.signals.connect(spider._on_idle, signal=signals.spider_idle)
+        return spider
+
+    def start_requests(self):
+        return ()
+
+    def _on_opened(self):
+        self.bridge._mark_ready(self._crawler, self)
+
+    def _on_idle(self):
+        raise DontCloseSpider
+
+    def parse(self, response):
+        self.bridge._complete_response(response)
+
+    def on_error(self, failure):
+        self.bridge._complete_error(failure)
+
+
+class ScrapyApiBridge:
+    """One long-lived Scrapy download owner for market-data API requests."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._ready = threading.Event()
+        self._startup_error: Exception | None = None
+        self._crawler = None
+        self._spider = None
+        self._process = None
+        self._states: dict[str, _ScrapyRequestState] = {}
+        self._cache: dict[str, str] = {}
+        self._audit: list[dict[str, Any]] = []
+        self._cache_hits = 0
+        self._started = False
+
+    def start(self) -> None:
+        if not SCRAPY_AVAILABLE:
+            raise RuntimeError("SCRAPY_MARKET_DATA_TRANSPORT_UNAVAILABLE")
+        with self._lock:
+            if not self._started:
+                self._started = True
+                thread = threading.Thread(
+                    target=self._run_reactor,
+                    name="xiaomei-market-data-reactor",
+                    daemon=True,
+                )
+                thread.start()
+        if not self._ready.wait(timeout=15):
+            raise RuntimeError("SCRAPY_MARKET_DATA_START_TIMEOUT")
+        if self._startup_error is not None:
+            raise RuntimeError("SCRAPY_MARKET_DATA_START_FAILED") from self._startup_error
+
+    def _run_reactor(self) -> None:
         try:
-            req = urllib.request.Request(full_url, headers=HEADERS)
-            resp = DIRECT_OPENER.open(req, timeout=timeout)
-            return json.loads(resp.read())
-        except Exception:
-            if attempt < retries - 1:
-                time.sleep(0.5 * (attempt + 1))
-    return None
+            self._process = CrawlerProcess(settings=market_data_scrapy_settings())
+            self._process.crawl(_MarketDataApiSpider, bridge=self)
+            self._process.start(stop_after_crawl=False, install_signal_handlers=False)
+        except Exception as exc:  # pragma: no cover - startup environment failure
+            self._startup_error = exc
+            self._ready.set()
+
+    def _mark_ready(self, crawler, spider) -> None:
+        self._crawler = crawler
+        self._spider = spider
+        self._ready.set()
+
+    def fetch_json(self, url: str) -> dict[str, Any]:
+        try:
+            payload = json.loads(self.fetch_text(url))
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"MARKET_DATA_INVALID_JSON: {url}") from exc
+        if not isinstance(payload, dict):
+            raise RuntimeError(f"MARKET_DATA_JSON_OBJECT_REQUIRED: {url}")
+        return payload
+
+    def fetch_text(self, url: str) -> str:
+        self.start()
+        with self._lock:
+            cached = self._cache.get(url)
+            if cached is not None:
+                self._cache_hits += 1
+                return cached
+            state = self._states.get(url)
+            if state is None:
+                state = _ScrapyRequestState(url=url)
+                self._states[url] = state
+                reactor.callFromThread(self._schedule, state)
+
+        timeout = SCRAPY_DOWNLOAD_TIMEOUT * (SCRAPY_RETRY_TIMES + 1) + 15
+        if not state.event.wait(timeout=timeout):
+            with self._lock:
+                self._states.pop(url, None)
+            raise TimeoutError(f"SCRAPY_MARKET_DATA_REQUEST_TIMEOUT: {url}")
+        if state.error is not None:
+            raise state.error
+        return state.body or ""
+
+    def _schedule(self, state: _ScrapyRequestState) -> None:
+        request = Request(
+            state.url,
+            callback=self._spider.parse,
+            errback=self._spider.on_error,
+            headers=HEADERS,
+            dont_filter=True,
+            meta={"bridge_url": state.url, "handle_httpstatus_all": True},
+        )
+        self._crawler.engine.crawl(request)
+
+    def _complete_response(self, response) -> None:
+        url = response.meta["bridge_url"]
+        body = response.text
+        status = int(response.status)
+        error = None if 200 <= status < 300 else MarketDataHttpError(status, url)
+        self._complete(
+            url,
+            body=body,
+            error=error,
+            status=status,
+            retry_count=int(response.request.meta.get("retry_times", 0)),
+        )
+
+    def _complete_error(self, failure) -> None:
+        request = getattr(failure, "request", None)
+        url = request.meta.get("bridge_url") if request is not None else "unknown"
+        retry_count = int(request.meta.get("retry_times", 0)) if request is not None else 0
+        self._complete(
+            url,
+            error=MarketDataHttpError(None, url),
+            status=None,
+            retry_count=retry_count,
+        )
+
+    def _complete(
+        self,
+        url: str,
+        body: str | None = None,
+        error: Exception | None = None,
+        status: int | None = None,
+        retry_count: int = 0,
+    ) -> None:
+        with self._lock:
+            state = self._states.pop(url, None)
+            if state is None:
+                return
+            if error is None and body is not None:
+                self._cache[url] = body
+            self._audit.append(
+                {
+                    "url": url,
+                    "domain": re.sub(r"^https?://([^/]+).*$", r"\1", url),
+                    "status": status,
+                    "retry_count": retry_count,
+                    "response_sha256": hashlib.sha256((body or "").encode("utf-8")).hexdigest(),
+                    "response_bytes": len((body or "").encode("utf-8")),
+                    "error": repr(error) if error is not None else "",
+                    "transport": "scrapy_api_bridge",
+                    "completed_at": datetime.now().isoformat(),
+                }
+            )
+            state.body = body
+            state.error = error
+            state.event.set()
+
+    def audit_snapshot(self) -> dict[str, Any]:
+        with self._lock:
+            records = list(self._audit)
+            domains: dict[str, dict[str, int]] = {}
+            for record in records:
+                domain = record["domain"]
+                summary = domains.setdefault(
+                    domain,
+                    {"request_count": 0, "success_count": 0, "error_count": 0, "retry_count": 0},
+                )
+                summary["request_count"] += 1
+                summary["success_count"] += int(not record["error"])
+                summary["error_count"] += int(bool(record["error"]))
+                summary["retry_count"] += int(record["retry_count"])
+            return {
+                "transport": "scrapy_api_bridge",
+                "request_count": len(records),
+                "cache_hit_count": self._cache_hits,
+                "domains": domains,
+                "records": records,
+            }
 
 
 def is_trading_day(d: date) -> bool:
@@ -163,6 +400,7 @@ class ProviderMetrics:
     fallback_used: str = ""
     latest_kline_date: str = ""
     error_message: str = ""
+    source_attempts: list[dict[str, Any]] = field(default_factory=list)
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
 
     def to_dict(self) -> dict:
@@ -170,14 +408,16 @@ class ProviderMetrics:
 
 
 class EastmoneyDirectProvider:
-    """主源：直接调用东财 push2his API.
-
-    当前从该 IP 被 blocked，但保留代码结构。
-    当 API 恢复可用时，自动作为 primary provider。
-    """
+    """EastMoney API provider using the module-owned Scrapy transport."""
 
     name = "eastmoney_direct"
-    priority = 1
+    priority = 2
+
+    def __init__(self, transport: ScrapyApiBridge):
+        self.transport = transport
+
+    def _fetch_json(self, url: str, params: dict[str, Any]) -> dict[str, Any]:
+        return self.transport.fetch_json(_url_with_query(url, params))
 
     def fetch_klines(self, symbol: str, beg: str, end: str, fqt: int = 1) -> list[dict] | None:
         """Fetch daily klines from EastMoney push2his API."""
@@ -190,7 +430,7 @@ class EastmoneyDirectProvider:
             "beg": beg.replace("-", ""),
             "end": end.replace("-", ""),
         }
-        payload = _eastmoney_get(KLINE_URL, params, retries=2, timeout=8)
+        payload = self._fetch_json(KLINE_URL, params)
         if not payload or payload.get("data") is None:
             return None
 
@@ -232,7 +472,7 @@ class EastmoneyDirectProvider:
                 "fields": STOCK_DETAIL_FIELDS,
                 "secid": secid,
             }
-            payload = _eastmoney_get(STOCK_GET_URL, params, retries=2, timeout=8)
+            payload = self._fetch_json(STOCK_GET_URL, params)
             if not payload or payload.get("data") is None:
                 continue
             d = payload["data"]
@@ -260,6 +500,76 @@ class EastmoneyDirectProvider:
         return None
 
 
+class YahooChartProvider:
+    """Optional Yahoo Finance chart API source for daily historical OHLCV."""
+
+    name = "yahoo_chart_api"
+    priority = 1
+
+    def __init__(self, transport: ScrapyApiBridge):
+        self.transport = transport
+
+    def fetch_klines(self, symbol: str, beg: str, end: str, fqt: int = 1) -> list[dict] | None:
+        del fqt  # Yahoo chart response is already adjusted through adjclose.
+        start = int(pd.Timestamp(beg, tz="UTC").timestamp())
+        end_exclusive = int((pd.Timestamp(end, tz="UTC") + pd.Timedelta(days=1)).timestamp())
+        url = _url_with_query(
+            f"{YAHOO_CHART_URL}/{normalize_us_symbol(symbol)}",
+            {
+                "period1": start,
+                "period2": end_exclusive,
+                "interval": "1d",
+                "events": "history",
+                "includeAdjustedClose": "true",
+            },
+        )
+        payload = self.transport.fetch_json(url)
+        chart = payload.get("chart") or {}
+        result = chart.get("result") or []
+        if not result:
+            return None
+        panel = result[0]
+        timestamps = panel.get("timestamp") or []
+        quotes = (panel.get("indicators") or {}).get("quote") or []
+        if not timestamps or not quotes:
+            return None
+        quote = quotes[0] or {}
+        adjclose_rows = (panel.get("indicators") or {}).get("adjclose") or []
+        adjcloses = (adjclose_rows[0] or {}).get("adjclose") if adjclose_rows else []
+
+        rows: list[dict[str, Any]] = []
+        for index, timestamp in enumerate(timestamps):
+            values = {
+                "open": _fnum((quote.get("open") or [None])[index] if index < len(quote.get("open") or []) else None),
+                "close": _fnum((quote.get("close") or [None])[index] if index < len(quote.get("close") or []) else None),
+                "high": _fnum((quote.get("high") or [None])[index] if index < len(quote.get("high") or []) else None),
+                "low": _fnum((quote.get("low") or [None])[index] if index < len(quote.get("low") or []) else None),
+                "volume": _fnum((quote.get("volume") or [None])[index] if index < len(quote.get("volume") or []) else None),
+            }
+            if any(value is None for value in values.values()):
+                continue
+            close = float(values["close"])
+            adjclose = _fnum(adjcloses[index]) if index < len(adjcloses or []) else close
+            row_date = datetime.utcfromtimestamp(int(timestamp)).strftime("%Y-%m-%d")
+            rows.append(
+                {
+                    "date": row_date,
+                    "open": values["open"],
+                    "close": close,
+                    "high": values["high"],
+                    "low": values["low"],
+                    "volume": values["volume"],
+                    "amount": close * float(values["volume"]),
+                    "adj_close": adjclose if adjclose is not None else close,
+                    "amplitude_pct": None,
+                    "pct_chg": None,
+                    "chg": None,
+                    "turnover_rate": None,
+                }
+            )
+        return rows or None
+
+
 class AkshareProvider:
     """Fallback：akshare（当前实际主源）。
 
@@ -267,7 +577,7 @@ class AkshareProvider:
     """
 
     name = "akshare"
-    priority = 2
+    priority = 3
 
     def fetch_klines(self, symbol: str, beg: str, end: str, fqt: int = 1) -> list[dict] | None:
         """Fetch klines for a single symbol."""
@@ -338,22 +648,24 @@ class DataProvider:
     """Multi-source data provider with fallback chain.
 
     Provider priority:
-    - Klines: EastmoneyDirect -> Akshare
+    - Klines: Yahoo chart API -> EastMoney -> Akshare
     - Quote: EastmoneyDirect -> Akshare
 
     Features:
     - Bounded concurrency for batch operations
     - Incremental kline fetching
-    - Retry queue with approved provider fallbacks
+    - Retry queue with explicit provider fallbacks
     - Provider metrics tracking
     - EastmoneyDirect cooldown monitoring
     """
 
     def __init__(self):
-        self.eastmoney_direct = EastmoneyDirectProvider()
+        self.transport = ScrapyApiBridge()
+        self.yahoo_chart = YahooChartProvider(self.transport)
+        self.eastmoney_direct = EastmoneyDirectProvider(self.transport)
         self.akshare = AkshareProvider()
 
-        self.kline_providers = [self.akshare, self.eastmoney_direct]
+        self.kline_providers = [self.yahoo_chart, self.eastmoney_direct, self.akshare]
         self.quote_providers = [self.eastmoney_direct, self.akshare]
 
         self.cache_dir = CACHE_DIR
@@ -362,10 +674,13 @@ class DataProvider:
         self.metrics_dir.mkdir(parents=True, exist_ok=True)
 
         self._api_status = {
+            "yahoo_chart": "unknown",
             "eastmoney_kline": "unknown",
             "eastmoney_quote": "unknown",
         }
         self._eastmoney_kline_cooldown_until: float = 0
+        self._yahoo_chart_cooldown_until: float = 0
+        self._last_batch_quote_status = "unknown"
         self._all_metrics: list[ProviderMetrics] = []
 
     # ─── Cache helpers ───────────────────────────────────────────────
@@ -427,11 +742,47 @@ class DataProvider:
         self._api_status["eastmoney_kline"] = "available"
         self._eastmoney_kline_cooldown_until = 0
 
+    def _is_yahoo_chart_available(self) -> bool:
+        if self._api_status.get("yahoo_chart") == "rate_limited":
+            return time.time() >= self._yahoo_chart_cooldown_until
+        return True
+
+    def _mark_yahoo_chart_rate_limited(self) -> None:
+        self._api_status["yahoo_chart"] = "rate_limited"
+        self._yahoo_chart_cooldown_until = time.time() + YAHOO_COOLDOWN_SECONDS
+
+    def _mark_yahoo_chart_available(self) -> None:
+        self._api_status["yahoo_chart"] = "available"
+        self._yahoo_chart_cooldown_until = 0
+
+    @staticmethod
+    def _provider_error_status(provider_name: str, exc: Exception) -> str:
+        if isinstance(exc, MarketDataHttpError) and exc.status == 429:
+            return "rate_limited"
+        if isinstance(exc, TimeoutError):
+            return "timeout"
+        if provider_name == "yahoo_chart_api":
+            return "unavailable"
+        return "failed"
+
+    def _provider_available(self, provider_name: str) -> bool:
+        if provider_name == "yahoo_chart_api":
+            return self._is_yahoo_chart_available()
+        if provider_name == "eastmoney_direct":
+            return self._is_eastmoney_kline_available()
+        return True
+
     # ─── API status check ────────────────────────────────────────────
 
     def check_api_status(self) -> dict[str, str]:
-        """Check EastMoney API availability."""
-        status = {}
+        """Return the latest explicit source states without hiding cooldowns."""
+        status = {
+            "yahoo_chart": (
+                "rate_limited (cooldown)"
+                if not self._is_yahoo_chart_available()
+                else self._api_status["yahoo_chart"]
+            )
+        }
 
         # Test kline API (respect cooldown)
         if self._is_eastmoney_kline_available():
@@ -479,12 +830,14 @@ class DataProvider:
             return cached, "cache", metrics.to_dict()
 
         # Try providers in order
-        providers_to_try = []
-        if self._is_eastmoney_kline_available():
-            providers_to_try.append(self.eastmoney_direct)
-        providers_to_try.append(self.akshare)
+        providers_to_try = self.kline_providers
 
         for provider in providers_to_try:
+            if not self._provider_available(provider.name):
+                metrics.source_attempts.append(
+                    {"provider": provider.name, "status": "cooldown", "rows": 0}
+                )
+                continue
             for retry in range(MAX_RETRY_COUNT + 1):
                 try:
                     start_time = time.time()
@@ -498,21 +851,48 @@ class DataProvider:
                         metrics.provider_latency_ms = latency_ms
                         metrics.retry_count = retry
                         metrics.latest_kline_date = rows[-1]["date"] if rows else ""
+                        metrics.source_attempts.append(
+                            {
+                                "provider": provider.name,
+                                "status": "available",
+                                "rows": len(rows),
+                                "latency_ms": latency_ms,
+                            }
+                        )
+                        if provider.name == "yahoo_chart_api":
+                            self._mark_yahoo_chart_available()
+                        if provider.name == "eastmoney_direct":
+                            self._mark_eastmoney_kline_available()
+                        if len(metrics.source_attempts) > 1:
+                            metrics.fallback_used = provider.name
                         self._record_metrics(metrics)
                         return rows, provider.name, metrics.to_dict()
 
-                    # No data returned
-                    if provider.name.startswith("eastmoney"):
+                    metrics.source_attempts.append(
+                        {"provider": provider.name, "status": "empty", "rows": 0, "latency_ms": latency_ms}
+                    )
+                    if provider.name == "eastmoney_direct":
                         self._mark_eastmoney_kline_blocked()
                     break  # Don't retry if provider returned empty
 
                 except Exception as e:
+                    error_status = self._provider_error_status(provider.name, e)
+                    metrics.source_attempts.append(
+                        {
+                            "provider": provider.name,
+                            "status": error_status,
+                            "retry": retry,
+                            "error": f"{type(e).__name__}: {e}",
+                        }
+                    )
+                    if provider.name == "yahoo_chart_api" and error_status == "rate_limited":
+                        self._mark_yahoo_chart_rate_limited()
+                        break
                     if retry < MAX_RETRY_COUNT:
                         time.sleep(0.5 * (retry + 1))
                         continue
-                    # All retries exhausted
                     metrics.error_message = f"{provider.name}: {type(e).__name__}: {e}"
-                    if provider.name.startswith("eastmoney"):
+                    if provider.name == "eastmoney_direct":
                         self._mark_eastmoney_kline_blocked()
                     break
 
@@ -528,6 +908,7 @@ class DataProvider:
         if cached:
             return cached, "cache", {"provider_status": "cached"}
 
+        attempts: list[dict[str, Any]] = []
         for provider in self.quote_providers:
             try:
                 start_time = time.time()
@@ -539,12 +920,26 @@ class DataProvider:
                     metadata = {
                         "provider_status": "available",
                         "provider_latency_ms": latency_ms,
+                        "source_attempts": attempts + [{
+                            "provider": provider.name,
+                            "status": "available",
+                            "latency_ms": latency_ms,
+                        }],
                     }
+                    if provider.name == "eastmoney_direct":
+                        self._api_status["eastmoney_quote"] = "available"
                     return quote, provider.name, metadata
-            except Exception:
-                continue
+                attempts.append({"provider": provider.name, "status": "empty", "latency_ms": latency_ms})
+            except Exception as exc:
+                attempts.append(
+                    {
+                        "provider": provider.name,
+                        "status": self._provider_error_status(provider.name, exc),
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                )
 
-        return None, "none", {"provider_status": "unavailable"}
+        return None, "none", {"provider_status": "unavailable", "source_attempts": attempts}
 
     def fetch_batch_quotes(self, fs: str = "m:105+t:1,m:105+t:2,m:105+t:3", page_size: int = 100) -> dict[str, dict]:
         """Batch fetch US stock quotes via push2delay paginated API.
@@ -565,9 +960,7 @@ class DataProvider:
             )
             url = f"https://push2delay.eastmoney.com/api/qt/clist/get?{params}"
             try:
-                req = urllib.request.Request(url, headers=HEADERS)
-                resp = DIRECT_OPENER.open(req, timeout=15)
-                data = json.loads(resp.read())
+                data = self.transport.fetch_json(url)
                 diff = data.get("data", {}).get("diff", []) or []
                 if not diff:
                     break
@@ -576,7 +969,8 @@ class DataProvider:
                     break
                 page += 1
                 time.sleep(0.05)
-            except Exception:
+            except Exception as exc:
+                self._last_batch_quote_status = self._provider_error_status("eastmoney_direct", exc)
                 break
 
         quotes = {}
@@ -608,6 +1002,14 @@ class DataProvider:
                 "as_of": datetime.now().isoformat(),
             }
         return quotes
+
+    def get_source_status(self) -> dict[str, Any]:
+        """Expose source state and transport audit for runtime diagnostics."""
+        return {
+            "providers": dict(self._api_status),
+            "batch_quote_status": self._last_batch_quote_status,
+            "transport": self.transport.audit_snapshot(),
+        }
 
     def fetch_financials(self, symbol: str) -> dict | None:
         """Return no financials until an approved provider is integrated."""
