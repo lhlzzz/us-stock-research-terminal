@@ -80,6 +80,7 @@ class Ticket(Base):
     quality_verdict = Column(String(20))
     lifecycle_stage = Column(String(30))
     run_name = Column(String(100))
+    research_run_id = Column(Integer, ForeignKey("research_runs.run_id"))
     # 出票理由字段
     narrative_title = Column(Text)
     business_title = Column(Text)

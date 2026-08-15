@@ -4,7 +4,11 @@ Called from pipeline's save_outputs to persist tickets, forward_tracking,
 runtime_decisions, and research_runs to the database.
 """
 from datetime import date, datetime
+import json
+from pathlib import Path
+import subprocess
 from typing import Any
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 
@@ -30,6 +34,238 @@ def _safe_format_float(val: Any, fmt: str = ".3f", default: float = 0.0) -> str:
     return f"{_safe_float(val, default):{fmt}}"
 
 
+def _json_default(value: Any) -> Any:
+    if hasattr(value, "item"):
+        return value.item()
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
+    return str(value)
+
+
+def _json_snapshot(value: Any) -> Any:
+    return json.loads(json.dumps(value, default=_json_default))
+
+
+def _current_git_commit() -> str | None:
+    try:
+        repo_root = Path(__file__).resolve().parents[2]
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            cwd=repo_root,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip() or None
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
+def _scoring_config_snapshot(db: Session) -> dict[str, str]:
+    rows = db.execute(
+        text("SELECT config_key, config_value FROM scoring_config ORDER BY config_key")
+    ).mappings()
+    return {str(row["config_key"]): str(row["config_value"]) for row in rows}
+
+
+def _candidate_source_layers(row: dict[str, Any]) -> dict[str, Any]:
+    narrative = row.get("narrative_evidence") or {}
+    business = row.get("business_evidence") or {}
+    capital_score = row.get("capital_flow_proxy_score")
+    return {
+        "news": {
+            "status": row.get("news_evidence_status", "UNAVAILABLE"),
+            "score": row.get("news_quality_score"),
+            "narrative_title": row.get("narrative_top_title"),
+            "business_title": row.get("business_top_title"),
+            "narrative_relevance": narrative.get("relevance_score"),
+            "business_relevance": business.get("relevance_score"),
+        },
+        "capital_flow_proxy": {
+            "status": row.get("capital_flow_status", "UNAVAILABLE"),
+            "score": capital_score,
+            "definition": "Public price-volume or EastMoney flow proxy; not verified institutional order flow.",
+        },
+        "social_sentiment": {
+            "status": row.get("social_sentiment_status", "UNAVAILABLE"),
+            "definition": "No validated social sentiment corpus was available for this run.",
+        },
+        "price_volume": {
+            "status": "OBSERVED",
+            "volume_confirmation_ratio": row.get("volume_confirmation_ratio"),
+            "volume_weighted_momentum": row.get("volume_weighted_momentum"),
+            "median_dollar_volume_20d": row.get("median_dollar_volume_20d"),
+        },
+    }
+
+
+def _candidate_factor_snapshot(row: dict[str, Any]) -> dict[str, Any]:
+    fields = (
+        "prior_5d_momentum",
+        "prior_20d_momentum",
+        "five_day_acceleration",
+        "relative_strength_vs_equal_weight",
+        "volume_confirmation_ratio",
+        "volume_weighted_momentum",
+        "closing_strength_5d",
+        "rsi_14",
+        "momentum_quality",
+        "breakout_score",
+        "reversal_quality",
+        "raw_market_score",
+        "blended_score",
+        "market_score",
+        "catalyst_score",
+        "ticket_score",
+        "contrarian_penalty",
+    )
+    return {field: row.get(field) for field in fields if row.get(field) is not None}
+
+
+def _persist_daily_candidates(
+    db: Session,
+    output_date: str,
+    research_run_id: int,
+    candidate_rows: list[dict[str, Any]],
+) -> int:
+    count = 0
+    for row in candidate_rows:
+        source_layers = _candidate_source_layers(row)
+        narrative = row.get("narrative_evidence") or {}
+        business = row.get("business_evidence") or {}
+        candidate_entry_reason = {
+            "classification": row.get("classification"),
+            "evidence_gate_status": row.get("evidence_gate_status"),
+            "evidence_gap_reason": row.get("evidence_gap_reason"),
+            "risk_summary": row.get("risk_summary"),
+        }
+        auxiliary_evidence = {
+            "narrative": narrative,
+            "business": business,
+            "risk_checklist": row.get("risk_checklist") or {},
+            "research_panel": row.get("research_panel") or {},
+        }
+        db.execute(
+            text(
+                """
+                INSERT INTO daily_candidates (
+                    trade_date, symbol, stock_name, rank, final_score, is_official_pick,
+                    decision, open, high, low, close, volume, amount, pct_chg,
+                    sentiment_catalyst, theme_catalyst, news_catalyst, positive_catalyst,
+                    selection_reason, candidate_entry_reason, ticket_reason,
+                    not_selected_reason, fund_flow_momentum, sector_catalyst_score,
+                    market_score, catalyst_score, ticket_score, market_regime,
+                    source_layers, factor_snapshot, auxiliary_evidence_snapshot,
+                    ranking_basis, reconstruction_provenance, raw_json, research_run_id,
+                    updated_at
+                ) VALUES (
+                    :trade_date, :symbol, :stock_name, :rank, :final_score, :is_official_pick,
+                    :decision, :open, :high, :low, :close, :volume, :amount, :pct_chg,
+                    NULL, :theme_catalyst, :news_catalyst, :positive_catalyst,
+                    :selection_reason, CAST(:candidate_entry_reason AS jsonb), CAST(:ticket_reason AS jsonb),
+                    CAST(:not_selected_reason AS jsonb), :fund_flow_momentum, :sector_catalyst_score,
+                    :market_score, :catalyst_score, :ticket_score, :market_regime,
+                    CAST(:source_layers AS jsonb), CAST(:factor_snapshot AS jsonb), CAST(:auxiliary_evidence_snapshot AS jsonb),
+                    CAST(:ranking_basis AS jsonb), CAST(:reconstruction_provenance AS jsonb), CAST(:raw_json AS jsonb), :research_run_id,
+                    NOW()
+                )
+                ON CONFLICT (trade_date, symbol) DO UPDATE SET
+                    stock_name = EXCLUDED.stock_name,
+                    rank = EXCLUDED.rank,
+                    final_score = EXCLUDED.final_score,
+                    is_official_pick = EXCLUDED.is_official_pick,
+                    decision = EXCLUDED.decision,
+                    open = EXCLUDED.open,
+                    high = EXCLUDED.high,
+                    low = EXCLUDED.low,
+                    close = EXCLUDED.close,
+                    volume = EXCLUDED.volume,
+                    amount = EXCLUDED.amount,
+                    pct_chg = EXCLUDED.pct_chg,
+                    theme_catalyst = EXCLUDED.theme_catalyst,
+                    news_catalyst = EXCLUDED.news_catalyst,
+                    positive_catalyst = EXCLUDED.positive_catalyst,
+                    selection_reason = EXCLUDED.selection_reason,
+                    candidate_entry_reason = EXCLUDED.candidate_entry_reason,
+                    ticket_reason = EXCLUDED.ticket_reason,
+                    not_selected_reason = EXCLUDED.not_selected_reason,
+                    fund_flow_momentum = EXCLUDED.fund_flow_momentum,
+                    sector_catalyst_score = EXCLUDED.sector_catalyst_score,
+                    market_score = EXCLUDED.market_score,
+                    catalyst_score = EXCLUDED.catalyst_score,
+                    ticket_score = EXCLUDED.ticket_score,
+                    market_regime = EXCLUDED.market_regime,
+                    source_layers = EXCLUDED.source_layers,
+                    factor_snapshot = EXCLUDED.factor_snapshot,
+                    auxiliary_evidence_snapshot = EXCLUDED.auxiliary_evidence_snapshot,
+                    ranking_basis = EXCLUDED.ranking_basis,
+                    reconstruction_provenance = EXCLUDED.reconstruction_provenance,
+                    raw_json = EXCLUDED.raw_json,
+                    research_run_id = EXCLUDED.research_run_id,
+                    updated_at = NOW()
+                """
+            ),
+            {
+                "trade_date": output_date,
+                "symbol": row.get("symbol"),
+                "stock_name": row.get("company_name"),
+                "rank": row.get("ticket_rank"),
+                "final_score": row.get("ticket_score"),
+                "is_official_pick": row.get("classification") == "CANDIDATE_FOR_PAPER_REVIEW",
+                "decision": row.get("classification") or "CANDIDATE",
+                "open": row.get("open"),
+                "high": row.get("high"),
+                "low": row.get("low"),
+                "close": row.get("close"),
+                "volume": row.get("volume"),
+                "amount": row.get("amount"),
+                "pct_chg": row.get("intraday_pct_chg"),
+                "theme_catalyst": row.get("sector_propagation_bonus"),
+                "news_catalyst": row.get("news_quality_score"),
+                "positive_catalyst": row.get("catalyst_score"),
+                "selection_reason": row.get("evidence_note") or row.get("risk_summary"),
+                "candidate_entry_reason": json.dumps(_json_snapshot(candidate_entry_reason)),
+                "ticket_reason": json.dumps(_json_snapshot(source_layers)),
+                "not_selected_reason": json.dumps(
+                    _json_snapshot(
+                        {"status": "SELECTED"}
+                        if row.get("classification") == "CANDIDATE_FOR_PAPER_REVIEW"
+                        else {"status": "NOT_OFFICIAL_PICK", "classification": row.get("classification")}
+                    )
+                ),
+                "fund_flow_momentum": row.get("capital_flow_proxy_score"),
+                "sector_catalyst_score": row.get("sector_propagation_bonus"),
+                "market_score": row.get("market_score"),
+                "catalyst_score": row.get("catalyst_score"),
+                "ticket_score": row.get("ticket_score"),
+                "market_regime": row.get("market_regime"),
+                "source_layers": json.dumps(_json_snapshot(source_layers)),
+                "factor_snapshot": json.dumps(_json_snapshot(_candidate_factor_snapshot(row))),
+                "auxiliary_evidence_snapshot": json.dumps(_json_snapshot(auxiliary_evidence)),
+                "ranking_basis": json.dumps(
+                    _json_snapshot(
+                        {
+                            "ranking_metric": "ticket_score",
+                            "score": row.get("ticket_score"),
+                            "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL",
+                            "profit_guarantee": False,
+                        }
+                    )
+                ),
+                "reconstruction_provenance": json.dumps(
+                    _json_snapshot(
+                        {
+                            "source": "us_profit_ticket_pipeline",
+                            "version_status": "VERSIONED",
+                        }
+                    )
+                ),
+                "raw_json": json.dumps(_json_snapshot(row)),
+                "research_run_id": research_run_id,
+            },
+        )
+        count += 1
+    return count
+
+
 def normalize_ticket(row: dict) -> dict:
     """Normalize ticket fields to ensure no None values cause format errors."""
     normalized = dict(row)
@@ -39,8 +275,6 @@ def normalize_ticket(row: dict) -> dict:
         "market_score": 0.0,
         "catalyst_score": 0.0,
         "ticket_score": 0.0,
-        "institutional_flow_score": 0.5,
-        "social_sentiment_score": 0.3,
         "raw_market_score": 0.0,
         "blended_score": 0.0,
         "risk_penalty": 0.0,
@@ -93,6 +327,7 @@ def save_pipeline_to_db(
     metrics: dict[str, Any],
     top_candidates: list[dict],
     forward_tracking_rows: list[dict],
+    candidate_rows: list[dict] | None = None,
 ) -> dict[str, int]:
     """Save pipeline outputs to PostgreSQL.
 
@@ -104,10 +339,18 @@ def save_pipeline_to_db(
         upsert_market_snapshot, upsert_factor_snapshot,
     )
 
-    counts = {"tickets": 0, "forward_tracking": 0, "runtime_decisions": 0}
+    counts = {"tickets": 0, "candidates": 0, "forward_tracking": 0, "runtime_decisions": 0}
     ticket_ids: dict[tuple[str, str], int] = {}
 
     # Save research run
+    run_config = {
+        "version_status": "VERSIONED",
+        "git_commit": _current_git_commit(),
+        "data_as_of": metrics.get("as_of_date"),
+        "generated_at": metrics.get("generated_at"),
+        "source_mode": metrics.get("source_mode"),
+        "scoring_config": _scoring_config_snapshot(db),
+    }
     run = create_research_run(
         db,
         run_name=metrics.get("run_name", "pipeline"),
@@ -115,6 +358,16 @@ def save_pipeline_to_db(
         status="done",
         candidate_count=metrics.get("paper_review_count", 0) + metrics.get("market_watchlist_count", 0),
         pass_count=metrics.get("paper_review_count", 0),
+        git_commit=run_config["git_commit"],
+        config=_json_snapshot(run_config),
+        finished_at=datetime.utcnow(),
+    )
+
+    counts["candidates"] = _persist_daily_candidates(
+        db,
+        output_date,
+        run.run_id,
+        candidate_rows or top_candidates,
     )
 
     # Save tickets
@@ -181,6 +434,7 @@ def save_pipeline_to_db(
                 quality_verdict=quality_verdict_str or row.get("quality_verdict"),
                 lifecycle_stage=row.get("lifecycle_stage"),
                 run_name=metrics.get("run_name"),
+                research_run_id=run.run_id,
                 narrative_title=narrative_title,
                 business_title=business_title,
                 risk_summary=risk_summary,
@@ -188,8 +442,8 @@ def save_pipeline_to_db(
                 panel_verdict=panel_verdict,
                 market_regime=market_regime,
                 entry_reason=entry_reason,
-                institutional_flow_score=row.get("institutional_flow_score"),
-                social_sentiment_score=row.get("social_sentiment_score"),
+                institutional_flow_score=row.get("capital_flow_proxy_score"),
+                social_sentiment_score=None,
                 raw_market_score=row.get("raw_market_score"),
                 blended_score=row.get("blended_score"),
                 breakout_score=row.get("breakout_score"),

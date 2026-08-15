@@ -8,6 +8,7 @@ SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 from us_profit_ticket_pipeline import build_forward_tracking_rows, build_summary_md, quote_cross_check
+from scripts.db.pipeline_bridge import _candidate_source_layers, normalize_ticket
 from xiaomei_scheduler import BEIJING_TZ, PIPELINE_SCHEDULE_DAYS, closed_us_session_date, is_trading_day
 
 
@@ -138,6 +139,25 @@ def test_summary_ticket_card_is_research_only_without_ashare_or_order_terms():
     assert "Catalyst Summary" in summary
     for forbidden in ["涨停", "连板", "龙虎榜", "place_order", "append_ledger"]:
         assert forbidden not in summary
+
+
+def test_candidate_source_layers_do_not_invent_institutional_flow_or_social_sentiment():
+    row = _candidate_row()
+    row.pop("institutional_flow_score", None)
+    row.pop("social_sentiment_score", None)
+    row["capital_flow_proxy_score"] = None
+    row["capital_flow_status"] = "UNAVAILABLE"
+    row["social_sentiment_status"] = "UNAVAILABLE"
+
+    normalized = normalize_ticket(row)
+    source_layers = _candidate_source_layers(row)
+
+    assert "institutional_flow_score" not in normalized
+    assert "social_sentiment_score" not in normalized
+    assert source_layers["capital_flow_proxy"]["score"] is None
+    assert source_layers["capital_flow_proxy"]["status"] == "UNAVAILABLE"
+    assert "not verified institutional order flow" in source_layers["capital_flow_proxy"]["definition"]
+    assert source_layers["social_sentiment"]["status"] == "UNAVAILABLE"
 
 
 def test_post_close_beijing_time_maps_to_prior_us_session():

@@ -2633,6 +2633,7 @@ def save_outputs(package: dict[str, Any], output_date: str, save_db: bool = Fals
                 db, output_date, package["metrics"],
                 package.get("top_candidates", []),
                 package.get("forward_tracking_rows", []),
+                candidate_rows=package.get("candidate_rows", []),
             )
             db.close()
             print(json.dumps({"db_save": db_counts}, ensure_ascii=False), flush=True)
@@ -2841,6 +2842,21 @@ def main(argv: list[str]) -> int:
         for row in candidate_rows:
             nq = _news_quality_score(row["symbol"])
             row["news_quality_score"] = nq
+            row["news_evidence_status"] = (
+                "OBSERVED"
+                if max(
+                    float((row.get("narrative_evidence") or {}).get("relevance_score", 0) or 0),
+                    float((row.get("business_evidence") or {}).get("relevance_score", 0) or 0),
+                ) > 0
+                else "UNAVAILABLE"
+            )
+            row["capital_flow_proxy_score"] = fund_flow_scores.get(row["symbol"])
+            row["capital_flow_status"] = (
+                "OBSERVED_EXTERNAL_PROXY"
+                if row["symbol"] in fund_flow_scores
+                else "UNAVAILABLE"
+            )
+            row["social_sentiment_status"] = "UNAVAILABLE"
             row["ticket_score"] = row.get("ticket_score", 0) + nq * 0.1
 
             sector = sector_map.get(row["symbol"], "Unknown") if sector_map else "Unknown"

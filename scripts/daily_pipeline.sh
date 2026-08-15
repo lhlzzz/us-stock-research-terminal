@@ -65,7 +65,7 @@ run_scoreboard() {
 run_tickets() {
     log "=== Step 3: Generate tickets ==="
     cd "$PROJECT_DIR"
-    python3 scripts/us_profit_ticket_pipeline.py --save-db --skip-last30days --top-k 3 2>&1 | tee -a "$LOG_FILE"
+    python3 scripts/us_profit_ticket_pipeline.py --save-db --top-k 3 2>&1 | tee -a "$LOG_FILE"
     log "Tickets complete"
 }
 

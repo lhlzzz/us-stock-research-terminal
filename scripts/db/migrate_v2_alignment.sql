@@ -82,6 +82,65 @@ CREATE INDEX IF NOT EXISTS idx_daily_candidates_symbol ON daily_candidates(symbo
 CREATE INDEX IF NOT EXISTS idx_daily_candidates_decision ON daily_candidates(decision);
 CREATE INDEX IF NOT EXISTS idx_daily_candidates_is_pick ON daily_candidates(is_official_pick);
 
+-- Every new ticket and candidate belongs to one reproducible research run.
+ALTER TABLE tickets
+    ADD COLUMN IF NOT EXISTS research_run_id INTEGER REFERENCES research_runs(run_id);
+ALTER TABLE daily_candidates
+    ADD COLUMN IF NOT EXISTS research_run_id INTEGER REFERENCES research_runs(run_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_research_run_id ON tickets(research_run_id);
+CREATE INDEX IF NOT EXISTS idx_daily_candidates_research_run_id ON daily_candidates(research_run_id);
+
+-- Historical rows without saved source snapshots must remain explicitly unavailable,
+-- never be presented as measured news, sentiment, or institutional flow evidence.
+UPDATE research_runs
+SET config = jsonb_build_object('version_status', 'UNAVAILABLE_HISTORICAL')
+WHERE config IS NULL OR config = '{}'::jsonb;
+
+UPDATE daily_candidates
+SET source_layers = jsonb_build_object(
+        'news', jsonb_build_object('status', 'UNAVAILABLE_HISTORICAL'),
+        'capital_flow_proxy', jsonb_build_object('status', 'UNAVAILABLE_HISTORICAL'),
+        'social_sentiment', jsonb_build_object('status', 'UNAVAILABLE_HISTORICAL'),
+        'price_volume', jsonb_build_object('status', 'UNAVAILABLE_HISTORICAL')
+    ),
+    factor_snapshot = COALESCE(
+        factor_snapshot,
+        jsonb_build_object('status', 'UNAVAILABLE_HISTORICAL')
+    ),
+    auxiliary_evidence_snapshot = COALESCE(
+        auxiliary_evidence_snapshot,
+        jsonb_build_object('status', 'UNAVAILABLE_HISTORICAL')
+    )
+WHERE source_layers IS NULL;
+
+-- The 2026-08-15 closed-session run predates snapshot persistence but can be
+-- tied to the committed scheduler lifecycle revision that produced it. Its
+-- omitted evidence remains unavailable; only the derivable run identity is
+-- reconstructed.
+UPDATE research_runs
+SET git_commit = '37693ec16f8ebbffdd29d758fa48ec458023b93b',
+    config = COALESCE(config, '{}'::jsonb) || jsonb_build_object(
+        'version_status', 'RECONSTRUCTED_FROM_DATABASE',
+        'reconstruction_note', 'Ticket/run linkage and source revision reconstructed; candidate evidence was not persisted.'
+    )
+WHERE run_id = 143
+  AND output_date = DATE '2026-08-15'
+  AND run_name = 'profit-ticket-pipeline'
+  AND git_commit IS NULL;
+
+UPDATE tickets
+SET research_run_id = 143
+WHERE research_run_id IS NULL
+  AND output_date = DATE '2026-08-15'
+  AND run_name = 'profit-ticket-pipeline'
+  AND EXISTS (
+      SELECT 1
+      FROM research_runs
+      WHERE run_id = 143
+        AND output_date = DATE '2026-08-15'
+        AND run_name = 'profit-ticket-pipeline'
+  );
+
 -- 2. scoring_config: Tunable closed-loop parameters
 CREATE TABLE IF NOT EXISTS scoring_config (
     id SERIAL PRIMARY KEY,

@@ -71,3 +71,28 @@
 - [x] Schedule the 05:00 Beijing pipeline for Tuesday through Saturday so Friday's US close is processed on Saturday morning.
 - [x] Make the existing infrastructure startup path launch one scheduler process without duplicate daemons.
 - [x] Verification: scheduler session-date tests pass, one daemon is running, and frontend/API data remains available.
+
+### Task 11: Version and complete research-decision records
+- [x] Persist the source code revision, scoring configuration snapshot, data-as-of timestamp, and evidence availability for every research run.
+- [x] Backfill only derivable decision metadata from authoritative ticket, candidate, and runtime-decision records; preserve unavailable evidence as unavailable.
+- [x] Verification: every new run is reproducibly versioned and the API exposes the version fields.
+
+### Task 12: Make the research thesis evidence truthful
+- [x] Replace unsupported "main fund" and "social sentiment" labels with explicit observable proxies or unavailable states.
+- [x] Expose news, capital-flow proxy, price-volume, and risk evidence separately so a ticket can explain why it exists and what evidence is absent.
+- [x] Verification: no frontend/API field describes a proxy as verified institutional flow or social sentiment.
+
+### Task 13: Publish one direct-database research dashboard contract
+- [x] Make the overview API read paper positions, trade journals, tickets, factors, outcomes, and version metadata from PostgreSQL.
+- [x] Publish ticket-level research-detail rows that join evidence, selection factors, forward outcomes, and attribution by `ticket_id`.
+- [x] Verification: the contract has no filesystem engine-state dependency for xiaomei paper data.
+
+### Task 14: Bind every xiaomei frontend module to the dashboard contract
+- [x] Replace placeholder research, intelligence, performance, and lifecycle content with contract fields and explicit unavailable states.
+- [x] Display selection evidence, factor contribution, horizon outcomes, loss/win attribution, and research version for each ticket.
+- [x] Verification: lint/build pass and the page renders data from the direct-database endpoint.
+
+### Task 15: Define the paper-only long/short research boundary
+- [x] Keep no broker or execution path.
+- [x] Do not emit a short candidate until a separately measured short-side model exists; show the missing validation explicitly.
+- [x] Define ranking as historical expected return and downside-aware evidence, never a profit guarantee.
