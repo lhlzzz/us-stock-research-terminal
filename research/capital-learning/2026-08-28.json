@@ -1,0 +1,30 @@
+{
+  "artifact_version": "capital_learning_artifact_v1",
+  "as_of_date": "2026-08-28",
+  "status": "RESEARCH_ONLY",
+  "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
+  "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+  "dataset": {
+    "total_samples": 0,
+    "valid_samples": 0,
+    "train_samples": 0,
+    "validation_samples": 0,
+    "test_samples": 0,
+    "trading_days": 0,
+    "symbols": 0,
+    "label_versions": 0,
+    "model_versions": 0
+  },
+  "prediction_error_count": 0,
+  "drift_records": [],
+  "metrics": {
+    "state_accuracy": "NOT_READY",
+    "transition_accuracy": "NOT_READY",
+    "intent_accuracy": "NOT_READY",
+    "path_calibration": "NOT_READY",
+    "distribution_warning": "NOT_READY",
+    "reversal_detection": "NOT_READY",
+    "economic_outcome": "NOT_READY",
+    "model_drift": "NOT_READY"
+  }
+}

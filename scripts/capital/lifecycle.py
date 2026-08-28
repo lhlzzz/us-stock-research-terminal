@@ -234,3 +234,246 @@ def write_capital_scoreboard(root: Path, engine=None) -> dict[str, Path]:
         lines.append(f"| {name} | {count} |")
     markdown_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return {"json": json_path, "markdown": markdown_path}
+
+
+def _learning_snapshot(engine=None) -> dict[str, Any]:
+    """Read only persisted V3 diagnostics; missing rows stay unavailable."""
+    if engine is None:
+        from db.engine import DATABASE_URL
+        from sqlalchemy import create_engine
+        engine = create_engine(DATABASE_URL)
+    from sqlalchemy import text
+
+    with engine.connect() as connection:
+        dataset = dict(connection.execute(text("""
+            SELECT COUNT(*) AS total_samples,
+                   COUNT(*) FILTER (WHERE eligibility_reason = 'VALID') AS valid_samples,
+                   COUNT(*) FILTER (WHERE eligible_for_training) AS train_samples,
+                   COUNT(*) FILTER (WHERE eligible_for_validation) AS validation_samples,
+                   COUNT(*) FILTER (WHERE eligible_for_test) AS test_samples,
+                   COUNT(DISTINCT as_of_date) AS trading_days,
+                   COUNT(DISTINCT symbol) AS symbols,
+                   COUNT(DISTINCT label_version) FILTER (WHERE label_version IS NOT NULL) AS label_versions,
+                   COUNT(DISTINCT model_version) AS model_versions
+            FROM capital_behavior_dataset
+        """)).mappings().one())
+        errors = int(connection.execute(text("SELECT COUNT(*) FROM capital_prediction_error")).scalar() or 0)
+        drift_result = connection.execute(text("""
+            SELECT model_version, window_start::text, window_end::text, status,
+                   state_accuracy, path_accuracy, calibration_error,
+                   distribution_warning_precision, metrics
+            FROM capital_model_drift
+            ORDER BY created_at DESC, id DESC
+            LIMIT 20
+        """)).mappings()
+        drift_rows = [dict(row) for row in drift_result]
+    return {
+        "dataset": dataset,
+        "prediction_error_count": errors,
+        "drift_records": drift_rows,
+        "status": "RESEARCH_ONLY",
+        # Valid labels make rows usable for research, but do not by themselves
+        # satisfy the independent fixed-chain or promotion gates.
+        "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
+        "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    }
+
+
+def record_capital_model_drift(engine=None, *, min_samples: int = 30) -> dict[str, Any]:
+    """Persist a drift observation only when valid outcomes are sufficient."""
+    if engine is None:
+        from db.engine import DATABASE_URL
+        from sqlalchemy import create_engine
+        engine = create_engine(DATABASE_URL)
+    from sqlalchemy import text
+    from .evaluation import evaluate_model_drift
+
+    with engine.connect() as connection:
+        rows = [dict(row) for row in connection.execute(text("""
+            SELECT as_of_date, capital_state, predicted_path,
+                   path_distribution_t3, future_outcome
+            FROM capital_behavior_dataset
+            WHERE eligibility_reason = 'VALID'
+            ORDER BY as_of_date, symbol, research_run_id
+        """)).mappings()]
+    outcomes = [row.get("future_outcome") or {} for row in rows]
+    result = evaluate_model_drift(
+        actual_state=[outcome.get("state_after_3d") for outcome in outcomes],
+        predicted_state=[row.get("capital_state") for row in rows],
+        actual_path=[outcome.get("path_after_3d") for outcome in outcomes],
+        predicted_path=[(row.get("predicted_path") or {}).get("path_type") for row in rows],
+        path_probabilities=[row.get("path_distribution_t3") or {} for row in rows],
+        min_samples=min_samples,
+        window_start=min((row["as_of_date"] for row in rows), default=None),
+        window_end=max((row["as_of_date"] for row in rows), default=None),
+    )
+    if result["status"] != "RESEARCH_ONLY":
+        return result
+    with engine.begin() as connection:
+        connection.execute(text("""
+            INSERT INTO capital_model_drift (
+                model_version, window_start, window_end, status,
+                state_accuracy, path_accuracy, calibration_error, metrics
+            ) VALUES (
+                :model_version, :window_start, :window_end, :status,
+                :state_accuracy, :path_accuracy, :calibration_error,
+                CAST(:metrics AS jsonb)
+            )
+            ON CONFLICT (model_version, window_start, window_end) DO UPDATE SET
+                status = EXCLUDED.status,
+                state_accuracy = EXCLUDED.state_accuracy,
+                path_accuracy = EXCLUDED.path_accuracy,
+                calibration_error = EXCLUDED.calibration_error,
+                metrics = EXCLUDED.metrics
+        """), {
+            "model_version": result["model_version"],
+            "window_start": result["window_start"],
+            "window_end": result["window_end"],
+            "status": result["status"],
+            "state_accuracy": result["state_accuracy"],
+            "path_accuracy": result["path_accuracy"],
+            "calibration_error": result["calibration_error"],
+            "metrics": json.dumps(result["metrics"], ensure_ascii=True, sort_keys=True),
+        })
+    return result
+
+
+def write_capital_case_libraries(root: Path, engine=None) -> dict[str, Path]:
+    """Export complete public-data cases and deterministic counterexamples."""
+    if engine is None:
+        from db.engine import DATABASE_URL
+        from sqlalchemy import create_engine
+        engine = create_engine(DATABASE_URL)
+    from sqlalchemy import text
+    from .case_retrieval import classify_case
+
+    with engine.connect() as connection:
+        rows = [dict(row) for row in connection.execute(text("""
+            SELECT symbol, as_of_date::text, capital_state, capital_intent,
+                   capital_strength, capital_quality, derived_features,
+                   inferred_state, inferred_intent, predicted_path, future_outcome
+            FROM capital_behavior_dataset
+            WHERE eligibility_reason = 'VALID'
+            ORDER BY as_of_date, symbol, id
+        """)).mappings()]
+    cases = []
+    counterexamples = []
+    for row in rows:
+        outcome = row.get("future_outcome") or {}
+        case = {
+            "symbol": row.get("symbol"),
+            "date": row.get("as_of_date"),
+            "state": row.get("capital_state"),
+            "intent": row.get("capital_intent"),
+            "path": outcome.get("path_after_3d") or outcome.get("actual_path"),
+            "evidence": row.get("derived_features") or {},
+            "outcome": outcome,
+            "return_3d": outcome.get("return_3d"),
+            "regime": (row.get("derived_features") or {}).get("regime"),
+            "similarity": None,
+        }
+        case_type = classify_case(row)
+        if case_type:
+            case["counterexample_type"] = case_type
+            counterexamples.append(case)
+        else:
+            cases.append(case)
+    case_root = root / "capital-cases"
+    counterexample_root = root / "capital-counterexamples"
+    case_root.mkdir(parents=True, exist_ok=True)
+    counterexample_root.mkdir(parents=True, exist_ok=True)
+    cases_path = case_root / "cases.jsonl"
+    counterexamples_path = counterexample_root / "cases.jsonl"
+    cases_path.write_text("".join(json.dumps(row, ensure_ascii=True, sort_keys=True, default=str) + "\n" for row in cases), encoding="utf-8")
+    counterexamples_path.write_text("".join(json.dumps(row, ensure_ascii=True, sort_keys=True, default=str) + "\n" for row in counterexamples), encoding="utf-8")
+    return {"cases": cases_path, "counterexamples": counterexamples_path}
+
+
+def write_capital_learning_artifacts(root: Path, output_date: str, engine=None) -> dict[str, Path]:
+    """Write the dated V3 learning artifact and a deterministic weekly review."""
+    artifact_root = root / "capital-learning"
+    artifact_root.mkdir(parents=True, exist_ok=True)
+    record_capital_model_drift(engine)
+    case_paths = write_capital_case_libraries(root, engine)
+    snapshot = _learning_snapshot(engine)
+    payload = {
+        "artifact_version": "capital_learning_artifact_v1",
+        "as_of_date": output_date,
+        "status": snapshot["status"],
+        "validation_status": snapshot["validation_status"],
+        "production_action": snapshot["production_action"],
+        "dataset": snapshot["dataset"],
+        "prediction_error_count": snapshot["prediction_error_count"],
+        "drift_records": snapshot["drift_records"],
+        "metrics": {
+            "state_accuracy": "NOT_READY",
+            "transition_accuracy": "NOT_READY",
+            "intent_accuracy": "NOT_READY",
+            "path_calibration": "NOT_READY",
+            "distribution_warning": "NOT_READY",
+            "reversal_detection": "NOT_READY",
+            "economic_outcome": "NOT_READY",
+            "model_drift": "NOT_READY" if not snapshot["drift_records"] else "RESEARCH_ONLY",
+        },
+    }
+    json_path = artifact_root / f"{output_date}.json"
+    md_path = artifact_root / f"{output_date}.md"
+    json_path.write_text(json.dumps(payload, indent=2, ensure_ascii=True, default=str) + "\n", encoding="utf-8")
+    lines = [
+        f"# Capital Learning - {output_date}",
+        "",
+        "- Status: `RESEARCH_ONLY`",
+        f"- Validation: `{payload['validation_status']}`",
+        "- Production action: `NO_PRODUCTION_WEIGHT_CHANGE`",
+        "",
+        "## Dataset",
+        "",
+        f"- Total samples: `{payload['dataset']['total_samples']}`",
+        f"- Valid samples: `{payload['dataset']['valid_samples']}`",
+        f"- Train / validation / test: `{payload['dataset']['train_samples']}` / `{payload['dataset']['validation_samples']}` / `{payload['dataset']['test_samples']}`",
+        f"- Symbols / trading days: `{payload['dataset']['symbols']}` / `{payload['dataset']['trading_days']}`",
+        f"- Prediction errors: `{payload['prediction_error_count']}`",
+        "",
+        "## Metrics",
+        "",
+        "All model metrics remain `NOT_READY` until versioned fixed-chain samples pass the eligibility gate.",
+        "",
+    ]
+    md_path.write_text("\n".join(lines), encoding="utf-8")
+
+    iso_week = datetime.fromisoformat(f"{output_date}T00:00:00").date().isocalendar()
+    weekly_json = artifact_root / f"weekly-model-review-{iso_week.year}-{iso_week.week:02d}.json"
+    weekly_md = artifact_root / f"weekly-model-review-{iso_week.year}-{iso_week.week:02d}.md"
+    weekly_payload = {
+        "artifact_version": "capital_weekly_model_review_v1",
+        "week": f"{iso_week.year}-W{iso_week.week:02d}",
+        "status": payload["status"],
+        "validation_status": payload["validation_status"],
+        "sample_growth": payload["dataset"],
+        "state_accuracy": "NOT_READY",
+        "transition_accuracy": "NOT_READY",
+        "intent_accuracy": "NOT_READY",
+        "path_calibration": "NOT_READY",
+        "distribution_warning": "NOT_READY",
+        "reversal_detection": "NOT_READY",
+        "economic_outcome": "NOT_READY",
+        "model_drift": "NOT_READY" if not snapshot["drift_records"] else snapshot["drift_records"],
+        "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    }
+    weekly_json.write_text(json.dumps(weekly_payload, indent=2, ensure_ascii=True, default=str) + "\n", encoding="utf-8")
+    weekly_md.write_text(
+        f"# Weekly Capital Model Review {weekly_payload['week']}\n\n"
+        f"- Status: `RESEARCH_ONLY`\n"
+        f"- Validation: `{weekly_payload['validation_status']}`\n"
+        f"- Samples: `{payload['dataset']['total_samples']}` total, `{payload['dataset']['valid_samples']}` valid\n"
+        "- State / transition / intent / path calibration: `NOT_READY`\n"
+        "- Production action: `NO_PRODUCTION_WEIGHT_CHANGE`\n",
+        encoding="utf-8",
+    )
+    return {
+        "json": json_path,
+        "markdown": md_path,
+        "weekly_json": weekly_json,
+        "weekly_markdown": weekly_md,
+        **case_paths,
+    }

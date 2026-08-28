@@ -64,7 +64,7 @@ from dynamic_horizon import (
     format_allocation_report,
 )
 from capital import build_capital_assessment
-from capital.lifecycle import write_daily_capital_report
+from capital.lifecycle import write_capital_learning_artifacts, write_daily_capital_report
 
 
 LAST30DAYS_SCRIPT = Path("/root/.agents/skills/last30days/scripts/last30days.py")
@@ -2651,11 +2651,15 @@ def save_outputs(package: dict[str, Any], output_date: str, save_db: bool = Fals
                 candidate_rows=package.get("candidate_rows", []),
             )
             db.close()
+            learning_paths = write_capital_learning_artifacts(RESEARCH_DIR, output_date)
             print(json.dumps({"db_save": db_counts}, ensure_ascii=False), flush=True)
         except Exception as exc:
             print(json.dumps({"db_save_error": str(exc)}, ensure_ascii=False), flush=True)
 
-    return {**paths, "capital_json": capital_report_paths["json"], "capital_markdown": capital_report_paths["markdown"]}
+    result = {**paths, "capital_json": capital_report_paths["json"], "capital_markdown": capital_report_paths["markdown"]}
+    if save_db and "learning_paths" in locals():
+        result.update({f"capital_learning_{key}": value for key, value in learning_paths.items()})
+    return result
 
 
 def emit_blocked_data_unavailable(args: argparse.Namespace, error: BlockedDataUnavailableError) -> None:

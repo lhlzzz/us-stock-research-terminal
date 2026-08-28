@@ -448,6 +448,119 @@ def _persist_capital_assessments(
         })
 
 
+def _persist_capital_dataset(
+    db: Session,
+    *,
+    output_date: str,
+    research_run_id: int,
+    candidate_rows: list[dict[str, Any]],
+) -> int:
+    """Project each persisted V2 assessment into the V3 dataset contract."""
+    from capital.dataset import assemble_dataset_sample
+
+    json_fields = {
+        "path_distribution_t1", "path_distribution_t3", "path_distribution_t5",
+        "observed_inputs", "derived_features", "inferred_state", "inferred_intent",
+        "predicted_path", "future_outcome", "source_lineage",
+    }
+    scalar_fields = (
+        "symbol", "as_of_date", "research_run_id", "data_version", "model_version",
+        "feature_version", "label_version", "capital_model_version",
+        "state_model_version", "intent_model_version", "path_model_version",
+        "calibration_version", "price", "volume", "liquidity",
+        "upward_pressure", "downward_pressure", "selling_activity", "price_damage",
+        "expected_price_damage", "damage_efficiency", "absorption", "absorption_efficiency",
+        "absorption_persistence", "absorption_failure", "demand_persistence",
+        "supply_exhaustion", "markup", "distribution", "crowding", "trap",
+        "price_response_efficiency", "upside_control_efficiency", "downside_control_efficiency",
+        "control_asymmetry", "control_collapse", "capital_state",
+        "capital_state_confidence", "capital_intent", "intent_probability",
+        "capital_strength", "capital_quality", "eligible_for_training",
+        "eligible_for_validation", "eligible_for_test", "eligibility_reason",
+        "dataset_split",
+    )
+    columns = scalar_fields + tuple(sorted(json_fields))
+    assignments = ", ".join(
+        f"{field} = EXCLUDED.{field}"
+        for field in columns
+        if field not in {"symbol", "as_of_date", "research_run_id", "model_version"}
+    )
+    placeholders = ", ".join(
+        f"CAST(:{field} AS jsonb)" if field in json_fields else f":{field}"
+        for field in columns
+    )
+    sql = text(f"""
+        INSERT INTO capital_behavior_dataset ({', '.join(columns)})
+        VALUES ({placeholders})
+        ON CONFLICT (symbol, as_of_date, research_run_id, model_version) DO UPDATE SET
+            {assignments}, updated_at = NOW()
+    """)
+    count = 0
+    for row in candidate_rows:
+        evidence = row.get("capital_evidence") or {}
+        if not evidence.get("evidence"):
+            continue
+        snapshot = dict(row)
+        snapshot.update({
+            "research_run_id": research_run_id,
+            "as_of_date": row.get("as_of_date") or output_date,
+            "data_version": row.get("capital_data_version") or "PUBLIC_OHLCV_V2",
+            "model_version": row.get("capital_model_version") or "capital_behavior_v2",
+            "feature_version": row.get("feature_version") or "capital_features_v2",
+            "price": row.get("price") or row.get("close") or row.get("latest_price"),
+            "volume": row.get("volume"),
+            "liquidity": row.get("liquidity") or row.get("median_dollar_volume_20d"),
+            "features": row.get("features") or evidence.get("features") or {},
+            "evidence": evidence,
+            "source_lineage": {
+                "status": "VALID" if evidence.get("availability") == "AVAILABLE" else "INVALID",
+                "source": evidence.get("evidence", {}).get("upward_pressure", {}).get("source", "PUBLIC_OHLCV"),
+                "source_layers": row.get("source_layers") or {},
+            },
+        })
+        sample = assemble_dataset_sample(snapshot, lineage=snapshot["source_lineage"])
+        params = {field: sample.get(field) for field in columns}
+        for field in json_fields:
+            params[field] = json.dumps(sample.get(field) or {}, sort_keys=True, ensure_ascii=True, allow_nan=False)
+        db.execute(sql, params)
+        count += 1
+    return count
+
+
+def _refresh_capital_dataset_splits(db: Session) -> int:
+    """Apply the fixed chronological split after a dataset mutation."""
+    from capital.dataset import temporal_split_assignments
+
+    if not hasattr(db, "execute"):
+        return 0
+
+    rows = [dict(row) for row in db.execute(text("""
+        SELECT id, as_of_date, eligibility_reason
+        FROM capital_behavior_dataset
+        ORDER BY as_of_date, symbol, research_run_id
+    """)).mappings()]
+    assignments = temporal_split_assignments(rows)
+    db.execute(text("""
+        UPDATE capital_behavior_dataset
+        SET dataset_split = NULL,
+            eligible_for_training = FALSE,
+            eligible_for_validation = FALSE,
+            eligible_for_test = FALSE,
+            updated_at = NOW()
+    """))
+    for sample_id, split in assignments.items():
+        db.execute(text("""
+            UPDATE capital_behavior_dataset
+            SET dataset_split = :split,
+                eligible_for_training = (:split = 'TRAIN'),
+                eligible_for_validation = (:split = 'VALIDATION'),
+                eligible_for_test = (:split = 'TEST'),
+                updated_at = NOW()
+            WHERE id = :id
+        """), {"id": sample_id, "split": split})
+    return len(assignments)
+
+
 def _persist_daily_candidates(
     db: Session,
     output_date: str,
@@ -724,6 +837,13 @@ def save_pipeline_to_db(
             research_run_id=run.run_id,
             candidate_rows=candidate_rows or top_candidates,
         )
+        _persist_capital_dataset(
+            db,
+            output_date=output_date,
+            research_run_id=run.run_id,
+            candidate_rows=candidate_rows or top_candidates,
+        )
+        _refresh_capital_dataset_splits(db)
     except Exception as exc:
         fail_run(exc)
 

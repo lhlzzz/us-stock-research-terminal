@@ -376,6 +376,17 @@ ALTER TABLE forward_tracking
     ADD COLUMN IF NOT EXISTS state_after_1d VARCHAR(40),
     ADD COLUMN IF NOT EXISTS state_after_3d VARCHAR(40),
     ADD COLUMN IF NOT EXISTS state_after_5d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS state_after_10d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS return_1d NUMERIC(10,6),
+    ADD COLUMN IF NOT EXISTS return_3d NUMERIC(10,6),
+    ADD COLUMN IF NOT EXISTS return_5d NUMERIC(10,6),
+    ADD COLUMN IF NOT EXISTS return_10d NUMERIC(10,6),
+    ADD COLUMN IF NOT EXISTS path_after_1d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS path_after_3d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS path_after_5d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS path_after_10d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS transition_label VARCHAR(96),
+    ADD COLUMN IF NOT EXISTS label_version VARCHAR(64),
     ADD COLUMN IF NOT EXISTS actual_path VARCHAR(40),
     ADD COLUMN IF NOT EXISTS actual_intent_proxy VARCHAR(40),
     ADD COLUMN IF NOT EXISTS actual_intent_semantic VARCHAR(32),
@@ -609,6 +620,132 @@ CREATE INDEX IF NOT EXISTS idx_capital_path_prediction_symbol_date
     ON capital_path_prediction(symbol, as_of_date DESC);
 CREATE INDEX IF NOT EXISTS idx_capital_prediction_outcome_symbol_date
     ON capital_prediction_outcome(symbol, as_of_date DESC);
+
+-- 11. Capital Behavior V3 empirical dataset and audit projections. These
+-- tables are research-only and never participate in production ranking.
+CREATE TABLE IF NOT EXISTS capital_behavior_dataset (
+    id BIGSERIAL PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    as_of_date DATE NOT NULL,
+    research_run_id INTEGER NOT NULL REFERENCES research_runs(run_id),
+    data_version VARCHAR(64) NOT NULL,
+    model_version VARCHAR(64) NOT NULL,
+    feature_version VARCHAR(64) NOT NULL,
+    label_version VARCHAR(64),
+    capital_model_version VARCHAR(64),
+    state_model_version VARCHAR(64),
+    intent_model_version VARCHAR(64),
+    path_model_version VARCHAR(64),
+    calibration_version VARCHAR(64),
+    price NUMERIC(12,4),
+    volume BIGINT,
+    liquidity NUMERIC(12,6),
+    upward_pressure NUMERIC(8,6),
+    downward_pressure NUMERIC(8,6),
+    selling_activity NUMERIC(8,6),
+    price_damage NUMERIC(8,6),
+    expected_price_damage NUMERIC(8,6),
+    damage_efficiency NUMERIC(8,6),
+    absorption NUMERIC(8,6),
+    absorption_efficiency NUMERIC(8,6),
+    absorption_persistence NUMERIC(8,6),
+    absorption_failure NUMERIC(8,6),
+    demand_persistence NUMERIC(8,6),
+    supply_exhaustion NUMERIC(8,6),
+    markup NUMERIC(8,6),
+    distribution NUMERIC(8,6),
+    crowding NUMERIC(8,6),
+    trap NUMERIC(8,6),
+    price_response_efficiency NUMERIC(8,6),
+    upside_control_efficiency NUMERIC(8,6),
+    downside_control_efficiency NUMERIC(8,6),
+    control_asymmetry NUMERIC(8,6),
+    control_collapse NUMERIC(8,6),
+    capital_state VARCHAR(40),
+    capital_state_confidence NUMERIC(8,6),
+    capital_intent VARCHAR(40),
+    intent_probability NUMERIC(8,6),
+    capital_strength NUMERIC(8,6),
+    capital_quality NUMERIC(8,6),
+    path_distribution_t1 JSONB NOT NULL DEFAULT '{}'::jsonb,
+    path_distribution_t3 JSONB NOT NULL DEFAULT '{}'::jsonb,
+    path_distribution_t5 JSONB NOT NULL DEFAULT '{}'::jsonb,
+    observed_inputs JSONB NOT NULL DEFAULT '{}'::jsonb,
+    derived_features JSONB NOT NULL DEFAULT '{}'::jsonb,
+    inferred_state JSONB NOT NULL DEFAULT '{}'::jsonb,
+    inferred_intent JSONB NOT NULL DEFAULT '{}'::jsonb,
+    predicted_path JSONB NOT NULL DEFAULT '{}'::jsonb,
+    future_outcome JSONB NOT NULL DEFAULT '{}'::jsonb,
+    source_lineage JSONB NOT NULL DEFAULT '{}'::jsonb,
+    eligible_for_training BOOLEAN NOT NULL DEFAULT FALSE,
+    eligible_for_validation BOOLEAN NOT NULL DEFAULT FALSE,
+    eligible_for_test BOOLEAN NOT NULL DEFAULT FALSE,
+    eligibility_reason VARCHAR(64) NOT NULL,
+    dataset_split VARCHAR(16),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(symbol, as_of_date, research_run_id, model_version)
+);
+
+CREATE INDEX IF NOT EXISTS idx_capital_dataset_date
+    ON capital_behavior_dataset(as_of_date, symbol);
+CREATE INDEX IF NOT EXISTS idx_capital_dataset_split
+    ON capital_behavior_dataset(dataset_split, eligible_for_training, eligible_for_validation, eligible_for_test);
+CREATE INDEX IF NOT EXISTS idx_capital_dataset_state
+    ON capital_behavior_dataset(capital_state, as_of_date);
+
+CREATE TABLE IF NOT EXISTS capital_prediction_error (
+    id BIGSERIAL PRIMARY KEY,
+    dataset_sample_id BIGINT REFERENCES capital_behavior_dataset(id),
+    model_version VARCHAR(64) NOT NULL,
+    prediction_date DATE NOT NULL,
+    symbol VARCHAR(10) NOT NULL,
+    predicted_state VARCHAR(40),
+    actual_state VARCHAR(40),
+    predicted_intent VARCHAR(40),
+    actual_intent_proxy VARCHAR(40),
+    predicted_path VARCHAR(40),
+    actual_path VARCHAR(40),
+    error_type VARCHAR(64) NOT NULL,
+    error_magnitude NUMERIC(12,6),
+    confidence NUMERIC(8,6),
+    metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(dataset_sample_id, error_type)
+);
+
+CREATE INDEX IF NOT EXISTS idx_capital_prediction_error_symbol_date
+    ON capital_prediction_error(symbol, prediction_date DESC);
+CREATE INDEX IF NOT EXISTS idx_capital_prediction_error_type
+    ON capital_prediction_error(error_type, prediction_date DESC);
+
+CREATE TABLE IF NOT EXISTS capital_model_drift (
+    id BIGSERIAL PRIMARY KEY,
+    model_version VARCHAR(64) NOT NULL,
+    window_start DATE,
+    window_end DATE,
+    status VARCHAR(32) NOT NULL,
+    state_accuracy NUMERIC(8,6),
+    path_accuracy NUMERIC(8,6),
+    calibration_error NUMERIC(8,6),
+    distribution_warning_precision NUMERIC(8,6),
+    metrics JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(model_version, window_start, window_end)
+);
+
+ALTER TABLE capital_prediction_outcome
+    ADD COLUMN IF NOT EXISTS state_after_10d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS return_1d NUMERIC(10,6),
+    ADD COLUMN IF NOT EXISTS return_3d NUMERIC(10,6),
+    ADD COLUMN IF NOT EXISTS return_5d NUMERIC(10,6),
+    ADD COLUMN IF NOT EXISTS return_10d NUMERIC(10,6),
+    ADD COLUMN IF NOT EXISTS path_after_1d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS path_after_3d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS path_after_5d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS path_after_10d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS transition_label VARCHAR(96),
+    ADD COLUMN IF NOT EXISTS label_version VARCHAR(64);
 
 -- 10. Intraday paper strategy lifecycle. These records intentionally do not
 -- reuse ticket-bound tables: daily tickets and intraday decisions have

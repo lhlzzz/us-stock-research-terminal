@@ -885,6 +885,286 @@ async def get_capital_scoreboard():
     }
 
 
+def _capital_dataset_stats(engine) -> dict:
+    """Return V3 dataset counts without treating incomplete rows as training data."""
+    from sqlalchemy import text
+
+    with engine.connect() as conn:
+        row = conn.execute(text("""
+            SELECT COUNT(*) AS total_samples,
+                   COUNT(*) FILTER (WHERE eligibility_reason = 'VALID') AS valid_samples,
+                   COUNT(*) FILTER (WHERE eligible_for_training) AS train_samples,
+                   COUNT(*) FILTER (WHERE eligible_for_validation) AS validation_samples,
+                   COUNT(*) FILTER (WHERE eligible_for_test) AS test_samples,
+                   COUNT(DISTINCT as_of_date) AS trading_days,
+                   COUNT(DISTINCT symbol) AS symbols,
+                   ARRAY_REMOVE(ARRAY_AGG(DISTINCT label_version), NULL) AS label_versions,
+                   ARRAY_REMOVE(ARRAY_AGG(DISTINCT model_version), NULL) AS model_versions
+            FROM capital_behavior_dataset
+        """)).mappings().one()
+    result = dict(row)
+    for key in ("label_versions", "model_versions"):
+        if result.get(key) is None:
+            result[key] = []
+    return result
+
+
+@app.get("/api/capital/dataset/status")
+async def get_capital_dataset_status():
+    """Return the empirical dataset gate state, never an implied model result."""
+    stats = _capital_dataset_stats(get_engine())
+    valid = int(stats.get("valid_samples") or 0)
+    return {
+        "status": "RESEARCH_ONLY",
+        "dataset_status": "NOT_READY" if valid == 0 else "RESEARCH_ONLY",
+        "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
+        "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+        **stats,
+    }
+
+
+@app.get("/api/capital/dataset/stats")
+async def get_capital_dataset_stats():
+    """Return V3 dataset volume and temporal-partition counts."""
+    return await get_capital_dataset_status()
+
+
+@app.get("/api/capital/{symbol}/probabilities")
+async def get_capital_probabilities(symbol: str):
+    """Show rule and empirical probabilities side by side for one latest sample."""
+    from sqlalchemy import text
+    from capital.learning import fit_empirical_baseline, hybrid_probability, predict_empirical
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        row = conn.execute(text("""
+            SELECT as_of_date::text, model_version, capital_state, capital_state_confidence,
+                   capital_intent, intent_probability, inferred_state, inferred_intent,
+                   predicted_path, path_distribution_t1, path_distribution_t3,
+                   path_distribution_t5, eligibility_reason
+            FROM capital_behavior_dataset
+            WHERE symbol = :symbol
+            ORDER BY as_of_date DESC, research_run_id DESC
+            LIMIT 1
+        """), {"symbol": symbol.upper()}).mappings().first()
+        historical = [dict(item) for item in conn.execute(text("""
+            SELECT capital_state, capital_intent, future_outcome, eligibility_reason,
+                   dataset_split
+            FROM capital_behavior_dataset
+            WHERE eligibility_reason = 'VALID'
+              AND dataset_split = 'TRAIN'
+              AND as_of_date < (SELECT MAX(as_of_date) FROM capital_behavior_dataset WHERE symbol = :symbol)
+            ORDER BY as_of_date, symbol, research_run_id
+        """), {"symbol": symbol.upper()}).mappings()]
+    sample = dict(row) if row else None
+    if not sample:
+        return {
+            "symbol": symbol.upper(), "status": "NOT_READY", "sample": None,
+            "rule_probability": {}, "empirical_probability": {}, "hybrid_probability": {},
+            "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+        }
+    inferred_state = sample.get("inferred_state") or {}
+    inferred_intent = sample.get("inferred_intent") or {}
+    empirical_model = fit_empirical_baseline(historical)
+    empirical_state = predict_empirical(empirical_model, sample, model_name="state_model")
+    empirical_intent = predict_empirical(empirical_model, sample, model_name="intent_model")
+    empirical_paths = {
+        f"t{horizon}": predict_empirical(empirical_model, sample, model_name="path_models", horizon=horizon)
+        for horizon in (1, 3, 5, 10)
+    }
+    rule_paths = {
+        "t1": sample.get("path_distribution_t1") or {},
+        "t3": sample.get("path_distribution_t3") or {},
+        "t5": sample.get("path_distribution_t5") or {},
+    }
+    return {
+        "symbol": symbol.upper(),
+        "as_of_date": sample["as_of_date"],
+        "status": (
+            "RESEARCH_ONLY"
+            if sample.get("eligibility_reason") == "VALID"
+            and empirical_model.get("status") == "RESEARCH_ONLY"
+            else "NOT_READY"
+        ),
+        "eligibility_reason": sample["eligibility_reason"],
+        "state_probability": {
+            "current_state": sample.get("capital_state"),
+            "confidence": sample.get("capital_state_confidence"),
+            "next_state_rule_probability": inferred_state.get("transition_probabilities", {}),
+            "empirical_probability": empirical_state,
+        },
+        "intent_probability": {
+            "top_intent": sample.get("capital_intent"),
+            "confidence": sample.get("intent_probability"),
+            "rule_probability": inferred_intent.get("intent_probabilities", {}),
+            "empirical_probability": empirical_intent,
+        },
+        "rule_probability": {
+            **rule_paths,
+        },
+        "empirical_probability": empirical_paths,
+        "hybrid_probability": {
+            f"t{horizon}": hybrid_probability(rule_paths.get(f"t{horizon}", {}), empirical_paths[f"t{horizon}"])
+            for horizon in (1, 3, 5)
+        },
+        "empirical_status": empirical_model.get("status", "NOT_READY"),
+        "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    }
+
+
+@app.get("/api/capital/{symbol}/analogues")
+async def get_capital_analogues(symbol: str, limit: int = Query(5, ge=1, le=20)):
+    """Return nearest historic public-data cases using as-of inputs only."""
+    from sqlalchemy import text
+    from capital.case_retrieval import analogue_outcome_distribution, retrieve_similar_cases
+
+    limit = int(limit) if isinstance(limit, (int, str)) else 5
+    engine = get_engine()
+    with engine.connect() as conn:
+        current = conn.execute(text("""
+            SELECT * FROM capital_behavior_dataset
+            WHERE symbol = :symbol
+            ORDER BY as_of_date DESC, research_run_id DESC
+            LIMIT 1
+        """), {"symbol": symbol.upper()}).mappings().first()
+        if not current:
+            return {"symbol": symbol.upper(), "status": "NOT_READY", "cases": [], "outcomes": {}}
+        historical = [dict(row) for row in conn.execute(text("""
+            SELECT * FROM capital_behavior_dataset
+            WHERE as_of_date < :as_of_date
+              AND eligibility_reason = 'VALID'
+            ORDER BY as_of_date, symbol, research_run_id
+        """), {"as_of_date": current["as_of_date"]}).mappings()]
+    cases = retrieve_similar_cases(dict(current), historical, top_k=limit)
+    return {
+        "symbol": symbol.upper(),
+        "as_of_date": str(current["as_of_date"]),
+        "status": "RESEARCH_ONLY" if cases else "NOT_READY",
+        "case_count": len(cases),
+        "cases": cases,
+        "outcomes": {f"t{h}": analogue_outcome_distribution(cases, horizon=h) for h in (1, 3, 5)},
+        "similarity_semantic": "AS_OF_PUBLIC_DATA_ONLY",
+    }
+
+
+@app.get("/api/capital/{symbol}/errors")
+async def get_capital_errors(symbol: str, limit: int = Query(100, ge=1, le=500)):
+    """Return deterministic post-hoc error attribution for one symbol."""
+    from sqlalchemy import text
+
+    limit = int(limit) if isinstance(limit, (int, str)) else 100
+    engine = get_engine()
+    with engine.connect() as conn:
+        rows = [dict(row) for row in conn.execute(text("""
+            SELECT prediction_date::text, model_version, predicted_state, actual_state,
+                   predicted_intent, actual_intent_proxy, predicted_path, actual_path,
+                   error_type, error_magnitude, confidence, metadata
+            FROM capital_prediction_error
+            WHERE symbol = :symbol
+            ORDER BY prediction_date DESC, id DESC
+            LIMIT :limit
+        """), {"symbol": symbol.upper(), "limit": limit}).mappings()]
+    return {
+        "symbol": symbol.upper(),
+        "status": "RESEARCH_ONLY" if rows else "NOT_READY",
+        "semantic": "POST_HOC_PUBLIC_DATA_INFERRED_PROXY",
+        "errors": rows,
+    }
+
+
+@app.get("/api/capital/{symbol}/lifecycle")
+async def get_capital_lifecycle(symbol: str, limit: int = Query(120, ge=1, le=500)):
+    """Return state timeline, predictions, actual outcomes, and errors together."""
+    from sqlalchemy import text
+
+    limit = int(limit) if isinstance(limit, (int, str)) else 120
+    engine = get_engine()
+    with engine.connect() as conn:
+        rows = [dict(row) for row in conn.execute(text("""
+            SELECT d.as_of_date::text, d.research_run_id, d.model_version,
+                   d.capital_state, d.capital_state_confidence, d.capital_intent,
+                   d.intent_probability, d.predicted_path, d.future_outcome,
+                   d.eligibility_reason, d.dataset_split,
+                   COUNT(e.id) AS prediction_error_count
+            FROM capital_behavior_dataset d
+            LEFT JOIN capital_prediction_error e ON e.dataset_sample_id = d.id
+            WHERE d.symbol = :symbol
+            GROUP BY d.id
+            ORDER BY d.as_of_date DESC, d.research_run_id DESC
+            LIMIT :limit
+        """), {"symbol": symbol.upper(), "limit": limit}).mappings()]
+    return {
+        "symbol": symbol.upper(),
+        "status": "RESEARCH_ONLY" if rows else "NOT_READY",
+        "semantic": {"state": "INFERRED", "path": "PREDICTED", "outcome": "POST_HOC_PUBLIC_DATA_INFERRED_PROXY"},
+        "timeline": rows,
+    }
+
+
+@app.get("/api/capital/model-performance")
+async def get_capital_model_performance():
+    """Evaluate the empirical baseline on the held-out chronological TEST split."""
+    from sqlalchemy import text
+    from capital.evaluation import evaluate_predictions
+    from capital.learning import fit_empirical_baseline, predict_empirical
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        rows = [dict(row) for row in conn.execute(text("""
+            SELECT capital_state, capital_intent, dataset_split,
+                   future_outcome, path_distribution_t3
+            FROM capital_behavior_dataset
+            WHERE eligibility_reason = 'VALID'
+            ORDER BY as_of_date, symbol, research_run_id
+        """)).mappings()]
+    model = fit_empirical_baseline(rows, split="TRAIN")
+    test_rows = [row for row in rows if row.get("dataset_split") == "TEST"]
+    outcomes = [row.get("future_outcome") or {} for row in test_rows]
+    state_predictions = [predict_empirical(model, row, model_name="state_model") for row in test_rows]
+    path_predictions = [predict_empirical(model, row, model_name="path_models", horizon=3) for row in test_rows]
+    predicted_state = [max(values, key=values.get) if values else None for values in state_predictions]
+    predicted_path = [max(values, key=values.get) if values else None for values in path_predictions]
+    metrics = evaluate_predictions(
+        actual_state=[outcome.get("state_after_3d") for outcome in outcomes],
+        predicted_state=predicted_state,
+        actual_path=[outcome.get("path_after_3d") for outcome in outcomes],
+        predicted_path=predicted_path,
+        path_probabilities=path_predictions,
+        returns=[outcome.get("return_3d") for outcome in outcomes],
+    )
+    return {
+        "status": metrics["status"],
+        "model_version": "capital_empirical_baseline_v1",
+        "fit_split": "TRAIN",
+        "evaluation_split": "TEST",
+        "sample_count": len(test_rows),
+        "metrics": metrics,
+        "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    }
+
+
+@app.get("/api/capital/model-drift")
+async def get_capital_model_drift():
+    """Return persisted drift diagnostics or an explicit sample gate."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        rows = [dict(row) for row in conn.execute(text("""
+            SELECT model_version, window_start::text, window_end::text, status,
+                   state_accuracy, path_accuracy, calibration_error,
+                   distribution_warning_precision, metrics, created_at::text
+            FROM capital_model_drift
+            ORDER BY created_at DESC, id DESC
+            LIMIT 100
+        """)).mappings()]
+    return {
+        "status": "RESEARCH_ONLY" if rows else "NOT_READY",
+        "drift": rows,
+        "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    }
+
+
 @app.get("/api/capital/history/{symbol}")
 async def get_capital_history(symbol: str, limit: int = Query(60, ge=1, le=500)):
     """Return inferred daily Capital Brain state history for a symbol."""

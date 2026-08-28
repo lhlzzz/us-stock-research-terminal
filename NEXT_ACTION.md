@@ -1,5 +1,37 @@
 # NEXT_ACTION
 
+## Capital Behavior V3 status (2026-08-28)
+
+- Baseline: `main @ c0c2c3e`; implementation target: `capital_behavior_v3`.
+- V3 dataset, deterministic labels, purged chronological split, empirical
+  baseline, calibration/evaluation, archetypes, analogue retrieval, feature
+  stability, decay/reversal diagnostics, prediction-error persistence, model
+  drift diagnostics, V3 API projections, and daily/weekly artifacts are now
+  integrated with the existing V2 owners.
+- Current database counts: `capital_behavior_dataset=0`,
+  `capital_prediction_error=0`, `capital_model_drift=0`,
+  `capital_daily_snapshot=0`, `capital_prediction_outcome=0`,
+  `forward_tracking=1161`, `tickets=458`.
+- Current artifacts: `research/capital-learning/2026-08-28.json`,
+  `research/capital-learning/2026-08-28.md`, weekly review for `2026-W35`,
+  and empty replayable `research/capital-cases/cases.jsonl` /
+  `research/capital-counterexamples/cases.jsonl`.
+- Walk-forward result: `UNVALIDATED_NO_FIXED_CHAIN` with zero fixed-chain
+  rows. State accuracy, transition accuracy, intent accuracy, path
+  calibration, distribution warning, reversal detection, economic outcome,
+  and lead-time metrics remain `NOT_READY`.
+- Temporal research isolation was tightened: label-window overlap purges the
+  tail of TRAIN/VALIDATION, and empirical fitting uses TRAIN while performance
+  evaluation uses held-out TEST. Sparse valid rows still remain
+  `UNVALIDATED_NO_FIXED_CHAIN` / `NOT_READY`.
+- Production boundary remains `RESEARCH_ONLY`,
+  `UNVALIDATED_NO_FIXED_CHAIN`, `KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED`,
+  and `NO_PRODUCTION_WEIGHT_CHANGE`.
+- Next operational action: accumulate independently versioned V2 snapshots
+  and due forward outcomes through the normal post-close pipeline; only then
+  run temporal train/validation/test, walk-forward, out-of-sample and A/B
+  gates. Do not tune against test rows or promote automatically.
+
 **已完成（2026-08-28，Capital Behavior V2 研究并行升级）：**
 - 完成 V2 gap audit，并将 Capital Brain 升级为公开 OHLCV 的确定性行为推演链：卖方活动/实际与预期伤害/吸收效率与持续性/失败、方向性价格响应效率、control asymmetry/collapse、动态 state transition、state aging、竞争 intent/path 概率、capital strength/quality、distribution/trap 风险。
 - 完成完整 V2 持久化：扩展现有 `capital_daily_snapshot`、`capital_evidence`、`capital_state_history`、`capital_intent`、`capital_path_prediction`、`capital_prediction_outcome` 及 ticket/tracking 字段；迁移对旧表幂等兼容。

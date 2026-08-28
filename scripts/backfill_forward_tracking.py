@@ -5,6 +5,7 @@ Uses DataProvider for kline data (multi-source with fallback).
 """
 
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -17,6 +18,8 @@ import pandas as pd
 from sqlalchemy import text
 from data_provider import get_provider, is_trading_day, latest_us_trading_day
 from capital import build_capital_assessment
+from capital.dataset import prediction_error_types
+from capital.outcomes import label_for_tracking_row, merge_outcomes
 
 _US_TRADING_DAY_CACHE: set[pd.Timestamp] | None = None
 
@@ -139,28 +142,52 @@ def _capital_outcome(
     if bars.empty:
         return None
     assessment = build_capital_assessment(bars)
-    actual_state = assessment["state"]["capital_state"]
-    actual_path = assessment["path"]["path_type"]
+    labels = label_for_tracking_row(bars, as_of_date=as_of_date, current_state=entry_state)
+    actual_state = labels.get(f"state_after_{horizon_days}d")
+    actual_path = labels.get(f"path_after_{horizon_days}d")
     # This is a post-hoc public-data inference, never an observed institution intent.
-    actual_intent_proxy = assessment["intent"]["capital_intent"]
+    actual_intent_proxy = labels.get(f"intent_after_{horizon_days}d")
     outcome: dict[str, object] = {
         "state_after_1d": actual_state if horizon_days == 1 else None,
         "state_after_3d": actual_state if horizon_days == 3 else None,
         "state_after_5d": actual_state if horizon_days == 5 else None,
+        "state_after_10d": actual_state if horizon_days == 10 else None,
+        f"return_{horizon_days}d": forward_return,
+        f"path_after_{horizon_days}d": actual_path,
+        "transition_label": labels.get(f"transition_after_{horizon_days}d") or (
+            f"{entry_state}->{actual_state}" if entry_state and actual_state else None
+        ),
+        "label_version": labels.get("label_version"),
         "actual_path": actual_path,
         "actual_intent_proxy": actual_intent_proxy,
+        # Keep the V2 field value stable; the explicit detail field carries
+        # the V3 public-data semantic for new consumers.
         "actual_intent_semantic": "POST_HOC_INFERRED_PROXY",
-        "state_correct": _state_family(entry_state) == _state_family(actual_state),
-        "intent_correct": (
-            (entry_intent in {"ACCUMULATE", "BUILD", "PUSH_HIGHER", "DEFEND_PRICE",
-                              "ABSORB_SUPPLY", "REACCELERATE"} and forward_return > 0)
-            or (entry_intent in {"DISTRIBUTE", "REDUCE_RISK", "PRESS_LOWER"} and forward_return < 0)
-            or (entry_intent in {"WAIT", "UNKNOWN", None} and abs(forward_return) <= 0.005)
+        "actual_intent_semantic_detail": "POST_HOC_PUBLIC_DATA_INFERRED_PROXY",
+        "state_correct": (
+            _state_family(entry_state) == _state_family(actual_state)
+            if actual_state is not None else None
         ),
-        "path_correct": bool(predicted_path) and predicted_path == actual_path,
+        "intent_correct": (
+            (
+                (entry_intent in {"ACCUMULATE", "BUILD", "PUSH_HIGHER", "DEFEND_PRICE",
+                                  "ABSORB_SUPPLY", "REACCELERATE"} and forward_return > 0)
+                or (entry_intent in {"DISTRIBUTE", "REDUCE_RISK", "PRESS_LOWER"} and forward_return < 0)
+                or (entry_intent in {"WAIT", "UNKNOWN", None} and abs(forward_return) <= 0.005)
+            )
+            if actual_intent_proxy is not None else None
+        ),
+        "path_correct": (
+            bool(predicted_path) and predicted_path == actual_path
+            if actual_path is not None else None
+        ),
         "model_version": assessment["model_version"],
         "data_version": "PUBLIC_OHLCV_V2",
     }
+    for horizon in (1, 3, 5, 10):
+        outcome.setdefault(f"return_{horizon}d", None)
+        outcome.setdefault(f"path_after_{horizon}d", None)
+        outcome.setdefault(f"state_after_{horizon}d", None)
     return outcome
 
 
@@ -176,12 +203,18 @@ def _upsert_capital_outcome(
     db.execute(text("""
         INSERT INTO capital_prediction_outcome (
             forward_tracking_id, symbol, as_of_date, research_run_id, model_version,
-            data_version, state_after_1d, state_after_3d, state_after_5d, actual_path,
+            data_version, state_after_1d, state_after_3d, state_after_5d, state_after_10d,
+            return_1d, return_3d, return_5d, return_10d,
+            path_after_1d, path_after_3d, path_after_5d, path_after_10d,
+            transition_label, label_version, actual_path,
             actual_intent_proxy, actual_intent_semantic,
             state_correct, intent_correct, path_correct, semantic, updated_at
         ) VALUES (
             :forward_tracking_id, :symbol, :as_of_date, :research_run_id, :model_version,
-            :data_version, :state_after_1d, :state_after_3d, :state_after_5d, :actual_path,
+            :data_version, :state_after_1d, :state_after_3d, :state_after_5d, :state_after_10d,
+            :return_1d, :return_3d, :return_5d, :return_10d,
+            :path_after_1d, :path_after_3d, :path_after_5d, :path_after_10d,
+            :transition_label, :label_version, :actual_path,
             :actual_intent_proxy, :actual_intent_semantic,
             :state_correct, :intent_correct, :path_correct, 'DERIVED', NOW()
         )
@@ -191,6 +224,17 @@ def _upsert_capital_outcome(
             state_after_1d = COALESCE(EXCLUDED.state_after_1d, capital_prediction_outcome.state_after_1d),
             state_after_3d = COALESCE(EXCLUDED.state_after_3d, capital_prediction_outcome.state_after_3d),
             state_after_5d = COALESCE(EXCLUDED.state_after_5d, capital_prediction_outcome.state_after_5d),
+            state_after_10d = COALESCE(EXCLUDED.state_after_10d, capital_prediction_outcome.state_after_10d),
+            return_1d = COALESCE(EXCLUDED.return_1d, capital_prediction_outcome.return_1d),
+            return_3d = COALESCE(EXCLUDED.return_3d, capital_prediction_outcome.return_3d),
+            return_5d = COALESCE(EXCLUDED.return_5d, capital_prediction_outcome.return_5d),
+            return_10d = COALESCE(EXCLUDED.return_10d, capital_prediction_outcome.return_10d),
+            path_after_1d = COALESCE(EXCLUDED.path_after_1d, capital_prediction_outcome.path_after_1d),
+            path_after_3d = COALESCE(EXCLUDED.path_after_3d, capital_prediction_outcome.path_after_3d),
+            path_after_5d = COALESCE(EXCLUDED.path_after_5d, capital_prediction_outcome.path_after_5d),
+            path_after_10d = COALESCE(EXCLUDED.path_after_10d, capital_prediction_outcome.path_after_10d),
+            transition_label = COALESCE(EXCLUDED.transition_label, capital_prediction_outcome.transition_label),
+            label_version = COALESCE(EXCLUDED.label_version, capital_prediction_outcome.label_version),
             actual_path = EXCLUDED.actual_path,
             actual_intent_proxy = EXCLUDED.actual_intent_proxy,
             actual_intent_semantic = EXCLUDED.actual_intent_semantic,
@@ -205,6 +249,105 @@ def _upsert_capital_outcome(
         "research_run_id": research_run_id,
         **outcome,
     })
+
+
+def _upsert_v3_dataset_outcome(
+    db,
+    *,
+    symbol: str,
+    as_of_date: date,
+    research_run_id: int | None,
+    outcome: dict[str, object],
+) -> int:
+    """Merge one due horizon into the V3 sample and persist error attribution."""
+    if research_run_id is None:
+        return 0
+    row = db.execute(text("""
+        SELECT *
+        FROM capital_behavior_dataset
+        WHERE symbol = :symbol
+          AND as_of_date = :as_of_date
+          AND research_run_id = :research_run_id
+          AND model_version = :model_version
+        LIMIT 1
+    """), {
+        "symbol": symbol,
+        "as_of_date": as_of_date,
+        "research_run_id": research_run_id,
+        "model_version": outcome.get("model_version", "capital_behavior_v2"),
+    }).mappings().first()
+    if not row:
+        return 0
+    sample = dict(row)
+    existing = sample.get("future_outcome") or {}
+    if isinstance(existing, str):
+        try:
+            existing = json.loads(existing)
+        except ValueError:
+            existing = {}
+    merged = merge_outcomes(existing if isinstance(existing, dict) else {}, outcome)
+    merged.pop("model_version", None)
+    merged.pop("data_version", None)
+    complete = all(merged.get(f"return_{horizon}d") is not None for horizon in (1, 3, 5, 10))
+    previous_reason = sample.get("eligibility_reason", "INSUFFICIENT_FORWARD_DATA")
+    eligibility_reason = (
+        "VALID" if complete and previous_reason in {"VALID", "INSUFFICIENT_FORWARD_DATA"}
+        else previous_reason
+    )
+    db.execute(text("""
+        UPDATE capital_behavior_dataset
+        SET future_outcome = CAST(:future_outcome AS jsonb),
+            label_version = :label_version,
+            eligibility_reason = :eligibility_reason,
+            eligible_for_training = CASE WHEN :complete THEN eligible_for_training ELSE FALSE END,
+            eligible_for_validation = CASE WHEN :complete THEN eligible_for_validation ELSE FALSE END,
+            eligible_for_test = CASE WHEN :complete THEN eligible_for_test ELSE FALSE END,
+            updated_at = NOW()
+        WHERE id = :id
+    """), {
+        "future_outcome": json.dumps(merged, sort_keys=True, ensure_ascii=True, allow_nan=False),
+        "label_version": merged.get("label_version", "capital_label_v1"),
+        "eligibility_reason": eligibility_reason,
+        "complete": complete,
+        "id": row["id"],
+    })
+    sample["future_outcome"] = merged
+    for error in prediction_error_types(sample, merged):
+        db.execute(text("""
+            INSERT INTO capital_prediction_error (
+                dataset_sample_id, model_version, prediction_date, symbol,
+                predicted_state, actual_state, predicted_intent, actual_intent_proxy,
+                predicted_path, actual_path, error_type, error_magnitude, confidence, metadata
+            ) VALUES (
+                :dataset_sample_id, :model_version, :prediction_date, :symbol,
+                :predicted_state, :actual_state, :predicted_intent, :actual_intent_proxy,
+                :predicted_path, :actual_path, :error_type, :error_magnitude, :confidence,
+                CAST(:metadata AS jsonb)
+            )
+            ON CONFLICT (dataset_sample_id, error_type) DO UPDATE SET
+                actual_state = EXCLUDED.actual_state,
+                actual_intent_proxy = EXCLUDED.actual_intent_proxy,
+                actual_path = EXCLUDED.actual_path,
+                error_magnitude = EXCLUDED.error_magnitude,
+                confidence = EXCLUDED.confidence,
+                metadata = EXCLUDED.metadata
+        """), {
+            "dataset_sample_id": row["id"],
+            "model_version": sample.get("model_version") or "capital_behavior_v2",
+            "prediction_date": as_of_date,
+            "symbol": symbol,
+            "predicted_state": sample.get("capital_state"),
+            "actual_state": merged.get("state_after_3d") or merged.get("state_after_1d"),
+            "predicted_intent": sample.get("capital_intent"),
+            "actual_intent_proxy": merged.get("actual_intent_proxy") or merged.get("intent_after_3d"),
+            "predicted_path": sample.get("path_type"),
+            "actual_path": merged.get("actual_path") or merged.get("path_after_3d"),
+            "error_type": error["error_type"],
+            "error_magnitude": error.get("error_magnitude"),
+            "confidence": sample.get("capital_state_confidence"),
+            "metadata": json.dumps({"label_version": merged.get("label_version", "capital_label_v1")}, sort_keys=True),
+        })
+    return 1
 
 
 def backfill_csv_file(csv_path: Path, target_dates: list[date]) -> int:
@@ -388,10 +531,21 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
             if capital_outcome:
                 db.execute(text("""
                     UPDATE forward_tracking
-                    SET state_after_1d = COALESCE(:state_after_1d, state_after_1d),
-                        state_after_3d = COALESCE(:state_after_3d, state_after_3d),
-                        state_after_5d = COALESCE(:state_after_5d, state_after_5d),
-                        actual_path = :actual_path,
+                        SET state_after_1d = COALESCE(:state_after_1d, state_after_1d),
+                            state_after_3d = COALESCE(:state_after_3d, state_after_3d),
+                            state_after_5d = COALESCE(:state_after_5d, state_after_5d),
+                            state_after_10d = COALESCE(:state_after_10d, state_after_10d),
+                            return_1d = COALESCE(:return_1d, return_1d),
+                            return_3d = COALESCE(:return_3d, return_3d),
+                            return_5d = COALESCE(:return_5d, return_5d),
+                            return_10d = COALESCE(:return_10d, return_10d),
+                            path_after_1d = COALESCE(:path_after_1d, path_after_1d),
+                            path_after_3d = COALESCE(:path_after_3d, path_after_3d),
+                            path_after_5d = COALESCE(:path_after_5d, path_after_5d),
+                            path_after_10d = COALESCE(:path_after_10d, path_after_10d),
+                            transition_label = COALESCE(:transition_label, transition_label),
+                            label_version = COALESCE(:label_version, label_version),
+                            actual_path = :actual_path,
                         actual_intent_proxy = :actual_intent_proxy,
                         actual_intent_semantic = :actual_intent_semantic,
                         state_correct = :state_correct,
@@ -407,10 +561,20 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
                     research_run_id=research_run_id,
                     outcome=capital_outcome,
                 )
+                _upsert_v3_dataset_outcome(
+                    db,
+                    symbol=symbol,
+                    as_of_date=as_of_date,
+                    research_run_id=research_run_id,
+                    outcome=capital_outcome,
+                )
             updated += 1
             direction = "profit" if ret > 0 else "LOSS" if ret < 0 else "flat"
             print(f"  {symbol} {horizon_days}d: {as_of:.2f} -> {price:.2f} ({ret:+.4f}) [{direction}]")
 
+        db.commit()
+        from scripts.db.pipeline_bridge import _refresh_capital_dataset_splits
+        _refresh_capital_dataset_splits(db)
         db.commit()
         from capital.lifecycle import write_capital_scoreboard
         write_capital_scoreboard(Path(__file__).resolve().parent.parent / "research")
