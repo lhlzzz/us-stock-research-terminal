@@ -20,6 +20,14 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 LOG_DIR="$PROJECT_DIR/logs"
 mkdir -p "$LOG_DIR"
 
+if [ -f "$PROJECT_DIR/.env" ]; then
+    set -a
+    . "$PROJECT_DIR/.env"
+    set +a
+fi
+
+: "${DATABASE_URL:?DATABASE_URL must be set in the environment or .env}"
+
 DATE=$(date +%Y-%m-%d)
 LOG_FILE="$LOG_DIR/pipeline-$DATE.log"
 
@@ -106,7 +114,7 @@ run_vector_update() {
 
 show_results() {
     log "=== Pipeline Results ==="
-    PGPASSWORD=xiaomei2026 psql -h localhost -p 5432 -U xiaomei -d xiaomei -c "
+    psql "$DATABASE_URL" -c "
         SELECT symbol, ticket_score, market_score, classification
         FROM tickets
         WHERE output_date = '$DATE'

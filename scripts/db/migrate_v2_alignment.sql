@@ -315,6 +315,148 @@ CREATE INDEX IF NOT EXISTS idx_trade_journal_ticket_id ON trade_journal(ticket_i
 CREATE INDEX IF NOT EXISTS idx_paper_trades_ticket_id ON paper_trades(ticket_id);
 CREATE INDEX IF NOT EXISTS idx_paper_fills_ticket_id ON paper_fills(ticket_id);
 
+-- 8. Intraday paper strategy lifecycle. These records intentionally do not
+-- reuse ticket-bound tables: daily tickets and intraday decisions have
+-- different time semantics and lineage requirements.
+CREATE TABLE IF NOT EXISTS intraday_strategy_runs (
+    id BIGSERIAL PRIMARY KEY,
+    session_date DATE NOT NULL,
+    strategy_version VARCHAR(64) NOT NULL,
+    context_research_run_id INTEGER REFERENCES research_runs(run_id),
+    status VARCHAR(32) NOT NULL,
+    candidate_count INTEGER NOT NULL DEFAULT 0,
+    source_state JSONB NOT NULL DEFAULT '{}'::jsonb,
+    started_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    finished_at TIMESTAMP,
+    error_message TEXT
+);
+
+CREATE TABLE IF NOT EXISTS intraday_strategy_decisions (
+    id BIGSERIAL PRIMARY KEY,
+    run_id BIGINT NOT NULL REFERENCES intraday_strategy_runs(id) ON DELETE CASCADE,
+    session_date DATE NOT NULL,
+    symbol VARCHAR(10) NOT NULL,
+    direction VARCHAR(8) NOT NULL DEFAULT 'LONG'
+        CHECK (direction IN ('LONG', 'SHORT')),
+    decision VARCHAR(32) NOT NULL,
+    decision_status VARCHAR(32) NOT NULL,
+    strategy_score NUMERIC(8, 6),
+    score_components JSONB NOT NULL DEFAULT '{}'::jsonb,
+    quote_snapshot JSONB NOT NULL DEFAULT '{}'::jsonb,
+    quote_source VARCHAR(64),
+    quote_age_seconds NUMERIC(12, 3),
+    context_research_run_id INTEGER REFERENCES research_runs(run_id),
+    reason TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(run_id, symbol, direction)
+);
+
+ALTER TABLE intraday_strategy_decisions
+    ADD COLUMN IF NOT EXISTS direction VARCHAR(8) NOT NULL DEFAULT 'LONG';
+ALTER TABLE intraday_strategy_decisions
+    DROP CONSTRAINT IF EXISTS intraday_strategy_decisions_direction_check;
+ALTER TABLE intraday_strategy_decisions
+    ADD CONSTRAINT intraday_strategy_decisions_direction_check
+    CHECK (direction IN ('LONG', 'SHORT'));
+ALTER TABLE intraday_strategy_decisions
+    DROP CONSTRAINT IF EXISTS intraday_strategy_decisions_run_id_symbol_key;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_intraday_strategy_decisions_run_symbol_direction
+    ON intraday_strategy_decisions(run_id, symbol, direction);
+
+CREATE TABLE IF NOT EXISTS intraday_paper_positions (
+    id BIGSERIAL PRIMARY KEY,
+    decision_id BIGINT NOT NULL REFERENCES intraday_strategy_decisions(id),
+    session_date DATE NOT NULL,
+    symbol VARCHAR(10) NOT NULL,
+    direction VARCHAR(8) NOT NULL DEFAULT 'LONG'
+        CHECK (direction IN ('LONG', 'SHORT')),
+    status VARCHAR(16) NOT NULL DEFAULT 'OPEN',
+    entry_price NUMERIC(12, 4) NOT NULL,
+    current_price NUMERIC(12, 4) NOT NULL,
+    quantity NUMERIC(12, 6) NOT NULL,
+    stop_loss_price NUMERIC(12, 4) NOT NULL,
+    take_profit_price NUMERIC(12, 4) NOT NULL,
+    exit_price NUMERIC(12, 4),
+    exit_reason VARCHAR(32),
+    realized_pnl NUMERIC(12, 2),
+    entry_fees NUMERIC(12, 4) NOT NULL DEFAULT 0,
+    exit_fees NUMERIC(12, 4) NOT NULL DEFAULT 0,
+    borrow_rate_daily NUMERIC(12, 8) NOT NULL DEFAULT 0,
+    accrued_borrow_cost NUMERIC(12, 4) NOT NULL DEFAULT 0,
+    squeeze_risk_score NUMERIC(8, 6),
+    source_snapshot JSONB NOT NULL DEFAULT '{}'::jsonb,
+    opened_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    closed_at TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(session_date, symbol)
+);
+
+ALTER TABLE intraday_paper_positions
+    ADD COLUMN IF NOT EXISTS entry_fees NUMERIC(12, 4) NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS exit_fees NUMERIC(12, 4) NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS direction VARCHAR(8) NOT NULL DEFAULT 'LONG',
+    ADD COLUMN IF NOT EXISTS borrow_rate_daily NUMERIC(12, 8) NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS accrued_borrow_cost NUMERIC(12, 4) NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS squeeze_risk_score NUMERIC(8, 6);
+
+ALTER TABLE intraday_paper_positions
+    DROP CONSTRAINT IF EXISTS intraday_paper_positions_direction_check;
+ALTER TABLE intraday_paper_positions
+    ADD CONSTRAINT intraday_paper_positions_direction_check
+    CHECK (direction IN ('LONG', 'SHORT'));
+
+CREATE TABLE IF NOT EXISTS intraday_paper_orders (
+    id BIGSERIAL PRIMARY KEY,
+    decision_id BIGINT NOT NULL REFERENCES intraday_strategy_decisions(id),
+    position_id BIGINT REFERENCES intraday_paper_positions(id),
+    session_date DATE NOT NULL,
+    symbol VARCHAR(10) NOT NULL,
+    side VARCHAR(16) NOT NULL CHECK (
+        side IN ('LONG_ENTRY', 'LONG_EXIT', 'SHORT_ENTRY', 'SHORT_EXIT')
+    ),
+    order_type VARCHAR(16) NOT NULL CHECK (order_type IN ('MARKET', 'LIMIT', 'STOP')),
+    requested_quantity NUMERIC(12, 6) NOT NULL,
+    remaining_quantity NUMERIC(12, 6) NOT NULL,
+    limit_price NUMERIC(12, 4),
+    stop_price NUMERIC(12, 4),
+    status VARCHAR(16) NOT NULL,
+    reason TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE intraday_paper_orders
+    DROP CONSTRAINT IF EXISTS intraday_paper_orders_side_check;
+ALTER TABLE intraday_paper_orders
+    ADD CONSTRAINT intraday_paper_orders_side_check
+    CHECK (side IN ('LONG_ENTRY', 'LONG_EXIT', 'SHORT_ENTRY', 'SHORT_EXIT'));
+
+CREATE TABLE IF NOT EXISTS intraday_paper_fills (
+    id BIGSERIAL PRIMARY KEY,
+    order_id BIGINT NOT NULL REFERENCES intraday_paper_orders(id) ON DELETE CASCADE,
+    decision_id BIGINT NOT NULL REFERENCES intraday_strategy_decisions(id),
+    symbol VARCHAR(10) NOT NULL,
+    quantity NUMERIC(12, 6) NOT NULL,
+    price NUMERIC(12, 4) NOT NULL,
+    commission NUMERIC(12, 4) NOT NULL,
+    sec_fee NUMERIC(12, 4) NOT NULL DEFAULT 0,
+    finra_fee NUMERIC(12, 4) NOT NULL DEFAULT 0,
+    slippage NUMERIC(12, 4) NOT NULL,
+    source_snapshot JSONB NOT NULL DEFAULT '{}'::jsonb,
+    filled_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_intraday_strategy_runs_session
+    ON intraday_strategy_runs(session_date, started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_intraday_strategy_decisions_symbol
+    ON intraday_strategy_decisions(session_date, symbol, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_intraday_paper_positions_open
+    ON intraday_paper_positions(status, session_date);
+CREATE INDEX IF NOT EXISTS idx_intraday_paper_orders_open
+    ON intraday_paper_orders(status, session_date, symbol);
+CREATE INDEX IF NOT EXISTS idx_intraday_paper_fills_order
+    ON intraday_paper_fills(order_id, filled_at);
+
 -- Read-only projection: one trace id for issuance, outcome, and paper evidence.
 CREATE OR REPLACE VIEW research_trade_trace AS
 SELECT

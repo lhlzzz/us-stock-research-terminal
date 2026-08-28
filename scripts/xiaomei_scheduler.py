@@ -9,6 +9,7 @@ Timeline (Beijing time):
         06:00    09:30    15:00    21:30    04:00    06:00
 
 Jobs:
+  Every 5 min  Intraday paper strategy (US regular session only)
   05:00  Daily pipeline (after US market close)
   09:00  Pre-market health check
   15:00  A-share close monitoring
@@ -30,6 +31,7 @@ logger = logging.getLogger(__name__)
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 PIPELINE_SCRIPT = PROJECT_DIR / "scripts" / "daily_pipeline.sh"
 LOG_DIR = PROJECT_DIR / "logs"
+SCHEDULER_PID_FILE = PROJECT_DIR / "run" / "xiaomei_scheduler.pid"
 
 # Beijing time timezone
 try:
@@ -106,6 +108,7 @@ CN_HOLIDAYS: set[date_cls] = {
 
 
 PIPELINE_SCHEDULE_DAYS = "tue-sat"
+INTRADAY_PAPER_SCHEDULE_HOURS = "0-5,20-23"
 
 
 def is_trading_day(session_date: date_cls | None = None) -> bool:
@@ -176,7 +179,39 @@ def run_pipeline(mode: str = "full") -> dict:
         return {"success": False, "error": str(e)}
 
 
-def morning_health_check():
+def _pid_matches_scheduler(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+        command = Path(f"/proc/{pid}/cmdline").read_bytes().replace(b"\0", b" ").decode()
+    except (OSError, UnicodeDecodeError):
+        return False
+    return "scripts/xiaomei_scheduler.py" in command and "--daemon" in command
+
+
+def scheduler_status(pid_file: Path = SCHEDULER_PID_FILE) -> dict:
+    """Return the single daemon identity recorded by the scheduler itself."""
+    try:
+        pid = int(pid_file.read_text().strip())
+    except (OSError, ValueError):
+        return {"running": False, "reason": "pid_file_missing"}
+
+    if not _pid_matches_scheduler(pid):
+        return {"running": False, "reason": "stale_or_mismatched_pid", "pid": pid}
+    return {"running": True, "pid": pid}
+
+
+def _write_scheduler_pid():
+    SCHEDULER_PID_FILE.parent.mkdir(parents=True, exist_ok=True)
+    SCHEDULER_PID_FILE.write_text(f"{os.getpid()}\n")
+
+
+def _clear_scheduler_pid():
+    status = scheduler_status()
+    if status.get("running") and status.get("pid") == os.getpid():
+        SCHEDULER_PID_FILE.unlink(missing_ok=True)
+
+
+def morning_health_check(require_scheduler: bool = False):
     """Pre-market health check (09:00 Beijing time)."""
     logger.info("Running morning health check...")
 
@@ -218,10 +253,18 @@ def morning_health_check():
     except Exception:
         pass
 
+    scheduler = None
+    if require_scheduler:
+        scheduler = scheduler_status()
+        checks["scheduler"] = bool(scheduler["running"])
+
     all_ok = all(checks.values())
     logger.info(f"Health check: {'OK' if all_ok else 'FAILED'} - {checks}")
 
-    return {"healthy": all_ok, "checks": checks}
+    result = {"healthy": all_ok, "checks": checks}
+    if scheduler is not None:
+        result["scheduler"] = scheduler
+    return result
 
 
 def daily_pipeline_job(now: datetime | None = None):
@@ -245,6 +288,15 @@ def daily_pipeline_job(now: datetime | None = None):
         logger.info("Daily pipeline completed successfully")
     else:
         logger.error(f"Daily pipeline failed: {result}")
+
+
+def intraday_paper_job(now: datetime | None = None) -> dict:
+    """Run one paper-only cycle; the runner enforces US session eligibility."""
+    from realtime_runner import run_once
+
+    result = run_once(now=now)
+    logger.info("Intraday paper cycle: %s", result.get("status"))
+    return result
 
 
 def signal_effectiveness_job():
@@ -290,6 +342,22 @@ def run_scheduler():
 
     scheduler = BlockingScheduler(timezone="Asia/Shanghai")
 
+    # The Beijing window covers both US daylight and standard time. The runner
+    # remains the sole owner of the exact New York session and holiday gate.
+    scheduler.add_job(
+        intraday_paper_job,
+        CronTrigger(
+            hour=INTRADAY_PAPER_SCHEDULE_HOURS,
+            minute="*/5",
+            day_of_week="mon-sat",
+        ),
+        id="intraday_paper",
+        name="Intraday Paper Strategy",
+        coalesce=True,
+        max_instances=1,
+        misfire_grace_time=60,
+    )
+
     # Daily pipeline at 05:00 (after US market close)
     scheduler.add_job(
         daily_pipeline_job,
@@ -317,14 +385,16 @@ def run_scheduler():
         misfire_grace_time=600,
     )
 
-    logger.info("Scheduler started with jobs:")
-    for job in scheduler.get_jobs():
-        logger.info(f"  - {job.name}: {job.trigger}")
-
     try:
+        _write_scheduler_pid()
+        logger.info("Scheduler started with jobs:")
+        for job in scheduler.get_jobs():
+            logger.info(f"  - {job.name}: {job.trigger}")
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         logger.info("Scheduler stopped")
+    finally:
+        _clear_scheduler_pid()
 
 
 if __name__ == "__main__":
@@ -339,6 +409,7 @@ if __name__ == "__main__":
     parser.add_argument("--run", choices=["full", "backfill", "tickets", "knowledge"],
                        help="Run pipeline once with specified mode")
     parser.add_argument("--health", action="store_true", help="Run health check")
+    parser.add_argument("--scheduler-status", action="store_true", help="Check scheduler daemon identity")
     parser.add_argument("--daemon", action="store_true", help="Run as daemon scheduler")
     args = parser.parse_args()
 
@@ -346,8 +417,13 @@ if __name__ == "__main__":
         result = run_pipeline(args.run)
         print(result)
     elif args.health:
-        result = morning_health_check()
+        result = morning_health_check(require_scheduler=True)
         print(result)
+        sys.exit(0 if result["healthy"] else 1)
+    elif args.scheduler_status:
+        result = scheduler_status()
+        print(result)
+        sys.exit(0 if result["running"] else 1)
     elif args.daemon:
         run_scheduler()
     else:

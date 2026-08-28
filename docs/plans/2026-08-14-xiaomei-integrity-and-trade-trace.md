@@ -117,3 +117,29 @@
 - [x] Generate concise reusable case text for selection thesis, evidence availability, observable footprint, win/loss/pending outcome, and reason.
 - [x] Upsert the existing `pick_case_embeddings` store only; do not create a parallel knowledge store or fabricate unavailable historical evidence.
 - [x] Verification: export one controlled historical date, inspect the JSON content, and verify its case vector upsert.
+
+### Task 19: Consolidate EastMoney browser K-line collection
+- [x] Keep `DataProvider` as the sole market-data owner while it uses the existing Scrapy API bridge first and an explicitly audited CloakBrowser page source only after the EastMoney historical API is unavailable.
+- [x] Move any usable public-page extraction from the legacy CDP scripts into the active provider; do not write directly to the database, infer OHLCV from screenshots, or bypass login, captcha, or other access controls.
+- [x] Parse only complete date-bounded OHLCV records and record browser availability, URL, content hash, capture time, schema version, and failure reason in returned source attempts.
+- [x] Verification: fixture tests cover page-data parsing and source-attempt order; a live normal-browser smoke produces either valid rows or an explicit unavailable state.
+
+### Task 20: Isolate observable-footprint feedback samples A:I1
+- [x] Restrict factor optimization, signal effectiveness, and self-evolution performance inputs to completed tickets from `observable_footprint_v1` runs with a persisted `finished_at`; exclude reconstructed and unversioned history.
+- [x] Return an explicit `UNVALIDATED_NO_FIXED_CHAIN` decision when the isolated population has fewer than the required rows or trading days.
+- [x] Verification: focused fixtures prove unversioned and reconstructed rows cannot influence feedback metrics.
+
+### Task 21: Gate weight changes on isolated out-of-sample evidence A:I1
+- [x] Keep the current scoring weights unchanged when isolated data does not meet minimum sample, positive-return, downside, and coverage gates.
+- [x] Persist the decision status and evidence counts in the existing weights artifact without claiming profitability.
+- [x] Verification: focused fixtures prove failed gates cannot write new optimized weights and a passing fixture writes a versioned decision.
+
+### Task 22: Close autonomous runtime liveness and credential handling A:I1
+- [x] Make scheduler health distinguish infrastructure readiness from the presence of one verified daemon process, and have startup fail when the daemon is not alive after launch.
+- [x] Remove plaintext PostgreSQL passwords from executable scripts; load the existing `DATABASE_URL` from the environment or repository `.env`.
+- [x] Verification: focused scheduler tests cover stale PID, live daemon identity, and health output; shell checks prove no password literal remains in executable scripts.
+
+### Task 23: Commit future research runs atomically A:I1
+- [x] Create each research run as `running`; commit candidates, tickets, tracking, decision snapshots, factors, and signals in one transaction; mark it `done` with `finished_at` only after that transaction is ready.
+- [x] On any persistence error, roll back derived run records and mark the research run `failed` with the recorded error instead of leaving partial data or a false completion state.
+- [x] Verification: focused tests cover successful completion and rollback-to-failed behavior without creating historical evidence.

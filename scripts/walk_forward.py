@@ -17,7 +17,7 @@ import pandas as pd
 from scipy import stats
 from sqlalchemy import create_engine, text
 
-DB_URL = "postgresql://xiaomei:xiaomei2026@localhost:5432/xiaomei"
+from db.engine import DATABASE_URL
 
 FACTORS = [
     "prior_5d_momentum", "prior_20d_momentum", "five_day_acceleration",
@@ -133,7 +133,7 @@ def evaluate_window(test_factors_scored, track_df, horizon):
 
 
 def run_walk_forward(train_days=60, test_days=5, horizon=1):
-    engine = create_engine(DB_URL)
+    engine = create_engine(DATABASE_URL)
     all_dates = pd.read_sql(
         text("SELECT DISTINCT trade_date FROM factor_snapshots ORDER BY trade_date"),
         engine,

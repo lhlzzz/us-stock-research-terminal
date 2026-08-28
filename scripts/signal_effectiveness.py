@@ -12,6 +12,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from scripts.db.engine import query_rows
 
+STRATEGY_VERSION = "observable_footprint_v1"
+VERSION_STATUS = "VERSIONED"
 
 SIGNAL_FIELDS = [
     "market_score",
@@ -39,14 +41,30 @@ def analyze_signal_effectiveness(min_samples: int = 3) -> dict:
             fs.volume_confirmation, fs.closing_strength_5d
         FROM forward_tracking f
         JOIN tickets t ON t.id = f.ticket_id
+        JOIN research_runs rr ON rr.run_id = t.research_run_id
         LEFT JOIN factor_snapshots fs ON fs.symbol = f.symbol AND fs.trade_date = f.output_date
         WHERE f.check_status = 'completed' AND f.forward_return IS NOT NULL
-    """)
+          AND rr.status = 'done'
+          AND rr.finished_at IS NOT NULL
+          AND rr.config->>'strategy_version' = :strategy_version
+          AND COALESCE(rr.config->>'version_status', '') = :version_status
+    """, {
+        "strategy_version": STRATEGY_VERSION,
+        "version_status": VERSION_STATUS,
+    })
 
     if not rows:
-        return {"error": "no completed forward tracking data"}
+        return {
+            "error": "no completed versioned forward tracking data",
+            "data_version": STRATEGY_VERSION,
+        }
 
-    results = {"overall": {}, "by_signal": {}, "by_horizon": {}}
+    results = {
+        "data_version": STRATEGY_VERSION,
+        "overall": {},
+        "by_signal": {},
+        "by_horizon": {},
+    }
 
     total = len(rows)
     positive = sum(1 for r in rows if r["forward_return"] > 0)
@@ -175,14 +193,15 @@ def store_results_db(results: dict):
 
             db.execute(text("""
                 INSERT INTO signal_effectiveness
-                    (analysis_date, signal_key, present_count, win_rate, avg_return, weight_suggestion)
+                    (analysis_date, signal_key, present_count, win_rate, avg_return, weight_suggestion, data_version)
                 VALUES
-                    (:date, :key, :count, :win_rate, :avg_return, :suggestion)
+                    (:date, :key, :count, :win_rate, :avg_return, :suggestion, :data_version)
                 ON CONFLICT (analysis_date, signal_key) DO UPDATE SET
                     present_count = EXCLUDED.present_count,
                     win_rate = EXCLUDED.win_rate,
                     avg_return = EXCLUDED.avg_return,
-                    weight_suggestion = EXCLUDED.weight_suggestion
+                    weight_suggestion = EXCLUDED.weight_suggestion,
+                    data_version = EXCLUDED.data_version
             """), {
                 "date": analysis_date,
                 "key": signal_key,
@@ -190,6 +209,7 @@ def store_results_db(results: dict):
                 "win_rate": data.get("high_return_rate", 0) / 100,
                 "avg_return": data.get("avg_return", 0) / 100,
                 "suggestion": weight,
+                "data_version": results.get("data_version", STRATEGY_VERSION),
             })
             stored += 1
 

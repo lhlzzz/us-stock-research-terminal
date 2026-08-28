@@ -62,15 +62,28 @@ def upsert_fund_flow(db: Session, symbol: str, trade_date: date, **kwargs):
     return obj
 
 
-def create_ticket(db: Session, **kwargs) -> Ticket:
+def _flush_or_commit(db: Session, commit: bool):
+    if commit:
+        db.commit()
+    else:
+        db.flush()
+
+
+def create_ticket(db: Session, *, commit: bool = True, **kwargs) -> Ticket:
     obj = Ticket(**kwargs)
     db.add(obj)
-    db.commit()
+    _flush_or_commit(db, commit)
     db.refresh(obj)
     return obj
 
 
-def upsert_forward_tracking(db: Session, track_key: str, **kwargs) -> ForwardTracking:
+def upsert_forward_tracking(
+    db: Session,
+    track_key: str,
+    *,
+    commit: bool = True,
+    **kwargs,
+) -> ForwardTracking:
     obj = db.query(ForwardTracking).filter_by(track_key=track_key).first()
     if obj:
         for k, v in kwargs.items():
@@ -79,7 +92,7 @@ def upsert_forward_tracking(db: Session, track_key: str, **kwargs) -> ForwardTra
     else:
         obj = ForwardTracking(track_key=track_key, **kwargs)
         db.add(obj)
-    db.commit()
+    _flush_or_commit(db, commit)
     db.refresh(obj)
     return obj
 
@@ -132,15 +145,15 @@ def complete_forward_tracking(db: Session, track_key: str, due_close: float, for
     return obj
 
 
-def create_runtime_decision(db: Session, **kwargs) -> RuntimeDecision:
+def create_runtime_decision(db: Session, *, commit: bool = True, **kwargs) -> RuntimeDecision:
     obj = RuntimeDecision(**kwargs)
     db.add(obj)
-    db.commit()
+    _flush_or_commit(db, commit)
     db.refresh(obj)
     return obj
 
 
-def upsert_market_snapshot(db: Session, trade_date: date, **kwargs):
+def upsert_market_snapshot(db: Session, trade_date: date, *, commit: bool = True, **kwargs):
     obj = db.get(MarketSnapshot, trade_date)
     if obj:
         for k, v in kwargs.items():
@@ -149,7 +162,7 @@ def upsert_market_snapshot(db: Session, trade_date: date, **kwargs):
     else:
         obj = MarketSnapshot(trade_date=trade_date, **kwargs)
         db.add(obj)
-    db.commit()
+    _flush_or_commit(db, commit)
     return obj
 
 
@@ -161,26 +174,40 @@ def create_lifecycle_scoreboard(db: Session, **kwargs) -> LifecycleScoreboard:
     return obj
 
 
-def create_research_run(db: Session, **kwargs) -> ResearchRun:
+def create_research_run(db: Session, *, commit: bool = True, **kwargs) -> ResearchRun:
     obj = ResearchRun(**kwargs)
     db.add(obj)
-    db.commit()
+    _flush_or_commit(db, commit)
     db.refresh(obj)
     return obj
 
 
-def finish_research_run(db: Session, run_id: int, status: str = "done", **kwargs):
+def finish_research_run(
+    db: Session,
+    run_id: int,
+    status: str = "done",
+    *,
+    commit: bool = True,
+    **kwargs,
+):
     obj = db.get(ResearchRun, run_id)
     if obj:
         obj.status = status
         obj.finished_at = datetime.utcnow()
         for k, v in kwargs.items():
             setattr(obj, k, v)
-        db.commit()
+        _flush_or_commit(db, commit)
     return obj
 
 
-def upsert_factor_snapshot(db: Session, trade_date: date, symbol: str, **kwargs):
+def upsert_factor_snapshot(
+    db: Session,
+    trade_date: date,
+    symbol: str,
+    *,
+    commit: bool = True,
+    **kwargs,
+):
     obj = db.query(FactorSnapshot).filter_by(trade_date=trade_date, symbol=symbol).first()
     if obj:
         for k, v in kwargs.items():
@@ -189,7 +216,7 @@ def upsert_factor_snapshot(db: Session, trade_date: date, symbol: str, **kwargs)
     else:
         obj = FactorSnapshot(trade_date=trade_date, symbol=symbol, **kwargs)
         db.add(obj)
-    db.commit()
+    _flush_or_commit(db, commit)
     return obj
 
 

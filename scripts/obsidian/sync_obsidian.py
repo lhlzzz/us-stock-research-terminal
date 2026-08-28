@@ -20,6 +20,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import psycopg2
 
+from db.engine import DATABASE_URL
+
 # 配置 - 直接挂载 Windows 路径
 OBSIDIAN_REPOS = {
     "project": {
@@ -35,11 +37,6 @@ OBSIDIAN_REPOS = {
         "include_name_contains": ["xiaomei", "美股"],
     }
 }
-
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL", "postgresql://xiaomei:xiaomei2026@localhost:5432/xiaomei"
-)
-
 
 def get_db_conn():
     """获取数据库连接"""

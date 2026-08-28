@@ -489,6 +489,7 @@ def backfill_knowledge_assets(
 if __name__ == "__main__":
     import argparse
     from sqlalchemy import create_engine
+    from db.engine import DATABASE_URL
 
     logging.basicConfig(level=logging.INFO)
 
@@ -498,8 +499,7 @@ if __name__ == "__main__":
     parser.add_argument("--start-date", type=str, help="Backfill start date")
     args = parser.parse_args()
 
-    db_url = os.environ.get("DATABASE_URL", "postgresql://xiaomei:xiaomei2026@localhost:5432/xiaomei")
-    engine = create_engine(db_url)
+    engine = create_engine(DATABASE_URL)
 
     if args.backfill:
         start = date.fromisoformat(args.start_date) if args.start_date else None

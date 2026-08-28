@@ -1,12 +1,17 @@
 import os
 from contextlib import contextmanager
+from pathlib import Path
+
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql://xiaomei:xiaomei2026@localhost:5432/xiaomei",
-)
+PROJECT_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(PROJECT_DIR / ".env")
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL must be set in the environment or .env")
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_size=5)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

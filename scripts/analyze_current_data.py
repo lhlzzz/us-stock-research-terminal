@@ -1,12 +1,8 @@
 import psycopg2
 
-conn = psycopg2.connect(
-    host="localhost",
-    port=5432,
-    database="xiaomei",
-    user="xiaomei",
-    password="xiaomei2026"
-)
+from db.engine import DATABASE_URL
+
+conn = psycopg2.connect(DATABASE_URL)
 
 cur = conn.cursor()
 cur.execute("""

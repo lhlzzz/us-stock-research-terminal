@@ -1,0 +1,1598 @@
+{
+  "trade_date": "2026-08-18",
+  "exported_at": "2026-08-18T05:07:17.651813",
+  "tickets": [
+    {
+      "ticket_id": 509,
+      "symbol": "ADI",
+      "ticket_score": "0.420550",
+      "market_score": "0.352400",
+      "catalyst_score": "0.625000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: I will delete my account if Nike stock closes below $40 today. News flash: won’t happen | business: Secondhand UK and Irish booksellers suspect AI firms behind strange bulk orders | scores: market=0.352 catalyst=0.625 | panel: NEUTRAL | risk: WATCH",
+      "research_run_id": 144,
+      "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+      "research_config": {
+        "data_as_of": "2026-08-18",
+        "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+        "source_mode": "live",
+        "generated_at": "2026-08-18T05:07:14.052139+08:00",
+        "scoring_config": {
+          "max_score_cap": "88",
+          "top_k_tickets": "3",
+          "weekday_blocklist": "",
+          "limit_up_threshold": "0.095",
+          "stale_decay_factor": "0.65",
+          "candidate_pool_size": "10",
+          "follow_on_t1_weight": "1.0",
+          "follow_on_t2_weight": "0.45",
+          "follow_on_t3_weight": "0.25",
+          "us_market_open_hour": "21",
+          "us_market_close_hour": "4",
+          "min_market_score_gate": "0.75",
+          "evidence_volume_weight": "0.15",
+          "pipeline_run_after_hour": "5",
+          "evidence_breakout_weight": "0.10",
+          "evidence_momentum_weight": "0.35",
+          "evidence_reversal_weight": "0.15",
+          "stale_repeat_window_days": "5",
+          "evidence_fund_flow_weight": "0.05",
+          "evidence_catalyst_boost_weight": "0.20"
+        },
+        "version_status": "VERSIONED",
+        "strategy_version": "observable_footprint_v1"
+      },
+      "source_layers": {
+        "news": {
+          "score": 0.6249999999999999,
+          "status": "OBSERVED",
+          "business_title": "Secondhand UK and Irish booksellers suspect AI firms behind strange bulk orders",
+          "narrative_title": "I will delete my account if Nike stock closes below $40 today. News flash: won’t happen",
+          "business_relevance": 0.0,
+          "narrative_relevance": 0.75
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": 1.0,
+            "relative_strength": 0.4437869822485207,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": 0.5,
+            "relative_volume_expansion": 0.8333333333333334
+          },
+          "median_dollar_volume_20d": 1259928988.0500002,
+          "volume_weighted_momentum": 0.01196396410440731,
+          "volume_confirmation_ratio": -0.33380373172849764,
+          "large_participant_footprint_score": 0.46285338593030906
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.46285338593030906,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.8333333333333334
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.35240037804076263,
+        "ticket_score": 0.420550283530572,
+        "blended_score": 0.44240037804076265,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.6249999999999999,
+        "raw_market_score": 0.46285338593030906,
+        "volume_trend_20d": 0.6131091163063151,
+        "prior_5d_momentum": 0.01292499351154941,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.01951359682348941,
+        "five_day_acceleration": -0.00658860331194,
+        "volume_weighted_momentum": 0.01196396410440731,
+        "footprint_factor_coverage": 0.8333333333333334,
+        "volume_confirmation_ratio": -0.33380373172849764,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": 1.0,
+          "relative_strength": 0.4437869822485207,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": 0.5,
+          "relative_volume_expansion": 0.8333333333333334
+        },
+        "large_participant_footprint_score": 0.46285338593030906,
+        "relative_strength_vs_equal_weight": -0.03355278412827388
+      },
+      "ranking_basis": {
+        "score": 0.420550283530572,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.8333333333333334,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "selection_reason": "narrative=I will delete my account if Nike stock closes below $40 today. News flash: won’t happen | matched ticker boundary 'ADI' with narrative context 'news'; business=UNRELATED: Secondhand UK and Irish booksellers suspect AI firms behind strange bulk orders | found business context 'order' but no company/product match",
+      "outcomes": {
+        "1d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-19"
+        },
+        "3d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-21"
+        },
+        "10d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-09-01"
+        }
+      },
+      "trace_records": [
+        {
+          "ticket_id": 509,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 1,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 509,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 3,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 509,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 10,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 509,
+          "record_type": "ticket",
+          "record_status": "ISSUED",
+          "horizon_days": null,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        }
+      ],
+      "research_case_text": "US research case: ADI\nSelection: catalyst: I will delete my account if Nike stock closes below $40 today. News flash: won’t happen | business: Secondhand UK and Irish booksellers suspect AI firms behind strange bulk orders | scores: market=0.352 catalyst=0.625 | panel: NEUTRAL | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 144; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.46285338593030906, footprint_factor_coverage=0.8333333333333334, market_participation_score=0.3265, breakout_score=0.0, relative_strength_vs_equal_weight=-0.03355278412827388, volume_confirmation_ratio=-0.33380373172849764\nEvidence availability: {\"news\": {\"score\": 0.6249999999999999, \"status\": \"OBSERVED\", \"business_title\": \"Secondhand UK and Irish booksellers suspect AI firms behind strange bulk orders\", \"narrative_title\": \"I will delete my account if Nike stock closes below $40 today. News flash: won’t happen\", \"business_relevance\": 0.0, \"narrative_relevance\": 0.75}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": 1.0, \"relative_strength\": 0.4437869822485207, \"breakout_acceptance\": 0.0, \"volume_price_alignment\": 0.5, \"relative_volume_expansion\": 0.8333333333333334}, \"median_dollar_volume_20d\": 1259928988.0500002, \"volume_weighted_momentum\": 0.01196396410440731, \"volume_confirmation_ratio\": -0.33380373172849764, \"large_participant_footprint_score\": 0.46285338593030906}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.46285338593030906, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.8333333333333334}, \"market_participation\": {\"score\": 0.3265, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+    },
+    {
+      "ticket_id": 510,
+      "symbol": "FOX",
+      "ticket_score": "0.391485",
+      "market_score": "0.233646",
+      "catalyst_score": "0.865000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: SpaceX's post-IPO plunge sets tense backdrop for first earnings report | business: Demand for Canadian citizenship certificates soaring, fuelled by Americans | scores: market=0.234 catalyst=0.865 | panel: BULLISH_CONSENSUS | risk: WATCH",
+      "research_run_id": 144,
+      "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+      "research_config": {
+        "data_as_of": "2026-08-18",
+        "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+        "source_mode": "live",
+        "generated_at": "2026-08-18T05:07:14.052139+08:00",
+        "scoring_config": {
+          "max_score_cap": "88",
+          "top_k_tickets": "3",
+          "weekday_blocklist": "",
+          "limit_up_threshold": "0.095",
+          "stale_decay_factor": "0.65",
+          "candidate_pool_size": "10",
+          "follow_on_t1_weight": "1.0",
+          "follow_on_t2_weight": "0.45",
+          "follow_on_t3_weight": "0.25",
+          "us_market_open_hour": "21",
+          "us_market_close_hour": "4",
+          "min_market_score_gate": "0.75",
+          "evidence_volume_weight": "0.15",
+          "pipeline_run_after_hour": "5",
+          "evidence_breakout_weight": "0.10",
+          "evidence_momentum_weight": "0.35",
+          "evidence_reversal_weight": "0.15",
+          "stale_repeat_window_days": "5",
+          "evidence_fund_flow_weight": "0.05",
+          "evidence_catalyst_boost_weight": "0.20"
+        },
+        "version_status": "VERSIONED",
+        "strategy_version": "observable_footprint_v1"
+      },
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Demand for Canadian citizenship certificates soaring, fuelled by Americans",
+          "narrative_title": "SpaceX's post-IPO plunge sets tense backdrop for first earnings report",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": 0.16666666666666666,
+            "relative_strength": 0.9388560157790927,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": 0.5,
+            "relative_volume_expansion": 0.3333333333333333
+          },
+          "median_dollar_volume_20d": 52130945.650000006,
+          "volume_weighted_momentum": 0.10764664983576135,
+          "volume_confirmation_ratio": -0.33718720596429475,
+          "large_participant_footprint_score": 0.3231426692965155
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.3231426692965155,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.8333333333333334
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.23364626890203813,
+        "ticket_score": 0.3914847016765286,
+        "blended_score": 0.3236462689020381,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.3231426692965155,
+        "volume_trend_20d": 0.5529514038968697,
+        "prior_5d_momentum": 0.11113118901337193,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.1946765105886925,
+        "five_day_acceleration": -0.08354532157532057,
+        "volume_weighted_momentum": 0.10764664983576135,
+        "footprint_factor_coverage": 0.8333333333333334,
+        "volume_confirmation_ratio": -0.33718720596429475,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": 0.16666666666666666,
+          "relative_strength": 0.9388560157790927,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": 0.5,
+          "relative_volume_expansion": 0.3333333333333333
+        },
+        "large_participant_footprint_score": 0.3231426692965155,
+        "relative_strength_vs_equal_weight": 0.1416101296369292
+      },
+      "ranking_basis": {
+        "score": 0.3914847016765286,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.8333333333333334,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "selection_reason": "narrative=SpaceX's post-IPO plunge sets tense backdrop for first earnings report | matched company term '福克斯-B' with narrative context 'earnings'; business=Demand for Canadian citizenship certificates soaring, fuelled by Americans | matched company term '福克斯-B' with business context 'demand'",
+      "outcomes": {
+        "1d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-19"
+        },
+        "3d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-21"
+        },
+        "10d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-09-01"
+        }
+      },
+      "trace_records": [
+        {
+          "ticket_id": 510,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 1,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 510,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 3,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 510,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 10,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 510,
+          "record_type": "ticket",
+          "record_status": "ISSUED",
+          "horizon_days": null,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        }
+      ],
+      "research_case_text": "US research case: FOX\nSelection: catalyst: SpaceX's post-IPO plunge sets tense backdrop for first earnings report | business: Demand for Canadian citizenship certificates soaring, fuelled by Americans | scores: market=0.234 catalyst=0.865 | panel: BULLISH_CONSENSUS | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 144; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.3231426692965155, footprint_factor_coverage=0.8333333333333334, market_participation_score=0.3265, breakout_score=0.0, relative_strength_vs_equal_weight=0.1416101296369292, volume_confirmation_ratio=-0.33718720596429475\nEvidence availability: {\"news\": {\"score\": 0.865, \"status\": \"OBSERVED\", \"business_title\": \"Demand for Canadian citizenship certificates soaring, fuelled by Americans\", \"narrative_title\": \"SpaceX's post-IPO plunge sets tense backdrop for first earnings report\", \"business_relevance\": 0.95, \"narrative_relevance\": 0.95}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": 0.16666666666666666, \"relative_strength\": 0.9388560157790927, \"breakout_acceptance\": 0.0, \"volume_price_alignment\": 0.5, \"relative_volume_expansion\": 0.3333333333333333}, \"median_dollar_volume_20d\": 52130945.650000006, \"volume_weighted_momentum\": 0.10764664983576135, \"volume_confirmation_ratio\": -0.33718720596429475, \"large_participant_footprint_score\": 0.3231426692965155}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.3231426692965155, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.8333333333333334}, \"market_participation\": {\"score\": 0.3265, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+    },
+    {
+      "ticket_id": 511,
+      "symbol": "BIIB",
+      "ticket_score": "0.369538",
+      "market_score": "0.301051",
+      "catalyst_score": "0.575000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: I will delete my account if Nike stock closes below $40 today. News flash: won’t happen | business: Biogen (BIIB) Q2 2026 Earnings Call Transcript | scores: market=0.301 catalyst=0.575 | panel: NEUTRAL | risk: WATCH",
+      "research_run_id": 144,
+      "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+      "research_config": {
+        "data_as_of": "2026-08-18",
+        "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+        "source_mode": "live",
+        "generated_at": "2026-08-18T05:07:14.052139+08:00",
+        "scoring_config": {
+          "max_score_cap": "88",
+          "top_k_tickets": "3",
+          "weekday_blocklist": "",
+          "limit_up_threshold": "0.095",
+          "stale_decay_factor": "0.65",
+          "candidate_pool_size": "10",
+          "follow_on_t1_weight": "1.0",
+          "follow_on_t2_weight": "0.45",
+          "follow_on_t3_weight": "0.25",
+          "us_market_open_hour": "21",
+          "us_market_close_hour": "4",
+          "min_market_score_gate": "0.75",
+          "evidence_volume_weight": "0.15",
+          "pipeline_run_after_hour": "5",
+          "evidence_breakout_weight": "0.10",
+          "evidence_momentum_weight": "0.35",
+          "evidence_reversal_weight": "0.15",
+          "stale_repeat_window_days": "5",
+          "evidence_fund_flow_weight": "0.05",
+          "evidence_catalyst_boost_weight": "0.20"
+        },
+        "version_status": "VERSIONED",
+        "strategy_version": "observable_footprint_v1"
+      },
+      "source_layers": {
+        "news": {
+          "score": 0.575,
+          "status": "OBSERVED",
+          "business_title": "Biogen (BIIB) Q2 2026 Earnings Call Transcript",
+          "narrative_title": "I will delete my account if Nike stock closes below $40 today. News flash: won’t happen",
+          "business_relevance": 0.75,
+          "narrative_relevance": 0.0
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": 0.3333333333333333,
+            "relative_strength": 0.4911242603550296,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": 0.5,
+            "relative_volume_expansion": 0.6666666666666666
+          },
+          "median_dollar_volume_20d": 180864084.565,
+          "volume_weighted_momentum": 0.017853023118381318,
+          "volume_confirmation_ratio": -0.34585854574416175,
+          "large_participant_footprint_score": 0.3318540433925049
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.3318540433925049,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.8333333333333334
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.30105093688362916,
+        "ticket_score": 0.36953820266272186,
+        "blended_score": 0.33105093688362913,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.575,
+        "raw_market_score": 0.3318540433925049,
+        "volume_trend_20d": 0.6055125503723459,
+        "prior_5d_momentum": 0.025798224532836533,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.02948415042331165,
+        "five_day_acceleration": -0.003685925890475117,
+        "volume_weighted_momentum": 0.017853023118381318,
+        "footprint_factor_coverage": 0.8333333333333334,
+        "volume_confirmation_ratio": -0.34585854574416175,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": 0.3333333333333333,
+          "relative_strength": 0.4911242603550296,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": 0.5,
+          "relative_volume_expansion": 0.6666666666666666
+        },
+        "large_participant_footprint_score": 0.3318540433925049,
+        "relative_strength_vs_equal_weight": -0.02358223052845164
+      },
+      "ranking_basis": {
+        "score": 0.36953820266272186,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.8333333333333334,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "selection_reason": "narrative=UNRELATED: I will delete my account if Nike stock closes below $40 today. News flash: won’t happen | found narrative context 'news' but no company/product match; business=Biogen (BIIB) Q2 2026 Earnings Call Transcript | matched ticker boundary 'BIIB' with business context 'revenue'",
+      "outcomes": {
+        "1d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-19"
+        },
+        "3d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-21"
+        },
+        "10d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-09-01"
+        }
+      },
+      "trace_records": [
+        {
+          "ticket_id": 511,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 1,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 511,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 3,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 511,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 10,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 511,
+          "record_type": "ticket",
+          "record_status": "ISSUED",
+          "horizon_days": null,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        }
+      ],
+      "research_case_text": "US research case: BIIB\nSelection: catalyst: I will delete my account if Nike stock closes below $40 today. News flash: won’t happen | business: Biogen (BIIB) Q2 2026 Earnings Call Transcript | scores: market=0.301 catalyst=0.575 | panel: NEUTRAL | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 144; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.3318540433925049, footprint_factor_coverage=0.8333333333333334, market_participation_score=0.3265, breakout_score=0.0, relative_strength_vs_equal_weight=-0.02358223052845164, volume_confirmation_ratio=-0.34585854574416175\nEvidence availability: {\"news\": {\"score\": 0.575, \"status\": \"OBSERVED\", \"business_title\": \"Biogen (BIIB) Q2 2026 Earnings Call Transcript\", \"narrative_title\": \"I will delete my account if Nike stock closes below $40 today. News flash: won’t happen\", \"business_relevance\": 0.75, \"narrative_relevance\": 0.0}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": 0.3333333333333333, \"relative_strength\": 0.4911242603550296, \"breakout_acceptance\": 0.0, \"volume_price_alignment\": 0.5, \"relative_volume_expansion\": 0.6666666666666666}, \"median_dollar_volume_20d\": 180864084.565, \"volume_weighted_momentum\": 0.017853023118381318, \"volume_confirmation_ratio\": -0.34585854574416175, \"large_participant_footprint_score\": 0.3318540433925049}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.3318540433925049, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.8333333333333334}, \"market_participation\": {\"score\": 0.3265, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "ADI",
+      "stock_name": "亚德诺",
+      "final_score": "0.4206",
+      "market_score": "0.3524",
+      "catalyst_score": "0.6250",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median. Evidence is partial; keep the candidate under review only if the relevant side is strong.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.8333333333333334
+      },
+      "selection_reason": "narrative=I will delete my account if Nike stock closes below $40 today. News flash: won’t happen | matched ticker boundary 'ADI' with narrative context 'news'; business=UNRELATED: Secondhand UK and Irish booksellers suspect AI firms behind strange bulk orders | found business context 'order' but no company/product match",
+      "source_layers": {
+        "news": {
+          "score": 0.6249999999999999,
+          "status": "OBSERVED",
+          "business_title": "Secondhand UK and Irish booksellers suspect AI firms behind strange bulk orders",
+          "narrative_title": "I will delete my account if Nike stock closes below $40 today. News flash: won’t happen",
+          "business_relevance": 0.0,
+          "narrative_relevance": 0.75
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": 1.0,
+            "relative_strength": 0.4437869822485207,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": 0.5,
+            "relative_volume_expansion": 0.8333333333333334
+          },
+          "median_dollar_volume_20d": 1259928988.0500002,
+          "volume_weighted_momentum": 0.01196396410440731,
+          "volume_confirmation_ratio": -0.33380373172849764,
+          "large_participant_footprint_score": 0.46285338593030906
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.46285338593030906,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.8333333333333334
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.35240037804076263,
+        "ticket_score": 0.420550283530572,
+        "blended_score": 0.44240037804076265,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.6249999999999999,
+        "raw_market_score": 0.46285338593030906,
+        "volume_trend_20d": 0.6131091163063151,
+        "prior_5d_momentum": 0.01292499351154941,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.01951359682348941,
+        "five_day_acceleration": -0.00658860331194,
+        "volume_weighted_momentum": 0.01196396410440731,
+        "footprint_factor_coverage": 0.8333333333333334,
+        "volume_confirmation_ratio": -0.33380373172849764,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": 1.0,
+          "relative_strength": 0.4437869822485207,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": 0.5,
+          "relative_volume_expansion": 0.8333333333333334
+        },
+        "large_participant_footprint_score": 0.46285338593030906,
+        "relative_strength_vs_equal_weight": -0.03355278412827388
+      },
+      "ranking_basis": {
+        "score": 0.420550283530572,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.8333333333333334,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    },
+    {
+      "symbol": "FOX",
+      "stock_name": "福克斯-B",
+      "final_score": "0.3915",
+      "market_score": "0.2336",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.8333333333333334
+      },
+      "selection_reason": "narrative=SpaceX's post-IPO plunge sets tense backdrop for first earnings report | matched company term '福克斯-B' with narrative context 'earnings'; business=Demand for Canadian citizenship certificates soaring, fuelled by Americans | matched company term '福克斯-B' with business context 'demand'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Demand for Canadian citizenship certificates soaring, fuelled by Americans",
+          "narrative_title": "SpaceX's post-IPO plunge sets tense backdrop for first earnings report",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": 0.16666666666666666,
+            "relative_strength": 0.9388560157790927,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": 0.5,
+            "relative_volume_expansion": 0.3333333333333333
+          },
+          "median_dollar_volume_20d": 52130945.650000006,
+          "volume_weighted_momentum": 0.10764664983576135,
+          "volume_confirmation_ratio": -0.33718720596429475,
+          "large_participant_footprint_score": 0.3231426692965155
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.3231426692965155,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.8333333333333334
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.23364626890203813,
+        "ticket_score": 0.3914847016765286,
+        "blended_score": 0.3236462689020381,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.3231426692965155,
+        "volume_trend_20d": 0.5529514038968697,
+        "prior_5d_momentum": 0.11113118901337193,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.1946765105886925,
+        "five_day_acceleration": -0.08354532157532057,
+        "volume_weighted_momentum": 0.10764664983576135,
+        "footprint_factor_coverage": 0.8333333333333334,
+        "volume_confirmation_ratio": -0.33718720596429475,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": 0.16666666666666666,
+          "relative_strength": 0.9388560157790927,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": 0.5,
+          "relative_volume_expansion": 0.3333333333333333
+        },
+        "large_participant_footprint_score": 0.3231426692965155,
+        "relative_strength_vs_equal_weight": 0.1416101296369292
+      },
+      "ranking_basis": {
+        "score": 0.3914847016765286,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.8333333333333334,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    },
+    {
+      "symbol": "BIIB",
+      "stock_name": "生化基因",
+      "final_score": "0.3695",
+      "market_score": "0.3011",
+      "catalyst_score": "0.5750",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median. Evidence is partial; keep the candidate under review only if the relevant side is strong.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.8333333333333334
+      },
+      "selection_reason": "narrative=UNRELATED: I will delete my account if Nike stock closes below $40 today. News flash: won’t happen | found narrative context 'news' but no company/product match; business=Biogen (BIIB) Q2 2026 Earnings Call Transcript | matched ticker boundary 'BIIB' with business context 'revenue'",
+      "source_layers": {
+        "news": {
+          "score": 0.575,
+          "status": "OBSERVED",
+          "business_title": "Biogen (BIIB) Q2 2026 Earnings Call Transcript",
+          "narrative_title": "I will delete my account if Nike stock closes below $40 today. News flash: won’t happen",
+          "business_relevance": 0.75,
+          "narrative_relevance": 0.0
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": 0.3333333333333333,
+            "relative_strength": 0.4911242603550296,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": 0.5,
+            "relative_volume_expansion": 0.6666666666666666
+          },
+          "median_dollar_volume_20d": 180864084.565,
+          "volume_weighted_momentum": 0.017853023118381318,
+          "volume_confirmation_ratio": -0.34585854574416175,
+          "large_participant_footprint_score": 0.3318540433925049
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.3318540433925049,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.8333333333333334
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.30105093688362916,
+        "ticket_score": 0.36953820266272186,
+        "blended_score": 0.33105093688362913,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.575,
+        "raw_market_score": 0.3318540433925049,
+        "volume_trend_20d": 0.6055125503723459,
+        "prior_5d_momentum": 0.025798224532836533,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.02948415042331165,
+        "five_day_acceleration": -0.003685925890475117,
+        "volume_weighted_momentum": 0.017853023118381318,
+        "footprint_factor_coverage": 0.8333333333333334,
+        "volume_confirmation_ratio": -0.34585854574416175,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": 0.3333333333333333,
+          "relative_strength": 0.4911242603550296,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": 0.5,
+          "relative_volume_expansion": 0.6666666666666666
+        },
+        "large_participant_footprint_score": 0.3318540433925049,
+        "relative_strength_vs_equal_weight": -0.02358223052845164
+      },
+      "ranking_basis": {
+        "score": 0.36953820266272186,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.8333333333333334,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    },
+    {
+      "symbol": "T",
+      "stock_name": "美国电话电报(AT&T)",
+      "final_score": "0.3491",
+      "market_score": "0.1605",
+      "catalyst_score": "0.9150",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "LOW_CONFIRMATION_BLOCK",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=I will delete my account if Nike stock closes below $40 today. News flash: won’t happen | matched ticker boundary 'T' with narrative context 'news'; business=AT&T’s CMO tied ‘brand love’ to the numbers CEOs care about. Customers are 3 times less likely to leave and much cheaper to acquire | matched company term '美国电话电报(AT&T)' with business context 'customer'",
+      "source_layers": {
+        "news": {
+          "score": 0.9149999999999999,
+          "status": "OBSERVED",
+          "business_title": "AT&T’s CMO tied ‘brand love’ to the numbers CEOs care about. Customers are 3 times less likely to leave and much cheaper to acquire",
+          "narrative_title": "I will delete my account if Nike stock closes below $40 today. News flash: won’t happen",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.75
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.7869822485207101,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.131163708086785
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.131163708086785,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.16046415187376725,
+        "ticket_score": 0.3490981139053254,
+        "blended_score": 0.16046415187376725,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.9149999999999999,
+        "raw_market_score": 0.131163708086785,
+        "prior_5d_momentum": 0.007346938775510292,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.10871518418688231,
+        "five_day_acceleration": -0.10136824541137202,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.7869822485207101,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.131163708086785,
+        "relative_strength_vs_equal_weight": 0.05564880323511902
+      },
+      "ranking_basis": {
+        "score": 0.3490981139053254,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    },
+    {
+      "symbol": "STLD",
+      "stock_name": "Steel Dynamics Inc",
+      "final_score": "0.3345",
+      "market_score": "0.1577",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Steel Dynamics Announces Third Quarter 2026 Cash Dividend | matched company term 'Steel Dynamics Inc' with narrative context 'quarter'; business=What Steel Dynamics (STLD)'s Record Q2 2026 Results Mean For Shareholders | matched company term 'Steel Dynamics Inc' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "What Steel Dynamics (STLD)'s Record Q2 2026 Results Mean For Shareholders",
+          "narrative_title": "Steel Dynamics Announces Third Quarter 2026 Cash Dividend",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.7672583826429981,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.12787639710716633
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.12787639710716633,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.15766993754109138,
+        "ticket_score": 0.3345024531558185,
+        "blended_score": 0.15766993754109138,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.12787639710716633,
+        "prior_5d_momentum": -0.020971595434032264,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.10551558752997603,
+        "five_day_acceleration": -0.1264871829640083,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.7672583826429981,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.12787639710716633,
+        "relative_strength_vs_equal_weight": 0.05244920657821274
+      },
+      "ranking_basis": {
+        "score": 0.3345024531558185,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    },
+    {
+      "symbol": "GE",
+      "stock_name": "GE航空航天",
+      "final_score": "0.3291",
+      "market_score": "0.1504",
+      "catalyst_score": "0.8650",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "LOW_CONFIRMATION_BLOCK",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=GE Aerospace (GE) Crossed Above the 20-Day Moving Average: What That Means for Investors | matched company term 'GE航空航天' with narrative context 'stock'; business=Kratos and GE Aerospace secure U.S. Air Force JASSM engine development contract | matched company term 'GE航空航天' with business context 'contract'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Kratos and GE Aerospace secure U.S. Air Force JASSM engine development contract",
+          "narrative_title": "GE Aerospace (GE) Crossed Above the 20-Day Moving Average: What That Means for Investors",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.7159763313609467,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.11932938856015779
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.11932938856015779,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.1504049802761341,
+        "ticket_score": 0.3290537352071006,
+        "blended_score": 0.1504049802761341,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.11932938856015779,
+        "prior_5d_momentum": 0.0037222192033907753,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.08432638685060168,
+        "five_day_acceleration": -0.0806041676472109,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.7159763313609467,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.11932938856015779,
+        "relative_strength_vs_equal_weight": 0.031260005898838386
+      },
+      "ranking_basis": {
+        "score": 0.3290537352071006,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    },
+    {
+      "symbol": "FERG",
+      "stock_name": "Ferguson Enterprises Inc",
+      "final_score": "0.3282",
+      "market_score": "0.1493",
+      "catalyst_score": "0.8650",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "LOW_CONFIRMATION_BLOCK",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Jim Cramer Calls Post-Earnings Pullback in Ferguson Enterprises (FERG) a “Gift” | matched company term 'Ferguson Enterprises Inc' with narrative context 'quarter'; business=Jim Cramer Calls Post-Earnings Pullback in Ferguson Enterprises (FERG) a “Gift” | matched company term 'Ferguson Enterprises Inc' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Jim Cramer Calls Post-Earnings Pullback in Ferguson Enterprises (FERG) a “Gift”",
+          "narrative_title": "Jim Cramer Calls Post-Earnings Pullback in Ferguson Enterprises (FERG) a “Gift”",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.7080867850098619,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.11801446416831031
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.11801446416831031,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.14928729454306375,
+        "ticket_score": 0.3282154709072978,
+        "blended_score": 0.14928729454306375,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.11801446416831031,
+        "prior_5d_momentum": -0.025963182378434313,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.08158940397350989,
+        "five_day_acceleration": -0.1075525863519442,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.7080867850098619,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.11801446416831031,
+        "relative_strength_vs_equal_weight": 0.0285230230217466
+      },
+      "ranking_basis": {
+        "score": 0.3282154709072978,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    },
+    {
+      "symbol": "VLTO",
+      "stock_name": "Veralto Corp",
+      "final_score": "0.3251",
+      "market_score": "0.1451",
+      "catalyst_score": "0.8650",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "LOW_CONFIRMATION_BLOCK",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Veralto’s (VLTO) Dual-Segment Advantage Fuels Long-Term Value | matched company term 'veralto' with narrative context 'quarter'; business=Veralto’s (VLTO) Dual-Segment Advantage Fuels Long-Term Value | matched company term 'veralto' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Veralto’s (VLTO) Dual-Segment Advantage Fuels Long-Term Value",
+          "narrative_title": "Veralto’s (VLTO) Dual-Segment Advantage Fuels Long-Term Value",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.6785009861932939,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.11308349769888232
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.11308349769888232,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.14509597304404998,
+        "ticket_score": 0.3250719797830375,
+        "blended_score": 0.14509597304404998,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.11308349769888232,
+        "prior_5d_momentum": -0.012452791670919616,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.07285429141716548,
+        "five_day_acceleration": -0.0853070830880851,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.6785009861932939,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.11308349769888232,
+        "relative_strength_vs_equal_weight": 0.019787910465402195
+      },
+      "ranking_basis": {
+        "score": 0.3250719797830375,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    },
+    {
+      "symbol": "NUE",
+      "stock_name": "纽柯钢铁",
+      "final_score": "0.3144",
+      "market_score": "0.1775",
+      "catalyst_score": "0.7250",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=SID Q2 Earnings Miss on Higher Financial Costs, Revenues Rise Y/Y | matched ticker boundary 'NUE' with narrative context 'earnings'; business=What Nucor (NUE)'s Surging Quarterly Earnings and 213th Straight Dividend Mean For Shareholders | matched ticker boundary 'NUE' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.725,
+          "status": "OBSERVED",
+          "business_title": "What Nucor (NUE)'s Surging Quarterly Earnings and 213th Straight Dividend Mean For Shareholders",
+          "narrative_title": "SID Q2 Earnings Miss on Higher Financial Costs, Revenues Rise Y/Y",
+          "business_relevance": 0.75,
+          "narrative_relevance": 0.75
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.9072978303747534,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.1512163050624589
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.1512163050624589,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.17750885930309004,
+        "ticket_score": 0.31438164447731753,
+        "blended_score": 0.17750885930309004,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.725,
+        "raw_market_score": 0.1512163050624589,
+        "prior_5d_momentum": 0.002684316970031242,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.16929674099485426,
+        "five_day_acceleration": -0.166612424024823,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.9072978303747534,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.1512163050624589,
+        "relative_strength_vs_equal_weight": 0.11623036004309097
+      },
+      "ranking_basis": {
+        "score": 0.31438164447731753,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    },
+    {
+      "symbol": "SLB",
+      "stock_name": "斯伦贝谢",
+      "final_score": "0.3123",
+      "market_score": "0.1747",
+      "catalyst_score": "0.7250",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "LOW_CONFIRMATION_BLOCK",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=SLB (SLB) Stock May Trade At A Discount On Cash Flow But Fairly On Earnings | matched ticker boundary 'SLB' with narrative context 'earnings'; business=SLB (SLB) Just Took a Hit. Here’s Why Investors May Stay Bullish | matched ticker boundary 'SLB' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.725,
+          "status": "OBSERVED",
+          "business_title": "SLB (SLB) Just Took a Hit. Here’s Why Investors May Stay Bullish",
+          "narrative_title": "SLB (SLB) Stock May Trade At A Discount On Cash Flow But Fairly On Earnings",
+          "business_relevance": 0.75,
+          "narrative_relevance": 0.75
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.8875739644970414,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.14792899408284022
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.14792899408284022,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.3265,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.17471464497041417,
+        "ticket_score": 0.3122859837278106,
+        "blended_score": 0.17471464497041417,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.725,
+        "raw_market_score": 0.14792899408284022,
+        "prior_5d_momentum": 0.003353204172876323,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.15604206911354357,
+        "five_day_acceleration": -0.15268886494066725,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.3265,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.8875739644970414,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.14792899408284022,
+        "relative_strength_vs_equal_weight": 0.10297568816178028
+      },
+      "ranking_basis": {
+        "score": 0.3122859837278106,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 144
+    }
+  ],
+  "returns": {
+    "ADI": {
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_10d": null
+    },
+    "BIIB": {
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_10d": null
+    },
+    "FOX": {
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_10d": null
+    }
+  },
+  "tracking": [
+    {
+      "ticket_id": 509,
+      "symbol": "ADI",
+      "horizon_days": 1,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-19"
+    },
+    {
+      "ticket_id": 509,
+      "symbol": "ADI",
+      "horizon_days": 3,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-21"
+    },
+    {
+      "ticket_id": 509,
+      "symbol": "ADI",
+      "horizon_days": 10,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-09-01"
+    },
+    {
+      "ticket_id": 511,
+      "symbol": "BIIB",
+      "horizon_days": 1,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-19"
+    },
+    {
+      "ticket_id": 511,
+      "symbol": "BIIB",
+      "horizon_days": 3,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-21"
+    },
+    {
+      "ticket_id": 511,
+      "symbol": "BIIB",
+      "horizon_days": 10,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-09-01"
+    },
+    {
+      "ticket_id": 510,
+      "symbol": "FOX",
+      "horizon_days": 1,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-19"
+    },
+    {
+      "ticket_id": 510,
+      "symbol": "FOX",
+      "horizon_days": 3,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-21"
+    },
+    {
+      "ticket_id": 510,
+      "symbol": "FOX",
+      "horizon_days": 10,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-09-01"
+    }
+  ],
+  "ticket_count": 3,
+  "top10_count": 10
+}

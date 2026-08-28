@@ -31,6 +31,8 @@ from pydantic import BaseModel
 from pathlib import Path
 from decimal import Decimal
 
+from db.engine import DATABASE_URL
+
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
@@ -49,12 +51,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Database connection
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL", "postgresql://xiaomei:***@localhost:5432/xiaomei"
-)
-
 
 def get_engine():
     from sqlalchemy import create_engine
@@ -290,6 +286,55 @@ async def get_trade_journal(status: str = None, limit: int = 50):
         rows = [dict(row._mapping) for row in result.fetchall()]
 
     return rows
+
+
+@app.get("/api/intraday/overview")
+async def get_intraday_overview(limit: int = 100):
+    """Return the paper-only intraday strategy lifecycle."""
+    from sqlalchemy import text
+
+    engine = get_engine()
+    with engine.connect() as conn:
+        runs = conn.execute(text("""
+            SELECT id, session_date::text, strategy_version, status, candidate_count,
+                   context_research_run_id, source_state, started_at::text, finished_at::text
+            FROM intraday_strategy_runs
+            ORDER BY started_at DESC LIMIT :limit
+        """), {"limit": limit}).fetchall()
+        decisions = conn.execute(text("""
+            SELECT d.id, d.run_id, d.session_date::text, d.symbol, d.direction,
+                   d.decision, d.decision_status, d.strategy_score, d.score_components,
+                   d.quote_source, d.quote_age_seconds, d.reason, d.created_at::text
+            FROM intraday_strategy_decisions d
+            ORDER BY d.created_at DESC LIMIT :limit
+        """), {"limit": limit}).fetchall()
+        positions = conn.execute(text("""
+            SELECT id, session_date::text, symbol, direction, status, entry_price,
+                   current_price, quantity, stop_loss_price, take_profit_price,
+                   exit_price, exit_reason, realized_pnl, entry_fees, exit_fees,
+                   borrow_rate_daily, accrued_borrow_cost, squeeze_risk_score,
+                   opened_at::text, closed_at::text, updated_at::text
+            FROM intraday_paper_positions
+            ORDER BY updated_at DESC LIMIT :limit
+        """), {"limit": limit}).fetchall()
+        fills = conn.execute(text("""
+            SELECT f.id, o.symbol, o.side, o.status AS order_status, f.quantity,
+                   f.price, f.commission, f.sec_fee, f.finra_fee, f.slippage,
+                   f.filled_at::text, d.direction, d.reason
+            FROM intraday_paper_fills f
+            JOIN intraday_paper_orders o ON o.id = f.order_id
+            JOIN intraday_strategy_decisions d ON d.id = f.decision_id
+            ORDER BY f.filled_at DESC LIMIT :limit
+        """), {"limit": limit}).fetchall()
+
+    return {
+        "paper_only": True,
+        "short_model_status": "UNVALIDATED_PAPER_SHORT",
+        "runs": [dict(row._mapping) for row in runs],
+        "decisions": [dict(row._mapping) for row in decisions],
+        "positions": [dict(row._mapping) for row in positions],
+        "fills": [dict(row._mapping) for row in fills],
+    }
 
 
 @app.get("/api/trade-traces")

@@ -1,0 +1,391 @@
+{
+  "trade_date": "2026-08-15",
+  "exported_at": "2026-08-15T13:57:06.774868",
+  "tickets": [
+    {
+      "ticket_id": 506,
+      "symbol": "NBIS",
+      "ticket_score": "0.701971",
+      "market_score": "0.802936",
+      "catalyst_score": "0.186874",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.803 catalyst=0.187 | panel: MIXED | risk: WATCH",
+      "research_run_id": 143,
+      "git_commit": "37693ec16f8ebbffdd29d758fa48ec458023b93b",
+      "research_config": {
+        "version_status": "RECONSTRUCTED_FROM_DATABASE",
+        "reconstruction_note": "Ticket/run linkage and source revision reconstructed; candidate evidence was not persisted."
+      },
+      "source_layers": null,
+      "factor_snapshot": null,
+      "ranking_basis": null,
+      "selection_reason": null,
+      "outcomes": {
+        "1d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-17"
+        },
+        "3d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-19"
+        },
+        "10d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-28"
+        }
+      },
+      "trace_records": [
+        {
+          "ticket_id": 506,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 1,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 506,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 3,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 506,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 10,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 506,
+          "record_type": "ticket",
+          "record_status": "ISSUED",
+          "horizon_days": null,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        }
+      ],
+      "research_case_text": "US research case: NBIS\nSelection: scores: market=0.803 catalyst=0.187 | panel: MIXED | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 143; commit: 37693ec16f8ebbffdd29d758fa48ec458023b93b\nObservable footprint: unavailable\nEvidence availability: {}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+    },
+    {
+      "ticket_id": 507,
+      "symbol": "NTAP",
+      "ticket_score": "0.691287",
+      "market_score": "0.637234",
+      "catalyst_score": "0.188407",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "MODERATE",
+      "entry_reason": "scores: market=0.637 catalyst=0.188 | panel: MIXED | risk: ELEVATED",
+      "research_run_id": 143,
+      "git_commit": "37693ec16f8ebbffdd29d758fa48ec458023b93b",
+      "research_config": {
+        "version_status": "RECONSTRUCTED_FROM_DATABASE",
+        "reconstruction_note": "Ticket/run linkage and source revision reconstructed; candidate evidence was not persisted."
+      },
+      "source_layers": null,
+      "factor_snapshot": null,
+      "ranking_basis": null,
+      "selection_reason": null,
+      "outcomes": {
+        "1d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-17"
+        },
+        "3d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-19"
+        },
+        "10d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-28"
+        }
+      },
+      "trace_records": [
+        {
+          "ticket_id": 507,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 1,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 507,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 3,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 507,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 10,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 507,
+          "record_type": "ticket",
+          "record_status": "ISSUED",
+          "horizon_days": null,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        }
+      ],
+      "research_case_text": "US research case: NTAP\nSelection: scores: market=0.637 catalyst=0.188 | panel: MIXED | risk: ELEVATED\nClassification: MARKET_WATCHLIST_NEEDS_EVIDENCE\nResearch run: 143; commit: 37693ec16f8ebbffdd29d758fa48ec458023b93b\nObservable footprint: unavailable\nEvidence availability: {}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+    },
+    {
+      "ticket_id": 508,
+      "symbol": "LITE",
+      "ticket_score": "0.662469",
+      "market_score": "0.612103",
+      "catalyst_score": "0.182372",
+      "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "risk_verdict": "ELEVATED",
+      "quality_verdict": "STRONG",
+      "entry_reason": "scores: market=0.612 catalyst=0.182 | panel: MIXED | risk: ELEVATED",
+      "research_run_id": 143,
+      "git_commit": "37693ec16f8ebbffdd29d758fa48ec458023b93b",
+      "research_config": {
+        "version_status": "RECONSTRUCTED_FROM_DATABASE",
+        "reconstruction_note": "Ticket/run linkage and source revision reconstructed; candidate evidence was not persisted."
+      },
+      "source_layers": null,
+      "factor_snapshot": null,
+      "ranking_basis": null,
+      "selection_reason": null,
+      "outcomes": {
+        "1d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-17"
+        },
+        "3d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-19"
+        },
+        "10d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-28"
+        }
+      },
+      "trace_records": [
+        {
+          "ticket_id": 508,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 1,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 508,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 3,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 508,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 10,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 508,
+          "record_type": "ticket",
+          "record_status": "ISSUED",
+          "horizon_days": null,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        }
+      ],
+      "research_case_text": "US research case: LITE\nSelection: scores: market=0.612 catalyst=0.182 | panel: MIXED | risk: ELEVATED\nClassification: MARKET_WATCHLIST_NEEDS_EVIDENCE\nResearch run: 143; commit: 37693ec16f8ebbffdd29d758fa48ec458023b93b\nObservable footprint: unavailable\nEvidence availability: {}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+    }
+  ],
+  "top10": [],
+  "returns": {
+    "LITE": {
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_10d": null
+    },
+    "NBIS": {
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_10d": null
+    },
+    "NTAP": {
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_10d": null
+    }
+  },
+  "tracking": [
+    {
+      "ticket_id": 508,
+      "symbol": "LITE",
+      "horizon_days": 1,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-17"
+    },
+    {
+      "ticket_id": 508,
+      "symbol": "LITE",
+      "horizon_days": 3,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-19"
+    },
+    {
+      "ticket_id": 508,
+      "symbol": "LITE",
+      "horizon_days": 10,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-28"
+    },
+    {
+      "ticket_id": 506,
+      "symbol": "NBIS",
+      "horizon_days": 1,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-17"
+    },
+    {
+      "ticket_id": 506,
+      "symbol": "NBIS",
+      "horizon_days": 3,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-19"
+    },
+    {
+      "ticket_id": 506,
+      "symbol": "NBIS",
+      "horizon_days": 10,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-28"
+    },
+    {
+      "ticket_id": 507,
+      "symbol": "NTAP",
+      "horizon_days": 1,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-17"
+    },
+    {
+      "ticket_id": 507,
+      "symbol": "NTAP",
+      "horizon_days": 3,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-19"
+    },
+    {
+      "ticket_id": 507,
+      "symbol": "NTAP",
+      "horizon_days": 10,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-28"
+    }
+  ],
+  "ticket_count": 3,
+  "top10_count": 0
+}

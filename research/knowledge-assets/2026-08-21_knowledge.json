@@ -1,0 +1,1580 @@
+{
+  "trade_date": "2026-08-21",
+  "exported_at": "2026-08-21T05:18:53.157585",
+  "tickets": [
+    {
+      "ticket_id": 512,
+      "symbol": "WTW",
+      "ticket_score": "0.340705",
+      "market_score": "0.165939",
+      "catalyst_score": "0.865000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: WTW Stock Surges 34.5% in Three Months: What Should Investors Do Now? | business: Zacks Industry Outlook Highlights Willis Towers Watson Public, Aon, Arthur J. Gallagher and Brown and Brown | scores: market=0.166 catalyst=0.865 | panel: NEUTRAL | risk: WATCH",
+      "research_run_id": 145,
+      "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+      "research_config": {
+        "data_as_of": "2026-08-21",
+        "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+        "source_mode": "live",
+        "generated_at": "2026-08-21T05:18:50.932468+08:00",
+        "scoring_config": {
+          "max_score_cap": "88",
+          "top_k_tickets": "3",
+          "weekday_blocklist": "",
+          "limit_up_threshold": "0.095",
+          "stale_decay_factor": "0.65",
+          "candidate_pool_size": "10",
+          "follow_on_t1_weight": "1.0",
+          "follow_on_t2_weight": "0.45",
+          "follow_on_t3_weight": "0.25",
+          "us_market_open_hour": "21",
+          "us_market_close_hour": "4",
+          "min_market_score_gate": "0.75",
+          "evidence_volume_weight": "0.15",
+          "pipeline_run_after_hour": "5",
+          "evidence_breakout_weight": "0.10",
+          "evidence_momentum_weight": "0.35",
+          "evidence_reversal_weight": "0.15",
+          "stale_repeat_window_days": "5",
+          "evidence_fund_flow_weight": "0.05",
+          "evidence_catalyst_boost_weight": "0.20"
+        },
+        "version_status": "VERSIONED",
+        "strategy_version": "observable_footprint_v1"
+      },
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Zacks Industry Outlook Highlights Willis Towers Watson Public, Aon, Arthur J. Gallagher and Brown and Brown",
+          "narrative_title": "WTW Stock Surges 34.5% in Three Months: What Should Investors Do Now?",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.876984126984127,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.14616402116402116
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.14616402116402116,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.16593941798941797,
+        "ticket_score": 0.34070456349206346,
+        "blended_score": 0.16593941798941797,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.14616402116402116,
+        "prior_5d_momentum": 0.028830785005579118,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.15600962353020886,
+        "five_day_acceleration": -0.12717883852462974,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.876984126984127,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.14616402116402116,
+        "relative_strength_vs_equal_weight": 0.10766966324462632
+      },
+      "ranking_basis": {
+        "score": 0.34070456349206346,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "selection_reason": "narrative=WTW Stock Surges 34.5% in Three Months: What Should Investors Do Now? | matched company term 'willis towers watson' with narrative context 'stock'; business=Zacks Industry Outlook Highlights Willis Towers Watson Public, Aon, Arthur J. Gallagher and Brown and Brown | matched company term 'willis towers watson' with business context 'demand'",
+      "outcomes": {
+        "1d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-24"
+        },
+        "3d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-26"
+        },
+        "10d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-09-04"
+        }
+      },
+      "trace_records": [
+        {
+          "ticket_id": 512,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 1,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 512,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 3,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 512,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 10,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 512,
+          "record_type": "ticket",
+          "record_status": "ISSUED",
+          "horizon_days": null,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        }
+      ],
+      "research_case_text": "US research case: WTW\nSelection: catalyst: WTW Stock Surges 34.5% in Three Months: What Should Investors Do Now? | business: Zacks Industry Outlook Highlights Willis Towers Watson Public, Aon, Arthur J. Gallagher and Brown and Brown | scores: market=0.166 catalyst=0.865 | panel: NEUTRAL | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 145; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.14616402116402116, footprint_factor_coverage=0.3333333333333333, market_participation_score=0.278, breakout_score=0.0, relative_strength_vs_equal_weight=0.10766966324462632\nEvidence availability: {\"news\": {\"score\": 0.865, \"status\": \"OBSERVED\", \"business_title\": \"Zacks Industry Outlook Highlights Willis Towers Watson Public, Aon, Arthur J. Gallagher and Brown and Brown\", \"narrative_title\": \"WTW Stock Surges 34.5% in Three Months: What Should Investors Do Now?\", \"business_relevance\": 0.95, \"narrative_relevance\": 0.95}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": null, \"relative_strength\": 0.876984126984127, \"breakout_acceptance\": 0.0, \"volume_price_alignment\": null, \"relative_volume_expansion\": null}, \"median_dollar_volume_20d\": null, \"volume_weighted_momentum\": null, \"volume_confirmation_ratio\": null, \"large_participant_footprint_score\": 0.14616402116402116}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.14616402116402116, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.3333333333333333}, \"market_participation\": {\"score\": 0.278, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+    },
+    {
+      "ticket_id": 513,
+      "symbol": "SOLV",
+      "ticket_score": "0.338596",
+      "market_score": "0.163129",
+      "catalyst_score": "0.865000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: Are Wall Street Analysts Bullish on Solventum Stock? | business: Solventum (SOLV) Q2 2026 Earnings Call Transcript | scores: market=0.163 catalyst=0.865 | panel: NEUTRAL | risk: WATCH",
+      "research_run_id": 145,
+      "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+      "research_config": {
+        "data_as_of": "2026-08-21",
+        "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+        "source_mode": "live",
+        "generated_at": "2026-08-21T05:18:50.932468+08:00",
+        "scoring_config": {
+          "max_score_cap": "88",
+          "top_k_tickets": "3",
+          "weekday_blocklist": "",
+          "limit_up_threshold": "0.095",
+          "stale_decay_factor": "0.65",
+          "candidate_pool_size": "10",
+          "follow_on_t1_weight": "1.0",
+          "follow_on_t2_weight": "0.45",
+          "follow_on_t3_weight": "0.25",
+          "us_market_open_hour": "21",
+          "us_market_close_hour": "4",
+          "min_market_score_gate": "0.75",
+          "evidence_volume_weight": "0.15",
+          "pipeline_run_after_hour": "5",
+          "evidence_breakout_weight": "0.10",
+          "evidence_momentum_weight": "0.35",
+          "evidence_reversal_weight": "0.15",
+          "stale_repeat_window_days": "5",
+          "evidence_fund_flow_weight": "0.05",
+          "evidence_catalyst_boost_weight": "0.20"
+        },
+        "version_status": "VERSIONED",
+        "strategy_version": "observable_footprint_v1"
+      },
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Solventum (SOLV) Q2 2026 Earnings Call Transcript",
+          "narrative_title": "Are Wall Street Analysts Bullish on Solventum Stock?",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.8571428571428571,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.14285714285714285
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.14285714285714285,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.1631285714285714,
+        "ticket_score": 0.3385964285714286,
+        "blended_score": 0.1631285714285714,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.14285714285714285,
+        "prior_5d_momentum": 0.00022575911502431545,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.13588001538264316,
+        "five_day_acceleration": -0.13565425626761884,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.8571428571428571,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.14285714285714285,
+        "relative_strength_vs_equal_weight": 0.08754005509706062
+      },
+      "ranking_basis": {
+        "score": 0.3385964285714286,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "selection_reason": "narrative=Are Wall Street Analysts Bullish on Solventum Stock? | matched company term 'solventum' with narrative context 'stock'; business=Solventum (SOLV) Q2 2026 Earnings Call Transcript | matched company term 'solventum' with business context 'quarter'",
+      "outcomes": {
+        "1d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-24"
+        },
+        "3d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-26"
+        },
+        "10d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-09-04"
+        }
+      },
+      "trace_records": [
+        {
+          "ticket_id": 513,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 1,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 513,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 3,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 513,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 10,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 513,
+          "record_type": "ticket",
+          "record_status": "ISSUED",
+          "horizon_days": null,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        }
+      ],
+      "research_case_text": "US research case: SOLV\nSelection: catalyst: Are Wall Street Analysts Bullish on Solventum Stock? | business: Solventum (SOLV) Q2 2026 Earnings Call Transcript | scores: market=0.163 catalyst=0.865 | panel: NEUTRAL | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 145; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.14285714285714285, footprint_factor_coverage=0.3333333333333333, market_participation_score=0.278, breakout_score=0.0, relative_strength_vs_equal_weight=0.08754005509706062\nEvidence availability: {\"news\": {\"score\": 0.865, \"status\": \"OBSERVED\", \"business_title\": \"Solventum (SOLV) Q2 2026 Earnings Call Transcript\", \"narrative_title\": \"Are Wall Street Analysts Bullish on Solventum Stock?\", \"business_relevance\": 0.95, \"narrative_relevance\": 0.95}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": null, \"relative_strength\": 0.8571428571428571, \"breakout_acceptance\": 0.0, \"volume_price_alignment\": null, \"relative_volume_expansion\": null}, \"median_dollar_volume_20d\": null, \"volume_weighted_momentum\": null, \"volume_confirmation_ratio\": null, \"large_participant_footprint_score\": 0.14285714285714285}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.14285714285714285, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.3333333333333333}, \"market_participation\": {\"score\": 0.278, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+    },
+    {
+      "ticket_id": 514,
+      "symbol": "RVTY",
+      "ticket_score": "0.335645",
+      "market_score": "0.159193",
+      "catalyst_score": "0.865000",
+      "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+      "risk_verdict": "WATCH",
+      "quality_verdict": "STRONG",
+      "entry_reason": "catalyst: The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call | business: The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call | scores: market=0.159 catalyst=0.865 | panel: BULLISH_CONSENSUS | risk: WATCH",
+      "research_run_id": 145,
+      "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+      "research_config": {
+        "data_as_of": "2026-08-21",
+        "git_commit": "bedb58e1f15ddc8d26b5860359e2bbd3640990c1",
+        "source_mode": "live",
+        "generated_at": "2026-08-21T05:18:50.932468+08:00",
+        "scoring_config": {
+          "max_score_cap": "88",
+          "top_k_tickets": "3",
+          "weekday_blocklist": "",
+          "limit_up_threshold": "0.095",
+          "stale_decay_factor": "0.65",
+          "candidate_pool_size": "10",
+          "follow_on_t1_weight": "1.0",
+          "follow_on_t2_weight": "0.45",
+          "follow_on_t3_weight": "0.25",
+          "us_market_open_hour": "21",
+          "us_market_close_hour": "4",
+          "min_market_score_gate": "0.75",
+          "evidence_volume_weight": "0.15",
+          "pipeline_run_after_hour": "5",
+          "evidence_breakout_weight": "0.10",
+          "evidence_momentum_weight": "0.35",
+          "evidence_reversal_weight": "0.15",
+          "stale_repeat_window_days": "5",
+          "evidence_fund_flow_weight": "0.05",
+          "evidence_catalyst_boost_weight": "0.20"
+        },
+        "version_status": "VERSIONED",
+        "strategy_version": "observable_footprint_v1"
+      },
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call",
+          "narrative_title": "The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.8293650793650794,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.13822751322751323
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.13822751322751323,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.15919338624338625,
+        "ticket_score": 0.33564503968253967,
+        "blended_score": 0.15919338624338625,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.13822751322751323,
+        "prior_5d_momentum": 0.06239301609037984,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.12365348058296366,
+        "five_day_acceleration": -0.06126046449258382,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.8293650793650794,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.13822751322751323,
+        "relative_strength_vs_equal_weight": 0.07531352029738111
+      },
+      "ranking_basis": {
+        "score": 0.33564503968253967,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "selection_reason": "narrative=The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call | matched company term 'revvity' with narrative context 'earnings call'; business=The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call | matched company term 'revvity' with business context 'quarter'",
+      "outcomes": {
+        "1d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-24"
+        },
+        "3d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-08-26"
+        },
+        "10d": {
+          "status": "pending",
+          "forward_return": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "due_date": "2026-09-04"
+        }
+      },
+      "trace_records": [
+        {
+          "ticket_id": 514,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 1,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 514,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 3,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 514,
+          "record_type": "forward_tracking",
+          "record_status": "pending",
+          "horizon_days": 10,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        },
+        {
+          "ticket_id": 514,
+          "record_type": "ticket",
+          "record_status": "ISSUED",
+          "horizon_days": null,
+          "forward_return": null,
+          "pnl": null,
+          "outcome_classification": null,
+          "outcome_reason": null,
+          "paper_reason": null
+        }
+      ],
+      "research_case_text": "US research case: RVTY\nSelection: catalyst: The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call | business: The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call | scores: market=0.159 catalyst=0.865 | panel: BULLISH_CONSENSUS | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 145; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.13822751322751323, footprint_factor_coverage=0.3333333333333333, market_participation_score=0.278, breakout_score=0.0, relative_strength_vs_equal_weight=0.07531352029738111\nEvidence availability: {\"news\": {\"score\": 0.865, \"status\": \"OBSERVED\", \"business_title\": \"The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call\", \"narrative_title\": \"The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call\", \"business_relevance\": 0.95, \"narrative_relevance\": 0.95}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": null, \"relative_strength\": 0.8293650793650794, \"breakout_acceptance\": 0.0, \"volume_price_alignment\": null, \"relative_volume_expansion\": null}, \"median_dollar_volume_20d\": null, \"volume_weighted_momentum\": null, \"volume_confirmation_ratio\": null, \"large_participant_footprint_score\": 0.13822751322751323}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.13822751322751323, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.3333333333333333}, \"market_participation\": {\"score\": 0.278, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+    }
+  ],
+  "top10": [
+    {
+      "symbol": "WTW",
+      "stock_name": "Willis Towers Watson PLC",
+      "final_score": "0.3407",
+      "market_score": "0.1659",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=WTW Stock Surges 34.5% in Three Months: What Should Investors Do Now? | matched company term 'willis towers watson' with narrative context 'stock'; business=Zacks Industry Outlook Highlights Willis Towers Watson Public, Aon, Arthur J. Gallagher and Brown and Brown | matched company term 'willis towers watson' with business context 'demand'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Zacks Industry Outlook Highlights Willis Towers Watson Public, Aon, Arthur J. Gallagher and Brown and Brown",
+          "narrative_title": "WTW Stock Surges 34.5% in Three Months: What Should Investors Do Now?",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.876984126984127,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.14616402116402116
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.14616402116402116,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.16593941798941797,
+        "ticket_score": 0.34070456349206346,
+        "blended_score": 0.16593941798941797,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.14616402116402116,
+        "prior_5d_momentum": 0.028830785005579118,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.15600962353020886,
+        "five_day_acceleration": -0.12717883852462974,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.876984126984127,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.14616402116402116,
+        "relative_strength_vs_equal_weight": 0.10766966324462632
+      },
+      "ranking_basis": {
+        "score": 0.34070456349206346,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    },
+    {
+      "symbol": "SOLV",
+      "stock_name": "Solventum Corp",
+      "final_score": "0.3386",
+      "market_score": "0.1631",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Are Wall Street Analysts Bullish on Solventum Stock? | matched company term 'solventum' with narrative context 'stock'; business=Solventum (SOLV) Q2 2026 Earnings Call Transcript | matched company term 'solventum' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Solventum (SOLV) Q2 2026 Earnings Call Transcript",
+          "narrative_title": "Are Wall Street Analysts Bullish on Solventum Stock?",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.8571428571428571,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.14285714285714285
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.14285714285714285,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.1631285714285714,
+        "ticket_score": 0.3385964285714286,
+        "blended_score": 0.1631285714285714,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.14285714285714285,
+        "prior_5d_momentum": 0.00022575911502431545,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.13588001538264316,
+        "five_day_acceleration": -0.13565425626761884,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.8571428571428571,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.14285714285714285,
+        "relative_strength_vs_equal_weight": 0.08754005509706062
+      },
+      "ranking_basis": {
+        "score": 0.3385964285714286,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    },
+    {
+      "symbol": "RVTY",
+      "stock_name": "Revvity Inc",
+      "final_score": "0.3356",
+      "market_score": "0.1592",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call | matched company term 'revvity' with narrative context 'earnings call'; business=The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call | matched company term 'revvity' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call",
+          "narrative_title": "The Top 5 Analyst Questions From Revvity’s Q2 Earnings Call",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.8293650793650794,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.13822751322751323
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.13822751322751323,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.15919338624338625,
+        "ticket_score": 0.33564503968253967,
+        "blended_score": 0.15919338624338625,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.13822751322751323,
+        "prior_5d_momentum": 0.06239301609037984,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.12365348058296366,
+        "five_day_acceleration": -0.06126046449258382,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.8293650793650794,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.13822751322751323,
+        "relative_strength_vs_equal_weight": 0.07531352029738111
+      },
+      "ranking_basis": {
+        "score": 0.33564503968253967,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    },
+    {
+      "symbol": "NWS",
+      "stock_name": "新闻集团-B",
+      "final_score": "0.3348",
+      "market_score": "0.1581",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Update: Market Chatter: News Corp Accuses Brave of Copyright Infringement in Countersuit | matched company term '新闻集团-B' with narrative context 'news'; business=What You Need To Know Ahead of News Corporation’s Earnings Release | matched company term '新闻集团-B' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "What You Need To Know Ahead of News Corporation’s Earnings Release",
+          "narrative_title": "Update: Market Chatter: News Corp Accuses Brave of Copyright Infringement in Countersuit",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.8214285714285714,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.1369047619047619
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.1369047619047619,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.1580690476190476,
+        "ticket_score": 0.3348017857142857,
+        "blended_score": 0.1580690476190476,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.1369047619047619,
+        "prior_5d_momentum": 0.018390111546578325,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.11891354753229555,
+        "five_day_acceleration": -0.10052343598571722,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.8214285714285714,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.1369047619047619,
+        "relative_strength_vs_equal_weight": 0.070573587246713
+      },
+      "ranking_basis": {
+        "score": 0.3348017857142857,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    },
+    {
+      "symbol": "CPAY",
+      "stock_name": "Corpay Inc",
+      "final_score": "0.3335",
+      "market_score": "0.1564",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Here's Why You Should Retain Corpay Stock in Your Portfolio Now | matched company term 'corpay' with narrative context 'stock'; business=Corpay Cross-Border Named the Official FX Partner of European T20 Premier League | matched company term 'Corpay Inc' with business context 'order'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Corpay Cross-Border Named the Official FX Partner of European T20 Premier League",
+          "narrative_title": "Here's Why You Should Retain Corpay Stock in Your Portfolio Now",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.8095238095238095,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.1349206349206349
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.1349206349206349,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.15638253968253968,
+        "ticket_score": 0.3335369047619048,
+        "blended_score": 0.15638253968253968,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.1349206349206349,
+        "prior_5d_momentum": -0.013409961685823757,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.11177073776242641,
+        "five_day_acceleration": -0.12518069944825017,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.8095238095238095,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.1349206349206349,
+        "relative_strength_vs_equal_weight": 0.06343077747684386
+      },
+      "ranking_basis": {
+        "score": 0.3335369047619048,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    },
+    {
+      "symbol": "NWSA",
+      "stock_name": "新闻集团-A",
+      "final_score": "0.3312",
+      "market_score": "0.1533",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Are Wall Street Analysts Bullish on News Corporation Stock? | matched company term '新闻集团-A' with narrative context 'stock'; business=NWSA's Q4 2026 Earnings Beat Estimates on Core Growth, Rise Y/Y | matched company term '新闻集团-A' with business context 'revenue'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "NWSA's Q4 2026 Earnings Beat Estimates on Core Growth, Rise Y/Y",
+          "narrative_title": "Are Wall Street Analysts Bullish on News Corporation Stock?",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.7876984126984127,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.13128306878306878
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.13128306878306878,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.15329060846560846,
+        "ticket_score": 0.33121795634920637,
+        "blended_score": 0.15329060846560846,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.13128306878306878,
+        "prior_5d_momentum": 0.016803840877914977,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.10799701046337806,
+        "five_day_acceleration": -0.09119316958546309,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.7876984126984127,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.13128306878306878,
+        "relative_strength_vs_equal_weight": 0.05965705017779551
+      },
+      "ranking_basis": {
+        "score": 0.33121795634920637,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    },
+    {
+      "symbol": "J",
+      "stock_name": "Jacobs Solutions Inc",
+      "final_score": "0.3293",
+      "market_score": "0.1508",
+      "catalyst_score": "0.8650",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "LOW_CONFIRMATION_BLOCK",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=5 Revealing Analyst Questions From Jacobs Solutions’s Q2 Earnings Call | matched company term 'jacobs solutions' with narrative context 'earnings call'; business=Jacobs Solutions' Life Sciences, AI Businesses to Drive Growth, RBC Says | matched company term 'jacobs solutions' with business context 'demand'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Jacobs Solutions' Life Sciences, AI Businesses to Drive Growth, RBC Says",
+          "narrative_title": "5 Revealing Analyst Questions From Jacobs Solutions’s Q2 Earnings Call",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.7698412698412699,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.1283068783068783
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.1283068783068783,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.15076084656084657,
+        "ticket_score": 0.3293206349206349,
+        "blended_score": 0.15076084656084657,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.1283068783068783,
+        "prior_5d_momentum": 0.022673855938061704,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.09943519619500596,
+        "five_day_acceleration": -0.07676134025694425,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.7698412698412699,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.1283068783068783,
+        "relative_strength_vs_equal_weight": 0.05109523590942341
+      },
+      "ranking_basis": {
+        "score": 0.3293206349206349,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    },
+    {
+      "symbol": "GEN",
+      "stock_name": "Gen Digital Inc",
+      "final_score": "0.3268",
+      "market_score": "0.1474",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Gen Digital Inc. Q1 2027 Earnings Call Summary | matched company term 'Gen Digital Inc' with narrative context 'earnings call'; business=Gen Digital Q1 Earnings Call Highlights | matched company term 'gen digital' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Gen Digital Q1 Earnings Call Highlights",
+          "narrative_title": "Gen Digital Inc. Q1 2027 Earnings Call Summary",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.746031746031746,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.12433862433862433
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.12433862433862433,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.14738783068783068,
+        "ticket_score": 0.326790873015873,
+        "blended_score": 0.14738783068783068,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.12433862433862433,
+        "prior_5d_momentum": -0.010709269662921295,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.09036377708978338,
+        "five_day_acceleration": -0.10107304675270468,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.746031746031746,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.12433862433862433,
+        "relative_strength_vs_equal_weight": 0.04202381680420083
+      },
+      "ranking_basis": {
+        "score": 0.326790873015873,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    },
+    {
+      "symbol": "VLTO",
+      "stock_name": "Veralto Corp",
+      "final_score": "0.3241",
+      "market_score": "0.1437",
+      "catalyst_score": "0.8650",
+      "decision": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "MARKET_WATCHLIST_NEEDS_EVIDENCE",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "LOW_CONFIRMATION_BLOCK",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Veralto Signs Agreement to Acquire Cleanwater1 | matched company term 'veralto' with narrative context 'quarter'; business=Veralto Signs Agreement to Acquire Cleanwater1 | matched company term 'veralto' with business context 'quarter'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Veralto Signs Agreement to Acquire Cleanwater1",
+          "narrative_title": "Veralto Signs Agreement to Acquire Cleanwater1",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.7202380952380952,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.12003968253968253
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.12003968253968253,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.14373373015873014,
+        "ticket_score": 0.3240502976190476,
+        "blended_score": 0.14373373015873014,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.12003968253968253,
+        "prior_5d_momentum": 0.018222768222768027,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.08085198869810917,
+        "five_day_acceleration": -0.06262922047534114,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.7202380952380952,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.12003968253968253,
+        "relative_strength_vs_equal_weight": 0.032512028412526615
+      },
+      "ranking_basis": {
+        "score": 0.3240502976190476,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    },
+    {
+      "symbol": "TRGP",
+      "stock_name": "Targa Resources Corp",
+      "final_score": "0.3228",
+      "market_score": "0.1420",
+      "catalyst_score": "0.8650",
+      "decision": "CANDIDATE_FOR_PAPER_REVIEW",
+      "candidate_entry_reason": {
+        "risk_summary": "Track 1d/3d/5d/10d closes against the universe. Invalidate on loss of 20d momentum or 5d acceleration. Watch for volume confirmation to fade back below the 20d median.",
+        "classification": "CANDIDATE_FOR_PAPER_REVIEW",
+        "evidence_gap_reason": "paper_review_gate_passed",
+        "evidence_gate_status": "CANDIDATE_FOR_PAPER_REVIEW",
+        "footprint_factor_coverage": 0.3333333333333333
+      },
+      "selection_reason": "narrative=Targa Resources (TRGP) Stock Sees Modest Fair Value Lift After Bullish Analyst Revisions | matched company term 'targa resources' with narrative context 'stock'; business=Targa Resources (TRGP) Stock Looks Fairly Valued Following Its 7x Five Year Run | matched company term 'targa resources' with business context 'margin'",
+      "source_layers": {
+        "news": {
+          "score": 0.865,
+          "status": "OBSERVED",
+          "business_title": "Targa Resources (TRGP) Stock Looks Fairly Valued Following Its 7x Five Year Run",
+          "narrative_title": "Targa Resources (TRGP) Stock Sees Modest Fair Value Lift After Bullish Analyst Revisions",
+          "business_relevance": 0.95,
+          "narrative_relevance": 0.95
+        },
+        "price_volume": {
+          "status": "OBSERVED",
+          "factor_contributions": {
+            "close_strength": null,
+            "liquidity_quality": null,
+            "relative_strength": 0.7083333333333334,
+            "breakout_acceptance": 0.0,
+            "volume_price_alignment": null,
+            "relative_volume_expansion": null
+          },
+          "median_dollar_volume_20d": null,
+          "volume_weighted_momentum": null,
+          "volume_confirmation_ratio": null,
+          "large_participant_footprint_score": 0.11805555555555555
+        },
+        "social_sentiment": {
+          "status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+          "definition": "No validated social sentiment corpus was available for this run."
+        },
+        "capital_flow_proxy": {
+          "score": 0.11805555555555555,
+          "status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
+          "definition": "Observable price-volume footprint proxy; not verified institutional order flow.",
+          "factor_coverage": 0.3333333333333333
+        },
+        "market_participation": {
+          "score": 0.278,
+          "status": "OBSERVED",
+          "definition": "Cross-sectional breadth and advance ratio; not social sentiment."
+        }
+      },
+      "factor_snapshot": {
+        "market_score": 0.1420472222222222,
+        "ticket_score": 0.32278541666666666,
+        "blended_score": 0.1420472222222222,
+        "breakout_score": 0.0,
+        "catalyst_score": 0.865,
+        "raw_market_score": 0.11805555555555555,
+        "prior_5d_momentum": 0.0959425649951049,
+        "contrarian_penalty": 0.0,
+        "prior_20d_momentum": 0.0791559554413026,
+        "five_day_acceleration": 0.01678660955380229,
+        "footprint_factor_coverage": 0.3333333333333333,
+        "market_participation_score": 0.278,
+        "footprint_factor_contributions": {
+          "close_strength": null,
+          "liquidity_quality": null,
+          "relative_strength": 0.7083333333333334,
+          "breakout_acceptance": 0.0,
+          "volume_price_alignment": null,
+          "relative_volume_expansion": null
+        },
+        "large_participant_footprint_score": 0.11805555555555555,
+        "relative_strength_vs_equal_weight": 0.030815995155720054
+      },
+      "ranking_basis": {
+        "score": 0.32278541666666666,
+        "formula": "0.75 * market_score + 0.25 * catalyst_score",
+        "ranking_metric": "ticket_score",
+        "factor_coverage": 0.3333333333333333,
+        "profit_guarantee": false,
+        "strategy_version": "observable_footprint_v1",
+        "expected_return_status": "UNAVAILABLE_HISTORICAL_MODEL"
+      },
+      "research_run_id": 145
+    }
+  ],
+  "returns": {
+    "RVTY": {
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_10d": null
+    },
+    "SOLV": {
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_10d": null
+    },
+    "WTW": {
+      "forward_1d": null,
+      "forward_3d": null,
+      "forward_10d": null
+    }
+  },
+  "tracking": [
+    {
+      "ticket_id": 514,
+      "symbol": "RVTY",
+      "horizon_days": 1,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-24"
+    },
+    {
+      "ticket_id": 514,
+      "symbol": "RVTY",
+      "horizon_days": 3,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-26"
+    },
+    {
+      "ticket_id": 514,
+      "symbol": "RVTY",
+      "horizon_days": 10,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-09-04"
+    },
+    {
+      "ticket_id": 513,
+      "symbol": "SOLV",
+      "horizon_days": 1,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-24"
+    },
+    {
+      "ticket_id": 513,
+      "symbol": "SOLV",
+      "horizon_days": 3,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-26"
+    },
+    {
+      "ticket_id": 513,
+      "symbol": "SOLV",
+      "horizon_days": 10,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-09-04"
+    },
+    {
+      "ticket_id": 512,
+      "symbol": "WTW",
+      "horizon_days": 1,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-24"
+    },
+    {
+      "ticket_id": 512,
+      "symbol": "WTW",
+      "horizon_days": 3,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-08-26"
+    },
+    {
+      "ticket_id": 512,
+      "symbol": "WTW",
+      "horizon_days": 10,
+      "check_status": "pending",
+      "forward_return": null,
+      "outcome_classification": null,
+      "outcome_reason": null,
+      "due_date": "2026-09-04"
+    }
+  ],
+  "ticket_count": 3,
+  "top10_count": 10
+}

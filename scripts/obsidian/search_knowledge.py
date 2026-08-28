@@ -16,10 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import psycopg2
 
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql://xiaomei:xiaomei2026@localhost:5432/xiaomei",
-)
+from db.engine import DATABASE_URL
 
 EMBEDDING_DIMENSION = 1536
 

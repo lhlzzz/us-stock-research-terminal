@@ -1,12 +1,26 @@
 # NEXT_ACTION
 
+**已验证（2026-08-18，盘中纸面模拟继续）：**
+- `scripts/realtime_runner.py` 已在纽约常规交易时段运行两轮：手动 `run_id=1`（北京时间 21:47）和 scheduler 自动 `run_id=2`（北京时间 21:55）；两轮均使用已完成的研究运行 `144` 作为上下文。
+- `intraday_paper_v1` 每轮对 15 个候选写入多头与短模型审计决策；可用行情未达到多头入场门槛，短模型因没有可验证借券来源而拒绝。当前纸面持仓、订单、成交均为 `0`，没有 broker 或外部订单调用。
+- 现有 scheduler 已注册 `Intraday Paper Strategy`，北京时区每 5 分钟触发，runner 自行执行纽约时段、节假日和行情新鲜度门控；PostgreSQL、Redis、scheduler 健康检查通过。
+- 验证：`pytest -q tests` 为 **50 passed**，`python3 -m compileall -q scripts`、`bash -n scripts/start_services.sh scripts/daily_pipeline.sh` 和 API 盘中概览 smoke 通过。
+
 **当前待办：**
-1. **策略质量验证**：新的 `observable_footprint_v1` 仅重构未来研究运行；必须积累独立样本后再判断 1d/3d/5d/10d 结果，不能把已有纸面收益当作实盘能力或策略证明。
+1. **策略质量验证**：`observable_footprint_v1` 当前没有已版本化的完成 1d 样本，权重优化、信号分析和自进化均会返回 `UNVALIDATED_NO_FIXED_CHAIN` / `NOT_READY` 并保留现有权重；必须积累独立样本后再判断 1d/3d/5d/10d 结果，不能把已有纸面收益当作实盘能力或策略证明。
 2. **历史版本边界**：446 张历史票缺少可唯一推导的 `research_run_id`，其新闻、资金代理和情绪快照均保持历史缺失；不得补造。
-3. **数据源运行边界**：Yahoo Chart API 在 2026-08-15 的真实 smoke 返回 403，EastMoney K 线未成功；`DataProvider` 已明确记录后回退到 Akshare。仅在来源、时间戳和 fallback 链均已保存时使用行情。
+3. **数据源运行边界**：Yahoo Chart API 在 2026-08-15 的真实 smoke 返回 403，EastMoney 历史 K 线 API 失败；CloakBrowser 可正常加载东财详情页，但日 K 仅以图表图片呈现、没有可验证的结构化 OHLCV 行。`DataProvider` 记录 Scrapy 与浏览器来源证据后回退到 Akshare。仅在来源、时间戳和 fallback 链均已保存时使用行情。
+
+**已验证（2026-08-15，生命周期闭环加固）：**
+- scheduler 现在自行维护并校验 daemon PID 身份；`start_services.sh` 用 `setsid --fork` 启动后必须通过独立 liveness 检查，`--health` 同时检查 PostgreSQL、Redis、日链、磁盘与 daemon。真实进程在独立检查中存活，Financial OS overview smoke 通过
+- 所有可执行 Python/Shell 脚本不再嵌入 PostgreSQL 密码或 `PGPASSWORD`；统一从环境或仓库 `.env` 读取 `DATABASE_URL`
+- 未来 pipeline 保存改为 `running` research run + 单事务派生记录；全部 flush 成功后才标记 `done` 和 `finished_at`，任一异常会 rollback 派生数据并把 run 标记为 `failed`
+- 权重优化、信号分析和自进化只读取 `observable_footprint_v1`、`VERSIONED`、已完成的研究运行；排除 446 张无版本历史票和 `RECONSTRUCTED_FROM_DATABASE` 运行。样本/收益/下行/因子覆盖 gate 不满足时只记录决策，不改写现有权重
+- 验证：`python3 -m pytest -q tests` 为 44 passed；`python3 -m compileall -q scripts`、`bash -n scripts/start_services.sh scripts/daily_pipeline.sh`、真实 optimizer/signal/self-evolve gate、scheduler health、PostgreSQL 版本样本查询和 Financial OS overview smoke 均通过
 
 **已验证（2026-08-15，行情、策略与知识资产重构）：**
 - `scripts/data_provider.py` 现在是行情 API 的唯一 transport owner：Scrapy 长生命周期 bridge 提供请求去重、超时、重试、域名并发、响应 hash 和 audit；Yahoo Chart API 为有界可选 K 线源，限流/不可用状态不会被掩盖，EastMoney 与 Akshare fallback 会写入 `source_attempts`
+- 东财 K 线新增受限 CloakBrowser 页面来源：仅在东财历史 API 失败后尝试，串行且最多 3 次；只接受完整日期、开高低收和成交量行，记录页面 URL、内容 hash、标题、抓取时间、schema 版本和状态。2026-08-15 NVDA 页面加载成功但没有结构化日线，状态为 `empty`，随后由 Akshare 返回截至 2026-08-14 的 10 根日线
 - 历史 K 线、出票实时行情、研究面板、回填任务和 K 线任务均已收口到 `DataProvider`；没有新增 broker、execution 或 live-trade 路径
 - 出票策略版本为 `observable_footprint_v1`：公开价格成交量足迹、流动性、相对强弱、突破接受度、收盘强度、市场宽度/涨跌家数、独立催化证据和风险惩罚；不再把 EastMoney 字段描述为主力资金/机构流，缺失项不会使用 `0.5` 中性分数
 - 公共催化证据缺失时只能产生 `MARKET_WATCHLIST_NEEDS_EVIDENCE`，不能进入 `CANDIDATE_FOR_PAPER_REVIEW`；`social_sentiment` 保持 `UNAVAILABLE_NO_VALIDATED_CORPUS`

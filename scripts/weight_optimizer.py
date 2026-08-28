@@ -20,6 +20,12 @@ from db.models import FactorSnapshot, ForwardTracking
 from sqlalchemy import text
 
 WEIGHTS_FILE = Path(__file__).resolve().parent.parent / "data" / "scoring_weights.json"
+STRATEGY_VERSION = "observable_footprint_v1"
+VERSION_STATUS = "VERSIONED"
+MIN_VALIDATED_ROWS = 20
+MIN_VALIDATED_TRADING_DAYS = 10
+MIN_FACTOR_COVERAGE = 0.75
+MAX_AVERAGE_LOSS = -0.05
 
 DEFAULT_WEIGHTS = {
     "prior_20d_momentum": 0.10,
@@ -39,39 +45,87 @@ FACTORS = [
 ]
 
 
-def compute_factor_ic(session, lookback_days: int = 60) -> dict[str, float]:
-    """Compute IC (rank correlation) for each factor vs 1d forward return."""
+def load_versioned_feedback(session, lookback_days: int = 60) -> pd.DataFrame:
+    """Load only reproducible observable-footprint 1d outcomes."""
     cutoff = date.today() - timedelta(days=lookback_days)
 
-    factors = session.execute(text(
-        "SELECT trade_date, symbol, " + ", ".join(FACTORS) + " "
-        "FROM factor_snapshots WHERE trade_date >= :cutoff ORDER BY trade_date, symbol"
-    ), {"cutoff": cutoff}).fetchall()
+    rows = session.execute(text(
+        "SELECT fs.trade_date, fs.symbol, " + ", ".join(f"fs.{factor}" for factor in FACTORS) + ", "
+        "ft.forward_return "
+        "FROM factor_snapshots fs "
+        "JOIN forward_tracking ft "
+        "  ON ft.symbol = fs.symbol "
+        " AND ft.as_of_date = fs.trade_date "
+        " AND ft.horizon_days = 1 "
+        "JOIN tickets t ON t.id = ft.ticket_id "
+        "JOIN research_runs rr ON rr.run_id = t.research_run_id "
+        "WHERE fs.trade_date >= :cutoff "
+        "  AND ft.check_status = 'completed' "
+        "  AND ft.forward_return IS NOT NULL "
+        "  AND rr.status = 'done' "
+        "  AND rr.finished_at IS NOT NULL "
+        "  AND rr.config->>'strategy_version' = :strategy_version "
+        "  AND COALESCE(rr.config->>'version_status', '') = :version_status "
+        "ORDER BY fs.trade_date, fs.symbol"
+    ), {
+        "cutoff": cutoff,
+        "strategy_version": STRATEGY_VERSION,
+        "version_status": VERSION_STATUS,
+    }).fetchall()
 
-    tracking = session.execute(text(
-        "SELECT as_of_date, symbol, forward_return "
-        "FROM forward_tracking WHERE check_status = 'completed' "
-        "AND as_of_date >= :cutoff AND horizon_days = 1"
-    ), {"cutoff": cutoff}).fetchall()
+    return pd.DataFrame(rows, columns=["trade_date", "symbol"] + FACTORS + ["forward_return"])
 
-    if not factors or not tracking:
-        return {}
 
-    factor_df = pd.DataFrame(factors, columns=["trade_date", "symbol"] + FACTORS)
-    track_df = pd.DataFrame(tracking, columns=["as_of_date", "symbol", "forward_return"])
+def evaluate_validation_gate(feedback: pd.DataFrame) -> dict:
+    """Block weight changes until independent versioned evidence is sufficient."""
+    if feedback.empty:
+        return {
+            "status": "UNVALIDATED_NO_FIXED_CHAIN",
+            "reason": "no_versioned_completed_returns",
+            "strategy_version": STRATEGY_VERSION,
+            "sample_count": 0,
+            "trading_days": 0,
+            "factor_coverage": 0.0,
+        }
 
-    merged = factor_df.merge(track_df, left_on=["trade_date", "symbol"], right_on=["as_of_date", "symbol"], how="inner")
+    factor_coverage = float(feedback[FACTORS].notna().mean().mean())
+    negative_returns = feedback.loc[feedback["forward_return"] < 0, "forward_return"]
+    average_loss = float(negative_returns.mean()) if not negative_returns.empty else 0.0
+    metrics = {
+        "strategy_version": STRATEGY_VERSION,
+        "sample_count": int(len(feedback)),
+        "trading_days": int(feedback["trade_date"].nunique()),
+        "average_return": float(feedback["forward_return"].mean()),
+        "average_loss": average_loss,
+        "factor_coverage": factor_coverage,
+    }
 
-    if len(merged) < 20:
+    if metrics["sample_count"] < MIN_VALIDATED_ROWS:
+        return {"status": "UNVALIDATED_NO_FIXED_CHAIN", "reason": "too_few_completed_returns", **metrics}
+    if metrics["trading_days"] < MIN_VALIDATED_TRADING_DAYS:
+        return {"status": "UNVALIDATED_NO_FIXED_CHAIN", "reason": "too_few_trading_days", **metrics}
+    if metrics["average_return"] <= 0:
+        return {"status": "UNVALIDATED_NO_FIXED_CHAIN", "reason": "non_positive_average_return", **metrics}
+    if metrics["average_loss"] < MAX_AVERAGE_LOSS:
+        return {"status": "UNVALIDATED_NO_FIXED_CHAIN", "reason": "average_loss_exceeds_limit", **metrics}
+    if metrics["factor_coverage"] < MIN_FACTOR_COVERAGE:
+        return {"status": "UNVALIDATED_NO_FIXED_CHAIN", "reason": "insufficient_factor_coverage", **metrics}
+    return {"status": "VALIDATED_FOR_WEIGHT_UPDATE", **metrics}
+
+
+def compute_factor_ic(feedback: pd.DataFrame) -> dict[str, float]:
+    """Compute IC for one validated feedback population."""
+    if len(feedback) < MIN_VALIDATED_ROWS:
         return {}
 
     ic_scores = {}
     for factor in FACTORS:
-        valid = merged[[factor, "forward_return"]].dropna()
+        valid = feedback[[factor, "forward_return"]].dropna()
         if len(valid) < 10:
             continue
         ic, _ = stats.spearmanr(valid[factor], valid["forward_return"])
-        ic_scores[factor] = round(float(ic), 4)
+        if np.isfinite(ic):
+            ic_scores[factor] = round(float(ic), 4)
 
     return ic_scores
 
@@ -117,8 +171,26 @@ def compute_optimal_weights(ic_scores: dict[str, float]) -> dict[str, float]:
     return weights
 
 
-def save_weights(weights: dict[str, float], ic_scores: dict[str, float]):
-    """Save weights and IC scores to file."""
+def _load_weights_artifact() -> dict:
+    if not WEIGHTS_FILE.exists():
+        return {"weights": DEFAULT_WEIGHTS.copy()}
+    try:
+        return json.loads(WEIGHTS_FILE.read_text())
+    except Exception:
+        return {"weights": DEFAULT_WEIGHTS.copy()}
+
+
+def save_validation_decision(decision: dict):
+    """Persist validation evidence without changing active weights."""
+    data = _load_weights_artifact()
+    data["strategy_decision"] = decision
+    data["updated_at"] = date.today().isoformat()
+    WEIGHTS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    WEIGHTS_FILE.write_text(json.dumps(data, indent=2))
+
+
+def save_weights(weights: dict[str, float], ic_scores: dict[str, float], decision: dict):
+    """Save validated weights, IC scores, and decision evidence."""
     WEIGHTS_FILE.parent.mkdir(parents=True, exist_ok=True)
 
     # Map database column names to pipeline expected names
@@ -137,12 +209,14 @@ def save_weights(weights: dict[str, float], ic_scores: dict[str, float]):
         mapped_key = COLUMN_MAPPING.get(k, k)
         mapped_ic[mapped_key] = v
 
-    data = {
+    data = _load_weights_artifact()
+    data.update({
         "updated_at": date.today().isoformat(),
         "weights": mapped_weights,
         "ic_scores": mapped_ic,
-        "source": "weekly_ic_analysis",
-    }
+        "source": "versioned_observable_footprint_ic_analysis",
+        "strategy_decision": decision,
+    })
     WEIGHTS_FILE.write_text(json.dumps(data, indent=2))
 
 
@@ -179,16 +253,42 @@ def load_horizon_weights(horizon: int = 3) -> dict[str, float]:
 
 
 def run_weekly_optimization() -> dict:
-    """Run full weekly weight optimization."""
+    """Optimize only after the versioned validation gate passes."""
     session = SessionLocal()
     try:
-        ic_scores = compute_factor_ic(session)
+        feedback = load_versioned_feedback(session)
+        decision = evaluate_validation_gate(feedback)
+        if decision["status"] != "VALIDATED_FOR_WEIGHT_UPDATE":
+            save_validation_decision(decision)
+            return {
+                "status": "UNVALIDATED_NO_FIXED_CHAIN",
+                "decision": decision,
+                "weights": load_weights(),
+                "weights_file": str(WEIGHTS_FILE),
+            }
+
+        ic_scores = compute_factor_ic(feedback)
+        if not ic_scores:
+            decision = {
+                **decision,
+                "status": "UNVALIDATED_NO_FIXED_CHAIN",
+                "reason": "insufficient_valid_factor_pairs",
+            }
+            save_validation_decision(decision)
+            return {
+                "status": "UNVALIDATED_NO_FIXED_CHAIN",
+                "decision": decision,
+                "weights": load_weights(),
+                "weights_file": str(WEIGHTS_FILE),
+            }
+
         weights = compute_optimal_weights(ic_scores)
-        save_weights(weights, ic_scores)
+        save_weights(weights, ic_scores, decision)
         return {
             "status": "done",
             "ic_scores": ic_scores,
             "weights": weights,
+            "decision": decision,
             "weights_file": str(WEIGHTS_FILE),
         }
     finally:

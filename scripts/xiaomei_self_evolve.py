@@ -29,6 +29,8 @@ ALLOWED_KNOBS = {
 
 # Max proposals per day
 MAX_PROPOSALS_PER_DAY = 3
+STRATEGY_VERSION = "observable_footprint_v1"
+VERSION_STATUS = "VERSIONED"
 
 
 def _get_config(engine, key: str) -> str | None:
@@ -76,11 +78,19 @@ def _check_performance_gate(engine) -> dict:
                 COUNT(DISTINCT t.output_date) as trading_days
             FROM forward_tracking ft
             JOIN tickets t ON ft.ticket_id = t.id
+            JOIN research_runs rr ON rr.run_id = t.research_run_id
             WHERE ft.check_status = 'completed'
+            AND rr.status = 'done'
+            AND rr.finished_at IS NOT NULL
+            AND rr.config->>'strategy_version' = :strategy_version
+            AND COALESCE(rr.config->>'version_status', '') = :version_status
             AND t.output_date >= (
                 SELECT MAX(output_date) - INTERVAL '30 days' FROM tickets
             )
-        """))
+        """), {
+            "strategy_version": STRATEGY_VERSION,
+            "version_status": VERSION_STATUS,
+        })
         row = result.fetchone()
 
         if not row or not row[0]:
@@ -123,15 +133,17 @@ def _analyze_factor_performance(engine) -> dict:
             WHERE analysis_date >= (
                 SELECT MAX(analysis_date) - INTERVAL '14 days' FROM signal_effectiveness
             )
+            AND data_version = :strategy_version
             AND ic_score IS NOT NULL
             ORDER BY ic_score DESC
-        """))
+        """), {"strategy_version": STRATEGY_VERSION})
         factors = [dict(row._mapping) for row in result.fetchall()]
 
     return {"factors": factors}
 
 
 def _propose_weight_changes(
+    engine,
     gate_status: str,
     factor_performance: dict,
 ) -> list[dict]:
@@ -155,7 +167,7 @@ def _propose_weight_changes(
         # Map signal_key to config key
         weight_key = f"evidence_{signal_key}_weight"
         if weight_key in ALLOWED_KNOBS:
-            current = _get_config(None, weight_key)  # Will be called with engine
+            current = _get_config(engine, weight_key)
             if current:
                 current_val = float(current)
                 min_val, max_val = ALLOWED_KNOBS[weight_key]
@@ -173,7 +185,7 @@ def _propose_weight_changes(
         signal_key = worst_factor["signal_key"]
         weight_key = f"evidence_{signal_key}_weight"
         if weight_key in ALLOWED_KNOBS:
-            current = _get_config(None, weight_key)
+            current = _get_config(engine, weight_key)
             if current:
                 current_val = float(current)
                 min_val, max_val = ALLOWED_KNOBS[weight_key]
@@ -212,7 +224,7 @@ def run_self_evolution(engine, dry_run: bool = False) -> dict:
     factor_perf = _analyze_factor_performance(engine)
 
     # Propose changes
-    proposals = _propose_weight_changes(gate_status, factor_perf)
+    proposals = _propose_weight_changes(engine, gate_status, factor_perf)
 
     if not proposals:
         logger.info("No proposals generated")
@@ -280,6 +292,7 @@ def _log_evolution(result: dict):
 if __name__ == "__main__":
     import argparse
     from sqlalchemy import create_engine
+    from db.engine import DATABASE_URL
 
     logging.basicConfig(level=logging.INFO)
 
@@ -288,8 +301,7 @@ if __name__ == "__main__":
     parser.add_argument("--check-gate", action="store_true", help="Check gate only")
     args = parser.parse_args()
 
-    db_url = os.environ.get("DATABASE_URL", "postgresql://xiaomei:xiaomei2026@localhost:5432/xiaomei")
-    engine = create_engine(db_url)
+    engine = create_engine(DATABASE_URL)
 
     if args.check_gate:
         gate = _check_performance_gate(engine)

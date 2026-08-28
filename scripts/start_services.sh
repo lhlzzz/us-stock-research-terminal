@@ -3,13 +3,20 @@
 # Portfolio coexistence: PostgreSQL on 5432 (xiaogu owns 5432).
 # Prefer docker-fallback xiaomei-db; Redis still native 6379.
 
-set -e
+set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 echo "=== xiaomei infrastructure startup ==="
 
-DB_URL="${DATABASE_URL:-postgresql://xiaomei:xiaomei2026@localhost:5432/xiaomei}"
+if [ -f "$ROOT/.env" ]; then
+    set -a
+    . "$ROOT/.env"
+    set +a
+fi
+
+: "${DATABASE_URL:?DATABASE_URL must be set in the environment or .env}"
+DB_URL="$DATABASE_URL"
 DB_PORT=5432
 
 if pg_isready -h 127.0.0.1 -p "$DB_PORT" -q 2>/dev/null; then
@@ -45,12 +52,12 @@ else
     fi
 fi
 
-if PGPASSWORD=xiaomei2026 psql -U xiaomei -h 127.0.0.1 -p "$DB_PORT" -d xiaomei -c "SELECT 1" >/dev/null 2>&1; then
+if psql "$DB_URL" -c "SELECT 1" >/dev/null 2>&1; then
     echo "Database 'xiaomei': accessible on $DB_PORT"
 else
     echo "Database 'xiaomei': waiting for role/db init..."
     sleep 2
-    if PGPASSWORD=xiaomei2026 psql -U xiaomei -h 127.0.0.1 -p "$DB_PORT" -d xiaomei -c "SELECT 1" >/dev/null 2>&1; then
+    if psql "$DB_URL" -c "SELECT 1" >/dev/null 2>&1; then
         echo "Database 'xiaomei': accessible"
     else
         echo "Database 'xiaomei': NOT ready — check docker logs xiaomei-db"
@@ -58,24 +65,23 @@ else
     fi
 fi
 
-SCHEDULER_PID_FILE="$ROOT/run/xiaomei_scheduler.pid"
 SCHEDULER_LOG_FILE="$ROOT/logs/xiaomei_scheduler.log"
-SCHEDULER_PID="$(pgrep -f 'python3 .*scripts/xiaomei_scheduler.py --daemon' | head -n 1 || true)"
 
-if [ -n "$SCHEDULER_PID" ]; then
-    mkdir -p "$(dirname "$SCHEDULER_PID_FILE")"
-    echo "$SCHEDULER_PID" > "$SCHEDULER_PID_FILE"
-    echo "Scheduler: already running (pid $SCHEDULER_PID)"
+if python3 "$ROOT/scripts/xiaomei_scheduler.py" --scheduler-status >/dev/null 2>&1; then
+    echo "Scheduler: already running"
 else
-    mkdir -p "$(dirname "$SCHEDULER_PID_FILE")" "$(dirname "$SCHEDULER_LOG_FILE")"
-    nohup python3 "$ROOT/scripts/xiaomei_scheduler.py" --daemon >> "$SCHEDULER_LOG_FILE" 2>&1 &
-    SCHEDULER_PID=$!
-    sleep 1
-    if kill -0 "$SCHEDULER_PID" 2>/dev/null; then
-        echo "$SCHEDULER_PID" > "$SCHEDULER_PID_FILE"
-        echo "Scheduler: started (pid $SCHEDULER_PID)"
-    else
-        echo "Scheduler: FAILED to start"
+    mkdir -p "$ROOT/run" "$(dirname "$SCHEDULER_LOG_FILE")"
+    setsid --fork python3 "$ROOT/scripts/xiaomei_scheduler.py" --daemon \
+        </dev/null >> "$SCHEDULER_LOG_FILE" 2>&1 &
+    for _ in 1 2 3; do
+        sleep 1
+        if python3 "$ROOT/scripts/xiaomei_scheduler.py" --scheduler-status >/dev/null 2>&1; then
+            echo "Scheduler: started and verified"
+            break
+        fi
+    done
+    if ! python3 "$ROOT/scripts/xiaomei_scheduler.py" --scheduler-status >/dev/null 2>&1; then
+        echo "Scheduler: FAILED liveness verification"
         exit 1
     fi
 fi

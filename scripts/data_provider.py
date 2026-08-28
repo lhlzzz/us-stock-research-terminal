@@ -54,6 +54,8 @@ SCRAPY_DOWNLOAD_TIMEOUT = int(os.environ.get("MARKET_DATA_DOWNLOAD_TIMEOUT", "12
 SCRAPY_RETRY_TIMES = int(os.environ.get("MARKET_DATA_RETRY_TIMES", "1"))
 SCRAPY_CONCURRENT_REQUESTS = int(os.environ.get("MARKET_DATA_CONCURRENT_REQUESTS", "8"))
 SCRAPY_CONCURRENT_PER_DOMAIN = int(os.environ.get("MARKET_DATA_CONCURRENT_PER_DOMAIN", "2"))
+BROWSER_CAPTURE_TIMEOUT = int(os.environ.get("MARKET_DATA_BROWSER_TIMEOUT", "20"))
+BROWSER_KLINE_MAX_CAPTURES = int(os.environ.get("MARKET_DATA_BROWSER_KLINE_MAX_CAPTURES", "3"))
 
 # Cache directory
 CACHE_DIR = Path(__file__).resolve().parent.parent / "data" / "provider-cache"
@@ -63,6 +65,7 @@ METRICS_DIR = Path(__file__).resolve().parent.parent / "data" / "provider-metric
 KLINE_URL = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
 STOCK_GET_URL = "https://push2delay.eastmoney.com/api/qt/stock/get"
 YAHOO_CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart"
+EASTMONEY_US_PAGE_URL = "https://quote.eastmoney.com/us/{symbol}.html"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
@@ -89,10 +92,13 @@ US_MARKET_HOLIDAYS_2026 = {
 
 
 def _fnum(v) -> float | None:
-    if v is None or v == "-":
+    if v is None:
         return None
     try:
-        return float(v)
+        text = str(v).strip().replace(",", "")
+        if text in {"", "-", "--"}:
+            return None
+        return float(text)
     except (ValueError, TypeError):
         return None
 
@@ -108,6 +114,36 @@ def secid_candidates(symbol: str) -> list[str]:
 
 def _url_with_query(url: str, params: dict[str, Any]) -> str:
     return f"{url}?{urlencode(params)}"
+
+
+def _parse_eastmoney_browser_klines(payload: dict[str, Any], beg: str, end: str) -> list[dict]:
+    """Normalize complete daily OHLCV rows extracted from an EastMoney page DOM."""
+    rows_by_date: dict[str, dict[str, Any]] = {}
+    beg_date = pd.Timestamp(beg).date()
+    end_date = pd.Timestamp(end).date()
+    for raw in payload.get("rows") or []:
+        if not isinstance(raw, dict):
+            continue
+        try:
+            row_date = pd.Timestamp(raw.get("date")).date()
+        except (TypeError, ValueError):
+            continue
+        if not beg_date <= row_date <= end_date:
+            continue
+        values = {key: _fnum(raw.get(key)) for key in ("open", "close", "high", "low", "volume")}
+        if any(value is None for value in values.values()):
+            continue
+        rows_by_date[row_date.isoformat()] = {
+            "date": row_date.isoformat(),
+            **values,
+            "amount": _fnum(raw.get("amount")),
+            "adj_close": _fnum(raw.get("adj_close")) or values["close"],
+            "amplitude_pct": _fnum(raw.get("amplitude_pct")),
+            "pct_chg": _fnum(raw.get("pct_chg")),
+            "chg": _fnum(raw.get("chg")),
+            "turnover_rate": _fnum(raw.get("turnover_rate")),
+        }
+    return [rows_by_date[key] for key in sorted(rows_by_date)]
 
 
 class MarketDataHttpError(RuntimeError):
@@ -500,6 +536,119 @@ class EastmoneyDirectProvider:
         return None
 
 
+class EastmoneyBrowserKlineProvider:
+    """Bounded public-page OHLCV fallback using CloakBrowser Playwright."""
+
+    name = "eastmoney_browser_page"
+    priority = 3
+    schema_version = "eastmoney_browser_dom_ohlcv_v1"
+
+    _EXTRACT_SCRIPT = r"""
+JSON.stringify((() => {
+  const text = (value) => String(value ?? '').replace(/,/g, '').trim();
+  const headersFor = (table) => Array.from(table.querySelectorAll('tr')).find((row) =>
+    Array.from(row.querySelectorAll('th,td')).some((cell) => /日期|date/i.test(cell.innerText))
+  );
+  const indexOf = (headers, names) => headers.findIndex((header) =>
+    names.some((name) => header.includes(name))
+  );
+  const rows = [];
+  for (const table of document.querySelectorAll('table')) {
+    const headerRow = headersFor(table);
+    if (!headerRow) continue;
+    const headers = Array.from(headerRow.querySelectorAll('th,td')).map((cell) => text(cell.innerText).toLowerCase());
+    const positions = {
+      date: indexOf(headers, ['日期', 'date']),
+      open: indexOf(headers, ['开盘', 'open']),
+      close: indexOf(headers, ['收盘', 'close']),
+      high: indexOf(headers, ['最高', 'high']),
+      low: indexOf(headers, ['最低', 'low']),
+      volume: indexOf(headers, ['成交量', 'volume']),
+      amount: indexOf(headers, ['成交额', 'amount']),
+    };
+    if (Object.values(positions).slice(0, 6).some((position) => position < 0)) continue;
+    for (const row of Array.from(table.querySelectorAll('tr'))) {
+      if (row === headerRow) continue;
+      const cells = Array.from(row.querySelectorAll('td')).map((cell) => text(cell.innerText));
+      if (cells.length <= Math.max(...Object.values(positions).filter((position) => position >= 0))) continue;
+      rows.push(Object.fromEntries(Object.entries(positions)
+        .filter(([, position]) => position >= 0)
+        .map(([field, position]) => [field, cells[position]])));
+    }
+  }
+  return {
+    schema_version: 'eastmoney_browser_dom_ohlcv_v1',
+    url: location.href,
+    title: document.title,
+    rows,
+  };
+})())
+"""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._capture_count = 0
+        self._local = threading.local()
+
+    def _set_capture_metadata(self, **metadata: Any) -> None:
+        self._local.capture_metadata = metadata
+
+    def source_attempt_metadata(self) -> dict[str, Any]:
+        return dict(getattr(self._local, "capture_metadata", {}))
+
+    def _capture_page_payload(self, symbol: str) -> dict[str, Any]:
+        url = EASTMONEY_US_PAGE_URL.format(symbol=normalize_us_symbol(symbol))
+        browser = None
+        try:
+            from cloakbrowser import launch
+
+            browser = launch(headless=True)
+            page = browser.new_page()
+            page.goto(url, wait_until="domcontentloaded", timeout=BROWSER_CAPTURE_TIMEOUT * 1000)
+            page.wait_for_timeout(2500)
+            text = page.evaluate(self._EXTRACT_SCRIPT)
+        except Exception as exc:
+            raise RuntimeError(f"EASTMONEY_BROWSER_CAPTURE_UNAVAILABLE: {exc}") from exc
+        finally:
+            if browser is not None:
+                browser.close()
+
+        if not isinstance(text, str):
+            raise RuntimeError("EASTMONEY_BROWSER_INVALID_PAGE_PAYLOAD")
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("EASTMONEY_BROWSER_INVALID_PAGE_PAYLOAD") from exc
+        if not isinstance(payload, dict):
+            raise RuntimeError("EASTMONEY_BROWSER_PAGE_OBJECT_REQUIRED")
+
+        self._set_capture_metadata(
+            browser_transport="cloakbrowser_playwright",
+            endpoint_kind="public_page_dom",
+            page_url=str(payload.get("url") or url),
+            page_title=str(payload.get("title") or ""),
+            schema_version=str(payload.get("schema_version") or self.schema_version),
+            page_sha256=hashlib.sha256(text.encode("utf-8")).hexdigest(),
+            captured_at=datetime.now().isoformat(),
+        )
+        return payload
+
+    def fetch_klines(self, symbol: str, beg: str, end: str, fqt: int = 1) -> list[dict] | None:
+        del fqt
+        self._set_capture_metadata(
+            browser_transport="cloakbrowser_playwright",
+            endpoint_kind="public_page_dom",
+            page_url=EASTMONEY_US_PAGE_URL.format(symbol=normalize_us_symbol(symbol)),
+            schema_version=self.schema_version,
+        )
+        with self._lock:
+            if self._capture_count >= BROWSER_KLINE_MAX_CAPTURES:
+                raise RuntimeError("EASTMONEY_BROWSER_CAPTURE_LIMIT_REACHED")
+            self._capture_count += 1
+            payload = self._capture_page_payload(symbol)
+        return _parse_eastmoney_browser_klines(payload, beg, end) or None
+
+
 class YahooChartProvider:
     """Optional Yahoo Finance chart API source for daily historical OHLCV."""
 
@@ -648,7 +797,7 @@ class DataProvider:
     """Multi-source data provider with fallback chain.
 
     Provider priority:
-    - Klines: Yahoo chart API -> EastMoney -> Akshare
+    - Klines: Yahoo chart API -> EastMoney API -> EastMoney browser page -> Akshare
     - Quote: EastmoneyDirect -> Akshare
 
     Features:
@@ -663,9 +812,15 @@ class DataProvider:
         self.transport = ScrapyApiBridge()
         self.yahoo_chart = YahooChartProvider(self.transport)
         self.eastmoney_direct = EastmoneyDirectProvider(self.transport)
+        self.eastmoney_browser = EastmoneyBrowserKlineProvider()
         self.akshare = AkshareProvider()
 
-        self.kline_providers = [self.yahoo_chart, self.eastmoney_direct, self.akshare]
+        self.kline_providers = [
+            self.yahoo_chart,
+            self.eastmoney_direct,
+            self.eastmoney_browser,
+            self.akshare,
+        ]
         self.quote_providers = [self.eastmoney_direct, self.akshare]
 
         self.cache_dir = CACHE_DIR
@@ -676,9 +831,11 @@ class DataProvider:
         self._api_status = {
             "yahoo_chart": "unknown",
             "eastmoney_kline": "unknown",
+            "eastmoney_browser_kline": "unknown",
             "eastmoney_quote": "unknown",
         }
         self._eastmoney_kline_cooldown_until: float = 0
+        self._eastmoney_browser_kline_cooldown_until: float = 0
         self._yahoo_chart_cooldown_until: float = 0
         self._last_batch_quote_status = "unknown"
         self._all_metrics: list[ProviderMetrics] = []
@@ -742,6 +899,19 @@ class DataProvider:
         self._api_status["eastmoney_kline"] = "available"
         self._eastmoney_kline_cooldown_until = 0
 
+    def _is_eastmoney_browser_kline_available(self) -> bool:
+        if self._api_status.get("eastmoney_browser_kline") == "unavailable":
+            return time.time() >= self._eastmoney_browser_kline_cooldown_until
+        return True
+
+    def _mark_eastmoney_browser_kline_unavailable(self) -> None:
+        self._api_status["eastmoney_browser_kline"] = "unavailable"
+        self._eastmoney_browser_kline_cooldown_until = time.time() + EASTMONEY_COOLDOWN_SECONDS
+
+    def _mark_eastmoney_browser_kline_available(self) -> None:
+        self._api_status["eastmoney_browser_kline"] = "available"
+        self._eastmoney_browser_kline_cooldown_until = 0
+
     def _is_yahoo_chart_available(self) -> bool:
         if self._api_status.get("yahoo_chart") == "rate_limited":
             return time.time() >= self._yahoo_chart_cooldown_until
@@ -763,6 +933,8 @@ class DataProvider:
             return "timeout"
         if provider_name == "yahoo_chart_api":
             return "unavailable"
+        if provider_name == "eastmoney_browser_page":
+            return "unavailable"
         return "failed"
 
     def _provider_available(self, provider_name: str) -> bool:
@@ -770,6 +942,8 @@ class DataProvider:
             return self._is_yahoo_chart_available()
         if provider_name == "eastmoney_direct":
             return self._is_eastmoney_kline_available()
+        if provider_name == "eastmoney_browser_page":
+            return self._is_eastmoney_browser_kline_available()
         return True
 
     # ─── API status check ────────────────────────────────────────────
@@ -857,22 +1031,41 @@ class DataProvider:
                                 "status": "available",
                                 "rows": len(rows),
                                 "latency_ms": latency_ms,
+                                **(
+                                    provider.source_attempt_metadata()
+                                    if hasattr(provider, "source_attempt_metadata")
+                                    else {}
+                                ),
                             }
                         )
                         if provider.name == "yahoo_chart_api":
                             self._mark_yahoo_chart_available()
                         if provider.name == "eastmoney_direct":
                             self._mark_eastmoney_kline_available()
+                        if provider.name == "eastmoney_browser_page":
+                            self._mark_eastmoney_browser_kline_available()
                         if len(metrics.source_attempts) > 1:
                             metrics.fallback_used = provider.name
                         self._record_metrics(metrics)
                         return rows, provider.name, metrics.to_dict()
 
                     metrics.source_attempts.append(
-                        {"provider": provider.name, "status": "empty", "rows": 0, "latency_ms": latency_ms}
+                        {
+                            "provider": provider.name,
+                            "status": "empty",
+                            "rows": 0,
+                            "latency_ms": latency_ms,
+                            **(
+                                provider.source_attempt_metadata()
+                                if hasattr(provider, "source_attempt_metadata")
+                                else {}
+                            ),
+                        }
                     )
                     if provider.name == "eastmoney_direct":
                         self._mark_eastmoney_kline_blocked()
+                    if provider.name == "eastmoney_browser_page":
+                        self._mark_eastmoney_browser_kline_unavailable()
                     break  # Don't retry if provider returned empty
 
                 except Exception as e:
@@ -883,6 +1076,11 @@ class DataProvider:
                             "status": error_status,
                             "retry": retry,
                             "error": f"{type(e).__name__}: {e}",
+                            **(
+                                provider.source_attempt_metadata()
+                                if hasattr(provider, "source_attempt_metadata")
+                                else {}
+                            ),
                         }
                     )
                     if provider.name == "yahoo_chart_api" and error_status == "rate_limited":
@@ -894,6 +1092,8 @@ class DataProvider:
                     metrics.error_message = f"{provider.name}: {type(e).__name__}: {e}"
                     if provider.name == "eastmoney_direct":
                         self._mark_eastmoney_kline_blocked()
+                    if provider.name == "eastmoney_browser_page":
+                        self._mark_eastmoney_browser_kline_unavailable()
                     break
 
         metrics.provider_name = "none"

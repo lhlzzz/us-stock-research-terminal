@@ -17,7 +17,7 @@ services:
     environment:
       POSTGRES_DB: xiaomei
       POSTGRES_USER: xiaomei
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-xiaomei2026}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
     volumes:
       - xiaomei-pgdata:/var/lib/postgresql/data
     restart: unless-stopped

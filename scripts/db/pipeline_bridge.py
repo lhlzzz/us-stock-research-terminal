@@ -368,7 +368,7 @@ def save_pipeline_to_db(
     """
     from scripts.db.crud import (
         create_ticket, upsert_forward_tracking,
-        create_runtime_decision, create_research_run,
+        create_runtime_decision, create_research_run, finish_research_run,
         upsert_market_snapshot, upsert_factor_snapshot,
     )
 
@@ -389,20 +389,32 @@ def save_pipeline_to_db(
         db,
         run_name=metrics.get("run_name", "pipeline"),
         output_date=output_date,
-        status="done",
+        status="running",
         candidate_count=metrics.get("paper_review_count", 0) + metrics.get("market_watchlist_count", 0),
         pass_count=metrics.get("paper_review_count", 0),
         git_commit=run_config["git_commit"],
         config=_json_snapshot(run_config),
-        finished_at=datetime.utcnow(),
     )
 
-    counts["candidates"] = _persist_daily_candidates(
-        db,
-        output_date,
-        run.run_id,
-        candidate_rows or top_candidates,
-    )
+    def fail_run(error: Exception):
+        db.rollback()
+        finish_research_run(
+            db,
+            run.run_id,
+            status="failed",
+            error_message=str(error)[:500],
+        )
+        raise RuntimeError(f"pipeline persistence failed for run {run.run_id}") from error
+
+    try:
+        counts["candidates"] = _persist_daily_candidates(
+            db,
+            output_date,
+            run.run_id,
+            candidate_rows or top_candidates,
+        )
+    except Exception as exc:
+        fail_run(exc)
 
     # Save tickets
     for row in top_candidates:
@@ -483,13 +495,14 @@ def save_pipeline_to_db(
                 breakout_score=row.get("breakout_score"),
                 risk_penalty=row.get("risk_penalty"),
                 confirmation_score=row.get("confirmation_score"),
+                commit=False,
             )
             as_of_date = row.get("as_of_date", output_date)
             ticket_ids[(row["symbol"], str(as_of_date))] = ticket.id
             ticket_ids.setdefault((row["symbol"], str(output_date)), ticket.id)
             counts["tickets"] += 1
         except Exception as e:
-            print(f"  DB ticket save error for {row.get('symbol', 'UNKNOWN')}: {e}")
+            fail_run(e)
 
     # Save forward tracking rows
     for ft in forward_tracking_rows:
@@ -512,10 +525,11 @@ def save_pipeline_to_db(
                 as_of_close=ft.get("as_of_close"),
                 check_status="pending",
                 ticket_id=ticket_id,
+                commit=False,
             )
             counts["forward_tracking"] += 1
         except Exception as e:
-            print(f"  DB tracking save error for {ft.get('symbol', 'UNKNOWN')}: {e}")
+            fail_run(e)
 
     # Save runtime decision
     try:
@@ -536,10 +550,11 @@ def save_pipeline_to_db(
             universe_count=metrics.get("source_universe_included_symbols"),
             regime=regime,
             summary=metrics,
+            commit=False,
         )
         counts["runtime_decisions"] += 1
     except Exception as e:
-        print(f"  DB runtime_decision save error: {e}")
+        fail_run(e)
 
     # Save market snapshot
     try:
@@ -551,9 +566,10 @@ def save_pipeline_to_db(
                 trade_date=date.fromisoformat(as_of),
                 regime=regime,
                 universe_count=metrics.get("source_universe_included_symbols"),
+                commit=False,
             )
     except Exception as e:
-        print(f"  DB market_snapshot save error: {e}")
+        fail_run(e)
 
     # Save factor snapshots for top candidates
     for row in top_candidates:
@@ -582,9 +598,10 @@ def save_pipeline_to_db(
                     theme_strength=row.get("theme_strength"),
                     announcement_catalyst=row.get("announcement_catalyst"),
                     regime=regime,
+                    commit=False,
                 )
         except Exception as e:
-            print(f"  DB factor_snapshot save error for {row.get('symbol', 'UNKNOWN')}: {e}")
+            fail_run(e)
 
     # Save signals for top candidates
     SIGNAL_FIELDS = [
@@ -609,7 +626,11 @@ def save_pipeline_to_db(
                     from scripts.db.crud import upsert_signal
                     upsert_signal(db, trade_date, symbol, signal_key, float(signal_value))
         except Exception as e:
-            print(f"  DB signal save error for {row.get('symbol', 'UNKNOWN')}: {e}")
+            fail_run(e)
 
-    db.commit()
-    return counts
+    try:
+        finish_research_run(db, run.run_id, status="done", commit=False)
+        db.commit()
+        return counts
+    except Exception as exc:
+        fail_run(exc)

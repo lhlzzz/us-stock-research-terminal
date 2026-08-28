@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 from datetime import date, datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
@@ -10,7 +11,13 @@ sys.path.insert(0, str(SCRIPTS))
 import numpy as np
 import pandas as pd
 
+import signal_effectiveness
+import realtime_runner
 import us_profit_ticket_pipeline as ticket_pipeline
+import weight_optimizer
+import xiaomei_scheduler as scheduler
+import xiaomei_self_evolve
+from scripts.db import crud, pipeline_bridge
 from market_regime import get_regime_thresholds
 from us_profit_ticket_pipeline import (
     build_candidate_record,
@@ -292,3 +299,317 @@ def test_post_close_pipeline_skips_us_market_holidays():
 
     assert closed_us_session_date(post_close_after_independence_day) == date(2026, 7, 3)
     assert is_trading_day(closed_us_session_date(post_close_after_independence_day)) is False
+
+
+class _RowsResult:
+    def __init__(self, rows):
+        self.rows = rows
+
+    def fetchall(self):
+        return self.rows
+
+
+class _CapturingSession:
+    def __init__(self, rows=None):
+        self.rows = rows or []
+        self.sql = ""
+        self.params = {}
+
+    def execute(self, statement, params):
+        self.sql = str(statement)
+        self.params = params
+        return _RowsResult(self.rows)
+
+    def close(self):
+        pass
+
+
+def _validated_feedback_frame() -> pd.DataFrame:
+    rows = 20
+    frame = pd.DataFrame(
+        {
+            "trade_date": [date(2026, 8, 1 + (index // 2)) for index in range(rows)],
+            "symbol": [f"SYM{index}" for index in range(rows)],
+            "forward_return": [0.01] * 19 + [-0.01],
+        }
+    )
+    for index, factor in enumerate(weight_optimizer.FACTORS):
+        frame[factor] = np.arange(rows, dtype=float) + index
+    return frame
+
+
+def test_weight_optimizer_loads_only_completed_versioned_observable_footprint_rows():
+    session = _CapturingSession()
+
+    feedback = weight_optimizer.load_versioned_feedback(session)
+
+    assert feedback.empty
+    assert "JOIN research_runs rr ON rr.run_id = t.research_run_id" in session.sql
+    assert "rr.finished_at IS NOT NULL" in session.sql
+    assert "rr.config->>'strategy_version' = :strategy_version" in session.sql
+    assert "COALESCE(rr.config->>'version_status', '') = :version_status" in session.sql
+    assert session.params["strategy_version"] == "observable_footprint_v1"
+    assert session.params["version_status"] == "VERSIONED"
+
+
+def test_unvalidated_weight_run_preserves_existing_weights_and_records_decision(monkeypatch, tmp_path):
+    weights_file = tmp_path / "scoring_weights.json"
+    existing_weights = {"relative_strength_vs_equal_weight": 0.42}
+    weights_file.write_text('{"weights": {"relative_strength_vs_equal_weight": 0.42}}')
+
+    monkeypatch.setattr(weight_optimizer, "WEIGHTS_FILE", weights_file)
+    monkeypatch.setattr(weight_optimizer, "SessionLocal", _CapturingSession)
+    monkeypatch.setattr(weight_optimizer, "load_versioned_feedback", lambda _session: pd.DataFrame())
+
+    result = weight_optimizer.run_weekly_optimization()
+    artifact = __import__("json").loads(weights_file.read_text())
+
+    assert result["status"] == "UNVALIDATED_NO_FIXED_CHAIN"
+    assert result["decision"]["reason"] == "no_versioned_completed_returns"
+    assert artifact["weights"] == existing_weights
+    assert artifact["strategy_decision"]["status"] == "UNVALIDATED_NO_FIXED_CHAIN"
+
+
+def test_validated_weight_gate_requires_independent_sample_and_coverage(monkeypatch, tmp_path):
+    decision = weight_optimizer.evaluate_validation_gate(_validated_feedback_frame())
+    weights_file = tmp_path / "scoring_weights.json"
+    monkeypatch.setattr(weight_optimizer, "WEIGHTS_FILE", weights_file)
+    weight_optimizer.save_weights(
+        {"relative_strength": 1.0},
+        {"relative_strength": 0.2},
+        decision,
+    )
+    artifact = __import__("json").loads(weights_file.read_text())
+
+    assert decision["status"] == "VALIDATED_FOR_WEIGHT_UPDATE"
+    assert decision["sample_count"] == 20
+    assert decision["trading_days"] == 10
+    assert decision["factor_coverage"] == 1.0
+    assert artifact["strategy_decision"]["status"] == "VALIDATED_FOR_WEIGHT_UPDATE"
+    assert artifact["weights"]["relative_strength_vs_equal_weight"] == 1.0
+
+
+def test_signal_effectiveness_excludes_unversioned_and_reconstructed_rows(monkeypatch):
+    captured = {}
+
+    def query_rows(sql, params):
+        captured["sql"] = sql
+        captured["params"] = params
+        return []
+
+    monkeypatch.setattr(signal_effectiveness, "query_rows", query_rows)
+
+    result = signal_effectiveness.analyze_signal_effectiveness()
+
+    assert result["error"] == "no completed versioned forward tracking data"
+    assert "JOIN research_runs rr ON rr.run_id = t.research_run_id" in captured["sql"]
+    assert "rr.finished_at IS NOT NULL" in captured["sql"]
+    assert captured["params"]["strategy_version"] == "observable_footprint_v1"
+
+
+def test_self_evolution_performance_gate_excludes_unversioned_and_reconstructed_rows():
+    class Result:
+        @staticmethod
+        def fetchone():
+            return (0, None, None, 0)
+
+    class Connection:
+        def __init__(self):
+            self.sql = ""
+            self.params = {}
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def execute(self, statement, params):
+            self.sql = str(statement)
+            self.params = params
+            return Result()
+
+    class Engine:
+        def __init__(self):
+            self.connection = Connection()
+
+        def connect(self):
+            return self.connection
+
+    engine = Engine()
+    result = xiaomei_self_evolve._check_performance_gate(engine)
+
+    assert result == {"status": "NOT_READY", "reason": "insufficient_data"}
+    assert "JOIN research_runs rr ON rr.run_id = t.research_run_id" in engine.connection.sql
+    assert "rr.finished_at IS NOT NULL" in engine.connection.sql
+    assert engine.connection.params["strategy_version"] == "observable_footprint_v1"
+
+
+def test_scheduler_status_rejects_stale_pid_and_accepts_live_daemon(monkeypatch, tmp_path):
+    pid_file = tmp_path / "xiaomei_scheduler.pid"
+    pid_file.write_text("123")
+
+    monkeypatch.setattr(scheduler, "_pid_matches_scheduler", lambda _pid: False)
+    assert scheduler.scheduler_status(pid_file) == {
+        "running": False,
+        "reason": "stale_or_mismatched_pid",
+        "pid": 123,
+    }
+
+    monkeypatch.setattr(scheduler, "_pid_matches_scheduler", lambda pid: pid == 123)
+    assert scheduler.scheduler_status(pid_file) == {"running": True, "pid": 123}
+
+
+def test_scheduler_health_reports_daemon_liveness(monkeypatch):
+    monkeypatch.setattr(
+        scheduler.subprocess,
+        "run",
+        lambda *_args, **_kwargs: SimpleNamespace(returncode=0),
+    )
+    monkeypatch.setattr(
+        scheduler,
+        "scheduler_status",
+        lambda: {"running": False, "reason": "pid_file_missing"},
+    )
+
+    result = scheduler.morning_health_check(require_scheduler=True)
+
+    assert result["healthy"] is False
+    assert result["checks"]["scheduler"] is False
+    assert result["scheduler"]["reason"] == "pid_file_missing"
+
+
+def test_intraday_paper_job_delegates_to_paper_only_runner(monkeypatch):
+    expected = {"status": "PAPER_STRATEGY_COMPLETE", "run_id": 42}
+    now = datetime(2026, 8, 18, 9, 45, tzinfo=BEIJING_TZ)
+    received = {}
+
+    def fake_run_once(*, now=None):
+        received["now"] = now
+        return expected
+
+    monkeypatch.setattr(realtime_runner, "run_once", fake_run_once)
+
+    assert scheduler.intraday_paper_job(now) == expected
+    assert received["now"] == now
+
+
+def test_executable_scripts_do_not_embed_database_passwords():
+    executable_paths = list(SCRIPTS.rglob("*.py")) + [
+        SCRIPTS / "daily_pipeline.sh",
+        SCRIPTS / "start_services.sh",
+    ]
+
+    for path in executable_paths:
+        text = path.read_text()
+        assert "xiaomei2026" not in text, path
+        assert "PGPASSWORD=" not in text, path
+
+
+class _PipelineDb:
+    def __init__(self):
+        self.commits = 0
+        self.rollbacks = 0
+
+    def commit(self):
+        self.commits += 1
+
+    def rollback(self):
+        self.rollbacks += 1
+
+
+def _patch_pipeline_persistence(monkeypatch, recorded):
+    monkeypatch.setattr(pipeline_bridge, "_current_git_commit", lambda: "a" * 40)
+    monkeypatch.setattr(pipeline_bridge, "_scoring_config_snapshot", lambda _db: {})
+    monkeypatch.setattr(
+        crud,
+        "create_research_run",
+        lambda db, **kwargs: (
+            recorded.append(("create", kwargs)),
+            db.commit(),
+            SimpleNamespace(run_id=41),
+        )[-1],
+    )
+    monkeypatch.setattr(
+        crud,
+        "finish_research_run",
+        lambda db, run_id, status, **kwargs: (
+            recorded.append(("finish", {"run_id": run_id, "status": status, **kwargs})),
+            db.commit() if kwargs.get("commit", True) else None,
+        )[-1],
+    )
+    monkeypatch.setattr(
+        crud,
+        "create_runtime_decision",
+        lambda _db, **kwargs: recorded.append(("runtime_decision", kwargs)),
+    )
+
+
+def test_pipeline_persistence_marks_done_only_after_one_derived_transaction(monkeypatch):
+    recorded = []
+    db = _PipelineDb()
+    _patch_pipeline_persistence(monkeypatch, recorded)
+    monkeypatch.setattr(pipeline_bridge, "_persist_daily_candidates", lambda *_args: 2)
+
+    counts = pipeline_bridge.save_pipeline_to_db(
+        db,
+        "2026-08-15",
+        {"run_name": "test", "paper_review_count": 1, "market_watchlist_count": 1},
+        [],
+        [],
+        candidate_rows=[],
+    )
+
+    assert counts == {
+        "tickets": 0,
+        "candidates": 2,
+        "forward_tracking": 0,
+        "runtime_decisions": 1,
+    }
+    assert recorded[0] == ("create", {
+        "run_name": "test",
+        "output_date": "2026-08-15",
+        "status": "running",
+        "candidate_count": 2,
+        "pass_count": 1,
+        "git_commit": "a" * 40,
+        "config": recorded[0][1]["config"],
+    })
+    assert recorded[-1] == ("finish", {"run_id": 41, "status": "done", "commit": False})
+    assert db.commits == 2
+    assert db.rollbacks == 0
+
+
+def test_pipeline_persistence_rolls_back_and_marks_run_failed(monkeypatch):
+    recorded = []
+    db = _PipelineDb()
+    _patch_pipeline_persistence(monkeypatch, recorded)
+
+    def fail_candidates(*_args):
+        raise ValueError("candidate write failed")
+
+    monkeypatch.setattr(pipeline_bridge, "_persist_daily_candidates", fail_candidates)
+
+    try:
+        pipeline_bridge.save_pipeline_to_db(
+            db,
+            "2026-08-15",
+            {"run_name": "test"},
+            [],
+            [],
+            candidate_rows=[],
+        )
+    except RuntimeError as error:
+        assert "pipeline persistence failed for run 41" in str(error)
+    else:
+        raise AssertionError("expected persistence failure")
+
+    assert db.rollbacks == 1
+    assert recorded[-1] == (
+        "finish",
+        {
+            "run_id": 41,
+            "status": "failed",
+            "error_message": "candidate write failed",
+        },
+    )
