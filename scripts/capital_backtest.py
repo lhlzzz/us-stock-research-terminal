@@ -18,6 +18,11 @@ REPORT_JSON = ROOT / "research" / "capital-backtest.json"
 REPORT_MD = ROOT / "research" / "capital-backtest.md"
 MIN_COMPLETED_ROWS = 30
 MIN_DATES = 10
+CAPITAL_STATES = (
+    "ACCUMULATION", "EARLY_BUILD", "ACTIVE_MARKUP", "PULLBACK_ABSORPTION",
+    "SECONDARY_MARKUP", "LATE_MARKUP", "DISTRIBUTION", "MARKDOWN",
+    "SHORT_BUILD", "SHORT_PRESSURE", "SHORT_COVER", "TRAP",
+)
 
 
 def load_rows(engine) -> pd.DataFrame:
@@ -27,6 +32,8 @@ def load_rows(engine) -> pd.DataFrame:
                ft.capital_validation_status, ft.capital_score_at_entry,
                ft.distribution_score_at_entry, ft.trap_score_at_entry,
                ft.predicted_path, t.ticket_score, t.market_score, t.expected_direction,
+               ft.capital_state_at_entry, ft.capital_quality_at_entry,
+               ft.distribution_probability_at_entry, ft.trap_probability_at_entry,
                rr.config->>'strategy_version' AS strategy_version,
                rr.config->>'version_status' AS version_status
         FROM forward_tracking ft
@@ -34,7 +41,7 @@ def load_rows(engine) -> pd.DataFrame:
         JOIN research_runs rr ON rr.run_id = t.research_run_id
         WHERE ft.check_status = 'completed'
           AND ft.forward_return IS NOT NULL
-          AND ft.capital_model_version = 'capital_behavior_v1'
+          AND ft.capital_model_version = 'capital_behavior_v2'
           AND rr.status = 'done'
           AND rr.finished_at IS NOT NULL
         ORDER BY ft.as_of_date, ft.symbol, ft.horizon_days
@@ -85,6 +92,26 @@ def _top_by_day(rows: pd.DataFrame, score: pd.Series, exclusion: pd.Series | Non
     ).head(1)
 
 
+def _state_cohorts(rows: pd.DataFrame) -> dict[str, dict[str, Any]]:
+    cohorts = {}
+    for state in CAPITAL_STATES:
+        cohort = rows[rows["capital_state_at_entry"] == state]
+        cohorts[state] = _metrics(cohort)
+    return cohorts
+
+
+def _momentum_bands(rows: pd.DataFrame) -> dict[str, dict[str, Any]]:
+    if rows.empty or "ticket_score" not in rows:
+        return {band: {"sample_count": 0} for band in ("top_5_pct", "top_10_pct", "top_20_pct")}
+    work = rows.copy()
+    work["momentum_rank"] = work.groupby("as_of_date")["ticket_score"].rank(pct=True, method="first", ascending=False)
+    return {
+        "top_5_pct": _metrics(work[work["momentum_rank"] <= 0.05]),
+        "top_10_pct": _metrics(work[work["momentum_rank"] <= 0.10]),
+        "top_20_pct": _metrics(work[work["momentum_rank"] <= 0.20]),
+    }
+
+
 def run_benchmark(engine=None) -> dict[str, Any]:
     """Run A-F in parallel only; this function never changes production weights."""
     engine = engine or create_engine(DATABASE_URL)
@@ -107,6 +134,16 @@ def run_benchmark(engine=None) -> dict[str, Any]:
             "gate": gate,
             "production_action": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
             "variants": {},
+            "state_specific": {state: {"sample_count": 0} for state in CAPITAL_STATES},
+            "key_transitions": {
+                "ACCUMULATION_TO_ACTIVE_MARKUP": {"sample_count": 0, "accuracy": None},
+                "ACTIVE_MARKUP_TO_DISTRIBUTION": {"sample_count": 0, "accuracy": None},
+            },
+            "high_momentum_distribution_analysis": {
+                "top_5_pct": {"sample_count": 0},
+                "top_10_pct": {"sample_count": 0},
+                "top_20_pct": {"sample_count": 0},
+            },
         }
 
     statistical = fixed["ticket_score"].fillna(fixed["market_score"]).clip(0, 1)
@@ -126,12 +163,32 @@ def run_benchmark(engine=None) -> dict[str, Any]:
             "reason": "intraday paper decisions have no versioned linked outcome benchmark",
         },
     }
+    transition_rows = fixed.sort_values(["symbol", "as_of_date"]).drop_duplicates(
+        ["symbol", "as_of_date"], keep="first"
+    ).copy()
+    transition_rows["next_state"] = transition_rows.groupby("symbol")["capital_state_at_entry"].shift(-1)
+    key_transitions = {
+        "ACCUMULATION_TO_ACTIVE_MARKUP": transition_rows[
+            (transition_rows["capital_state_at_entry"] == "ACCUMULATION")
+            & (transition_rows["next_state"] == "ACTIVE_MARKUP")
+        ],
+        "ACTIVE_MARKUP_TO_DISTRIBUTION": transition_rows[
+            (transition_rows["capital_state_at_entry"] == "ACTIVE_MARKUP")
+            & (transition_rows["next_state"] == "DISTRIBUTION")
+        ],
+    }
     return {
         "status": "RESEARCH_ONLY_BENCHMARK",
-        "validation_status": "UNVALIDATED_NOT_READY",
+        "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
         "gate": gate,
         "production_action": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
         "variants": variants,
+        "state_specific": _state_cohorts(fixed),
+        "key_transitions": {
+            name: {"sample_count": int(len(cohort)), "accuracy": _direction_accuracy(cohort)}
+            for name, cohort in key_transitions.items()
+        },
+        "high_momentum_distribution_analysis": _momentum_bands(fixed),
     }
 
 

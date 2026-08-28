@@ -1,7 +1,7 @@
 # Capital Behavior Scoreboard
 
 - Status: `RESEARCH_ONLY`
-- Validation: `UNVALIDATED_NOT_READY`
+- Validation: `UNVALIDATED_NO_FIXED_CHAIN`
 - Sample count: `0`
 - State accuracy: `None`
 - Intent accuracy: `None`

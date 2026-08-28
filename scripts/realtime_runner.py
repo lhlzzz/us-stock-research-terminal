@@ -193,13 +193,16 @@ def _latest_context(session) -> list[dict[str, Any]]:
     rows = session.execute(text("""
         SELECT dc.symbol, dc.final_score, dc.market_score, dc.catalyst_score,
                dc.research_run_id,
-               cds.capital_score, cds.capital_strength,
+               cds.capital_score, cds.capital_strength, cds.capital_quality,
                cds.distribution_risk, cds.trap_risk,
+               cds.distribution_probability, cds.trap_probability,
+               cds.path_distribution,
                cds.dominant_direction, cds.dominant_pressure,
                csh.capital_state, csh.state_confidence,
                ci.capital_intent, ci.intent_confidence,
                cpp.path_type, cpp.t1_probability, cpp.t3_probability,
-               cpp.t5_probability
+               cpp.t5_probability, cpp.path_distribution AS prediction_path_distribution,
+               cpp.path_sequence, cpp.path_invalidation
         FROM daily_candidates dc
         JOIN research_runs rr ON rr.run_id = dc.research_run_id
         LEFT JOIN capital_daily_snapshot cds

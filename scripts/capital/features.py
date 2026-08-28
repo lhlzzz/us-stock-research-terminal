@@ -1,4 +1,4 @@
-"""Deterministic OHLCV feature preparation for the Capital Brain."""
+"""Deterministic OHLCV feature preparation for Capital Behavior V2."""
 from __future__ import annotations
 
 from typing import Any
@@ -73,14 +73,19 @@ def build_feature_set(
     frame: pd.DataFrame | None,
     relative_strength: float | None = None,
 ) -> dict[str, float | int | bool | str]:
-    """Build only features observable at the final row of ``frame``."""
+    """Build features observable at the final row of ``frame``.
+
+    All rolling values are calculated from the supplied, already bounded
+    frame.  The output deliberately describes public price/volume behavior,
+    not an identity or intent of any market participant.
+    """
     bars = normalize_ohlcv(frame)
     ready, availability_status = availability(bars)
     result: dict[str, float | int | bool | str] = {
         "row_count": int(len(bars)),
         "available": ready,
         "availability": availability_status,
-        "relative_strength": float(relative_strength) if relative_strength is not None and np.isfinite(relative_strength) else 0.0,
+        "relative_strength": float(relative_strength) if relative_strength is not None and np.isfinite(relative_strength) else None,
     }
     if bars.empty:
         return result
@@ -92,6 +97,7 @@ def build_feature_set(
     returns = close.pct_change().replace([np.inf, -np.inf], np.nan).fillna(0.0)
     ranges = (high - low).replace(0, np.nan)
     close_position = ((close - low) / ranges).replace([np.inf, -np.inf], np.nan).fillna(0.5)
+    true_range_pct = ((high - low) / close).replace([np.inf, -np.inf], np.nan).fillna(0.0)
     baseline20 = volume.rolling(20, min_periods=5).median()
     volume_ratio = _safe_ratio(float(volume.iloc[-1]), float(baseline20.iloc[-1]))
     volume_mean20 = volume.rolling(20, min_periods=5).mean()
@@ -107,6 +113,52 @@ def build_feature_set(
     prior_drawdown_5 = float(pullback.iloc[-10:-5].max()) if len(pullback) >= 10 else max_drawdown_5
     high_20 = close.rolling(20, min_periods=5).max()
     failed_breakdown = bool(close.iloc[-1] >= close.iloc[-3:].min() and close.iloc[-1] > low.iloc[-3:].min())
+    volatility20 = float(returns.rolling(20, min_periods=5).std(ddof=0).iloc[-1] or 0.0)
+    dollar_volume = close * volume
+    liquidity_baseline = dollar_volume.rolling(20, min_periods=5).median()
+    liquidity_proxy = clamp(_safe_ratio(float(dollar_volume.iloc[-1]), float(liquidity_baseline.iloc[-1])) / 3.0)
+
+    downside_return_damage = clamp((-returns / np.maximum(volatility20, 0.005)).iloc[-1] / 3.0)
+    intraday_damage = clamp((1.0 - float(close_position.iloc[-1])) * clamp(float(true_range_pct.iloc[-1]) / 0.08))
+    close_displacement = clamp((-float(returns.iloc[-1]) / 0.06))
+    prior_support_level = float(
+        close.shift(1).rolling(10, min_periods=3).min().iloc[-1]
+    )
+    support_distance = clamp(
+        (prior_support_level - float(close.iloc[-1]))
+        / max(float(close.iloc[-1]) * 0.08, 0.01)
+    )
+    volume_activity = clamp((volume_ratio - 0.75) / 2.25)
+    downside_activity_series = volume.where(returns < 0, 0.0)
+    down_ratio_series = downside_activity_series.rolling(10, min_periods=3).sum() / (
+        volume.rolling(10, min_periods=3).sum().replace(0, np.nan)
+    )
+    down_ratio_series = down_ratio_series.replace([np.inf, -np.inf], np.nan).fillna(0.0)
+    selling_activity_series = (
+        0.55 * down_ratio_series
+        + 0.25 * volume.rolling(10, min_periods=3).mean().div(
+            volume.rolling(20, min_periods=5).median().replace(0, np.nan)
+        ).fillna(0.0).clip(0.0, 3.0).div(3.0)
+        + 0.20 * (-returns).clip(lower=0.0).div(0.06).clip(0.0, 1.0)
+    ).clip(0.0, 1.0)
+    actual_damage_series = (
+        0.55 * (-returns).div(returns.rolling(20, min_periods=5).std(ddof=0).replace(0, np.nan)).fillna(0.0).div(3.0).clip(0.0, 1.0)
+        + 0.25 * (1.0 - close_position).clip(0.0, 1.0)
+        + 0.20 * true_range_pct.div(0.08).clip(0.0, 1.0)
+    ).clip(0.0, 1.0)
+    expected_damage_series = (
+        0.55 * selling_activity_series
+        + 0.25 * returns.rolling(20, min_periods=5).std(ddof=0).fillna(0.0).div(0.04).clip(0.0, 1.0)
+        + 0.20 * (1.0 - liquidity_proxy)
+    ).clip(0.05, 1.0)
+    absorption_efficiency_series = (
+        1.0 - actual_damage_series.div(expected_damage_series).clip(0.0, 1.0)
+    ).clip(0.0, 1.0)
+    recovery_series = returns.rolling(3, min_periods=1).mean().clip(-0.06, 0.06).add(0.06).div(0.12).clip(0.0, 1.0)
+    prior_support_series = close.shift(1).rolling(10, min_periods=3).min()
+    support_retention_series = (
+        close >= prior_support_series.fillna(close) * 0.98
+    ).astype(float)
     result.update(
         {
             "return_1d": float(returns.iloc[-1]),
@@ -134,6 +186,24 @@ def build_feature_set(
             "recent_positive_days": float((recent > 0).mean()),
             "recent_negative_days": float((recent < 0).mean()),
             "flat_price": bool(abs(float(returns.iloc[-5:].sum())) < 0.002),
+            "volatility_20d": clamp(volatility20 / 0.08),
+            "liquidity_proxy": liquidity_proxy,
+            "selling_activity": float(selling_activity_series.iloc[-1]),
+            "price_damage": clamp(0.45 * downside_return_damage + 0.25 * intraday_damage + 0.20 * close_displacement + 0.10 * support_distance),
+            "expected_price_damage": float(expected_damage_series.iloc[-1]),
+            "damage_efficiency": float(absorption_efficiency_series.iloc[-1]),
+            "recovery_after_pressure": float(recovery_series.iloc[-1]),
+            "support_retention": float(support_retention_series.iloc[-1]),
+            "absorption_persistence_1d": float(absorption_efficiency_series.iloc[-1] * selling_activity_series.iloc[-1]),
+            "absorption_persistence_3d": float((absorption_efficiency_series.iloc[-3:] * selling_activity_series.iloc[-3:]).mean()),
+            "absorption_persistence_5d": float((absorption_efficiency_series.iloc[-5:] * selling_activity_series.iloc[-5:]).mean()),
+            "absorption_persistence_10d": float((absorption_efficiency_series.iloc[-10:] * selling_activity_series.iloc[-10:]).mean()),
+            "pressure_persistence": float((selling_activity_series.iloc[-5:] > 0.45).mean()),
+            "pressure_change": clamp(float(selling_activity_series.iloc[-1] - selling_activity_series.iloc[-5:].mean()), -1.0, 1.0),
+            "upside_activity": float(up_volume.iloc[-1] / max(float(up_volume.iloc[-1] + down_volume.iloc[-1]), 1.0)),
+            "downside_activity": float(down_volume.iloc[-1] / max(float(up_volume.iloc[-1] + down_volume.iloc[-1]), 1.0)),
+            "upside_response": clamp(float(returns.where(returns > 0, 0.0).iloc[-5:].sum()) / max(volatility20 * 5.0, 0.01)),
+            "downside_response": clamp(float((-returns.where(returns < 0, 0.0)).iloc[-5:].sum()) / max(volatility20 * 5.0, 0.01)),
         }
     )
     return result
@@ -153,6 +223,7 @@ def build_intraday_feature_set(
     range_position = _safe_ratio(price - low, high - low) if high > low else 0.5
     daily_volume_pressure = clamp(daily_context.get("volume_pressure", 0.0))
     daily_demand = clamp(daily_context.get("demand_persistence_score", 0.0))
+    daily_quality = clamp(daily_context.get("capital_quality", 0.0))
     return {
         "available": bool(price > 0 and prev_close > 0),
         "availability": "AVAILABLE" if price > 0 and prev_close > 0 else "MISSING_QUOTE_FIELDS",
@@ -165,5 +236,8 @@ def build_intraday_feature_set(
         "session_downside": clamp((-pct_change + 0.02) / 0.06),
         "daily_volume_pressure": daily_volume_pressure,
         "daily_demand_persistence": daily_demand,
+        "daily_capital_quality": daily_quality,
+        "intraday_activity": clamp(volume / max(float(daily_context.get("median_volume") or volume or 1.0), 1.0)),
+        "intraday_price_response": clamp(abs(pct_change) / 0.06),
         "quote_semantic": "OBSERVED",
     }

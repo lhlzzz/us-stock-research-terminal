@@ -291,7 +291,7 @@ def run_capital_walk_forward(train_days=60, test_days=5, horizon=1):
         WHERE ft.check_status = 'completed'
           AND ft.forward_return IS NOT NULL
           AND ft.horizon_days = :horizon
-          AND ce.model_version = 'capital_behavior_v1'
+          AND ce.model_version = 'capital_behavior_v2'
           AND rr.status = 'done'
           AND rr.finished_at IS NOT NULL
         ORDER BY ce.as_of_date, ce.symbol
@@ -370,7 +370,7 @@ def run_capital_walk_forward(train_days=60, test_days=5, horizon=1):
 
     result = {
         "status": "RESEARCH_ONLY" if windows else "UNVALIDATED_INSUFFICIENT_WINDOWS",
-        "validation_status": "UNVALIDATED_NOT_READY",
+        "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
         "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
         "workflow": ["TRAIN", "FIT", "TEST", "ADVANCE"],
         "config": {"train_days": train_days, "test_days": test_days, "horizon": horizon},

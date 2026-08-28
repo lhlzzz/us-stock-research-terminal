@@ -28,13 +28,19 @@ def build_intraday_capital_assessment(
     downside = float(features["session_downside"])
     range_position = float(features["range_position"])
     daily_state = str(daily_context.get("capital_state") or "UNKNOWN")
-    daily_distribution = clamp(daily_context.get("distribution_score", 0.0))
-    daily_trap = clamp(daily_context.get("trap_score", 0.0))
+    daily_distribution = clamp(
+        daily_context.get("distribution_probability", daily_context.get("distribution_risk", daily_context.get("distribution_score", 0.0)))
+    )
+    daily_trap = clamp(
+        daily_context.get("trap_probability", daily_context.get("trap_risk", daily_context.get("trap_score", 0.0)))
+    )
     daily_strength = clamp(daily_context.get("capital_strength", 0.0))
+    daily_quality = clamp(daily_context.get("capital_quality", 0.0))
     strength = clamp(
         0.35 * momentum
         + 0.20 * range_position
-        + 0.25 * daily_strength
+        + 0.20 * daily_strength
+        + 0.05 * daily_quality
         + 0.20 * float(features["daily_demand_persistence"])
     )
     distribution = clamp(
@@ -61,5 +67,12 @@ def build_intraday_capital_assessment(
         "intraday_strength": round(strength, 6),
         "intraday_distribution_risk": round(distribution, 6),
         "intraday_trap_risk": round(trap, 6),
+        "daily_capital_state": daily_state,
+        "daily_capital_intent": daily_context.get("capital_intent") or "UNKNOWN",
+        "daily_path": daily_context.get("path_type") or "UNKNOWN",
+        "daily_path_distribution": daily_context.get("path_distribution") or {},
+        "daily_capital_quality": round(daily_quality, 6),
+        "daily_distribution_probability": round(daily_distribution, 6),
+        "daily_trap_probability": round(daily_trap, 6),
         "semantic": {"quote": "OBSERVED", "assessment": "INFERRED"},
     }

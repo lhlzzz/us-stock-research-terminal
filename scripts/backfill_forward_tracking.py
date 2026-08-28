@@ -141,11 +141,15 @@ def _capital_outcome(
     assessment = build_capital_assessment(bars)
     actual_state = assessment["state"]["capital_state"]
     actual_path = assessment["path"]["path_type"]
+    # This is a post-hoc public-data inference, never an observed institution intent.
+    actual_intent_proxy = assessment["intent"]["capital_intent"]
     outcome: dict[str, object] = {
         "state_after_1d": actual_state if horizon_days == 1 else None,
         "state_after_3d": actual_state if horizon_days == 3 else None,
         "state_after_5d": actual_state if horizon_days == 5 else None,
         "actual_path": actual_path,
+        "actual_intent_proxy": actual_intent_proxy,
+        "actual_intent_semantic": "POST_HOC_INFERRED_PROXY",
         "state_correct": _state_family(entry_state) == _state_family(actual_state),
         "intent_correct": (
             (entry_intent in {"ACCUMULATE", "BUILD", "PUSH_HIGHER", "DEFEND_PRICE",
@@ -155,7 +159,7 @@ def _capital_outcome(
         ),
         "path_correct": bool(predicted_path) and predicted_path == actual_path,
         "model_version": assessment["model_version"],
-        "data_version": "PUBLIC_OHLCV_V1",
+        "data_version": "PUBLIC_OHLCV_V2",
     }
     return outcome
 
@@ -173,10 +177,12 @@ def _upsert_capital_outcome(
         INSERT INTO capital_prediction_outcome (
             forward_tracking_id, symbol, as_of_date, research_run_id, model_version,
             data_version, state_after_1d, state_after_3d, state_after_5d, actual_path,
+            actual_intent_proxy, actual_intent_semantic,
             state_correct, intent_correct, path_correct, semantic, updated_at
         ) VALUES (
             :forward_tracking_id, :symbol, :as_of_date, :research_run_id, :model_version,
             :data_version, :state_after_1d, :state_after_3d, :state_after_5d, :actual_path,
+            :actual_intent_proxy, :actual_intent_semantic,
             :state_correct, :intent_correct, :path_correct, 'DERIVED', NOW()
         )
         ON CONFLICT (forward_tracking_id) DO UPDATE SET
@@ -186,6 +192,8 @@ def _upsert_capital_outcome(
             state_after_3d = COALESCE(EXCLUDED.state_after_3d, capital_prediction_outcome.state_after_3d),
             state_after_5d = COALESCE(EXCLUDED.state_after_5d, capital_prediction_outcome.state_after_5d),
             actual_path = EXCLUDED.actual_path,
+            actual_intent_proxy = EXCLUDED.actual_intent_proxy,
+            actual_intent_semantic = EXCLUDED.actual_intent_semantic,
             state_correct = EXCLUDED.state_correct,
             intent_correct = EXCLUDED.intent_correct,
             path_correct = EXCLUDED.path_correct,
@@ -384,6 +392,8 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
                         state_after_3d = COALESCE(:state_after_3d, state_after_3d),
                         state_after_5d = COALESCE(:state_after_5d, state_after_5d),
                         actual_path = :actual_path,
+                        actual_intent_proxy = :actual_intent_proxy,
+                        actual_intent_semantic = :actual_intent_semantic,
                         state_correct = :state_correct,
                         intent_correct = :intent_correct,
                         path_correct = :path_correct

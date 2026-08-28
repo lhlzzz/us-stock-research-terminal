@@ -6,7 +6,8 @@ from typing import Any
 from .features import build_feature_set, clamp
 
 
-MODEL_VERSION = "capital_behavior_v1"
+MODEL_VERSION = "capital_behavior_v2"
+DATA_VERSION = "PUBLIC_OHLCV_V2"
 SOURCE = "PUBLIC_OHLCV"
 
 
@@ -40,13 +41,17 @@ def build_capital_evidence(
         unavailable = _evidence(0.0, 0.0, False, "20d")
         return {
             "model_version": MODEL_VERSION,
+            "data_version": DATA_VERSION,
             "availability": f["availability"],
             "features": f,
             "evidence": {name: dict(unavailable) for name in (
                 "upward_pressure", "downward_pressure", "volume_pressure",
                 "demand_persistence", "supply_exhaustion", "absorption",
                 "accumulation", "markup", "distribution", "crowding",
-                "trap", "price_impact",
+                "trap", "price_impact", "selling_activity", "price_damage",
+                "expected_price_damage", "damage_efficiency",
+                "recovery_after_pressure", "support_retention",
+                "absorption_persistence", "absorption_failure",
             )},
         }
 
@@ -58,7 +63,8 @@ def build_capital_evidence(
     close_position = float(f["close_position_5d"])
     up_ratio = float(f["up_volume_ratio"])
     down_ratio = float(f["down_volume_ratio"])
-    relative = clamp(0.5 + float(f["relative_strength"]) * 5.0)
+    relative_raw = f.get("relative_strength")
+    relative = clamp(0.5 + float(relative_raw) * 5.0) if relative_raw is not None else 0.0
 
     upward = clamp(
         0.24 * clamp((ret5 + 0.05) / 0.10)
@@ -94,11 +100,34 @@ def build_capital_evidence(
         + 0.16 * float(f["higher_low"])
         + 0.16 * float(f["recovery_speed"])
     )
+    selling_activity = clamp(float(f["selling_activity"]))
+    price_damage = clamp(float(f["price_damage"]))
+    expected_damage = clamp(float(f["expected_price_damage"]))
+    damage_efficiency = clamp(float(f["damage_efficiency"]))
+    recovery_after_pressure = clamp(float(f["recovery_after_pressure"]))
+    support_retention = clamp(float(f["support_retention"]))
+    absorption_persistence = clamp(
+        0.10 * float(f["absorption_persistence_1d"])
+        + 0.20 * float(f["absorption_persistence_3d"])
+        + 0.30 * float(f["absorption_persistence_5d"])
+        + 0.40 * float(f["absorption_persistence_10d"])
+    )
+    # Activity is necessary; quiet stability is not absorption.
     absorption = clamp(
-        0.42 * volume_pressure * clamp(1.0 - downward)
-        + 0.28 * float(f["recovery_speed"])
-        + 0.20 * float(f["higher_low"])
-        + 0.10 * float(f["failed_breakdown"])
+        selling_activity
+        * (
+            0.45 * damage_efficiency
+            + 0.25 * recovery_after_pressure
+            + 0.20 * support_retention
+            + 0.10 * absorption_persistence
+        )
+    )
+    absorption_failure = clamp(
+        0.35 * selling_activity
+        + 0.30 * price_damage
+        + 0.20 * (1.0 - support_retention)
+        + 0.15 * clamp(float(f["pressure_change"]) + 0.5)
+        - 0.25 * damage_efficiency
     )
     accumulation = clamp(
         0.24 * absorption
@@ -154,9 +183,18 @@ def build_capital_evidence(
         "crowding": _evidence(crowding, confidence * 0.75, True, "1d/20d"),
         "trap": _evidence(trap, confidence * 0.75, True, "1d/5d"),
         "price_impact": _evidence(price_impact, confidence, True, "1d/5d"),
+        "selling_activity": _evidence(selling_activity, confidence, True, "1d/5d/10d"),
+        "price_damage": _evidence(price_damage, confidence, True, "1d/5d"),
+        "expected_price_damage": _evidence(expected_damage, confidence, True, "5d/20d"),
+        "damage_efficiency": _evidence(damage_efficiency, confidence * 0.9, True, "1d/5d/20d"),
+        "recovery_after_pressure": _evidence(recovery_after_pressure, confidence, True, "3d"),
+        "support_retention": _evidence(support_retention, confidence, True, "5d/10d"),
+        "absorption_persistence": _evidence(absorption_persistence, confidence * 0.9, True, "1d/3d/5d/10d"),
+        "absorption_failure": _evidence(absorption_failure, confidence * 0.9, True, "1d/5d/10d"),
     }
     return {
         "model_version": MODEL_VERSION,
+        "data_version": DATA_VERSION,
         "availability": "AVAILABLE",
         "features": f,
         "evidence": evidence,

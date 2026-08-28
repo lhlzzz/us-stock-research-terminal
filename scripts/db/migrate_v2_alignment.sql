@@ -342,6 +342,27 @@ ALTER TABLE tickets
     ADD COLUMN IF NOT EXISTS capital_thesis TEXT,
     ADD COLUMN IF NOT EXISTS invalidation_condition TEXT;
 
+ALTER TABLE tickets
+    ADD COLUMN IF NOT EXISTS capital_quality NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS quality_label VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS absorption_efficiency NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS absorption_persistence NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS upside_control_efficiency NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS downside_control_efficiency NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS control_asymmetry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS distribution_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS distribution_stage VARCHAR(32),
+    ADD COLUMN IF NOT EXISTS distribution_acceleration NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS distribution_transition_risk NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS trap_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS transition_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS late_state_risk NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS state_age_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS intent_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS intent_probabilities JSONB,
+    ADD COLUMN IF NOT EXISTS transition_probabilities JSONB,
+    ADD COLUMN IF NOT EXISTS path_distribution JSONB;
+
 ALTER TABLE forward_tracking
     ADD COLUMN IF NOT EXISTS capital_model_version VARCHAR(64),
     ADD COLUMN IF NOT EXISTS capital_validation_status VARCHAR(64),
@@ -356,9 +377,19 @@ ALTER TABLE forward_tracking
     ADD COLUMN IF NOT EXISTS state_after_3d VARCHAR(40),
     ADD COLUMN IF NOT EXISTS state_after_5d VARCHAR(40),
     ADD COLUMN IF NOT EXISTS actual_path VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS actual_intent_proxy VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS actual_intent_semantic VARCHAR(32),
     ADD COLUMN IF NOT EXISTS state_correct BOOLEAN,
     ADD COLUMN IF NOT EXISTS intent_correct BOOLEAN,
     ADD COLUMN IF NOT EXISTS path_correct BOOLEAN;
+
+ALTER TABLE forward_tracking
+    ADD COLUMN IF NOT EXISTS capital_quality_at_entry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS distribution_probability_at_entry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS trap_probability_at_entry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS quality_label_at_entry VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS intent_probability_at_entry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS path_distribution_at_entry JSONB;
 
 CREATE TABLE IF NOT EXISTS capital_daily_snapshot (
     id BIGSERIAL PRIMARY KEY,
@@ -376,10 +407,58 @@ CREATE TABLE IF NOT EXISTS capital_daily_snapshot (
     dominant_pressure NUMERIC(8,6),
     distribution_risk NUMERIC(8,6),
     trap_risk NUMERIC(8,6),
+    capital_quality NUMERIC(8,6),
+    quality_label VARCHAR(40),
+    absorption_score NUMERIC(8,6),
+    absorption_efficiency NUMERIC(8,6),
+    absorption_persistence NUMERIC(8,6),
+    upside_control_efficiency NUMERIC(8,6),
+    downside_control_efficiency NUMERIC(8,6),
+    control_asymmetry NUMERIC(8,6),
+    control_regime VARCHAR(16),
+    control_collapse_score NUMERIC(8,6),
+    distribution_probability NUMERIC(8,6),
+    distribution_stage VARCHAR(32),
+    distribution_acceleration NUMERIC(8,6),
+    distribution_transition_risk NUMERIC(8,6),
+    trap_probability NUMERIC(8,6),
+    transition_score NUMERIC(8,6),
+    transition_acceleration NUMERIC(8,6),
+    state_age_score NUMERIC(8,6),
+    late_state_risk NUMERIC(8,6),
+    intent_probability NUMERIC(8,6),
+    intent_probabilities JSONB,
+    transition_probabilities JSONB,
+    path_distribution JSONB,
     evidence_json JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(symbol, as_of_date, research_run_id)
 );
+
+ALTER TABLE capital_daily_snapshot
+    ADD COLUMN IF NOT EXISTS capital_quality NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS quality_label VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS absorption_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS absorption_efficiency NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS absorption_persistence NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS upside_control_efficiency NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS downside_control_efficiency NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS control_asymmetry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS control_regime VARCHAR(16),
+    ADD COLUMN IF NOT EXISTS control_collapse_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS distribution_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS distribution_stage VARCHAR(32),
+    ADD COLUMN IF NOT EXISTS distribution_acceleration NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS distribution_transition_risk NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS trap_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS transition_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS transition_acceleration NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS state_age_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS late_state_risk NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS intent_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS intent_probabilities JSONB,
+    ADD COLUMN IF NOT EXISTS transition_probabilities JSONB,
+    ADD COLUMN IF NOT EXISTS path_distribution JSONB;
 
 CREATE TABLE IF NOT EXISTS capital_evidence (
     id BIGSERIAL PRIMARY KEY,
@@ -412,10 +491,32 @@ CREATE TABLE IF NOT EXISTS capital_state_history (
     state_duration INTEGER NOT NULL DEFAULT 0,
     state_confidence NUMERIC(8,6),
     state_reason TEXT,
+    state_momentum NUMERIC(8,6),
+    transition_score NUMERIC(8,6),
+    transition_acceleration NUMERIC(8,6),
+    evidence_persistence NUMERIC(8,6),
+    expected_duration INTEGER,
+    duration_percentile NUMERIC(8,6),
+    late_state_risk NUMERIC(8,6),
+    state_age_score NUMERIC(8,6),
+    transition_probabilities JSONB,
+    transition_matrix JSONB,
     semantic VARCHAR(16) NOT NULL DEFAULT 'INFERRED',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(symbol, as_of_date, research_run_id)
 );
+
+ALTER TABLE capital_state_history
+    ADD COLUMN IF NOT EXISTS state_momentum NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS transition_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS transition_acceleration NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS evidence_persistence NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS expected_duration INTEGER,
+    ADD COLUMN IF NOT EXISTS duration_percentile NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS late_state_risk NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS state_age_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS transition_probabilities JSONB,
+    ADD COLUMN IF NOT EXISTS transition_matrix JSONB;
 
 CREATE TABLE IF NOT EXISTS capital_intent (
     id BIGSERIAL PRIMARY KEY,
@@ -429,10 +530,24 @@ CREATE TABLE IF NOT EXISTS capital_intent (
     expected_direction VARCHAR(16),
     continuation_condition TEXT,
     invalidation_condition TEXT,
+    intent_probability NUMERIC(8,6),
+    intent_probabilities JSONB,
+    intent_alternatives JSONB,
+    previous_intent VARCHAR(40),
+    current_intent VARCHAR(40),
+    intent_transition VARCHAR(96),
     semantic VARCHAR(16) NOT NULL DEFAULT 'INFERRED',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(symbol, as_of_date, research_run_id)
 );
+
+ALTER TABLE capital_intent
+    ADD COLUMN IF NOT EXISTS intent_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS intent_probabilities JSONB,
+    ADD COLUMN IF NOT EXISTS intent_alternatives JSONB,
+    ADD COLUMN IF NOT EXISTS previous_intent VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS current_intent VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS intent_transition VARCHAR(96);
 
 CREATE TABLE IF NOT EXISTS capital_path_prediction (
     id BIGSERIAL PRIMARY KEY,
@@ -446,10 +561,18 @@ CREATE TABLE IF NOT EXISTS capital_path_prediction (
     t3_probability NUMERIC(8,6),
     t5_probability NUMERIC(8,6),
     path_confidence NUMERIC(8,6),
+    path_distribution JSONB,
+    path_sequence JSONB,
+    path_invalidation JSONB,
     semantic VARCHAR(16) NOT NULL DEFAULT 'PREDICTED',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(symbol, as_of_date, research_run_id)
 );
+
+ALTER TABLE capital_path_prediction
+    ADD COLUMN IF NOT EXISTS path_distribution JSONB,
+    ADD COLUMN IF NOT EXISTS path_sequence JSONB,
+    ADD COLUMN IF NOT EXISTS path_invalidation JSONB;
 
 CREATE TABLE IF NOT EXISTS capital_prediction_outcome (
     id BIGSERIAL PRIMARY KEY,
@@ -463,6 +586,8 @@ CREATE TABLE IF NOT EXISTS capital_prediction_outcome (
     state_after_3d VARCHAR(40),
     state_after_5d VARCHAR(40),
     actual_path VARCHAR(40),
+    actual_intent_proxy VARCHAR(40),
+    actual_intent_semantic VARCHAR(32),
     state_correct BOOLEAN,
     intent_correct BOOLEAN,
     path_correct BOOLEAN,
@@ -471,6 +596,10 @@ CREATE TABLE IF NOT EXISTS capital_prediction_outcome (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(forward_tracking_id)
 );
+
+ALTER TABLE capital_prediction_outcome
+    ADD COLUMN IF NOT EXISTS actual_intent_proxy VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS actual_intent_semantic VARCHAR(32);
 
 CREATE INDEX IF NOT EXISTS idx_capital_daily_snapshot_symbol_date
     ON capital_daily_snapshot(symbol, as_of_date DESC);

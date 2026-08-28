@@ -7,5 +7,64 @@
     "trading_days": 0
   },
   "production_action": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
-  "variants": {}
+  "variants": {},
+  "state_specific": {
+    "ACCUMULATION": {
+      "sample_count": 0
+    },
+    "EARLY_BUILD": {
+      "sample_count": 0
+    },
+    "ACTIVE_MARKUP": {
+      "sample_count": 0
+    },
+    "PULLBACK_ABSORPTION": {
+      "sample_count": 0
+    },
+    "SECONDARY_MARKUP": {
+      "sample_count": 0
+    },
+    "LATE_MARKUP": {
+      "sample_count": 0
+    },
+    "DISTRIBUTION": {
+      "sample_count": 0
+    },
+    "MARKDOWN": {
+      "sample_count": 0
+    },
+    "SHORT_BUILD": {
+      "sample_count": 0
+    },
+    "SHORT_PRESSURE": {
+      "sample_count": 0
+    },
+    "SHORT_COVER": {
+      "sample_count": 0
+    },
+    "TRAP": {
+      "sample_count": 0
+    }
+  },
+  "key_transitions": {
+    "ACCUMULATION_TO_ACTIVE_MARKUP": {
+      "sample_count": 0,
+      "accuracy": null
+    },
+    "ACTIVE_MARKUP_TO_DISTRIBUTION": {
+      "sample_count": 0,
+      "accuracy": null
+    }
+  },
+  "high_momentum_distribution_analysis": {
+    "top_5_pct": {
+      "sample_count": 0
+    },
+    "top_10_pct": {
+      "sample_count": 0
+    },
+    "top_20_pct": {
+      "sample_count": 0
+    }
+  }
 }

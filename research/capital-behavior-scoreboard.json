@@ -1,8 +1,8 @@
 {
   "status": "RESEARCH_ONLY",
-  "model_version": "capital_behavior_v1",
-  "validation_status": "UNVALIDATED_NOT_READY",
-  "generated_at": "2026-08-28T04:37:20.049552Z",
+  "model_version": "capital_behavior_v2",
+  "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
+  "generated_at": "2026-08-28T06:11:35.177849Z",
   "sample_count": 0,
   "capital_state_accuracy": null,
   "intent_accuracy": null,
@@ -21,6 +21,34 @@
   "distribution_warning_precision": null,
   "trap_warning_precision": null,
   "risk_warning_sample_count": 0,
+  "calibration": {
+    "path_t1": {
+      "status": "UNAVAILABLE_NO_FIXED_CHAIN",
+      "brier_score": {
+        "status": "UNAVAILABLE_NO_FIXED_CHAIN",
+        "sample_count": 0,
+        "value": null
+      },
+      "log_loss": {
+        "status": "UNAVAILABLE_NO_FIXED_CHAIN",
+        "sample_count": 0,
+        "value": null
+      },
+      "calibration_curve": {
+        "status": "UNAVAILABLE_NO_FIXED_CHAIN",
+        "sample_count": 0,
+        "bins": []
+      }
+    },
+    "path_t3": {
+      "status": "UNAVAILABLE_NO_FIXED_CHAIN",
+      "sample_count": 0
+    },
+    "path_t5": {
+      "status": "UNAVAILABLE_NO_FIXED_CHAIN",
+      "sample_count": 0
+    }
+  },
   "by_horizon": {
     "t1": {
       "sample_count": 0,

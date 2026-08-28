@@ -146,8 +146,25 @@ def _candidate_factor_snapshot(row: dict[str, Any]) -> dict[str, Any]:
         "capital_score",
         "combined_score",
         "capital_strength",
+        "capital_quality",
+        "quality_label",
         "distribution_score",
+        "distribution_probability",
+        "distribution_stage",
+        "distribution_transition_risk",
         "trap_score",
+        "trap_probability",
+        "absorption_efficiency",
+        "absorption_persistence",
+        "upside_control_efficiency",
+        "downside_control_efficiency",
+        "control_asymmetry",
+        "control_collapse_score",
+        "state_duration",
+        "state_age_score",
+        "late_state_risk",
+        "intent_probability",
+        "transition_score",
         "price_control_score",
     )
     snapshot = {field: row.get(field) for field in fields if row.get(field) is not None}
@@ -170,36 +187,78 @@ def _persist_capital_assessments(
         if not evidence_items:
             continue
         as_of_date = row.get("as_of_date") or output_date
-        model_version = _safe_str(row.get("capital_model_version"), "capital_behavior_v1")
-        data_version = _safe_str(row.get("capital_data_version"), "PUBLIC_OHLCV_V1")
+        model_version = _safe_str(row.get("capital_model_version"), "capital_behavior_v2")
+        data_version = _safe_str(row.get("capital_data_version"), "PUBLIC_OHLCV_V2")
         snapshot_params = {
             "symbol": row.get("symbol"),
             "as_of_date": as_of_date,
             "research_run_id": research_run_id,
             "model_version": model_version,
             "data_version": data_version,
-            "validation_status": _safe_str(row.get("capital_validation_status"), "UNVALIDATED_NOT_READY"),
+            "validation_status": _safe_str(row.get("capital_validation_status"), "UNVALIDATED_NO_FIXED_CHAIN"),
             "statistical_score": row.get("statistical_score"),
             "capital_score": row.get("capital_score"),
             "combined_score": row.get("combined_score"),
             "capital_strength": row.get("capital_strength"),
+            "capital_quality": row.get("capital_quality"),
+            "quality_label": row.get("quality_label"),
             "dominant_direction": row.get("dominant_direction"),
             "dominant_pressure": row.get("dominant_pressure"),
+            "absorption_score": row.get("absorption_score"),
+            "absorption_efficiency": row.get("absorption_efficiency"),
+            "absorption_persistence": row.get("absorption_persistence"),
+            "upside_control_efficiency": row.get("upside_control_efficiency"),
+            "downside_control_efficiency": row.get("downside_control_efficiency"),
+            "control_asymmetry": row.get("control_asymmetry"),
+            "control_regime": row.get("control_regime"),
+            "control_collapse_score": row.get("control_collapse_score"),
             "distribution_risk": row.get("distribution_score"),
             "trap_risk": row.get("trap_score"),
+            "distribution_probability": row.get("distribution_probability"),
+            "distribution_stage": row.get("distribution_stage"),
+            "distribution_acceleration": row.get("distribution_acceleration"),
+            "distribution_transition_risk": row.get("distribution_transition_risk"),
+            "trap_probability": row.get("trap_probability"),
+            "transition_score": row.get("transition_score"),
+            "transition_acceleration": row.get("transition_acceleration"),
+            "state_age_score": row.get("state_age_score"),
+            "late_state_risk": row.get("late_state_risk"),
+            "intent_probability": row.get("intent_probability"),
+            "intent_probabilities": json.dumps(_json_snapshot(row.get("intent_probabilities") or {})),
+            "transition_probabilities": json.dumps(_json_snapshot(row.get("transition_probabilities") or {})),
+            "path_distribution": json.dumps(_json_snapshot(row.get("paths") or {})),
             "evidence_json": json.dumps(_json_snapshot(evidence_bundle)),
         }
         db.execute(text("""
             INSERT INTO capital_daily_snapshot (
                 symbol, as_of_date, research_run_id, model_version, data_version,
                 validation_status, statistical_score, capital_score, combined_score,
-                capital_strength, dominant_direction, dominant_pressure,
-                distribution_risk, trap_risk, evidence_json
+                capital_strength, capital_quality, quality_label,
+                dominant_direction, dominant_pressure, absorption_score,
+                absorption_efficiency, absorption_persistence,
+                upside_control_efficiency, downside_control_efficiency,
+                control_asymmetry, control_regime, control_collapse_score,
+                distribution_risk, trap_risk, distribution_probability,
+                distribution_stage, distribution_acceleration,
+                distribution_transition_risk, trap_probability, transition_score,
+                transition_acceleration, state_age_score, late_state_risk,
+                intent_probability, intent_probabilities, transition_probabilities,
+                path_distribution, evidence_json
             ) VALUES (
                 :symbol, :as_of_date, :research_run_id, :model_version, :data_version,
                 :validation_status, :statistical_score, :capital_score, :combined_score,
-                :capital_strength, :dominant_direction, :dominant_pressure,
-                :distribution_risk, :trap_risk, CAST(:evidence_json AS jsonb)
+                :capital_strength, :capital_quality, :quality_label,
+                :dominant_direction, :dominant_pressure, :absorption_score,
+                :absorption_efficiency, :absorption_persistence,
+                :upside_control_efficiency, :downside_control_efficiency,
+                :control_asymmetry, :control_regime, :control_collapse_score,
+                :distribution_risk, :trap_risk, :distribution_probability,
+                :distribution_stage, :distribution_acceleration,
+                :distribution_transition_risk, :trap_probability, :transition_score,
+                :transition_acceleration, :state_age_score, :late_state_risk,
+                :intent_probability, CAST(:intent_probabilities AS jsonb),
+                CAST(:transition_probabilities AS jsonb), CAST(:path_distribution AS jsonb),
+                CAST(:evidence_json AS jsonb)
             )
             ON CONFLICT (symbol, as_of_date, research_run_id) DO UPDATE SET
                 model_version = EXCLUDED.model_version,
@@ -209,10 +268,33 @@ def _persist_capital_assessments(
                 capital_score = EXCLUDED.capital_score,
                 combined_score = EXCLUDED.combined_score,
                 capital_strength = EXCLUDED.capital_strength,
+                capital_quality = EXCLUDED.capital_quality,
+                quality_label = EXCLUDED.quality_label,
                 dominant_direction = EXCLUDED.dominant_direction,
                 dominant_pressure = EXCLUDED.dominant_pressure,
+                absorption_score = EXCLUDED.absorption_score,
+                absorption_efficiency = EXCLUDED.absorption_efficiency,
+                absorption_persistence = EXCLUDED.absorption_persistence,
+                upside_control_efficiency = EXCLUDED.upside_control_efficiency,
+                downside_control_efficiency = EXCLUDED.downside_control_efficiency,
+                control_asymmetry = EXCLUDED.control_asymmetry,
+                control_regime = EXCLUDED.control_regime,
+                control_collapse_score = EXCLUDED.control_collapse_score,
                 distribution_risk = EXCLUDED.distribution_risk,
                 trap_risk = EXCLUDED.trap_risk,
+                distribution_probability = EXCLUDED.distribution_probability,
+                distribution_stage = EXCLUDED.distribution_stage,
+                distribution_acceleration = EXCLUDED.distribution_acceleration,
+                distribution_transition_risk = EXCLUDED.distribution_transition_risk,
+                trap_probability = EXCLUDED.trap_probability,
+                transition_score = EXCLUDED.transition_score,
+                transition_acceleration = EXCLUDED.transition_acceleration,
+                state_age_score = EXCLUDED.state_age_score,
+                late_state_risk = EXCLUDED.late_state_risk,
+                intent_probability = EXCLUDED.intent_probability,
+                intent_probabilities = EXCLUDED.intent_probabilities,
+                transition_probabilities = EXCLUDED.transition_probabilities,
+                path_distribution = EXCLUDED.path_distribution,
                 evidence_json = EXCLUDED.evidence_json
         """), snapshot_params)
         for evidence_type, item in evidence_items.items():
@@ -245,11 +327,17 @@ def _persist_capital_assessments(
             INSERT INTO capital_state_history (
                 symbol, as_of_date, research_run_id, model_version, data_version,
                 capital_state, previous_capital_state, state_transition, state_duration,
-                state_confidence, state_reason, semantic
+                state_confidence, state_reason, state_momentum, transition_score,
+                transition_acceleration, evidence_persistence, expected_duration,
+                duration_percentile, late_state_risk, state_age_score,
+                transition_probabilities, transition_matrix, semantic
             ) VALUES (
                 :symbol, :as_of_date, :research_run_id, :model_version, :data_version,
                 :capital_state, :previous_capital_state, :state_transition, :state_duration,
-                :state_confidence, :state_reason, 'INFERRED'
+                :state_confidence, :state_reason, :state_momentum, :transition_score,
+                :transition_acceleration, :evidence_persistence, :expected_duration,
+                :duration_percentile, :late_state_risk, :state_age_score,
+                CAST(:transition_probabilities AS jsonb), CAST(:transition_matrix AS jsonb), 'INFERRED'
             )
             ON CONFLICT (symbol, as_of_date, research_run_id) DO UPDATE SET
                 capital_state = EXCLUDED.capital_state,
@@ -257,7 +345,17 @@ def _persist_capital_assessments(
                 state_transition = EXCLUDED.state_transition,
                 state_duration = EXCLUDED.state_duration,
                 state_confidence = EXCLUDED.state_confidence,
-                state_reason = EXCLUDED.state_reason
+                state_reason = EXCLUDED.state_reason,
+                state_momentum = EXCLUDED.state_momentum,
+                transition_score = EXCLUDED.transition_score,
+                transition_acceleration = EXCLUDED.transition_acceleration,
+                evidence_persistence = EXCLUDED.evidence_persistence,
+                expected_duration = EXCLUDED.expected_duration,
+                duration_percentile = EXCLUDED.duration_percentile,
+                late_state_risk = EXCLUDED.late_state_risk,
+                state_age_score = EXCLUDED.state_age_score,
+                transition_probabilities = EXCLUDED.transition_probabilities,
+                transition_matrix = EXCLUDED.transition_matrix
         """), {
             **snapshot_params,
             "capital_state": row.get("capital_state", "UNKNOWN"),
@@ -266,47 +364,77 @@ def _persist_capital_assessments(
             "state_duration": int(row.get("state_duration") or 0),
             "state_confidence": row.get("capital_state_confidence", row.get("state_confidence")),
             "state_reason": row.get("capital_state_reason", row.get("state_reason")),
+            "state_momentum": row.get("state_momentum"),
+            "transition_score": row.get("transition_score"),
+            "transition_acceleration": row.get("transition_acceleration"),
+            "evidence_persistence": row.get("evidence_persistence"),
+            "expected_duration": row.get("expected_duration"),
+            "duration_percentile": row.get("duration_percentile"),
+            "late_state_risk": row.get("late_state_risk"),
+            "state_age_score": row.get("state_age_score"),
+            "transition_probabilities": json.dumps(_json_snapshot(row.get("transition_probabilities") or {})),
+            "transition_matrix": json.dumps(_json_snapshot(row.get("transition_matrix") or {})),
         })
         db.execute(text("""
             INSERT INTO capital_intent (
                 symbol, as_of_date, research_run_id, model_version, data_version,
                 capital_intent, intent_confidence, expected_direction,
-                continuation_condition, invalidation_condition, semantic
+                continuation_condition, invalidation_condition, intent_probability,
+                intent_probabilities, intent_alternatives, previous_intent,
+                current_intent, intent_transition, semantic
             ) VALUES (
                 :symbol, :as_of_date, :research_run_id, :model_version, :data_version,
                 :capital_intent, :intent_confidence, :expected_direction,
-                :continuation_condition, :invalidation_condition, 'INFERRED'
+                :continuation_condition, :invalidation_condition, :intent_probability,
+                CAST(:intent_probabilities AS jsonb), CAST(:intent_alternatives AS jsonb),
+                :previous_intent, :current_intent, :intent_transition, 'INFERRED'
             )
             ON CONFLICT (symbol, as_of_date, research_run_id) DO UPDATE SET
                 capital_intent = EXCLUDED.capital_intent,
                 intent_confidence = EXCLUDED.intent_confidence,
+                intent_probability = EXCLUDED.intent_probability,
+                intent_probabilities = EXCLUDED.intent_probabilities,
+                intent_alternatives = EXCLUDED.intent_alternatives,
                 expected_direction = EXCLUDED.expected_direction,
                 continuation_condition = EXCLUDED.continuation_condition,
-                invalidation_condition = EXCLUDED.invalidation_condition
+                invalidation_condition = EXCLUDED.invalidation_condition,
+                previous_intent = EXCLUDED.previous_intent,
+                current_intent = EXCLUDED.current_intent,
+                intent_transition = EXCLUDED.intent_transition
         """), {
             **snapshot_params,
             "capital_intent": row.get("capital_intent", "UNKNOWN"),
             "intent_confidence": row.get("capital_intent_confidence", row.get("intent_confidence")),
+            "intent_probability": row.get("intent_probability"),
+            "intent_probabilities": json.dumps(_json_snapshot(row.get("intent_probabilities") or {})),
+            "intent_alternatives": json.dumps(_json_snapshot(row.get("intent_alternatives") or [])),
             "expected_direction": row.get("expected_direction", "UNKNOWN"),
             "continuation_condition": row.get("continuation_condition"),
             "invalidation_condition": row.get("invalidation_condition"),
+            "previous_intent": row.get("previous_intent"),
+            "current_intent": row.get("current_intent"),
+            "intent_transition": row.get("intent_transition"),
         })
         db.execute(text("""
             INSERT INTO capital_path_prediction (
                 symbol, as_of_date, research_run_id, model_version, data_version,
                 path_type, t1_probability, t3_probability, t5_probability,
-                path_confidence, semantic
+                path_confidence, path_distribution, path_sequence, path_invalidation, semantic
             ) VALUES (
                 :symbol, :as_of_date, :research_run_id, :model_version, :data_version,
                 :path_type, :t1_probability, :t3_probability, :t5_probability,
-                :path_confidence, 'PREDICTED'
+                :path_confidence, CAST(:path_distribution AS jsonb),
+                CAST(:path_sequence AS jsonb), CAST(:path_invalidation AS jsonb), 'PREDICTED'
             )
             ON CONFLICT (symbol, as_of_date, research_run_id) DO UPDATE SET
                 path_type = EXCLUDED.path_type,
                 t1_probability = EXCLUDED.t1_probability,
                 t3_probability = EXCLUDED.t3_probability,
                 t5_probability = EXCLUDED.t5_probability,
-                path_confidence = EXCLUDED.path_confidence
+                path_confidence = EXCLUDED.path_confidence,
+                path_distribution = EXCLUDED.path_distribution,
+                path_sequence = EXCLUDED.path_sequence,
+                path_invalidation = EXCLUDED.path_invalidation
         """), {
             **snapshot_params,
             "path_type": row.get("path_type", "UNKNOWN"),
@@ -314,6 +442,9 @@ def _persist_capital_assessments(
             "t3_probability": row.get("t3_probability"),
             "t5_probability": row.get("t5_probability"),
             "path_confidence": row.get("path_confidence"),
+            "path_distribution": json.dumps(_json_snapshot(row.get("paths") or {})),
+            "path_sequence": json.dumps(_json_snapshot(row.get("path_sequence") or [])),
+            "path_invalidation": json.dumps(_json_snapshot(row.get("path_invalidation") or [])),
         })
 
 
@@ -553,9 +684,9 @@ def save_pipeline_to_db(
         "strategy_version": metrics.get("strategy_version", "observable_footprint_v1"),
         "scoring_config": _scoring_config_snapshot(db),
         "capital_model": {
-            "model_version": "capital_behavior_v1",
-            "data_version": "PUBLIC_OHLCV_V1",
-            "validation_status": "UNVALIDATED_NOT_READY",
+            "model_version": "capital_behavior_v2",
+            "data_version": "PUBLIC_OHLCV_V2",
+            "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
             "mode": "parallel_only",
         },
     }
@@ -677,6 +808,8 @@ def save_pipeline_to_db(
                 confirmation_score=row.get("confirmation_score"),
                 capital_score=row.get("capital_score"),
                 capital_strength=row.get("capital_strength"),
+                capital_quality=row.get("capital_quality"),
+                quality_label=row.get("quality_label"),
                 capital_state=row.get("capital_state"),
                 capital_state_confidence=row.get("capital_state_confidence"),
                 capital_intent=row.get("capital_intent"),
@@ -690,6 +823,23 @@ def save_pipeline_to_db(
                 price_control_score=row.get("price_control_score"),
                 crowding_score=row.get("crowding_score"),
                 trap_score=row.get("trap_score"),
+                absorption_efficiency=row.get("absorption_efficiency"),
+                absorption_persistence=row.get("absorption_persistence"),
+                upside_control_efficiency=row.get("upside_control_efficiency"),
+                downside_control_efficiency=row.get("downside_control_efficiency"),
+                control_asymmetry=row.get("control_asymmetry"),
+                distribution_probability=row.get("distribution_probability"),
+                distribution_stage=row.get("distribution_stage"),
+                distribution_acceleration=row.get("distribution_acceleration"),
+                distribution_transition_risk=row.get("distribution_transition_risk"),
+                trap_probability=row.get("trap_probability"),
+                transition_score=row.get("transition_score"),
+                late_state_risk=row.get("late_state_risk"),
+                state_age_score=row.get("state_age_score"),
+                intent_probability=row.get("intent_probability"),
+                intent_probabilities=row.get("intent_probabilities"),
+                transition_probabilities=row.get("transition_probabilities"),
+                path_distribution=row.get("paths"),
                 expected_direction=row.get("expected_direction"),
                 path_type=row.get("path_type"),
                 t1_probability=row.get("t1_probability"),
@@ -735,6 +885,12 @@ def save_pipeline_to_db(
                 capital_score_at_entry=ft.get("capital_score_at_entry"),
                 distribution_score_at_entry=ft.get("distribution_score_at_entry"),
                 trap_score_at_entry=ft.get("trap_score_at_entry"),
+                capital_quality_at_entry=ft.get("capital_quality_at_entry"),
+                distribution_probability_at_entry=ft.get("distribution_probability_at_entry"),
+                trap_probability_at_entry=ft.get("trap_probability_at_entry"),
+                quality_label_at_entry=ft.get("quality_label_at_entry"),
+                intent_probability_at_entry=ft.get("intent_probability_at_entry"),
+                path_distribution_at_entry=ft.get("path_distribution_at_entry"),
                 predicted_path=ft.get("predicted_path"),
                 commit=False,
             )

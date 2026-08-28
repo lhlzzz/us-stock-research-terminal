@@ -37,7 +37,7 @@ def evaluate_capital_features(engine=None) -> dict:
         WHERE ft.check_status = 'completed'
           AND ft.forward_return IS NOT NULL
           AND ft.horizon_days = 1
-          AND ce.model_version = 'capital_behavior_v1'
+          AND ce.model_version = 'capital_behavior_v2'
     """), engine)
     fixed = rows[
         (rows["capital_validation_status"] == "VALIDATED_FOR_BENCHMARK")

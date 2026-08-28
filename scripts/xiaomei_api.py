@@ -853,7 +853,8 @@ async def get_capital_scoreboard():
               ON cpo.forward_tracking_id = ft.id
             WHERE ft.check_status = 'completed'
               AND ft.forward_return IS NOT NULL
-              AND ft.capital_model_version = 'capital_behavior_v1'
+              AND ft.capital_model_version = 'capital_behavior_v2'
+              AND ft.capital_validation_status = 'VALIDATED_FOR_BENCHMARK'
         """)).mappings().one())
         horizons = [
             dict(row)
@@ -866,14 +867,15 @@ async def get_capital_scoreboard():
                 LEFT JOIN tickets t ON t.id = ft.ticket_id
                 WHERE ft.check_status = 'completed'
                   AND ft.forward_return IS NOT NULL
-                  AND ft.capital_model_version = 'capital_behavior_v1'
+                  AND ft.capital_model_version = 'capital_behavior_v2'
+                  AND ft.capital_validation_status = 'VALIDATED_FOR_BENCHMARK'
                 GROUP BY horizon_days
                 ORDER BY horizon_days
             """)).mappings()
         ]
     return {
         "status": "RESEARCH_ONLY",
-        "validation_status": "UNVALIDATED_NOT_READY",
+        "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
         **summary,
         "by_horizon": horizons,
         "mfe": "UNAVAILABLE_NOT_PERSISTED",
@@ -887,27 +889,72 @@ async def get_capital_scoreboard():
 async def get_capital_history(symbol: str, limit: int = Query(60, ge=1, le=500)):
     """Return inferred daily Capital Brain state history for a symbol."""
     from sqlalchemy import text
+    limit = int(limit) if isinstance(limit, (int, str)) else 60
     engine = get_engine()
     with engine.connect() as conn:
         rows = [
             dict(row)
             for row in conn.execute(text("""
-                SELECT csh.as_of_date::text, csh.research_run_id, csh.capital_state,
+                SELECT csh.as_of_date::text, csh.research_run_id, csh.model_version,
+                       csh.capital_state,
                        csh.previous_capital_state, csh.state_transition, csh.state_duration,
-                       csh.state_confidence, csh.state_reason, ci.capital_intent,
-                       ci.intent_confidence, cpp.path_type, cpp.t1_probability,
-                       cpp.t3_probability, cpp.t5_probability
+                       csh.state_confidence, csh.state_reason, csh.state_momentum,
+                       csh.transition_score, csh.transition_acceleration,
+                       csh.evidence_persistence, csh.expected_duration,
+                       csh.duration_percentile, csh.late_state_risk, csh.state_age_score,
+                       csh.transition_probabilities, csh.transition_matrix,
+                       ci.capital_intent, ci.intent_confidence, ci.intent_probability,
+                       ci.intent_probabilities, ci.intent_alternatives,
+                       ci.expected_direction, ci.previous_intent, ci.current_intent,
+                       ci.intent_transition, ci.continuation_condition,
+                       ci.invalidation_condition, cpp.path_type, cpp.t1_probability,
+                       cpp.t3_probability, cpp.t5_probability, cpp.path_confidence,
+                       cpp.path_distribution, cpp.path_sequence, cpp.path_invalidation,
+                       cds.capital_strength, cds.capital_quality, cds.quality_label,
+                       cds.absorption_score, cds.absorption_efficiency,
+                       cds.absorption_persistence, cds.upside_control_efficiency,
+                       cds.downside_control_efficiency, cds.control_asymmetry,
+                       cds.control_regime, cds.control_collapse_score,
+                       cds.distribution_probability, cds.distribution_stage,
+                       cds.distribution_acceleration, cds.distribution_transition_risk,
+                       cds.trap_probability, cds.evidence_json
                 FROM capital_state_history csh
                 LEFT JOIN capital_intent ci
                   ON ci.symbol = csh.symbol AND ci.research_run_id = csh.research_run_id
                 LEFT JOIN capital_path_prediction cpp
                   ON cpp.symbol = csh.symbol AND cpp.research_run_id = csh.research_run_id
+                LEFT JOIN capital_daily_snapshot cds
+                  ON cds.symbol = csh.symbol AND cds.research_run_id = csh.research_run_id
                 WHERE csh.symbol = :symbol
                 ORDER BY csh.as_of_date DESC, csh.research_run_id DESC
                 LIMIT :limit
             """), {"symbol": symbol.upper(), "limit": limit}).mappings()
         ]
     return {"symbol": symbol.upper(), "history": rows}
+
+
+@app.get("/api/capital/transitions/{symbol}")
+async def get_capital_transitions(symbol: str, limit: int = Query(60, ge=1, le=500)):
+    """Return the inferred state and intent transition timeline."""
+    limit = int(limit) if isinstance(limit, (int, str)) else 60
+    history = await get_capital_history(symbol, limit=limit)
+    return {
+        "symbol": symbol.upper(),
+        "transitions": [
+            {
+                "as_of_date": row.get("as_of_date"),
+                "from_state": row.get("previous_capital_state"),
+                "to_state": row.get("capital_state"),
+                "state_transition": row.get("state_transition"),
+                "state_confidence": row.get("state_confidence"),
+                "transition_score": row.get("transition_score"),
+                "transition_probabilities": row.get("transition_probabilities") or {},
+                "intent_transition": row.get("intent_transition"),
+                "intent_probability": row.get("intent_probability"),
+            }
+            for row in history["history"]
+        ],
+    }
 
 
 @app.get("/api/capital/state/{symbol}")
@@ -928,9 +975,11 @@ async def get_capital_path(symbol: str):
     engine = get_engine()
     with engine.connect() as conn:
         row = conn.execute(text("""
-            SELECT cpp.as_of_date::text, cpp.research_run_id, cpp.path_type,
+            SELECT cpp.as_of_date::text, cpp.research_run_id, cpp.model_version,
+                   cpp.path_type,
                    cpp.t1_probability, cpp.t3_probability, cpp.t5_probability,
-                   cpp.path_confidence, cpp.semantic
+                   cpp.path_confidence, cpp.path_distribution, cpp.path_sequence,
+                   cpp.path_invalidation, cpp.semantic
             FROM capital_path_prediction cpp
             WHERE cpp.symbol = :symbol
             ORDER BY cpp.as_of_date DESC, cpp.research_run_id DESC
@@ -949,14 +998,35 @@ async def get_capital(symbol: str):
             SELECT cds.symbol, cds.as_of_date::text, cds.research_run_id,
                    cds.model_version, cds.data_version, cds.validation_status,
                    cds.statistical_score, cds.capital_score, cds.combined_score,
-                   cds.capital_strength, cds.dominant_direction, cds.dominant_pressure,
-                   cds.distribution_risk, cds.trap_risk, cds.evidence_json,
+                   cds.capital_strength, cds.capital_quality, cds.quality_label,
+                   cds.dominant_direction, cds.dominant_pressure,
+                   cds.absorption_score, cds.absorption_efficiency,
+                   cds.absorption_persistence, cds.upside_control_efficiency,
+                   cds.downside_control_efficiency, cds.control_asymmetry,
+                   cds.control_regime, cds.control_collapse_score,
+                   cds.distribution_risk, cds.distribution_probability,
+                   cds.distribution_stage, cds.distribution_acceleration,
+                   cds.distribution_transition_risk, cds.trap_risk,
+                   cds.trap_probability, cds.transition_score,
+                   cds.transition_acceleration, cds.state_age_score,
+                   cds.late_state_risk, cds.intent_probability,
+                   cds.intent_probabilities, cds.transition_probabilities,
+                   cds.path_distribution, cds.evidence_json,
                    csh.capital_state, csh.previous_capital_state, csh.state_transition,
                    csh.state_duration, csh.state_confidence, csh.state_reason,
-                   ci.capital_intent, ci.intent_confidence, ci.expected_direction,
+                   csh.state_momentum, csh.transition_acceleration AS state_transition_acceleration,
+                   csh.evidence_persistence, csh.expected_duration,
+                   csh.duration_percentile, csh.state_age_score AS state_age_score_history,
+                   csh.transition_probabilities AS state_transition_probabilities,
+                   csh.transition_matrix,
+                   ci.capital_intent, ci.intent_confidence, ci.intent_probability,
+                   ci.intent_probabilities, ci.intent_alternatives,
+                   ci.previous_intent, ci.current_intent, ci.intent_transition,
+                   ci.expected_direction,
                    ci.continuation_condition, ci.invalidation_condition,
                    cpp.path_type, cpp.t1_probability, cpp.t3_probability,
-                   cpp.t5_probability, cpp.path_confidence
+                   cpp.t5_probability, cpp.path_confidence,
+                   cpp.path_distribution, cpp.path_sequence, cpp.path_invalidation
             FROM capital_daily_snapshot cds
             LEFT JOIN capital_state_history csh
               ON csh.symbol = cds.symbol AND csh.research_run_id = cds.research_run_id
@@ -968,9 +1038,19 @@ async def get_capital(symbol: str):
             ORDER BY cds.as_of_date DESC, cds.research_run_id DESC
             LIMIT 1
         """), {"symbol": symbol.upper()}).mappings().first()
+    assessment = dict(row) if row else None
     return {
         "symbol": symbol.upper(),
-        "assessment": dict(row) if row else None,
+        "assessment": assessment,
+        "capital_state": assessment.get("capital_state") if assessment else None,
+        "capital_intent": assessment.get("capital_intent") if assessment else None,
+        "capital_strength": assessment.get("capital_strength") if assessment else None,
+        "capital_quality": assessment.get("capital_quality") if assessment else None,
+        "paths": {
+            "t1": (assessment.get("path_distribution") or {}).get("t1", {}) if assessment else {},
+            "t3": (assessment.get("path_distribution") or {}).get("t3", {}) if assessment else {},
+            "t5": (assessment.get("path_distribution") or {}).get("t5", {}) if assessment else {},
+        },
         "semantic_contract": {
             "evidence": "DERIVED",
             "state_and_intent": "INFERRED",

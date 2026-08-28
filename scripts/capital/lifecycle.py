@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from .calibration import evaluate_calibration
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -11,8 +12,11 @@ from typing import Any
 def capital_summary_row(row: dict[str, Any]) -> dict[str, Any]:
     fields = [
         "symbol", "capital_state", "capital_intent", "capital_score", "capital_strength",
-        "distribution_score", "trap_score", "crowding_score", "path_type",
+        "capital_quality", "quality_label", "distribution_score", "distribution_probability",
+        "distribution_stage", "trap_score", "trap_probability", "crowding_score",
+        "state_duration", "state_age_score", "late_state_risk", "path_type",
         "t1_probability", "t3_probability", "t5_probability", "combined_score",
+        "path_distribution", "intent_probabilities", "transition_probabilities",
     ]
     return {field: row.get(field) for field in fields}
 
@@ -29,8 +33,8 @@ def write_daily_capital_report(root: Path, output_date: str, rows: list[dict[str
         group.sort(key=lambda item: float(item.get("capital_score") or 0.0), reverse=True)
     payload = {
         "status": "RESEARCH_ONLY",
-        "model_version": "capital_behavior_v1",
-        "validation_status": "UNVALIDATED_NOT_READY",
+        "model_version": "capital_behavior_v2",
+        "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
         "as_of_date": output_date,
         "semantic_contract": {
             "volume": "OBSERVED",
@@ -47,7 +51,7 @@ def write_daily_capital_report(root: Path, output_date: str, rows: list[dict[str
         f"# Daily Capital Behavior - {output_date}",
         "",
         "- Status: `RESEARCH_ONLY`",
-        "- Validation: `UNVALIDATED_NOT_READY`",
+        "- Validation: `UNVALIDATED_NO_FIXED_CHAIN`",
         "- Evidence is derived from public price-volume observations; no participant identity is asserted.",
         "",
     ]
@@ -83,6 +87,7 @@ def write_capital_scoreboard(root: Path, engine=None) -> dict[str, Path]:
             for row in connection.execute(text("""
                 SELECT ft.id, ft.symbol, ft.horizon_days, ft.forward_return,
                        ft.capital_state_at_entry, ft.capital_intent_at_entry,
+                       ft.capital_validation_status,
                        ft.distribution_score_at_entry, ft.trap_score_at_entry,
                        t.expected_direction, cpo.state_correct, cpo.intent_correct,
                        cpo.path_correct, cpo.actual_path
@@ -92,7 +97,8 @@ def write_capital_scoreboard(root: Path, engine=None) -> dict[str, Path]:
                   ON cpo.forward_tracking_id = ft.id
                 WHERE ft.check_status = 'completed'
                   AND ft.forward_return IS NOT NULL
-                  AND ft.capital_model_version = 'capital_behavior_v1'
+                  AND ft.capital_model_version = 'capital_behavior_v2'
+                  AND ft.capital_validation_status = 'VALIDATED_FOR_BENCHMARK'
                 ORDER BY ft.as_of_date, ft.id
             """)).mappings()
         ]
@@ -156,8 +162,8 @@ def write_capital_scoreboard(root: Path, engine=None) -> dict[str, Path]:
 
     payload = {
         "status": "RESEARCH_ONLY",
-        "model_version": "capital_behavior_v1",
-        "validation_status": "UNVALIDATED_NOT_READY",
+        "model_version": "capital_behavior_v2",
+        "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
         "generated_at": datetime.utcnow().isoformat() + "Z",
         "sample_count": len(rows),
         "capital_state_accuracy": accuracy("state_correct"),
@@ -183,6 +189,14 @@ def write_capital_scoreboard(root: Path, engine=None) -> dict[str, Path]:
             len(trap_warning_rows),
         ),
         "risk_warning_sample_count": len(risk_rows),
+        "calibration": {
+            "path_t1": evaluate_calibration(
+                [row.get("t1_probability") for row in rows],
+                [1.0 if row.get("actual_path") == row.get("predicted_path") else 0.0 for row in rows],
+            ),
+            "path_t3": {"status": "UNAVAILABLE_NO_FIXED_CHAIN", "sample_count": 0},
+            "path_t5": {"status": "UNAVAILABLE_NO_FIXED_CHAIN", "sample_count": 0},
+        },
         "by_horizon": by_horizon,
         "high_momentum_distribution_analysis": {
             "sample_count": len(high_momentum),
@@ -200,7 +214,7 @@ def write_capital_scoreboard(root: Path, engine=None) -> dict[str, Path]:
         "# Capital Behavior Scoreboard",
         "",
         "- Status: `RESEARCH_ONLY`",
-        "- Validation: `UNVALIDATED_NOT_READY`",
+        "- Validation: `UNVALIDATED_NO_FIXED_CHAIN`",
         f"- Sample count: `{payload['sample_count']}`",
         f"- State accuracy: `{payload['capital_state_accuracy']}`",
         f"- Intent accuracy: `{payload['intent_accuracy']}`",

@@ -9,7 +9,7 @@ def test_tracking_carries_capital_entry_contract():
         "market_score": 0.8, "catalyst_score": 0.1, "ticket_score": 0.9,
         "research_only": True, "allow_trade": False, "auto_order": False,
         "no_broker_api": True, "classification": "CANDIDATE_FOR_PAPER_REVIEW",
-        "capital_model_version": "capital_behavior_v1", "capital_validation_status": "UNVALIDATED_NOT_READY",
+        "capital_model_version": "capital_behavior_v2", "capital_validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
         "capital_state": "ACTIVE_MARKUP", "capital_intent": "PUSH_HIGHER",
         "capital_strength": 0.8, "capital_score": 0.7, "distribution_score": 0.1,
         "trap_score": 0.1, "path_type": "CONTINUE_UP",

@@ -1,5 +1,17 @@
 # NEXT_ACTION
 
+**已完成（2026-08-28，Capital Behavior V2 研究并行升级）：**
+- 完成 V2 gap audit，并将 Capital Brain 升级为公开 OHLCV 的确定性行为推演链：卖方活动/实际与预期伤害/吸收效率与持续性/失败、方向性价格响应效率、control asymmetry/collapse、动态 state transition、state aging、竞争 intent/path 概率、capital strength/quality、distribution/trap 风险。
+- 完成完整 V2 持久化：扩展现有 `capital_daily_snapshot`、`capital_evidence`、`capital_state_history`、`capital_intent`、`capital_path_prediction`、`capital_prediction_outcome` 及 ticket/tracking 字段；迁移对旧表幂等兼容。
+- API 已支持 `/api/capital/{symbol}`、`history`、`transitions`、`path`、`scoreboard` 的完整 V2 对象；盘中 paper context 同时读取 daily state/intent/path/quality/distribution/trap。
+- 回测增加 state-specific、关键 transition、top 5/10/20% momentum 和 calibration 输出；零 fixed-chain 时保持 `UNVALIDATED_NO_FIXED_CHAIN`，不修改权重。
+- 新增 9 个 V2 专项测试文件；最终验证：`77 passed`、compileall、shell syntax、diff check、幂等 migration、API contract、outcome persistence transaction、lifecycle、scheduler dry-run、intraday paper outside-session smoke 均通过。
+- `actual_intent_proxy` 已配套持久化 `actual_intent_semantic=POST_HOC_INFERRED_PROXY`，明确它是事后公开数据推断代理，不是机构事实；事务 smoke 已验证后回滚，未污染业务数据。
+- 生产保护继续固定为 `RESEARCH_ONLY`、`KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED`、`NO_PRODUCTION_WEIGHT_CHANGE`；Capital 模型仍无生产资格。
+
+**下一步（样本积累后）：**
+- 继续生成独立版本化 V2 ticket/tracking/outcome 链，待 fixed-chain gate 满足后执行 train/validate/walk-forward/out-of-sample/A/B；在此之前不得解释 accuracy、calibration 或经济结果为模型能力。
+
 **已验证（2026-08-28，Capital Behavior Engine 研究并行）：**
 - 新增 `capital_behavior_v1`：仅使用公开 OHLCV/实时行情，严格区分 `OBSERVED`、`DERIVED`、`INFERRED`、`PREDICTED`；不声明机构、主力或隐藏参与者身份。
 - 新的 Capital Brain 以并行元数据接入 `observable_footprint_v1` 日研究、票据、T+1/T+3/T+5 跟踪、生命周期、盘中纸面策略、API 与失败复盘；旧的候选排序仍为 `(ticket_score, market_score, volume_confirmation_ratio)`，未被 Capital 分数改变。
