@@ -1,6 +1,6 @@
 from datetime import datetime, date
 from sqlalchemy import (
-    Column, String, Integer, BigInteger, Numeric, Text, TIMESTAMP, Date,
+    Column, String, Integer, BigInteger, Numeric, Text, TIMESTAMP, Date, Boolean,
     ForeignKey, UniqueConstraint, Index, JSON
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -97,6 +97,28 @@ class Ticket(Base):
     breakout_score = Column(Numeric(8, 6))
     risk_penalty = Column(Numeric(8, 6))
     confirmation_score = Column(Numeric(8, 6))
+    capital_score = Column(Numeric(8, 6))
+    capital_strength = Column(Numeric(8, 6))
+    capital_state = Column(String(40))
+    capital_state_confidence = Column(Numeric(8, 6))
+    capital_intent = Column(String(40))
+    capital_intent_confidence = Column(Numeric(8, 6))
+    accumulation_score = Column(Numeric(8, 6))
+    absorption_score = Column(Numeric(8, 6))
+    supply_exhaustion_score = Column(Numeric(8, 6))
+    demand_persistence_score = Column(Numeric(8, 6))
+    markup_score = Column(Numeric(8, 6))
+    distribution_score = Column(Numeric(8, 6))
+    price_control_score = Column(Numeric(8, 6))
+    crowding_score = Column(Numeric(8, 6))
+    trap_score = Column(Numeric(8, 6))
+    expected_direction = Column(String(16))
+    path_type = Column(String(40))
+    t1_probability = Column(Numeric(8, 6))
+    t3_probability = Column(Numeric(8, 6))
+    t5_probability = Column(Numeric(8, 6))
+    capital_thesis = Column(Text)
+    invalidation_condition = Column(Text)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
 
 
@@ -119,7 +141,135 @@ class ForwardTracking(Base):
     loss_reason = Column(Text)
     outcome_classification = Column(String(20))
     outcome_reason = Column(Text)
+    capital_model_version = Column(String(64))
+    capital_validation_status = Column(String(64))
+    capital_state_at_entry = Column(String(40))
+    capital_intent_at_entry = Column(String(40))
+    capital_strength_at_entry = Column(Numeric(8, 6))
+    capital_score_at_entry = Column(Numeric(8, 6))
+    distribution_score_at_entry = Column(Numeric(8, 6))
+    trap_score_at_entry = Column(Numeric(8, 6))
+    predicted_path = Column(String(40))
+    state_after_1d = Column(String(40))
+    state_after_3d = Column(String(40))
+    state_after_5d = Column(String(40))
+    actual_path = Column(String(40))
+    state_correct = Column(Boolean)
+    intent_correct = Column(Boolean)
+    path_correct = Column(Boolean)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
+
+
+class CapitalDailySnapshot(Base):
+    __tablename__ = "capital_daily_snapshot"
+    id = Column(BigInteger, primary_key=True)
+    symbol = Column(String(10), nullable=False)
+    as_of_date = Column(Date, nullable=False)
+    research_run_id = Column(Integer, ForeignKey("research_runs.run_id"), nullable=False)
+    model_version = Column(String(64), nullable=False)
+    data_version = Column(String(64), nullable=False)
+    validation_status = Column(String(64), nullable=False)
+    statistical_score = Column(Numeric(8, 6))
+    capital_score = Column(Numeric(8, 6))
+    combined_score = Column(Numeric(8, 6))
+    capital_strength = Column(Numeric(8, 6))
+    dominant_direction = Column(String(16))
+    dominant_pressure = Column(Numeric(8, 6))
+    distribution_risk = Column(Numeric(8, 6))
+    trap_risk = Column(Numeric(8, 6))
+    evidence_json = Column(JSONB)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+
+
+class CapitalEvidence(Base):
+    __tablename__ = "capital_evidence"
+    id = Column(BigInteger, primary_key=True)
+    symbol = Column(String(10), nullable=False)
+    as_of_date = Column(Date, nullable=False)
+    research_run_id = Column(Integer, ForeignKey("research_runs.run_id"), nullable=False)
+    model_version = Column(String(64), nullable=False)
+    data_version = Column(String(64), nullable=False)
+    evidence_type = Column(String(64), nullable=False)
+    value = Column(Numeric(8, 6))
+    confidence = Column(Numeric(8, 6))
+    availability = Column(String(40), nullable=False)
+    source = Column(String(128))
+    lookback = Column(String(64))
+    semantic = Column(String(16), nullable=False)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+
+
+class CapitalStateHistory(Base):
+    __tablename__ = "capital_state_history"
+    id = Column(BigInteger, primary_key=True)
+    symbol = Column(String(10), nullable=False)
+    as_of_date = Column(Date, nullable=False)
+    research_run_id = Column(Integer, ForeignKey("research_runs.run_id"), nullable=False)
+    model_version = Column(String(64), nullable=False)
+    data_version = Column(String(64), nullable=False)
+    capital_state = Column(String(40), nullable=False)
+    previous_capital_state = Column(String(40))
+    state_transition = Column(String(96))
+    state_duration = Column(Integer, nullable=False)
+    state_confidence = Column(Numeric(8, 6))
+    state_reason = Column(Text)
+    semantic = Column(String(16), nullable=False)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+
+
+class CapitalIntent(Base):
+    __tablename__ = "capital_intent"
+    id = Column(BigInteger, primary_key=True)
+    symbol = Column(String(10), nullable=False)
+    as_of_date = Column(Date, nullable=False)
+    research_run_id = Column(Integer, ForeignKey("research_runs.run_id"), nullable=False)
+    model_version = Column(String(64), nullable=False)
+    data_version = Column(String(64), nullable=False)
+    capital_intent = Column(String(40), nullable=False)
+    intent_confidence = Column(Numeric(8, 6))
+    expected_direction = Column(String(16))
+    continuation_condition = Column(Text)
+    invalidation_condition = Column(Text)
+    semantic = Column(String(16), nullable=False)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+
+
+class CapitalPathPrediction(Base):
+    __tablename__ = "capital_path_prediction"
+    id = Column(BigInteger, primary_key=True)
+    symbol = Column(String(10), nullable=False)
+    as_of_date = Column(Date, nullable=False)
+    research_run_id = Column(Integer, ForeignKey("research_runs.run_id"), nullable=False)
+    model_version = Column(String(64), nullable=False)
+    data_version = Column(String(64), nullable=False)
+    path_type = Column(String(40), nullable=False)
+    t1_probability = Column(Numeric(8, 6))
+    t3_probability = Column(Numeric(8, 6))
+    t5_probability = Column(Numeric(8, 6))
+    path_confidence = Column(Numeric(8, 6))
+    semantic = Column(String(16), nullable=False)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+
+
+class CapitalPredictionOutcome(Base):
+    __tablename__ = "capital_prediction_outcome"
+    id = Column(BigInteger, primary_key=True)
+    forward_tracking_id = Column(Integer, ForeignKey("forward_tracking.id"), nullable=False)
+    symbol = Column(String(10), nullable=False)
+    as_of_date = Column(Date, nullable=False)
+    research_run_id = Column(Integer, ForeignKey("research_runs.run_id"))
+    model_version = Column(String(64))
+    data_version = Column(String(64))
+    state_after_1d = Column(String(40))
+    state_after_3d = Column(String(40))
+    state_after_5d = Column(String(40))
+    actual_path = Column(String(40))
+    state_correct = Column(Boolean)
+    intent_correct = Column(Boolean)
+    path_correct = Column(Boolean)
+    semantic = Column(String(16), nullable=False)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    updated_at = Column(TIMESTAMP, default=datetime.utcnow)
 
 
 class RuntimeDecision(Base):

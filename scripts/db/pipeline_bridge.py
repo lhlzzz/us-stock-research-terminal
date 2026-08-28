@@ -142,11 +142,179 @@ def _candidate_factor_snapshot(row: dict[str, Any]) -> dict[str, Any]:
         "catalyst_score",
         "ticket_score",
         "contrarian_penalty",
+        "statistical_score",
+        "capital_score",
+        "combined_score",
+        "capital_strength",
+        "distribution_score",
+        "trap_score",
+        "price_control_score",
     )
     snapshot = {field: row.get(field) for field in fields if row.get(field) is not None}
     if row.get("footprint_factor_contributions") is not None:
         snapshot["footprint_factor_contributions"] = row["footprint_factor_contributions"]
     return snapshot
+
+
+def _persist_capital_assessments(
+    db: Session,
+    *,
+    output_date: str,
+    research_run_id: int,
+    candidate_rows: list[dict[str, Any]],
+) -> None:
+    """Persist public-data Capital Brain outputs in the existing run transaction."""
+    for row in candidate_rows:
+        evidence_bundle = row.get("capital_evidence") or {}
+        evidence_items = evidence_bundle.get("evidence") or {}
+        if not evidence_items:
+            continue
+        as_of_date = row.get("as_of_date") or output_date
+        model_version = _safe_str(row.get("capital_model_version"), "capital_behavior_v1")
+        data_version = _safe_str(row.get("capital_data_version"), "PUBLIC_OHLCV_V1")
+        snapshot_params = {
+            "symbol": row.get("symbol"),
+            "as_of_date": as_of_date,
+            "research_run_id": research_run_id,
+            "model_version": model_version,
+            "data_version": data_version,
+            "validation_status": _safe_str(row.get("capital_validation_status"), "UNVALIDATED_NOT_READY"),
+            "statistical_score": row.get("statistical_score"),
+            "capital_score": row.get("capital_score"),
+            "combined_score": row.get("combined_score"),
+            "capital_strength": row.get("capital_strength"),
+            "dominant_direction": row.get("dominant_direction"),
+            "dominant_pressure": row.get("dominant_pressure"),
+            "distribution_risk": row.get("distribution_score"),
+            "trap_risk": row.get("trap_score"),
+            "evidence_json": json.dumps(_json_snapshot(evidence_bundle)),
+        }
+        db.execute(text("""
+            INSERT INTO capital_daily_snapshot (
+                symbol, as_of_date, research_run_id, model_version, data_version,
+                validation_status, statistical_score, capital_score, combined_score,
+                capital_strength, dominant_direction, dominant_pressure,
+                distribution_risk, trap_risk, evidence_json
+            ) VALUES (
+                :symbol, :as_of_date, :research_run_id, :model_version, :data_version,
+                :validation_status, :statistical_score, :capital_score, :combined_score,
+                :capital_strength, :dominant_direction, :dominant_pressure,
+                :distribution_risk, :trap_risk, CAST(:evidence_json AS jsonb)
+            )
+            ON CONFLICT (symbol, as_of_date, research_run_id) DO UPDATE SET
+                model_version = EXCLUDED.model_version,
+                data_version = EXCLUDED.data_version,
+                validation_status = EXCLUDED.validation_status,
+                statistical_score = EXCLUDED.statistical_score,
+                capital_score = EXCLUDED.capital_score,
+                combined_score = EXCLUDED.combined_score,
+                capital_strength = EXCLUDED.capital_strength,
+                dominant_direction = EXCLUDED.dominant_direction,
+                dominant_pressure = EXCLUDED.dominant_pressure,
+                distribution_risk = EXCLUDED.distribution_risk,
+                trap_risk = EXCLUDED.trap_risk,
+                evidence_json = EXCLUDED.evidence_json
+        """), snapshot_params)
+        for evidence_type, item in evidence_items.items():
+            db.execute(text("""
+                INSERT INTO capital_evidence (
+                    symbol, as_of_date, research_run_id, model_version, data_version,
+                    evidence_type, value, confidence, availability, source, lookback, semantic
+                ) VALUES (
+                    :symbol, :as_of_date, :research_run_id, :model_version, :data_version,
+                    :evidence_type, :value, :confidence, :availability, :source, :lookback, :semantic
+                )
+                ON CONFLICT (symbol, as_of_date, research_run_id, evidence_type) DO UPDATE SET
+                    value = EXCLUDED.value,
+                    confidence = EXCLUDED.confidence,
+                    availability = EXCLUDED.availability,
+                    source = EXCLUDED.source,
+                    lookback = EXCLUDED.lookback,
+                    semantic = EXCLUDED.semantic
+            """), {
+                **snapshot_params,
+                "evidence_type": evidence_type,
+                "value": item.get("value"),
+                "confidence": item.get("confidence"),
+                "availability": item.get("availability", "UNAVAILABLE"),
+                "source": item.get("source"),
+                "lookback": item.get("lookback"),
+                "semantic": item.get("semantic", "DERIVED"),
+            })
+        db.execute(text("""
+            INSERT INTO capital_state_history (
+                symbol, as_of_date, research_run_id, model_version, data_version,
+                capital_state, previous_capital_state, state_transition, state_duration,
+                state_confidence, state_reason, semantic
+            ) VALUES (
+                :symbol, :as_of_date, :research_run_id, :model_version, :data_version,
+                :capital_state, :previous_capital_state, :state_transition, :state_duration,
+                :state_confidence, :state_reason, 'INFERRED'
+            )
+            ON CONFLICT (symbol, as_of_date, research_run_id) DO UPDATE SET
+                capital_state = EXCLUDED.capital_state,
+                previous_capital_state = EXCLUDED.previous_capital_state,
+                state_transition = EXCLUDED.state_transition,
+                state_duration = EXCLUDED.state_duration,
+                state_confidence = EXCLUDED.state_confidence,
+                state_reason = EXCLUDED.state_reason
+        """), {
+            **snapshot_params,
+            "capital_state": row.get("capital_state", "UNKNOWN"),
+            "previous_capital_state": row.get("previous_capital_state", "UNKNOWN"),
+            "state_transition": row.get("state_transition", "UNKNOWN"),
+            "state_duration": int(row.get("state_duration") or 0),
+            "state_confidence": row.get("capital_state_confidence", row.get("state_confidence")),
+            "state_reason": row.get("capital_state_reason", row.get("state_reason")),
+        })
+        db.execute(text("""
+            INSERT INTO capital_intent (
+                symbol, as_of_date, research_run_id, model_version, data_version,
+                capital_intent, intent_confidence, expected_direction,
+                continuation_condition, invalidation_condition, semantic
+            ) VALUES (
+                :symbol, :as_of_date, :research_run_id, :model_version, :data_version,
+                :capital_intent, :intent_confidence, :expected_direction,
+                :continuation_condition, :invalidation_condition, 'INFERRED'
+            )
+            ON CONFLICT (symbol, as_of_date, research_run_id) DO UPDATE SET
+                capital_intent = EXCLUDED.capital_intent,
+                intent_confidence = EXCLUDED.intent_confidence,
+                expected_direction = EXCLUDED.expected_direction,
+                continuation_condition = EXCLUDED.continuation_condition,
+                invalidation_condition = EXCLUDED.invalidation_condition
+        """), {
+            **snapshot_params,
+            "capital_intent": row.get("capital_intent", "UNKNOWN"),
+            "intent_confidence": row.get("capital_intent_confidence", row.get("intent_confidence")),
+            "expected_direction": row.get("expected_direction", "UNKNOWN"),
+            "continuation_condition": row.get("continuation_condition"),
+            "invalidation_condition": row.get("invalidation_condition"),
+        })
+        db.execute(text("""
+            INSERT INTO capital_path_prediction (
+                symbol, as_of_date, research_run_id, model_version, data_version,
+                path_type, t1_probability, t3_probability, t5_probability,
+                path_confidence, semantic
+            ) VALUES (
+                :symbol, :as_of_date, :research_run_id, :model_version, :data_version,
+                :path_type, :t1_probability, :t3_probability, :t5_probability,
+                :path_confidence, 'PREDICTED'
+            )
+            ON CONFLICT (symbol, as_of_date, research_run_id) DO UPDATE SET
+                path_type = EXCLUDED.path_type,
+                t1_probability = EXCLUDED.t1_probability,
+                t3_probability = EXCLUDED.t3_probability,
+                t5_probability = EXCLUDED.t5_probability,
+                path_confidence = EXCLUDED.path_confidence
+        """), {
+            **snapshot_params,
+            "path_type": row.get("path_type", "UNKNOWN"),
+            "t1_probability": row.get("t1_probability"),
+            "t3_probability": row.get("t3_probability"),
+            "t5_probability": row.get("t5_probability"),
+            "path_confidence": row.get("path_confidence"),
+        })
 
 
 def _persist_daily_candidates(
@@ -384,6 +552,12 @@ def save_pipeline_to_db(
         "source_mode": metrics.get("source_mode"),
         "strategy_version": metrics.get("strategy_version", "observable_footprint_v1"),
         "scoring_config": _scoring_config_snapshot(db),
+        "capital_model": {
+            "model_version": "capital_behavior_v1",
+            "data_version": "PUBLIC_OHLCV_V1",
+            "validation_status": "UNVALIDATED_NOT_READY",
+            "mode": "parallel_only",
+        },
     }
     run = create_research_run(
         db,
@@ -412,6 +586,12 @@ def save_pipeline_to_db(
             output_date,
             run.run_id,
             candidate_rows or top_candidates,
+        )
+        _persist_capital_assessments(
+            db,
+            output_date=output_date,
+            research_run_id=run.run_id,
+            candidate_rows=candidate_rows or top_candidates,
         )
     except Exception as exc:
         fail_run(exc)
@@ -495,6 +675,28 @@ def save_pipeline_to_db(
                 breakout_score=row.get("breakout_score"),
                 risk_penalty=row.get("risk_penalty"),
                 confirmation_score=row.get("confirmation_score"),
+                capital_score=row.get("capital_score"),
+                capital_strength=row.get("capital_strength"),
+                capital_state=row.get("capital_state"),
+                capital_state_confidence=row.get("capital_state_confidence"),
+                capital_intent=row.get("capital_intent"),
+                capital_intent_confidence=row.get("capital_intent_confidence"),
+                accumulation_score=row.get("accumulation_score"),
+                absorption_score=row.get("absorption_score"),
+                supply_exhaustion_score=row.get("supply_exhaustion_score"),
+                demand_persistence_score=row.get("demand_persistence_score"),
+                markup_score=row.get("markup_score"),
+                distribution_score=row.get("distribution_score"),
+                price_control_score=row.get("price_control_score"),
+                crowding_score=row.get("crowding_score"),
+                trap_score=row.get("trap_score"),
+                expected_direction=row.get("expected_direction"),
+                path_type=row.get("path_type"),
+                t1_probability=row.get("t1_probability"),
+                t3_probability=row.get("t3_probability"),
+                t5_probability=row.get("t5_probability"),
+                capital_thesis=row.get("capital_thesis"),
+                invalidation_condition=row.get("invalidation_condition"),
                 commit=False,
             )
             as_of_date = row.get("as_of_date", output_date)
@@ -525,6 +727,15 @@ def save_pipeline_to_db(
                 as_of_close=ft.get("as_of_close"),
                 check_status="pending",
                 ticket_id=ticket_id,
+                capital_model_version=ft.get("capital_model_version"),
+                capital_validation_status=ft.get("capital_validation_status"),
+                capital_state_at_entry=ft.get("capital_state_at_entry"),
+                capital_intent_at_entry=ft.get("capital_intent_at_entry"),
+                capital_strength_at_entry=ft.get("capital_strength_at_entry"),
+                capital_score_at_entry=ft.get("capital_score_at_entry"),
+                distribution_score_at_entry=ft.get("distribution_score_at_entry"),
+                trap_score_at_entry=ft.get("trap_score_at_entry"),
+                predicted_path=ft.get("predicted_path"),
                 commit=False,
             )
             counts["forward_tracking"] += 1

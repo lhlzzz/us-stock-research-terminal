@@ -29,6 +29,7 @@ from trading_engine import (
     SEC_FEE_RATE,
     SLIPPAGE_BPS,
 )
+from capital.intraday import build_intraday_capital_assessment
 from xiaomei_scheduler import US_HOLIDAYS
 
 try:
@@ -77,7 +78,7 @@ def quote_is_fresh(quote: dict[str, Any], now: datetime | None = None) -> bool:
     return age is not None and age <= MAX_QUOTE_AGE_SECONDS
 
 
-def score_intraday_quote(context: dict[str, Any], quote: dict[str, Any]) -> tuple[float, dict[str, float]]:
+def score_intraday_quote(context: dict[str, Any], quote: dict[str, Any]) -> tuple[float, dict[str, Any]]:
     """Score a quote without using the in-progress session as a daily bar."""
     price = float(quote.get("latest_price") or 0)
     prev_close = float(quote.get("prev_close") or 0)
@@ -191,9 +192,24 @@ def evaluate_short_model(
 def _latest_context(session) -> list[dict[str, Any]]:
     rows = session.execute(text("""
         SELECT dc.symbol, dc.final_score, dc.market_score, dc.catalyst_score,
-               dc.research_run_id
+               dc.research_run_id,
+               cds.capital_score, cds.capital_strength,
+               cds.distribution_risk, cds.trap_risk,
+               cds.dominant_direction, cds.dominant_pressure,
+               csh.capital_state, csh.state_confidence,
+               ci.capital_intent, ci.intent_confidence,
+               cpp.path_type, cpp.t1_probability, cpp.t3_probability,
+               cpp.t5_probability
         FROM daily_candidates dc
         JOIN research_runs rr ON rr.run_id = dc.research_run_id
+        LEFT JOIN capital_daily_snapshot cds
+          ON cds.symbol = dc.symbol AND cds.research_run_id = dc.research_run_id
+        LEFT JOIN capital_state_history csh
+          ON csh.symbol = dc.symbol AND csh.research_run_id = dc.research_run_id
+        LEFT JOIN capital_intent ci
+          ON ci.symbol = dc.symbol AND ci.research_run_id = dc.research_run_id
+        LEFT JOIN capital_path_prediction cpp
+          ON cpp.symbol = dc.symbol AND cpp.research_run_id = dc.research_run_id
         WHERE rr.status = 'done'
           AND dc.trade_date = (
               SELECT MAX(dc2.trade_date)
@@ -418,8 +434,17 @@ def run_once(provider: DataProvider | None = None, now: datetime | None = None,
             reason = "quote_missing_or_stale"
             if quote and quote_is_fresh(quote, current):
                 score, components = score_intraday_quote(row, quote)
+                capital_assessment = build_intraday_capital_assessment(row, quote)
+                components["capital"] = capital_assessment
                 if symbol in open_by_symbol:
                     decision, status, reason = "PAPER_HOLD", "OPEN_POSITION", "position_already_open"
+                elif (
+                    capital_assessment["intraday_distribution_risk"] >= 0.70
+                    or capital_assessment["intraday_trap_risk"] >= 0.70
+                    or float(row.get("distribution_risk") or 0.0) >= 0.70
+                    or float(row.get("trap_risk") or 0.0) >= 0.70
+                ):
+                    status, reason = "CAPITAL_RISK_BLOCKED", "distribution_or_trap_gate"
                 elif score >= ENTRY_SCORE and components["pct_change"] > 0:
                     risk = assess_trade_risk(
                         symbol=symbol, entry_price=float(quote["latest_price"]),

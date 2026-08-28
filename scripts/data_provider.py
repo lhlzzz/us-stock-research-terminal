@@ -20,11 +20,12 @@ Usage:
 """
 import json
 import hashlib
+import ipaddress
 import os
 import re
 import threading
 import time
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field, asdict
 from datetime import date, datetime, timedelta
@@ -114,6 +115,17 @@ def secid_candidates(symbol: str) -> list[str]:
 
 def _url_with_query(url: str, params: dict[str, Any]) -> str:
     return f"{url}?{urlencode(params)}"
+
+
+def _is_loopback_url(url: str) -> bool:
+    """Keep local health checks and fixtures out of environment HTTP proxies."""
+    hostname = urlparse(url).hostname
+    if hostname == "localhost":
+        return True
+    try:
+        return bool(hostname and ipaddress.ip_address(hostname).is_loopback)
+    except ValueError:
+        return False
 
 
 def _parse_eastmoney_browser_klines(payload: dict[str, Any], beg: str, end: str) -> list[dict]:
@@ -292,13 +304,16 @@ class ScrapyApiBridge:
         return state.body or ""
 
     def _schedule(self, state: _ScrapyRequestState) -> None:
+        meta = {"bridge_url": state.url, "handle_httpstatus_all": True}
+        if _is_loopback_url(state.url):
+            meta["proxy"] = None
         request = Request(
             state.url,
             callback=self._spider.parse,
             errback=self._spider.on_error,
             headers=HEADERS,
             dont_filter=True,
-            meta={"bridge_url": state.url, "handle_httpstatus_all": True},
+            meta=meta,
         )
         self._crawler.engine.crawl(request)
 

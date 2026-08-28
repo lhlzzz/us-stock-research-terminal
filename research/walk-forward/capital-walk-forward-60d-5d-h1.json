@@ -1,0 +1,13 @@
+{
+  "status": "UNVALIDATED_NO_FIXED_CHAIN",
+  "reason": "no independent validated Capital Brain outcome chain",
+  "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+  "workflow": [
+    "TRAIN",
+    "FIT",
+    "TEST",
+    "ADVANCE"
+  ],
+  "raw_rows": 0,
+  "fixed_chain_rows": 0
+}

@@ -7,6 +7,50 @@ import json
 from pathlib import Path
 from collections import defaultdict
 
+CAPITAL_FAILURE_TAXONOMY = (
+    "FALSE_ACCUMULATION",
+    "FALSE_ABSORPTION",
+    "DISTRIBUTION_MISSED",
+    "FALSE_MARKUP",
+    "SHORT_PRESSURE_MISSED",
+    "SHORT_COVER_MISSED",
+    "TRAP_MISSED",
+    "REGIME_SHIFT",
+    "NEWS_SHOCK",
+    "LIQUIDITY_FAILURE",
+    "DATA_FAILURE",
+    "STATE_TRANSITION_FAILURE",
+)
+
+
+def classify_capital_failure(candidate, forward_return):
+    """Classify observable model failure without asserting participant identity."""
+    if not candidate:
+        return "DATA_FAILURE"
+    if str(candidate.get("trap_score", "0") or "0") not in {"", "0"}:
+        try:
+            if float(candidate["trap_score"]) >= 0.70:
+                return "TRAP_MISSED"
+        except ValueError:
+            return "DATA_FAILURE"
+    if str(candidate.get("distribution_score", "0") or "0") not in {"", "0"}:
+        try:
+            if float(candidate["distribution_score"]) >= 0.70:
+                return "DISTRIBUTION_MISSED"
+        except ValueError:
+            return "DATA_FAILURE"
+    state = candidate.get("capital_state", "")
+    if state == "ACCUMULATION":
+        return "FALSE_ACCUMULATION"
+    if state == "PULLBACK_ABSORPTION":
+        return "FALSE_ABSORPTION"
+    if state in {"ACTIVE_MARKUP", "SECONDARY_MARKUP", "LATE_MARKUP"}:
+        return "FALSE_MARKUP"
+    if state in {"SHORT_BUILD", "SHORT_PRESSURE"} and forward_return > 0:
+        return "SHORT_COVER_MISSED"
+    return "STATE_TRANSITION_FAILURE"
+
+
 def extract_forward_tracking_data(research_dir):
     """Extract all completed forward tracking rows."""
     rows = []
@@ -85,7 +129,7 @@ def analyze_performance(rows):
     return results
 
 def main():
-    research_dir = Path("/root/hermes/company-ai-system/workspaces/xiaomei/research")
+    research_dir = Path(__file__).resolve().parent.parent / "research"
     
     print("=== Analyzing Forward Tracking Data ===")
     rows = extract_forward_tracking_data(research_dir)
@@ -123,6 +167,7 @@ def main():
     # Extract candidate data for losers
     print("\n=== Candidate Data for Losers ===")
     candidates = extract_candidate_data(research_dir)
+    post_mortems = []
     
     for r in losers[:5]:
         symbol = r['symbol']
@@ -137,6 +182,29 @@ def main():
             print(f"  Panel: {c.get('panel', 'N/A')}")
             print(f"  Narrative: {c.get('narrative_status', 'N/A')}")
             print(f"  Business: {c.get('business_status', 'N/A')}")
+            classification = classify_capital_failure(c, r["avg_return"])
+            post_mortems.append({
+                "symbol": symbol,
+                "prediction": {
+                    "capital_state": c.get("capital_state"),
+                    "capital_intent": c.get("capital_intent"),
+                    "predicted_path": c.get("predicted_path") or c.get("path_type"),
+                },
+                "actual_state": "UNAVAILABLE_FROM_CSV",
+                "missed_evidence": "UNAVAILABLE_FROM_CSV",
+                "failure_taxonomy": classification,
+                "why_transition_was_wrong": classification,
+                "which_feature_failed": "UNAVAILABLE_FROM_CSV",
+                "which_gate_failed": "UNAVAILABLE_NO_PRODUCTION_GATE",
+            })
+    if post_mortems:
+        output = research_dir / "capital-post-mortem.json"
+        output.write_text(json.dumps({
+            "status": "RESEARCH_ONLY",
+            "taxonomy": CAPITAL_FAILURE_TAXONOMY,
+            "post_mortems": post_mortems,
+        }, indent=2) + "\n", encoding="utf-8")
+        print(f"\nCapital post mortem: {output}")
 
 if __name__ == "__main__":
     main()

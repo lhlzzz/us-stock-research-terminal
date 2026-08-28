@@ -63,6 +63,8 @@ from dynamic_horizon import (
     get_dynamic_tracking_horizons,
     format_allocation_report,
 )
+from capital import build_capital_assessment
+from capital.lifecycle import write_daily_capital_report
 
 
 LAST30DAYS_SCRIPT = Path("/root/.agents/skills/last30days/scripts/last30days.py")
@@ -77,7 +79,49 @@ MIN_TICKET_SCORE = 0.3  # Lowered: data shows low-score tickets outperform (cont
 DATA_SOURCE_MISMATCH_THRESHOLD = 0.01
 QUOTE_SOURCE_DISPLAY = "DataProvider realtime quote (Scrapy-owned API transport)"
 MARKET_DATA_SOURCE_DISPLAY = "DataProvider historical OHLCV + realtime quote"
-TRACKING_HORIZONS = [1, 3, 10]
+TRACKING_HORIZONS = [1, 3, 5, 10]
+CAPITAL_CANDIDATE_FIELDS = (
+    "capital_model_version",
+    "capital_validation_status",
+    "statistical_score",
+    "capital_score",
+    "combined_score",
+    "capital_strength",
+    "dominant_direction",
+    "dominant_pressure",
+    "capital_state",
+    "previous_capital_state",
+    "state_transition",
+    "state_duration",
+    "capital_state_confidence",
+    "capital_state_reason",
+    "capital_intent",
+    "capital_intent_confidence",
+    "upward_pressure",
+    "downward_pressure",
+    "volume_pressure",
+    "accumulation_score",
+    "absorption_score",
+    "supply_exhaustion_score",
+    "demand_persistence_score",
+    "markup_score",
+    "distribution_score",
+    "price_control_score",
+    "upside_control_efficiency",
+    "downside_control_efficiency",
+    "crowding_score",
+    "trap_score",
+    "price_impact_score",
+    "expected_direction",
+    "path_type",
+    "predicted_path",
+    "path_confidence",
+    "t1_probability",
+    "t3_probability",
+    "t5_probability",
+    "capital_thesis",
+    "invalidation_condition",
+)
 RUN_ARTIFACT_FILENAMES = {
     "summary": "summary-{output_date}.md",
     "metrics": "metrics-{output_date}.json",
@@ -95,6 +139,37 @@ SKIP_LAST30DAYS = os.environ.get("XIAOMEI_SKIP_LAST30DAYS", "0") == "1"
 
 RESEARCH_DIR = Path(__file__).resolve().parent.parent / "research"
 FEEDBACK_JSON = RESEARCH_DIR / "backtest-review-feedback.json"
+
+
+def load_previous_capital_states(symbols: list[str]) -> dict[str, dict[str, Any]]:
+    """Load the last persisted inferred state without making persistence required."""
+    if not symbols:
+        return {}
+    try:
+        from sqlalchemy import text
+        from db.engine import SessionLocal
+
+        with SessionLocal() as session:
+            rows = session.execute(
+                text(
+                    """
+                    SELECT DISTINCT ON (symbol) symbol, capital_state, state_duration
+                    FROM capital_state_history
+                    WHERE symbol = ANY(:symbols)
+                    ORDER BY symbol, as_of_date DESC, id DESC
+                    """
+                ),
+                {"symbols": symbols},
+            ).mappings()
+            return {
+                str(row["symbol"]): {
+                    "capital_state": row["capital_state"],
+                    "state_duration": row["state_duration"],
+                }
+                for row in rows
+            }
+    except Exception:
+        return {}
 
 
 def fetch_realtime_quote(symbol: str) -> dict[str, Any] | None:
@@ -1055,6 +1130,7 @@ def build_market_snapshot(
     selected_universe: list[str],
     feedback: dict | None = None,
     kline_source: str | None = None,
+    previous_capital_states: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     if close_panel.empty or adj_panel.empty:
         raise RuntimeError("empty price panel")
@@ -1340,6 +1416,54 @@ def build_market_snapshot(
 
     feature_frame["blowoff_risk"] = np.where(blowoff_mask, "high_volume_rejection", "")
     feature_frame["confirmation_score"] = feature_frame["footprint_factor_coverage"]
+    # Capital Brain runs beside observable_footprint_v1. It is never used to
+    # alter the existing ranking or classification until validation gates pass.
+    capital_columns: dict[str, dict[str, Any]] = {}
+    previous_capital_states = previous_capital_states or {}
+    for symbol in selected_universe:
+        symbol_bars = long_panel[long_panel["symbol"] == symbol]
+        previous = previous_capital_states.get(symbol, {})
+        assessment = build_capital_assessment(
+            symbol_bars,
+            statistical_score=float(np.clip(feature_frame.at[symbol, "market_score"], 0.0, 1.0)),
+            relative_strength=_safe_float(feature_frame.at[symbol, "relative_strength_vs_equal_weight"]),
+            regime_alignment=market_participation,
+            previous_state=previous.get("capital_state"),
+            previous_duration=int(previous.get("state_duration") or 0),
+        )
+        evidence_values = {
+            key: item["value"] for key, item in assessment["evidence"]["evidence"].items()
+        }
+        capital_columns[symbol] = {
+            "capital_evidence": assessment["evidence"],
+            "capital_model_version": assessment["model_version"],
+            "capital_validation_status": assessment["validation_status"],
+            **assessment["scores"],
+            **assessment["control"],
+            **assessment["state"],
+            **assessment["intent"],
+            **assessment["path"],
+            "upward_pressure": evidence_values["upward_pressure"],
+            "downward_pressure": evidence_values["downward_pressure"],
+            "volume_pressure": evidence_values["volume_pressure"],
+            "demand_persistence_score": evidence_values["demand_persistence"],
+            "supply_exhaustion_score": evidence_values["supply_exhaustion"],
+            "absorption_score": evidence_values["absorption"],
+            "accumulation_score": evidence_values["accumulation"],
+            "markup_score": evidence_values["markup"],
+            "distribution_score": evidence_values["distribution"],
+            "crowding_score": evidence_values["crowding"],
+            "trap_score": evidence_values["trap"],
+            "price_impact_score": evidence_values["price_impact"],
+            "capital_thesis": (
+                f"{assessment['control']['dominant_direction']} observable pressure has "
+                f"the advantage; inferred state={assessment['state']['capital_state']}; "
+                f"inferred intent={assessment['intent']['capital_intent']}; "
+                f"predicted path={assessment['path']['path_type']}"
+            ),
+        }
+    capital_frame = pd.DataFrame.from_dict(capital_columns, orient="index")
+    feature_frame = feature_frame.join(capital_frame, how="left")
     feature_frame["market_rank"] = feature_frame["market_score"].rank(
         method="first",
         ascending=False,
@@ -1902,6 +2026,43 @@ def build_candidate_record(
         "capital_flow_proxy_score": _safe_float(row.get("large_participant_footprint_score")),
         "capital_flow_status": "OBSERVED_PRICE_VOLUME_FOOTPRINT",
         "social_sentiment_status": "UNAVAILABLE_NO_VALIDATED_CORPUS",
+        "capital_evidence": row.get("capital_evidence") or {},
+        "capital_model_version": str(row.get("capital_model_version") or "capital_behavior_v1"),
+        "capital_validation_status": str(row.get("capital_validation_status") or "UNVALIDATED_NOT_READY"),
+        "statistical_score": _safe_float(row.get("statistical_score")),
+        "capital_score": _safe_float(row.get("capital_score")),
+        "combined_score": _safe_float(row.get("combined_score")),
+        "capital_strength": _safe_float(row.get("capital_strength")),
+        "dominant_direction": str(row.get("dominant_direction") or "UNKNOWN"),
+        "dominant_pressure": _safe_float(row.get("dominant_pressure")),
+        "capital_state": str(row.get("capital_state") or "UNKNOWN"),
+        "previous_capital_state": str(row.get("previous_capital_state") or "UNKNOWN"),
+        "state_transition": str(row.get("state_transition") or "UNKNOWN"),
+        "state_duration": int(row.get("state_duration") or 0),
+        "capital_state_confidence": _safe_float(row.get("state_confidence")),
+        "capital_state_reason": str(row.get("state_reason") or ""),
+        "capital_intent": str(row.get("capital_intent") or "UNKNOWN"),
+        "capital_intent_confidence": _safe_float(row.get("intent_confidence")),
+        "accumulation_score": _safe_float(row.get("accumulation_score")),
+        "absorption_score": _safe_float(row.get("absorption_score")),
+        "supply_exhaustion_score": _safe_float(row.get("supply_exhaustion_score")),
+        "demand_persistence_score": _safe_float(row.get("demand_persistence_score")),
+        "markup_score": _safe_float(row.get("markup_score")),
+        "distribution_score": _safe_float(row.get("distribution_score")),
+        "price_control_score": _safe_float(row.get("price_control_score")),
+        "upside_control_efficiency": _safe_float(row.get("upside_control_efficiency")),
+        "downside_control_efficiency": _safe_float(row.get("downside_control_efficiency")),
+        "crowding_score": _safe_float(row.get("crowding_score")),
+        "trap_score": _safe_float(row.get("trap_score")),
+        "price_impact_score": _safe_float(row.get("price_impact_score")),
+        "expected_direction": str(row.get("expected_direction") or "UNKNOWN"),
+        "path_type": str(row.get("path_type") or "UNKNOWN"),
+        "path_confidence": _safe_float(row.get("path_confidence")),
+        "t1_probability": _safe_float(row.get("t1_probability")),
+        "t3_probability": _safe_float(row.get("t3_probability")),
+        "t5_probability": _safe_float(row.get("t5_probability")),
+        "capital_thesis": str(row.get("capital_thesis") or ""),
+        "invalidation_condition": str(row.get("invalidation_condition") or ""),
         "research_only": True,
         "allow_trade": False,
         "auto_order": False,
@@ -2004,6 +2165,13 @@ def build_runtime_decision_context(
                 "risk_block_reason": row.get("risk_block_reason"),
                 "evidence_gate_status": row.get("evidence_gate_status"),
                 "evidence_gap_reason": row.get("evidence_gap_reason"),
+                "capital_validation_status": row.get("capital_validation_status"),
+                "capital_score": row.get("capital_score"),
+                "capital_state": row.get("capital_state"),
+                "capital_intent": row.get("capital_intent"),
+                "distribution_score": row.get("distribution_score"),
+                "trap_score": row.get("trap_score"),
+                "path_type": row.get("path_type"),
             }
             for row in top_candidates
         ],
@@ -2016,6 +2184,9 @@ def build_runtime_decision_context(
             "ticket_score": best_watch_candidate.get("ticket_score"),
             "market_score": best_watch_candidate.get("market_score"),
             "watch_reason": best_watch_candidate.get("watch_reason"),
+            "capital_state": best_watch_candidate.get("capital_state"),
+            "capital_score": best_watch_candidate.get("capital_score"),
+            "path_type": best_watch_candidate.get("path_type"),
         },
     }
 
@@ -2096,6 +2267,15 @@ def build_forward_tracking_rows(
                     "market_score": row["market_score"],
                     "catalyst_score": row["catalyst_score"],
                     "ticket_score": row["ticket_score"],
+                    "capital_model_version": row.get("capital_model_version"),
+                    "capital_validation_status": row.get("capital_validation_status"),
+                    "capital_state_at_entry": row.get("capital_state"),
+                    "capital_intent_at_entry": row.get("capital_intent"),
+                    "capital_strength_at_entry": row.get("capital_strength"),
+                    "predicted_path": row.get("predicted_path") or row.get("path_type"),
+                    "capital_score_at_entry": row.get("capital_score"),
+                    "distribution_score_at_entry": row.get("distribution_score"),
+                    "trap_score_at_entry": row.get("trap_score"),
                     "lifecycle_stage": candidate_lifecycle_stage(row),
                     "research_only": row["research_only"],
                     "allow_trade": row["allow_trade"],
@@ -2444,6 +2624,11 @@ def save_outputs(package: dict[str, Any], output_date: str, save_db: bool = Fals
     write_csv(tracking_path, package["tracking_frame"])
     write_json(runtime_context_path, package["runtime_decision_context"])
     append_runtime_decision_ledger(runtime_ledger_path, package["runtime_decision_ledger_entry"])
+    capital_report_paths = write_daily_capital_report(
+        RESEARCH_DIR,
+        output_date,
+        package.get("candidate_rows", []),
+    )
 
     if save_db:
         try:
@@ -2464,7 +2649,7 @@ def save_outputs(package: dict[str, Any], output_date: str, save_db: bool = Fals
         except Exception as exc:
             print(json.dumps({"db_save_error": str(exc)}, ensure_ascii=False), flush=True)
 
-    return paths
+    return {**paths, "capital_json": capital_report_paths["json"], "capital_markdown": capital_report_paths["markdown"]}
 
 
 def emit_blocked_data_unavailable(args: argparse.Namespace, error: BlockedDataUnavailableError) -> None:
@@ -2582,6 +2767,7 @@ def main(argv: list[str]) -> int:
         universe["close_panel"] = close_panel
         universe["adj_panel"] = adj_panel
         universe["long_panel"] = long_panel
+        previous_capital_states = load_previous_capital_states(universe["included_symbols"])
         market_snapshot = build_market_snapshot(
             close_panel,
             adj_panel,
@@ -2589,6 +2775,7 @@ def main(argv: list[str]) -> int:
             universe["included_symbols"],
             feedback=feedback,
             kline_source=actual_kline_source,
+            previous_capital_states=previous_capital_states,
         )
         feature_frame = market_snapshot["feature_frame"]
         market_rows = feature_frame.reset_index().to_dict(orient="records")
@@ -2745,6 +2932,7 @@ def main(argv: list[str]) -> int:
                 "risk_position_size_pct",
                 "risk_kelly_fraction",
                 "risk_score",
+                *CAPITAL_CANDIDATE_FIELDS,
             ],
         )
         candidate_frame = pd.DataFrame(
@@ -2788,6 +2976,9 @@ def main(argv: list[str]) -> int:
                      "news_quality_score": row.get("news_quality_score", 0.0),
                      "sector_propagation_bonus": row.get("sector_propagation_bonus", 0.0),
                      "contrarian_penalty": row.get("contrarian_penalty", 0.0),
+                    **{field: row.get(field) for field in CAPITAL_CANDIDATE_FIELDS},
+                    "distribution_risk": row.get("distribution_score"),
+                    "trap_risk": row.get("trap_score"),
                      "lifecycle_stage": candidate_lifecycle_stage(row),
                      "research_only": row["research_only"],
                      "allow_trade": row["allow_trade"],

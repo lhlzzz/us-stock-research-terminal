@@ -25,6 +25,11 @@ FACTORS = [
     "momentum_quality", "breakout_score", "reversal_quality",
     "volume_confirmation", "closing_strength_5d",
 ]
+CAPITAL_FACTORS = [
+    "upward_pressure", "downward_pressure", "volume_pressure",
+    "demand_persistence", "supply_exhaustion", "absorption", "accumulation",
+    "markup", "distribution", "crowding", "trap", "price_impact",
+]
 
 RESEARCH_DIR = Path(__file__).resolve().parent.parent / "research" / "walk-forward"
 
@@ -271,10 +276,125 @@ def run_walk_forward(train_days=60, test_days=5, horizon=1):
     print(f"Report: {md_path}")
 
 
+def run_capital_walk_forward(train_days=60, test_days=5, horizon=1):
+    """Run explicit TRAIN -> FIT -> TEST -> ADVANCE without production mutation."""
+    engine = create_engine(DATABASE_URL)
+    rows = pd.read_sql(text("""
+        SELECT ce.as_of_date, ce.symbol, ce.evidence_type, ce.value,
+               ft.forward_return, ft.capital_validation_status,
+               rr.config->>'version_status' AS version_status
+        FROM capital_evidence ce
+        JOIN forward_tracking ft
+          ON ft.symbol = ce.symbol AND ft.as_of_date = ce.as_of_date
+        JOIN tickets t ON t.id = ft.ticket_id
+        JOIN research_runs rr ON rr.run_id = t.research_run_id
+        WHERE ft.check_status = 'completed'
+          AND ft.forward_return IS NOT NULL
+          AND ft.horizon_days = :horizon
+          AND ce.model_version = 'capital_behavior_v1'
+          AND rr.status = 'done'
+          AND rr.finished_at IS NOT NULL
+        ORDER BY ce.as_of_date, ce.symbol
+    """), engine, params={"horizon": horizon})
+    fixed = rows[
+        (rows["capital_validation_status"] == "VALIDATED_FOR_BENCHMARK")
+        & (rows["version_status"] == "VERSIONED")
+    ].copy()
+    output = RESEARCH_DIR / f"capital-walk-forward-{train_days}d-{test_days}d-h{horizon}.json"
+    if fixed.empty:
+        result = {
+            "status": "UNVALIDATED_NO_FIXED_CHAIN",
+            "reason": "no independent validated Capital Brain outcome chain",
+            "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+            "workflow": ["TRAIN", "FIT", "TEST", "ADVANCE"],
+            "raw_rows": int(len(rows)),
+            "fixed_chain_rows": 0,
+        }
+        RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps(result, indent=2))
+        return result
+
+    panel = fixed.pivot_table(
+        index=["as_of_date", "symbol", "forward_return"],
+        columns="evidence_type",
+        values="value",
+        aggfunc="last",
+    ).reset_index()
+    panel["as_of_date"] = pd.to_datetime(panel["as_of_date"]).dt.date
+    dates = sorted(panel["as_of_date"].unique())
+    windows = []
+    start = 0
+    while start + train_days + test_days <= len(dates):
+        train_dates = dates[start:start + train_days]
+        test_dates = dates[start + train_days:start + train_days + test_days]
+        train = panel[panel["as_of_date"].isin(train_dates)]
+        test = panel[panel["as_of_date"].isin(test_dates)]
+        if len(train) < 30 or test.empty:
+            start += test_days
+            continue
+        # TRAIN: construct a strictly pre-test sample.
+        ics = {}
+        for feature in CAPITAL_FACTORS:
+            cohort = train[[feature, "forward_return"]].dropna()
+            if len(cohort) < 10:
+                continue
+            ic, _ = stats.spearmanr(cohort[feature], cohort["forward_return"])
+            if np.isfinite(ic):
+                ics[feature] = float(ic)
+        if not ics:
+            start += test_days
+            continue
+        # FIT: parameters are frozen before scoring every test date.
+        normalizer = sum(abs(value) for value in ics.values())
+        weights = {key: value / normalizer for key, value in ics.items()} if normalizer else {}
+        # TEST: score only features known at each test date.
+        scored = test.copy()
+        scored["capital_composite"] = sum(
+            scored[feature].fillna(0) * weight for feature, weight in weights.items()
+        )
+        top = scored.sort_values(["as_of_date", "capital_composite"], ascending=[True, False]).groupby(
+            "as_of_date", group_keys=False
+        ).head(1)
+        windows.append({
+            "train_range": [str(train_dates[0]), str(train_dates[-1])],
+            "test_range": [str(test_dates[0]), str(test_dates[-1])],
+            "train_rows": int(len(train)),
+            "test_rows": int(len(test)),
+            "weights": {key: round(value, 6) for key, value in weights.items()},
+            "top_win_rate": round(float((top["forward_return"] > 0).mean()), 6),
+            "top_avg_return": round(float(top["forward_return"].mean()), 6),
+        })
+        # ADVANCE: move forward only after the held-out period is scored.
+        start += test_days
+
+    result = {
+        "status": "RESEARCH_ONLY" if windows else "UNVALIDATED_INSUFFICIENT_WINDOWS",
+        "validation_status": "UNVALIDATED_NOT_READY",
+        "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+        "workflow": ["TRAIN", "FIT", "TEST", "ADVANCE"],
+        "config": {"train_days": train_days, "test_days": test_days, "horizon": horizon},
+        "windows": windows,
+        "overall": {
+            "window_count": len(windows),
+            "avg_top_win_rate": round(float(np.mean([item["top_win_rate"] for item in windows])), 6) if windows else None,
+            "avg_top_return": round(float(np.mean([item["top_avg_return"] for item in windows])), 6) if windows else None,
+        },
+    }
+    RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(result["overall"], indent=2))
+    return result
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Walk-forward validation")
     parser.add_argument("--train-days", type=int, default=60)
     parser.add_argument("--test-days", type=int, default=5)
     parser.add_argument("--horizon", type=int, default=1)
+    parser.add_argument("--capital", action="store_true", help="Run research-only Capital Brain walk-forward.")
     args = parser.parse_args()
-    run_walk_forward(args.train_days, args.test_days, args.horizon)
+    if args.capital:
+        run_capital_walk_forward(args.train_days, args.test_days, args.horizon)
+    else:
+        run_walk_forward(args.train_days, args.test_days, args.horizon)

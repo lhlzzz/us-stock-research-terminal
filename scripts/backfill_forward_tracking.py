@@ -8,13 +8,15 @@ import argparse
 import os
 import subprocess
 import sys
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import pandas as pd
+from sqlalchemy import text
 from data_provider import get_provider, is_trading_day, latest_us_trading_day
+from capital import build_capital_assessment
 
 _US_TRADING_DAY_CACHE: set[pd.Timestamp] | None = None
 
@@ -88,6 +90,113 @@ def fetch_close_price(symbol: str, target_date: date) -> float | None:
         return float(quote["latest_price"])
 
     return None
+
+
+def fetch_bounded_ohlcv(symbol: str, as_of_date: date) -> pd.DataFrame:
+    """Load only bars available on or before ``as_of_date`` for capital outcomes."""
+    provider = get_provider()
+    start_date = as_of_date - timedelta(days=90)
+    rows, _, _ = provider.fetch_klines(
+        symbol,
+        start_date.strftime("%Y-%m-%d"),
+        as_of_date.strftime("%Y-%m-%d"),
+    )
+    if not rows:
+        return pd.DataFrame(columns=["date", "open", "high", "low", "close", "volume"])
+    frame = pd.DataFrame(rows)
+    if "date" not in frame:
+        return pd.DataFrame(columns=["date", "open", "high", "low", "close", "volume"])
+    frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
+    return frame.loc[frame["date"].dt.date <= as_of_date].copy()
+
+
+def _state_family(state: str | None) -> str:
+    if state in {
+        "ACCUMULATION", "EARLY_BUILD", "ACTIVE_MARKUP",
+        "PULLBACK_ABSORPTION", "SECONDARY_MARKUP", "LATE_MARKUP",
+    }:
+        return "LONG"
+    if state in {"MARKDOWN", "SHORT_BUILD", "SHORT_PRESSURE"}:
+        return "SHORT"
+    if state in {"DISTRIBUTION", "EXIT", "TRAP"}:
+        return "RISK"
+    return "NEUTRAL"
+
+
+def _capital_outcome(
+    *,
+    symbol: str,
+    as_of_date: date,
+    due_date: date,
+    horizon_days: int,
+    entry_state: str | None,
+    entry_intent: str | None,
+    predicted_path: str | None,
+    forward_return: float,
+) -> dict[str, object] | None:
+    """Reconstruct only the outcome observable through this row's due date."""
+    bars = fetch_bounded_ohlcv(symbol, due_date)
+    if bars.empty:
+        return None
+    assessment = build_capital_assessment(bars)
+    actual_state = assessment["state"]["capital_state"]
+    actual_path = assessment["path"]["path_type"]
+    outcome: dict[str, object] = {
+        "state_after_1d": actual_state if horizon_days == 1 else None,
+        "state_after_3d": actual_state if horizon_days == 3 else None,
+        "state_after_5d": actual_state if horizon_days == 5 else None,
+        "actual_path": actual_path,
+        "state_correct": _state_family(entry_state) == _state_family(actual_state),
+        "intent_correct": (
+            (entry_intent in {"ACCUMULATE", "BUILD", "PUSH_HIGHER", "DEFEND_PRICE",
+                              "ABSORB_SUPPLY", "REACCELERATE"} and forward_return > 0)
+            or (entry_intent in {"DISTRIBUTE", "REDUCE_RISK", "PRESS_LOWER"} and forward_return < 0)
+            or (entry_intent in {"WAIT", "UNKNOWN", None} and abs(forward_return) <= 0.005)
+        ),
+        "path_correct": bool(predicted_path) and predicted_path == actual_path,
+        "model_version": assessment["model_version"],
+        "data_version": "PUBLIC_OHLCV_V1",
+    }
+    return outcome
+
+
+def _upsert_capital_outcome(
+    db,
+    *,
+    forward_tracking_id: int,
+    symbol: str,
+    as_of_date: date,
+    research_run_id: int | None,
+    outcome: dict[str, object],
+) -> None:
+    db.execute(text("""
+        INSERT INTO capital_prediction_outcome (
+            forward_tracking_id, symbol, as_of_date, research_run_id, model_version,
+            data_version, state_after_1d, state_after_3d, state_after_5d, actual_path,
+            state_correct, intent_correct, path_correct, semantic, updated_at
+        ) VALUES (
+            :forward_tracking_id, :symbol, :as_of_date, :research_run_id, :model_version,
+            :data_version, :state_after_1d, :state_after_3d, :state_after_5d, :actual_path,
+            :state_correct, :intent_correct, :path_correct, 'DERIVED', NOW()
+        )
+        ON CONFLICT (forward_tracking_id) DO UPDATE SET
+            model_version = EXCLUDED.model_version,
+            data_version = EXCLUDED.data_version,
+            state_after_1d = COALESCE(EXCLUDED.state_after_1d, capital_prediction_outcome.state_after_1d),
+            state_after_3d = COALESCE(EXCLUDED.state_after_3d, capital_prediction_outcome.state_after_3d),
+            state_after_5d = COALESCE(EXCLUDED.state_after_5d, capital_prediction_outcome.state_after_5d),
+            actual_path = EXCLUDED.actual_path,
+            state_correct = EXCLUDED.state_correct,
+            intent_correct = EXCLUDED.intent_correct,
+            path_correct = EXCLUDED.path_correct,
+            updated_at = NOW()
+    """), {
+        "forward_tracking_id": forward_tracking_id,
+        "symbol": symbol,
+        "as_of_date": as_of_date,
+        "research_run_id": research_run_id,
+        **outcome,
+    })
 
 
 def backfill_csv_file(csv_path: Path, target_dates: list[date]) -> int:
@@ -171,8 +280,6 @@ def parse_args() -> argparse.Namespace:
 def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
     """Backfill forward tracking rows in PostgreSQL database."""
     from db.engine import SessionLocal
-    from sqlalchemy import text
-
     db = SessionLocal()
     try:
         from db.crud import link_unlinked_forward_tracking
@@ -190,7 +297,9 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
             "SELECT ft.id, ft.track_key, ft.symbol, ft.as_of_date, ft.horizon_days, "
             "ft.due_date, ft.as_of_close, "
             "t.narrative_title, t.risk_verdict, t.quality_verdict, t.panel_verdict, "
-            "t.market_score, t.catalyst_score "
+            "t.market_score, t.catalyst_score, t.research_run_id, "
+            "ft.capital_model_version, ft.capital_state_at_entry, "
+            "ft.capital_intent_at_entry, ft.predicted_path "
             "FROM forward_tracking ft "
             "LEFT JOIN tickets t ON ft.ticket_id = t.id "
             "WHERE ft.check_status = 'pending' AND ft.due_date <= :max_date"
@@ -201,7 +310,8 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
         for row in pending:
             (row_id, track_key, symbol, as_of_date, horizon_days, due_date, as_of_close,
              narrative_title, risk_verdict, quality_verdict, panel_verdict,
-             market_score, catalyst_score) = row
+             market_score, catalyst_score, research_run_id, capital_model_version,
+             capital_state_at_entry, capital_intent_at_entry, predicted_path) = row
 
             # Fetch as_of_close if missing
             if as_of_close is None:
@@ -255,11 +365,45 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
                 "classification": outcome_classification,
                 "id": row_id,
             })
+            capital_outcome = None
+            if capital_model_version:
+                capital_outcome = _capital_outcome(
+                    symbol=symbol,
+                    as_of_date=as_of_date,
+                    due_date=due_date,
+                    horizon_days=int(horizon_days),
+                    entry_state=capital_state_at_entry,
+                    entry_intent=capital_intent_at_entry,
+                    predicted_path=predicted_path,
+                    forward_return=ret,
+                )
+            if capital_outcome:
+                db.execute(text("""
+                    UPDATE forward_tracking
+                    SET state_after_1d = COALESCE(:state_after_1d, state_after_1d),
+                        state_after_3d = COALESCE(:state_after_3d, state_after_3d),
+                        state_after_5d = COALESCE(:state_after_5d, state_after_5d),
+                        actual_path = :actual_path,
+                        state_correct = :state_correct,
+                        intent_correct = :intent_correct,
+                        path_correct = :path_correct
+                    WHERE id = :id
+                """), {**capital_outcome, "id": row_id})
+                _upsert_capital_outcome(
+                    db,
+                    forward_tracking_id=row_id,
+                    symbol=symbol,
+                    as_of_date=as_of_date,
+                    research_run_id=research_run_id,
+                    outcome=capital_outcome,
+                )
             updated += 1
             direction = "profit" if ret > 0 else "LOSS" if ret < 0 else "flat"
             print(f"  {symbol} {horizon_days}d: {as_of:.2f} -> {price:.2f} ({ret:+.4f}) [{direction}]")
 
         db.commit()
+        from capital.lifecycle import write_capital_scoreboard
+        write_capital_scoreboard(Path(__file__).resolve().parent.parent / "research")
         print(f"\nDB rows updated: {updated}")
         return updated
     finally:

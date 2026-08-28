@@ -832,6 +832,153 @@ async def get_scoreboard():
         return rows[0] if rows else {"overall": {}, "by_horizon": {}}
 
 
+@app.get("/api/capital/scoreboard")
+async def get_capital_scoreboard():
+    """Return research-only Capital Brain outcome diagnostics."""
+    from sqlalchemy import text
+    engine = get_engine()
+    with engine.connect() as conn:
+        summary = dict(conn.execute(text("""
+            SELECT COUNT(*) AS sample_count,
+                   AVG(CASE WHEN cpo.state_correct IS TRUE THEN 1.0
+                            WHEN cpo.state_correct IS FALSE THEN 0.0 END) AS state_accuracy,
+                   AVG(CASE WHEN cpo.intent_correct IS TRUE THEN 1.0
+                            WHEN cpo.intent_correct IS FALSE THEN 0.0 END) AS intent_accuracy,
+                   AVG(CASE WHEN cpo.path_correct IS TRUE THEN 1.0
+                            WHEN cpo.path_correct IS FALSE THEN 0.0 END) AS path_accuracy,
+                   AVG(ft.forward_return) AS avg_return,
+                   AVG(CASE WHEN ft.forward_return > 0 THEN 1.0 ELSE 0.0 END) AS win_rate
+            FROM forward_tracking ft
+            LEFT JOIN capital_prediction_outcome cpo
+              ON cpo.forward_tracking_id = ft.id
+            WHERE ft.check_status = 'completed'
+              AND ft.forward_return IS NOT NULL
+              AND ft.capital_model_version = 'capital_behavior_v1'
+        """)).mappings().one())
+        horizons = [
+            dict(row)
+            for row in conn.execute(text("""
+                SELECT horizon_days, COUNT(*) AS sample_count,
+                       AVG(CASE WHEN t.expected_direction = 'LONG' AND ft.forward_return > 0 THEN 1.0
+                                WHEN t.expected_direction = 'SHORT' AND ft.forward_return < 0 THEN 1.0
+                                WHEN t.expected_direction IN ('LONG', 'SHORT') THEN 0.0 END) AS direction_accuracy
+                FROM forward_tracking ft
+                LEFT JOIN tickets t ON t.id = ft.ticket_id
+                WHERE ft.check_status = 'completed'
+                  AND ft.forward_return IS NOT NULL
+                  AND ft.capital_model_version = 'capital_behavior_v1'
+                GROUP BY horizon_days
+                ORDER BY horizon_days
+            """)).mappings()
+        ]
+    return {
+        "status": "RESEARCH_ONLY",
+        "validation_status": "UNVALIDATED_NOT_READY",
+        **summary,
+        "by_horizon": horizons,
+        "mfe": "UNAVAILABLE_NOT_PERSISTED",
+        "mae": "UNAVAILABLE_NOT_PERSISTED",
+        "distribution_avoidance": "UNAVAILABLE_NO_PRODUCTION_GATE",
+        "trap_avoidance": "UNAVAILABLE_NO_PRODUCTION_GATE",
+    }
+
+
+@app.get("/api/capital/history/{symbol}")
+async def get_capital_history(symbol: str, limit: int = Query(60, ge=1, le=500)):
+    """Return inferred daily Capital Brain state history for a symbol."""
+    from sqlalchemy import text
+    engine = get_engine()
+    with engine.connect() as conn:
+        rows = [
+            dict(row)
+            for row in conn.execute(text("""
+                SELECT csh.as_of_date::text, csh.research_run_id, csh.capital_state,
+                       csh.previous_capital_state, csh.state_transition, csh.state_duration,
+                       csh.state_confidence, csh.state_reason, ci.capital_intent,
+                       ci.intent_confidence, cpp.path_type, cpp.t1_probability,
+                       cpp.t3_probability, cpp.t5_probability
+                FROM capital_state_history csh
+                LEFT JOIN capital_intent ci
+                  ON ci.symbol = csh.symbol AND ci.research_run_id = csh.research_run_id
+                LEFT JOIN capital_path_prediction cpp
+                  ON cpp.symbol = csh.symbol AND cpp.research_run_id = csh.research_run_id
+                WHERE csh.symbol = :symbol
+                ORDER BY csh.as_of_date DESC, csh.research_run_id DESC
+                LIMIT :limit
+            """), {"symbol": symbol.upper(), "limit": limit}).mappings()
+        ]
+    return {"symbol": symbol.upper(), "history": rows}
+
+
+@app.get("/api/capital/state/{symbol}")
+async def get_capital_state(symbol: str):
+    """Return the latest inferred capital state, or an explicit empty result."""
+    history = await get_capital_history(symbol, limit=1)
+    return {
+        "symbol": symbol.upper(),
+        "state": history["history"][0] if history["history"] else None,
+        "semantic": "INFERRED",
+    }
+
+
+@app.get("/api/capital/path/{symbol}")
+async def get_capital_path(symbol: str):
+    """Return the latest predicted price path, or an explicit empty result."""
+    from sqlalchemy import text
+    engine = get_engine()
+    with engine.connect() as conn:
+        row = conn.execute(text("""
+            SELECT cpp.as_of_date::text, cpp.research_run_id, cpp.path_type,
+                   cpp.t1_probability, cpp.t3_probability, cpp.t5_probability,
+                   cpp.path_confidence, cpp.semantic
+            FROM capital_path_prediction cpp
+            WHERE cpp.symbol = :symbol
+            ORDER BY cpp.as_of_date DESC, cpp.research_run_id DESC
+            LIMIT 1
+        """), {"symbol": symbol.upper()}).mappings().first()
+    return {"symbol": symbol.upper(), "path": dict(row) if row else None}
+
+
+@app.get("/api/capital/{symbol}")
+async def get_capital(symbol: str):
+    """Return the latest combined public-data Capital Brain assessment."""
+    from sqlalchemy import text
+    engine = get_engine()
+    with engine.connect() as conn:
+        row = conn.execute(text("""
+            SELECT cds.symbol, cds.as_of_date::text, cds.research_run_id,
+                   cds.model_version, cds.data_version, cds.validation_status,
+                   cds.statistical_score, cds.capital_score, cds.combined_score,
+                   cds.capital_strength, cds.dominant_direction, cds.dominant_pressure,
+                   cds.distribution_risk, cds.trap_risk, cds.evidence_json,
+                   csh.capital_state, csh.previous_capital_state, csh.state_transition,
+                   csh.state_duration, csh.state_confidence, csh.state_reason,
+                   ci.capital_intent, ci.intent_confidence, ci.expected_direction,
+                   ci.continuation_condition, ci.invalidation_condition,
+                   cpp.path_type, cpp.t1_probability, cpp.t3_probability,
+                   cpp.t5_probability, cpp.path_confidence
+            FROM capital_daily_snapshot cds
+            LEFT JOIN capital_state_history csh
+              ON csh.symbol = cds.symbol AND csh.research_run_id = cds.research_run_id
+            LEFT JOIN capital_intent ci
+              ON ci.symbol = cds.symbol AND ci.research_run_id = cds.research_run_id
+            LEFT JOIN capital_path_prediction cpp
+              ON cpp.symbol = cds.symbol AND cpp.research_run_id = cds.research_run_id
+            WHERE cds.symbol = :symbol
+            ORDER BY cds.as_of_date DESC, cds.research_run_id DESC
+            LIMIT 1
+        """), {"symbol": symbol.upper()}).mappings().first()
+    return {
+        "symbol": symbol.upper(),
+        "assessment": dict(row) if row else None,
+        "semantic_contract": {
+            "evidence": "DERIVED",
+            "state_and_intent": "INFERRED",
+            "path": "PREDICTED",
+        },
+    }
+
+
 @app.get("/api/factors")
 async def get_factors(trade_date: str = None, symbol: str = None, limit: int = 100):
     """Get factor snapshots. Optionally filter by date and/or symbol."""

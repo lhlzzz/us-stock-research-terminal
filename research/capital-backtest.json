@@ -1,0 +1,11 @@
+{
+  "status": "UNVALIDATED_NO_FIXED_CHAIN",
+  "reason": "capital_parallel_model_has_no_independent_validated_completed_chain",
+  "gate": {
+    "raw_completed_rows": 0,
+    "fixed_chain_rows": 0,
+    "trading_days": 0
+  },
+  "production_action": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
+  "variants": {}
+}

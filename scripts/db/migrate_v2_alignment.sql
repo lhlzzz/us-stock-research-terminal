@@ -315,7 +315,173 @@ CREATE INDEX IF NOT EXISTS idx_trade_journal_ticket_id ON trade_journal(ticket_i
 CREATE INDEX IF NOT EXISTS idx_paper_trades_ticket_id ON paper_trades(ticket_id);
 CREATE INDEX IF NOT EXISTS idx_paper_fills_ticket_id ON paper_fills(ticket_id);
 
--- 8. Intraday paper strategy lifecycle. These records intentionally do not
+-- 9. Capital Behavior Engine. These fields and tables are strictly parallel
+-- research metadata derived from public price-volume data. They do not assert
+-- participant identity and must not alter the production ranking by themselves.
+ALTER TABLE tickets
+    ADD COLUMN IF NOT EXISTS capital_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS capital_strength NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS capital_state VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS capital_state_confidence NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS capital_intent VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS capital_intent_confidence NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS accumulation_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS absorption_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS supply_exhaustion_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS demand_persistence_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS markup_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS distribution_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS price_control_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS crowding_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS trap_score NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS expected_direction VARCHAR(16),
+    ADD COLUMN IF NOT EXISTS path_type VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS t1_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS t3_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS t5_probability NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS capital_thesis TEXT,
+    ADD COLUMN IF NOT EXISTS invalidation_condition TEXT;
+
+ALTER TABLE forward_tracking
+    ADD COLUMN IF NOT EXISTS capital_model_version VARCHAR(64),
+    ADD COLUMN IF NOT EXISTS capital_validation_status VARCHAR(64),
+    ADD COLUMN IF NOT EXISTS capital_state_at_entry VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS capital_intent_at_entry VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS capital_strength_at_entry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS capital_score_at_entry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS distribution_score_at_entry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS trap_score_at_entry NUMERIC(8,6),
+    ADD COLUMN IF NOT EXISTS predicted_path VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS state_after_1d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS state_after_3d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS state_after_5d VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS actual_path VARCHAR(40),
+    ADD COLUMN IF NOT EXISTS state_correct BOOLEAN,
+    ADD COLUMN IF NOT EXISTS intent_correct BOOLEAN,
+    ADD COLUMN IF NOT EXISTS path_correct BOOLEAN;
+
+CREATE TABLE IF NOT EXISTS capital_daily_snapshot (
+    id BIGSERIAL PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    as_of_date DATE NOT NULL,
+    research_run_id INTEGER NOT NULL REFERENCES research_runs(run_id),
+    model_version VARCHAR(64) NOT NULL,
+    data_version VARCHAR(64) NOT NULL,
+    validation_status VARCHAR(64) NOT NULL,
+    statistical_score NUMERIC(8,6),
+    capital_score NUMERIC(8,6),
+    combined_score NUMERIC(8,6),
+    capital_strength NUMERIC(8,6),
+    dominant_direction VARCHAR(16),
+    dominant_pressure NUMERIC(8,6),
+    distribution_risk NUMERIC(8,6),
+    trap_risk NUMERIC(8,6),
+    evidence_json JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(symbol, as_of_date, research_run_id)
+);
+
+CREATE TABLE IF NOT EXISTS capital_evidence (
+    id BIGSERIAL PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    as_of_date DATE NOT NULL,
+    research_run_id INTEGER NOT NULL REFERENCES research_runs(run_id),
+    model_version VARCHAR(64) NOT NULL,
+    data_version VARCHAR(64) NOT NULL,
+    evidence_type VARCHAR(64) NOT NULL,
+    value NUMERIC(8,6),
+    confidence NUMERIC(8,6),
+    availability VARCHAR(40) NOT NULL,
+    source VARCHAR(128),
+    lookback VARCHAR(64),
+    semantic VARCHAR(16) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(symbol, as_of_date, research_run_id, evidence_type)
+);
+
+CREATE TABLE IF NOT EXISTS capital_state_history (
+    id BIGSERIAL PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    as_of_date DATE NOT NULL,
+    research_run_id INTEGER NOT NULL REFERENCES research_runs(run_id),
+    model_version VARCHAR(64) NOT NULL,
+    data_version VARCHAR(64) NOT NULL,
+    capital_state VARCHAR(40) NOT NULL,
+    previous_capital_state VARCHAR(40),
+    state_transition VARCHAR(96),
+    state_duration INTEGER NOT NULL DEFAULT 0,
+    state_confidence NUMERIC(8,6),
+    state_reason TEXT,
+    semantic VARCHAR(16) NOT NULL DEFAULT 'INFERRED',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(symbol, as_of_date, research_run_id)
+);
+
+CREATE TABLE IF NOT EXISTS capital_intent (
+    id BIGSERIAL PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    as_of_date DATE NOT NULL,
+    research_run_id INTEGER NOT NULL REFERENCES research_runs(run_id),
+    model_version VARCHAR(64) NOT NULL,
+    data_version VARCHAR(64) NOT NULL,
+    capital_intent VARCHAR(40) NOT NULL,
+    intent_confidence NUMERIC(8,6),
+    expected_direction VARCHAR(16),
+    continuation_condition TEXT,
+    invalidation_condition TEXT,
+    semantic VARCHAR(16) NOT NULL DEFAULT 'INFERRED',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(symbol, as_of_date, research_run_id)
+);
+
+CREATE TABLE IF NOT EXISTS capital_path_prediction (
+    id BIGSERIAL PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    as_of_date DATE NOT NULL,
+    research_run_id INTEGER NOT NULL REFERENCES research_runs(run_id),
+    model_version VARCHAR(64) NOT NULL,
+    data_version VARCHAR(64) NOT NULL,
+    path_type VARCHAR(40) NOT NULL,
+    t1_probability NUMERIC(8,6),
+    t3_probability NUMERIC(8,6),
+    t5_probability NUMERIC(8,6),
+    path_confidence NUMERIC(8,6),
+    semantic VARCHAR(16) NOT NULL DEFAULT 'PREDICTED',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(symbol, as_of_date, research_run_id)
+);
+
+CREATE TABLE IF NOT EXISTS capital_prediction_outcome (
+    id BIGSERIAL PRIMARY KEY,
+    forward_tracking_id INTEGER NOT NULL REFERENCES forward_tracking(id),
+    symbol VARCHAR(10) NOT NULL,
+    as_of_date DATE NOT NULL,
+    research_run_id INTEGER REFERENCES research_runs(run_id),
+    model_version VARCHAR(64),
+    data_version VARCHAR(64),
+    state_after_1d VARCHAR(40),
+    state_after_3d VARCHAR(40),
+    state_after_5d VARCHAR(40),
+    actual_path VARCHAR(40),
+    state_correct BOOLEAN,
+    intent_correct BOOLEAN,
+    path_correct BOOLEAN,
+    semantic VARCHAR(16) NOT NULL DEFAULT 'DERIVED',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(forward_tracking_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_capital_daily_snapshot_symbol_date
+    ON capital_daily_snapshot(symbol, as_of_date DESC);
+CREATE INDEX IF NOT EXISTS idx_capital_state_history_symbol_date
+    ON capital_state_history(symbol, as_of_date DESC);
+CREATE INDEX IF NOT EXISTS idx_capital_path_prediction_symbol_date
+    ON capital_path_prediction(symbol, as_of_date DESC);
+CREATE INDEX IF NOT EXISTS idx_capital_prediction_outcome_symbol_date
+    ON capital_prediction_outcome(symbol, as_of_date DESC);
+
+-- 10. Intraday paper strategy lifecycle. These records intentionally do not
 -- reuse ticket-bound tables: daily tickets and intraday decisions have
 -- different time semantics and lineage requirements.
 CREATE TABLE IF NOT EXISTS intraday_strategy_runs (

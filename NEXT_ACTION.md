@@ -1,5 +1,12 @@
 # NEXT_ACTION
 
+**已验证（2026-08-28，Capital Behavior Engine 研究并行）：**
+- 新增 `capital_behavior_v1`：仅使用公开 OHLCV/实时行情，严格区分 `OBSERVED`、`DERIVED`、`INFERRED`、`PREDICTED`；不声明机构、主力或隐藏参与者身份。
+- 新的 Capital Brain 以并行元数据接入 `observable_footprint_v1` 日研究、票据、T+1/T+3/T+5 跟踪、生命周期、盘中纸面策略、API 与失败复盘；旧的候选排序仍为 `(ticket_score, market_score, volume_confirmation_ratio)`，未被 Capital 分数改变。
+- PostgreSQL 已应用幂等迁移：`capital_daily_snapshot`、`capital_evidence`、`capital_state_history`、`capital_intent`、`capital_path_prediction`、`capital_prediction_outcome`，并扩展票据和 tracking 资本字段。
+- 验证：`pytest -q tests` 为 **66 passed**；`python3 -m compileall -q scripts`、`python3 scripts/daily_scheduler.py --dry-run`、shell syntax 与 Capital API route contract 均通过。
+- 资本 A/B、feature optimizer、walk-forward 均返回 `UNVALIDATED_NO_FIXED_CHAIN`，没有独立版本化完成样本；生产动作固定为 `KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED` / `NO_PRODUCTION_WEIGHT_CHANGE`。Capital Model **不具备 production-ready 状态**。
+
 **已验证（2026-08-18，盘中纸面模拟继续）：**
 - `scripts/realtime_runner.py` 已在纽约常规交易时段运行两轮：手动 `run_id=1`（北京时间 21:47）和 scheduler 自动 `run_id=2`（北京时间 21:55）；两轮均使用已完成的研究运行 `144` 作为上下文。
 - `intraday_paper_v1` 每轮对 15 个候选写入多头与短模型审计决策；可用行情未达到多头入场门槛，短模型因没有可验证借券来源而拒绝。当前纸面持仓、订单、成交均为 `0`，没有 broker 或外部订单调用。
