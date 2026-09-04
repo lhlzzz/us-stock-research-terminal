@@ -1,5 +1,41 @@
 # NEXT_ACTION
 
+## Historical Lineage + As-of OHLCV + Bootstrap V2 (2026-09-03)
+
+- Baseline: `main @ 41e9430`. Replay of existing tickets through
+  `capital_behavior_v2`. Not a new Capital Model. Not model validation.
+- Lineage audit (`capital_historical_lineage`): `EXPLICIT=12`,
+  `DERIVED_UNIQUE=11`, `DERIVED_EXACT=0`, `AMBIGUOUS=424`, `UNRESOLVED=11`.
+  Recoverable extra lineage=`11` (tickets `160-164` run `40`; `500-502`
+  run `141`; `503-505` run `142`). `tickets.research_run_id` still only
+  `12` versioned rows; recovered tickets remain NULL on the tickets table.
+- As-of OHLCV (`capital_historical_ohlcv`): `1307` bars / `21` symbols /
+  `provider_cache` only. `daily_klines` unchanged (`435447`, max
+  `2026-07-31`). Versioned tickets `506-517` are replayable from
+  provider-cache last bars on D or D-1 (`MAX_AS_OF_STALE_DAYS=5`).
+- Replay funnel: Historical Tickets `458` → unique join `295` → valid
+  lineage `23` → OHLCV replayable `23` → V2 replay `23` → complete
+  T+1/3/5/10 `5` → VALID Dataset `5`.
+- Dataset: `VALID=5` (META/NVDA/AMAT/STX/KDP on `2026-07-11`),
+  `INSUFFICIENT_FORWARD_DATA=18`, `MISSING_LINEAGE=435`. Empirical
+  remains `NOT_READY` (`MIN_SAMPLES=30`, sample_count=`5`). Gate was
+  not lowered.
+- Persist is idempotent: second lineage/OHLCV/bootstrap persist did not
+  grow rows. `tickets` still `458` / versioned `12` /
+  `ticket_score_sum=361.551543`. Capital tables after persist:
+  snapshot=`23`, dataset=`23` (VALID=`5`), outcome=`74`, error=`10`.
+- Artifacts: `research/capital-learning/lineage-recovery-2026-09-03.{json,md}`,
+  `historical-ohlcv-backfill-2026-09-03.{json,md}`,
+  `historical-bootstrap-2026-09-03.{json,md}`,
+  `historical-bootstrap-v2-2026-09-03.{json,md}`.
+- Production boundary unchanged: `RESEARCH_ONLY`,
+  `UNVALIDATED_NO_FIXED_CHAIN`, `KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED`,
+  `NO_PRODUCTION_WEIGHT_CHANGE`.
+- Next operational action: do not invent lineage for the remaining
+  unversioned tickets. Accumulate independently versioned V2 tickets
+  with complete T+1/3/5/10 through the normal post-close pipeline until
+  VALID ≥ 30. Then re-run bootstrap. Do not change production weights.
+
 ## Capital Behavior V3 status (2026-08-28)
 
 - Baseline: `main @ c0c2c3e`; implementation target: `capital_behavior_v3`.

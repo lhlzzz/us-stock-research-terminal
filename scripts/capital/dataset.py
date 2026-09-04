@@ -6,6 +6,7 @@ copy those as-of outputs and keep future labels in a separate outcome object.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from dataclasses import dataclass
@@ -63,6 +64,25 @@ def _clean(value: Any) -> Any:
 def canonical_json(value: Any) -> str:
     """Return stable JSON used for replay fingerprints and artifact output."""
     return json.dumps(_clean(value), ensure_ascii=True, sort_keys=True, separators=(",", ":"), allow_nan=False)
+
+
+def sample_fingerprint(
+    *,
+    symbol: Any,
+    as_of_date: Any,
+    research_run_id: Any,
+    model_version: Any,
+    dataset_version: Any = DATASET_VERSION,
+) -> str:
+    """Stable identity for one dataset sample. Duplicate fingerprints must upsert."""
+    payload = canonical_json({
+        "symbol": str(symbol or "").upper(),
+        "as_of_date": str(as_of_date or ""),
+        "research_run_id": research_run_id,
+        "model_version": str(model_version or CAPITAL_MODEL_VERSION),
+        "dataset_version": str(dataset_version or DATASET_VERSION),
+    })
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _nested(snapshot: Mapping[str, Any], key: str, fallback: str) -> dict[str, Any]:
@@ -230,6 +250,13 @@ def assemble_dataset_sample(
         "eligibility_reason": reason,
         "dataset_split": requested_split,
         "dataset_version": DATASET_VERSION,
+        "sample_fingerprint": sample_fingerprint(
+            symbol=snapshot.get("symbol"),
+            as_of_date=snapshot.get("as_of_date"),
+            research_run_id=snapshot.get("research_run_id"),
+            model_version=snapshot.get("model_version") or CAPITAL_MODEL_VERSION,
+            dataset_version=DATASET_VERSION,
+        ),
     }
     return _clean(sample)
 
@@ -377,14 +404,22 @@ def prediction_error_types(sample: Mapping[str, Any], outcome: Mapping[str, Any]
     predicted_path = (_nested(sample, "predicted_path", "predicted_path").get("path_type")
                       or sample.get("path_type"))
     actual_path = outcome.get("actual_path") or outcome.get("path_after_3d")
+    long_family = {
+        "ACCUMULATION", "EARLY_BUILD", "ACTIVE_MARKUP",
+        "PULLBACK_ABSORPTION", "SECONDARY_MARKUP", "LATE_MARKUP",
+    }
     if predicted_state and actual_state and predicted_state != actual_state:
         errors.append({"error_type": "STATE_FALSE_POSITIVE", "error_magnitude": 1.0})
+        if predicted_state not in long_family and actual_state in long_family:
+            errors.append({"error_type": "STATE_FALSE_NEGATIVE", "error_magnitude": 1.0})
     if outcome.get("transition_label") and predicted_state and not str(outcome["transition_label"]).startswith(f"{predicted_state}->"):
         errors.append({"error_type": "TRANSITION_MISSED", "error_magnitude": 1.0})
     if predicted_intent and actual_intent and predicted_intent not in {actual_intent, "UNCERTAIN"}:
         errors.append({"error_type": "INTENT_WRONG", "error_magnitude": 1.0})
     if predicted_path and actual_path and predicted_path != actual_path:
         errors.append({"error_type": "PATH_WRONG", "error_magnitude": 1.0})
+    if predicted_path in {"UP_CONTINUATION", "ACCELERATION"} and actual_path in {"BREAKDOWN", "DISTRIBUTION", "TRAP"}:
+        errors.append({"error_type": "REVERSAL_MISSED", "error_magnitude": 1.0})
     if _finite(sample.get("distribution")) is not None and float(sample.get("distribution") or 0.0) >= 0.7 and actual_path not in {"DISTRIBUTION", "TRAP"}:
         errors.append({"error_type": "DISTRIBUTION_MISSED", "error_magnitude": float(sample.get("distribution") or 0.0)})
     if _finite(sample.get("trap")) is not None and float(sample.get("trap") or 0.0) >= 0.7 and actual_path != "TRAP":

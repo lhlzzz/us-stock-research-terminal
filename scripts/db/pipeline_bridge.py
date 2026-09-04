@@ -516,9 +516,15 @@ def _persist_capital_dataset(
                 "status": "VALID" if evidence.get("availability") == "AVAILABLE" else "INVALID",
                 "source": evidence.get("evidence", {}).get("upward_pressure", {}).get("source", "PUBLIC_OHLCV"),
                 "source_layers": row.get("source_layers") or {},
+                **dict(row.get("source_lineage") or {}),
             },
         })
-        sample = assemble_dataset_sample(snapshot, lineage=snapshot["source_lineage"])
+        sample = assemble_dataset_sample(
+            snapshot,
+            outcome=row.get("future_outcome") or row.get("outcome"),
+            lineage=snapshot["source_lineage"],
+            split=row.get("dataset_split"),
+        )
         params = {field: sample.get(field) for field in columns}
         for field in json_fields:
             params[field] = json.dumps(sample.get(field) or {}, sort_keys=True, ensure_ascii=True, allow_nan=False)

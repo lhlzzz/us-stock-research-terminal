@@ -1,0 +1,385 @@
+{
+  "run_date": "2026-09-03",
+  "mode": "persist",
+  "summary": {
+    "tickets": 458,
+    "unversioned_tickets": 446,
+    "EXPLICIT": 12,
+    "DERIVED_EXACT": 0,
+    "DERIVED_UNIQUE": 11,
+    "AMBIGUOUS": 424,
+    "UNRESOLVED": 11,
+    "recoverable": 11,
+    "valid_lineage": 23
+  },
+  "persisted_rows": 458,
+  "tickets_mutated": false,
+  "recovered": [
+    {
+      "ticket_id": 160,
+      "symbol": "META",
+      "as_of_date": "2026-07-11",
+      "research_run_id": 40,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-07-11",
+        "run_id": 40,
+        "run_started_at": "2026-07-10T18:47:07.914035",
+        "ticket_created_at": "2026-07-10T18:47:07.927719",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 161,
+      "symbol": "NVDA",
+      "as_of_date": "2026-07-11",
+      "research_run_id": 40,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-07-11",
+        "run_id": 40,
+        "run_started_at": "2026-07-10T18:47:07.914035",
+        "ticket_created_at": "2026-07-10T18:47:07.938168",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 162,
+      "symbol": "AMAT",
+      "as_of_date": "2026-07-11",
+      "research_run_id": 40,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-07-11",
+        "run_id": 40,
+        "run_started_at": "2026-07-10T18:47:07.914035",
+        "ticket_created_at": "2026-07-10T18:47:07.943854",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 163,
+      "symbol": "STX",
+      "as_of_date": "2026-07-11",
+      "research_run_id": 40,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-07-11",
+        "run_id": 40,
+        "run_started_at": "2026-07-10T18:47:07.914035",
+        "ticket_created_at": "2026-07-10T18:47:07.948329",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 164,
+      "symbol": "KDP",
+      "as_of_date": "2026-07-11",
+      "research_run_id": 40,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-07-11",
+        "run_id": 40,
+        "run_started_at": "2026-07-10T18:47:07.914035",
+        "ticket_created_at": "2026-07-10T18:47:07.954619",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 500,
+      "symbol": "MSFT",
+      "as_of_date": "2026-08-01",
+      "research_run_id": 141,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-08-01",
+        "run_id": 141,
+        "run_started_at": "2026-08-01T05:41:18.849321",
+        "ticket_created_at": "2026-08-01T05:41:18.887365",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 501,
+      "symbol": "HII",
+      "as_of_date": "2026-08-01",
+      "research_run_id": 141,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-08-01",
+        "run_id": 141,
+        "run_started_at": "2026-08-01T05:41:18.849321",
+        "ticket_created_at": "2026-08-01T05:41:18.909030",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 502,
+      "symbol": "FFIV",
+      "as_of_date": "2026-08-01",
+      "research_run_id": 141,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-08-01",
+        "run_id": 141,
+        "run_started_at": "2026-08-01T05:41:18.849321",
+        "ticket_created_at": "2026-08-01T05:41:18.912635",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 503,
+      "symbol": "MSFT",
+      "as_of_date": "2026-08-03",
+      "research_run_id": 142,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-08-03",
+        "run_id": 142,
+        "run_started_at": "2026-08-02T19:32:44.034004",
+        "ticket_created_at": "2026-08-02T19:32:44.054630",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 504,
+      "symbol": "HII",
+      "as_of_date": "2026-08-03",
+      "research_run_id": 142,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-08-03",
+        "run_id": 142,
+        "run_started_at": "2026-08-02T19:32:44.034004",
+        "ticket_created_at": "2026-08-02T19:32:44.064259",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 505,
+      "symbol": "AMZN",
+      "as_of_date": "2026-08-03",
+      "research_run_id": 142,
+      "lineage_status": "DERIVED_UNIQUE",
+      "lineage_method": "symbol.as_of_date.unique_run.created_at",
+      "lineage_source": "research_runs",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 4,
+        "as_of_date": "2026-08-03",
+        "run_id": 142,
+        "run_started_at": "2026-08-02T19:32:44.034004",
+        "ticket_created_at": "2026-08-02T19:32:44.067823",
+        "window_hours": 1.0
+      }
+    },
+    {
+      "ticket_id": 506,
+      "symbol": "NBIS",
+      "as_of_date": "2026-08-15",
+      "research_run_id": 143,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 143
+      }
+    },
+    {
+      "ticket_id": 507,
+      "symbol": "NTAP",
+      "as_of_date": "2026-08-15",
+      "research_run_id": 143,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 143
+      }
+    },
+    {
+      "ticket_id": 508,
+      "symbol": "LITE",
+      "as_of_date": "2026-08-15",
+      "research_run_id": 143,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 143
+      }
+    },
+    {
+      "ticket_id": 509,
+      "symbol": "ADI",
+      "as_of_date": "2026-08-18",
+      "research_run_id": 144,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 144
+      }
+    },
+    {
+      "ticket_id": 510,
+      "symbol": "FOX",
+      "as_of_date": "2026-08-18",
+      "research_run_id": 144,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 144
+      }
+    },
+    {
+      "ticket_id": 511,
+      "symbol": "BIIB",
+      "as_of_date": "2026-08-18",
+      "research_run_id": 144,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 144
+      }
+    },
+    {
+      "ticket_id": 512,
+      "symbol": "WTW",
+      "as_of_date": "2026-08-21",
+      "research_run_id": 145,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 145
+      }
+    },
+    {
+      "ticket_id": 513,
+      "symbol": "SOLV",
+      "as_of_date": "2026-08-21",
+      "research_run_id": 145,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 145
+      }
+    },
+    {
+      "ticket_id": 514,
+      "symbol": "RVTY",
+      "as_of_date": "2026-08-21",
+      "research_run_id": 145,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 145
+      }
+    },
+    {
+      "ticket_id": 515,
+      "symbol": "TGT",
+      "as_of_date": "2026-08-27",
+      "research_run_id": 146,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 146
+      }
+    },
+    {
+      "ticket_id": 516,
+      "symbol": "TRGP",
+      "as_of_date": "2026-08-27",
+      "research_run_id": 146,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 146
+      }
+    },
+    {
+      "ticket_id": 517,
+      "symbol": "MSTR",
+      "as_of_date": "2026-08-27",
+      "research_run_id": 146,
+      "lineage_status": "EXPLICIT",
+      "lineage_method": "ticket.research_run_id",
+      "lineage_source": "tickets",
+      "confidence": 1.0,
+      "evidence": {
+        "level": 1,
+        "ticket_research_run_id": 146
+      }
+    }
+  ]
+}

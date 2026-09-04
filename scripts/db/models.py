@@ -365,6 +365,40 @@ class CapitalPredictionOutcome(Base):
     updated_at = Column(TIMESTAMP, default=datetime.utcnow)
 
 
+class CapitalHistoricalLineage(Base):
+    __tablename__ = "capital_historical_lineage"
+    ticket_id = Column(Integer, ForeignKey("tickets.id"), primary_key=True)
+    research_run_id = Column(Integer, ForeignKey("research_runs.run_id"))
+    lineage_status = Column(String(32), nullable=False)
+    lineage_method = Column(String(64))
+    lineage_source = Column(String(64), nullable=False)
+    confidence = Column(Numeric(6, 4), nullable=False, default=0)
+    evidence = Column(JSONB, nullable=False, default=dict)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    updated_at = Column(TIMESTAMP, default=datetime.utcnow)
+
+
+class CapitalHistoricalOhlcv(Base):
+    __tablename__ = "capital_historical_ohlcv"
+    id = Column(BigInteger, primary_key=True)
+    symbol = Column(String(10), nullable=False)
+    trade_date = Column(Date, nullable=False)
+    open = Column(Numeric(12, 4))
+    high = Column(Numeric(12, 4))
+    low = Column(Numeric(12, 4))
+    close = Column(Numeric(12, 4))
+    volume = Column(BigInteger)
+    source_provider = Column(String(64), nullable=False)
+    price_semantics = Column(String(64), nullable=False)
+    adjustment_mode = Column(String(32), nullable=False)
+    timezone = Column(String(64), nullable=False, default="America/New_York")
+    frequency = Column(String(16), nullable=False, default="1D")
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    __table_args__ = (
+        UniqueConstraint("symbol", "trade_date", "source_provider", name="uq_capital_historical_ohlcv_symbol_date_provider"),
+    )
+
+
 class CapitalBehaviorDataset(Base):
     __tablename__ = "capital_behavior_dataset"
     id = Column(BigInteger, primary_key=True)

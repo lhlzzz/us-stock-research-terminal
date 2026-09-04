@@ -1,0 +1,1223 @@
+{
+  "run_date": "2026-09-03",
+  "baseline_commit": "41e9430",
+  "mode": "persist",
+  "sample_origin": "HISTORICAL_REPLAY",
+  "live_sample_origin": "LIVE_RESEARCH_FORWARD",
+  "tickets": 458,
+  "forward_tracking": 1161,
+  "inventory": {
+    "tickets": {
+      "row_count": 458,
+      "min_date": "2026-06-25",
+      "max_date": "2026-08-27",
+      "distinct_symbols": 95,
+      "distinct_research_runs": 4
+    },
+    "forward_tracking": {
+      "row_count": 1161,
+      "min_date": "2026-06-25",
+      "max_date": "2026-08-27",
+      "distinct_symbols": 95,
+      "distinct_tickets": 295,
+      "columns": [
+        "id",
+        "output_date",
+        "symbol",
+        "as_of_date",
+        "horizon_days",
+        "due_date",
+        "as_of_close",
+        "check_status",
+        "due_close",
+        "forward_return",
+        "completed_at",
+        "track_key",
+        "ticket_id",
+        "created_at",
+        "loss_reason",
+        "outcome_classification",
+        "outcome_reason",
+        "capital_model_version",
+        "capital_validation_status",
+        "capital_state_at_entry",
+        "capital_intent_at_entry",
+        "capital_strength_at_entry",
+        "capital_score_at_entry",
+        "distribution_score_at_entry",
+        "trap_score_at_entry",
+        "predicted_path",
+        "state_after_1d",
+        "state_after_3d",
+        "state_after_5d",
+        "actual_path",
+        "state_correct",
+        "intent_correct",
+        "path_correct",
+        "capital_quality_at_entry",
+        "distribution_probability_at_entry",
+        "trap_probability_at_entry",
+        "quality_label_at_entry",
+        "intent_probability_at_entry",
+        "path_distribution_at_entry",
+        "actual_intent_proxy",
+        "actual_intent_semantic",
+        "state_after_10d",
+        "return_1d",
+        "return_3d",
+        "return_5d",
+        "return_10d",
+        "path_after_1d",
+        "path_after_3d",
+        "path_after_5d",
+        "path_after_10d",
+        "transition_label",
+        "label_version"
+      ]
+    },
+    "research_runs": {
+      "row_count": 146,
+      "min_date": "2026-05-26",
+      "max_date": "2026-08-27",
+      "distinct_research_runs": 146,
+      "distinct_symbols": 0
+    },
+    "daily_candidates": {
+      "row_count": 217,
+      "min_date": "2026-06-27",
+      "max_date": "2026-08-27",
+      "distinct_symbols": 141,
+      "distinct_research_runs": 3
+    },
+    "daily_klines": {
+      "row_count": 435447,
+      "min_date": "1977-01-03",
+      "max_date": "2026-07-31",
+      "distinct_symbols": 83
+    },
+    "capital": {
+      "capital_daily_snapshot": {
+        "row_count": 23,
+        "min_date": "2026-07-11",
+        "max_date": "2026-08-27",
+        "distinct_symbols": 21
+      },
+      "capital_evidence": {
+        "row_count": 460,
+        "min_date": "2026-07-11",
+        "max_date": "2026-08-27",
+        "distinct_symbols": 21
+      },
+      "capital_state_history": {
+        "row_count": 23,
+        "min_date": "2026-07-11",
+        "max_date": "2026-08-27",
+        "distinct_symbols": 21
+      },
+      "capital_intent": {
+        "row_count": 23,
+        "min_date": "2026-07-11",
+        "max_date": "2026-08-27",
+        "distinct_symbols": 21
+      },
+      "capital_path_prediction": {
+        "row_count": 23,
+        "min_date": "2026-07-11",
+        "max_date": "2026-08-27",
+        "distinct_symbols": 21
+      },
+      "capital_prediction_outcome": {
+        "row_count": 74,
+        "min_date": "2026-07-11",
+        "max_date": "2026-08-27",
+        "distinct_symbols": 21
+      },
+      "capital_behavior_dataset": {
+        "row_count": 23,
+        "min_date": "2026-07-11",
+        "max_date": "2026-08-27",
+        "distinct_symbols": 21
+      },
+      "capital_prediction_error": {
+        "row_count": 10,
+        "min_date": "2026-07-11",
+        "max_date": "2026-07-11",
+        "distinct_symbols": 5
+      }
+    },
+    "horizon_fields": {
+      "1": "return_1d",
+      "3": "return_3d",
+      "5": "return_5d",
+      "10": "return_10d"
+    }
+  },
+  "horizon_coverage": {
+    "t1": 295,
+    "t3": 292,
+    "t5": 276,
+    "t10": 286,
+    "all": 276,
+    "t10_confirmed_tickets": 286,
+    "date_ranges": {
+      "t1": {
+        "min": "2026-06-25",
+        "max": "2026-08-27"
+      },
+      "t3": {
+        "min": "2026-06-25",
+        "max": "2026-08-21"
+      },
+      "t5": {
+        "min": "2026-06-25",
+        "max": "2026-07-31"
+      },
+      "t10": {
+        "min": "2026-06-25",
+        "max": "2026-08-15"
+      }
+    }
+  },
+  "join": {
+    "unique": 295,
+    "ambiguous": 79,
+    "orphan_tracking": 0,
+    "orphan_ticket": 84,
+    "unique_research_run_id": 12,
+    "methods": {
+      "ticket_id": 295,
+      "none": 33,
+      "symbol_date": 130
+    }
+  },
+  "ohlcv": {
+    "replayable": 23,
+    "unavailable": 0,
+    "invalid": 0,
+    "data_gap": 0
+  },
+  "capital_replay": {
+    "candidates": 23,
+    "success": 23,
+    "failed": 0
+  },
+  "dataset": {
+    "valid": 5,
+    "not_ready": 453
+  },
+  "eligibility": {
+    "VALID": 5,
+    "INSUFFICIENT_FORWARD_DATA": 18,
+    "MISSING_LINEAGE": 435,
+    "SOURCE_INVALID": 0,
+    "VERSION_INVALID": 0,
+    "DATA_GAP": 0
+  },
+  "failures": {
+    "MISSING_TICKET": 0,
+    "MISSING_FORWARD": 84,
+    "MISSING_LINEAGE": 351,
+    "SOURCE_INVALID": 0,
+    "OHLCV_UNAVAILABLE": 0,
+    "REPLAY_ERROR": 0,
+    "OUTCOME_ERROR": 0,
+    "DATASET_ERROR": 0
+  },
+  "split": {
+    "TRAIN": 5,
+    "VALIDATION": 0,
+    "TEST": 0,
+    "PURGED": 0,
+    "EMBARGO": []
+  },
+  "empirical": {
+    "status": "NOT_READY",
+    "reason": "VALID dataset below MIN_SAMPLES",
+    "sample_count": 5,
+    "min_samples": 30
+  },
+  "research": {
+    "valid_samples": 5,
+    "state_distribution": {
+      "ACCUMULATION": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "EARLY_BUILD": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "ACTIVE_MARKUP": {
+        "count": 1,
+        "pct": 20.0
+      },
+      "PULLBACK_ABSORPTION": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "SECONDARY_MARKUP": {
+        "count": 2,
+        "pct": 40.0
+      },
+      "LATE_MARKUP": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "DISTRIBUTION": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "MARKDOWN": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "SHORT_BUILD": {
+        "count": 1,
+        "pct": 20.0
+      },
+      "SHORT_PRESSURE": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "SHORT_COVER": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "TRAP": {
+        "count": 0,
+        "pct": 0.0
+      }
+    },
+    "state_outcomes": {
+      "ACCUMULATION": {
+        "1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "10": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "EARLY_BUILD": {
+        "1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "10": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "ACTIVE_MARKUP": {
+        "1": {
+          "count": 1,
+          "mean": -0.019718,
+          "median": -0.019718,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.019718,
+          "mae": -0.019718,
+          "tail_loss": -0.019718
+        },
+        "3": {
+          "count": 1,
+          "mean": -0.013643,
+          "median": -0.013643,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.013643,
+          "mae": -0.013643,
+          "tail_loss": -0.013643
+        },
+        "5": {
+          "count": 1,
+          "mean": -0.002,
+          "median": -0.002,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.002,
+          "mae": -0.002,
+          "tail_loss": -0.002
+        },
+        "10": {
+          "count": 1,
+          "mean": -0.095292,
+          "median": -0.095292,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.095292,
+          "mae": -0.095292,
+          "tail_loss": -0.095292
+        }
+      },
+      "PULLBACK_ABSORPTION": {
+        "1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "10": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "SECONDARY_MARKUP": {
+        "1": {
+          "count": 2,
+          "mean": -0.04566,
+          "median": -0.04566,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.031132,
+          "mae": -0.060189,
+          "tail_loss": -0.060189
+        },
+        "3": {
+          "count": 2,
+          "mean": -0.014638,
+          "median": -0.014638,
+          "win_rate": 0.5,
+          "profit_factor": 0.23412,
+          "mfe": 0.008949,
+          "mae": -0.038224,
+          "tail_loss": -0.038224
+        },
+        "5": {
+          "count": 2,
+          "mean": -0.10154,
+          "median": -0.10154,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.01371,
+          "mae": -0.189369,
+          "tail_loss": -0.189369
+        },
+        "10": {
+          "count": 2,
+          "mean": -0.004439,
+          "median": -0.004439,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.002643,
+          "mae": -0.006236,
+          "tail_loss": -0.006236
+        }
+      },
+      "LATE_MARKUP": {
+        "1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "10": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "DISTRIBUTION": {
+        "1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "10": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "MARKDOWN": {
+        "1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "10": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "SHORT_BUILD": {
+        "1": {
+          "count": 1,
+          "mean": -0.009195,
+          "median": -0.009195,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.009195,
+          "mae": -0.009195,
+          "tail_loss": -0.009195
+        },
+        "3": {
+          "count": 1,
+          "mean": -0.030913,
+          "median": -0.030913,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.030913,
+          "mae": -0.030913,
+          "tail_loss": -0.030913
+        },
+        "5": {
+          "count": 1,
+          "mean": -0.003805,
+          "median": -0.003805,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.003805,
+          "mae": -0.003805,
+          "tail_loss": -0.003805
+        },
+        "10": {
+          "count": 1,
+          "mean": -0.05929,
+          "median": -0.05929,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.05929,
+          "mae": -0.05929,
+          "tail_loss": -0.05929
+        }
+      },
+      "SHORT_PRESSURE": {
+        "1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "10": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "SHORT_COVER": {
+        "1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "10": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "TRAP": {
+        "1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "10": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      }
+    },
+    "transition_matrix": [
+      {
+        "from_state": "ACTIVE_MARKUP",
+        "to_state": "SECONDARY_MARKUP",
+        "count": 1,
+        "empirical_probability": 1.0,
+        "rule_probability": 0.250999
+      },
+      {
+        "from_state": "NEUTRAL",
+        "to_state": "NEUTRAL",
+        "count": 1,
+        "empirical_probability": 1.0,
+        "rule_probability": 0.418385
+      },
+      {
+        "from_state": "SECONDARY_MARKUP",
+        "to_state": "SECONDARY_MARKUP",
+        "count": 1,
+        "empirical_probability": 0.5,
+        "rule_probability": 0.370174
+      },
+      {
+        "from_state": "SECONDARY_MARKUP",
+        "to_state": "SHORT_PRESSURE",
+        "count": 1,
+        "empirical_probability": 0.5,
+        "rule_probability": null
+      },
+      {
+        "from_state": "SHORT_BUILD",
+        "to_state": "SHORT_BUILD",
+        "count": 1,
+        "empirical_probability": 1.0,
+        "rule_probability": 0.223195
+      }
+    ],
+    "rule_vs_empirical": [
+      {
+        "from_state": "ACTIVE_MARKUP",
+        "to_state": "SECONDARY_MARKUP",
+        "rule_probability": 0.250999,
+        "empirical_probability": 1.0
+      },
+      {
+        "from_state": "NEUTRAL",
+        "to_state": "NEUTRAL",
+        "rule_probability": 0.418385,
+        "empirical_probability": 1.0
+      },
+      {
+        "from_state": "SECONDARY_MARKUP",
+        "to_state": "SECONDARY_MARKUP",
+        "rule_probability": 0.370174,
+        "empirical_probability": 0.5
+      },
+      {
+        "from_state": "SECONDARY_MARKUP",
+        "to_state": "SHORT_PRESSURE",
+        "rule_probability": null,
+        "empirical_probability": 0.5
+      },
+      {
+        "from_state": "SHORT_BUILD",
+        "to_state": "SHORT_BUILD",
+        "rule_probability": 0.223195,
+        "empirical_probability": 1.0
+      }
+    ],
+    "key_transitions": {
+      "ACCUMULATION->EARLY_BUILD": {
+        "count": 0,
+        "t3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "EARLY_BUILD->ACTIVE_MARKUP": {
+        "count": 0,
+        "t3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "ACTIVE_MARKUP->PULLBACK_ABSORPTION": {
+        "count": 0,
+        "t3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "ACTIVE_MARKUP->LATE_MARKUP": {
+        "count": 0,
+        "t3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "LATE_MARKUP->DISTRIBUTION": {
+        "count": 0,
+        "t3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "PULLBACK_ABSORPTION->SECONDARY_MARKUP": {
+        "count": 0,
+        "t3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      }
+    },
+    "absorption": {
+      "high": {
+        "count": 0,
+        "t1": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "t3": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        },
+        "t5": {
+          "mean": null,
+          "median": null,
+          "win_rate": null,
+          "profit_factor": null,
+          "mfe": null,
+          "mae": null,
+          "tail_loss": null,
+          "count": 0
+        }
+      },
+      "low": {
+        "count": 5,
+        "t1": {
+          "count": 5,
+          "mean": -0.033964,
+          "median": -0.031132,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.009195,
+          "mae": -0.060189,
+          "tail_loss": -0.060189
+        },
+        "t3": {
+          "count": 5,
+          "mean": -0.01673,
+          "median": -0.013643,
+          "win_rate": 0.2,
+          "profit_factor": 0.096641,
+          "mfe": 0.008949,
+          "mae": -0.038224,
+          "tail_loss": -0.038224
+        },
+        "t5": {
+          "count": 5,
+          "mean": -0.056815,
+          "median": -0.01371,
+          "win_rate": 0.0,
+          "profit_factor": 0.0,
+          "mfe": -0.002,
+          "mae": -0.189369,
+          "tail_loss": -0.189369
+        }
+      }
+    },
+    "distribution_risk_high_momentum": {
+      "count": 0,
+      "drawdown": {
+        "mean": null,
+        "median": null,
+        "win_rate": null,
+        "profit_factor": null,
+        "mfe": null,
+        "mae": null,
+        "tail_loss": null,
+        "count": 0
+      }
+    },
+    "control_collapse": {
+      "count": 0,
+      "reversal_or_distribution": 0
+    },
+    "pullback_absorption_vs_pullback": {
+      "pullback_absorption": {
+        "count": 0,
+        "continuation": null
+      },
+      "other_pullback": {
+        "count": 0,
+        "continuation": null
+      }
+    }
+  },
+  "funnel": [
+    {
+      "stage": "Historical Tickets",
+      "count": 458,
+      "percentage": 100.0,
+      "drop_reasons": null
+    },
+    {
+      "stage": "Unique Forward Tracking Join",
+      "count": 295,
+      "percentage": 64.4105,
+      "drop_reasons": "ambiguous/orphan"
+    },
+    {
+      "stage": "Valid Lineage",
+      "count": 23,
+      "percentage": 5.0218,
+      "drop_reasons": "MISSING_LINEAGE"
+    },
+    {
+      "stage": "Historical OHLCV Replayable",
+      "count": 23,
+      "percentage": 5.0218,
+      "drop_reasons": "SOURCE_INVALID/OHLCV_UNAVAILABLE/DATA_GAP"
+    },
+    {
+      "stage": "Capital V2 Replay Success",
+      "count": 23,
+      "percentage": 5.0218,
+      "drop_reasons": "REPLAY_ERROR"
+    },
+    {
+      "stage": "Complete T+1/T+3/T+5/T+10",
+      "count": 5,
+      "percentage": 1.0917,
+      "drop_reasons": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "stage": "VALID Dataset",
+      "count": 5,
+      "percentage": 1.0917,
+      "drop_reasons": "eligibility gates"
+    }
+  ],
+  "lineage_block": {
+    "unversioned_tickets": 446,
+    "unique_join_unversioned": 283,
+    "complete_four_horizon_tickets": 276,
+    "recovered_lineage": 11,
+    "note": "Recovered lineage is audit-only. tickets.research_run_id is never guessed or overwritten."
+  },
+  "versioned_ticket_report": [
+    {
+      "ticket_id": 506,
+      "symbol": "NBIS",
+      "as_of_date": "2026-08-15",
+      "research_run_id": 143,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-14",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 507,
+      "symbol": "NTAP",
+      "as_of_date": "2026-08-15",
+      "research_run_id": 143,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-14",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 508,
+      "symbol": "LITE",
+      "as_of_date": "2026-08-15",
+      "research_run_id": 143,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-14",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 509,
+      "symbol": "ADI",
+      "as_of_date": "2026-08-18",
+      "research_run_id": 144,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-18",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 510,
+      "symbol": "FOX",
+      "as_of_date": "2026-08-18",
+      "research_run_id": 144,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-18",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 511,
+      "symbol": "BIIB",
+      "as_of_date": "2026-08-18",
+      "research_run_id": 144,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-18",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 512,
+      "symbol": "WTW",
+      "as_of_date": "2026-08-21",
+      "research_run_id": 145,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-21",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 513,
+      "symbol": "SOLV",
+      "as_of_date": "2026-08-21",
+      "research_run_id": 145,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-21",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 514,
+      "symbol": "RVTY",
+      "as_of_date": "2026-08-21",
+      "research_run_id": 145,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-21",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 515,
+      "symbol": "TGT",
+      "as_of_date": "2026-08-27",
+      "research_run_id": 146,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-27",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 516,
+      "symbol": "TRGP",
+      "as_of_date": "2026-08-27",
+      "research_run_id": 146,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-27",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    },
+    {
+      "ticket_id": 517,
+      "symbol": "MSTR",
+      "as_of_date": "2026-08-27",
+      "research_run_id": 146,
+      "ohlcv_source": "provider_cache",
+      "ohlcv_last_bar": "2026-08-27",
+      "replay_status": "REPLAYABLE",
+      "failure_reason": "INSUFFICIENT_FORWARD_DATA"
+    }
+  ],
+  "persisted_tickets": 23,
+  "production": {
+    "status": "RESEARCH_ONLY",
+    "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
+    "ranking": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
+    "production_action": "NO_PRODUCTION_WEIGHT_CHANGE"
+  },
+  "note": "Historical replay uses capital_behavior_v2 rules. It does not prove the capital model."
+}

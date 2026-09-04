@@ -889,6 +889,48 @@ CREATE INDEX IF NOT EXISTS idx_intraday_paper_orders_open
 CREATE INDEX IF NOT EXISTS idx_intraday_paper_fills_order
     ON intraday_paper_fills(order_id, filled_at);
 
+-- Capital historical lineage audit. Recovers ticket → research_run without
+-- mutating tickets.research_run_id. Ambiguous matches stay NULL.
+CREATE TABLE IF NOT EXISTS capital_historical_lineage (
+    ticket_id INTEGER PRIMARY KEY REFERENCES tickets(id),
+    research_run_id INTEGER REFERENCES research_runs(run_id),
+    lineage_status VARCHAR(32) NOT NULL,
+    lineage_method VARCHAR(64),
+    lineage_source VARCHAR(64) NOT NULL,
+    confidence NUMERIC(6, 4) NOT NULL DEFAULT 0,
+    evidence JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_capital_historical_lineage_run
+    ON capital_historical_lineage(research_run_id);
+
+CREATE INDEX IF NOT EXISTS idx_capital_historical_lineage_status
+    ON capital_historical_lineage(lineage_status);
+
+-- As-of historical OHLCV for Capital replay. Never written into daily_klines.
+CREATE TABLE IF NOT EXISTS capital_historical_ohlcv (
+    id BIGSERIAL PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    trade_date DATE NOT NULL,
+    open NUMERIC(12, 4),
+    high NUMERIC(12, 4),
+    low NUMERIC(12, 4),
+    close NUMERIC(12, 4),
+    volume BIGINT,
+    source_provider VARCHAR(64) NOT NULL,
+    price_semantics VARCHAR(64) NOT NULL,
+    adjustment_mode VARCHAR(32) NOT NULL,
+    timezone VARCHAR(64) NOT NULL DEFAULT 'America/New_York',
+    frequency VARCHAR(16) NOT NULL DEFAULT '1D',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(symbol, trade_date, source_provider)
+);
+
+CREATE INDEX IF NOT EXISTS idx_capital_historical_ohlcv_symbol_date
+    ON capital_historical_ohlcv(symbol, trade_date);
+
 -- Read-only projection: one trace id for issuance, outcome, and paper evidence.
 CREATE OR REPLACE VIEW research_trade_trace AS
 SELECT
