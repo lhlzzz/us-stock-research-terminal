@@ -54,8 +54,7 @@ def _get_config(engine, key: str) -> str | None:
         return row[0] if row else None
 
 
-def _set_config(engine, key: str, value: str, reason: str = ""):
-    """Update a config value in scoring_config table."""
+def _persist_config(engine, key: str, value: str):
     from sqlalchemy import text
 
     with engine.connect() as conn:
@@ -66,7 +65,43 @@ def _set_config(engine, key: str, value: str, reason: str = ""):
         """), {"key": key, "value": value})
         conn.commit()
 
-    logger.info(f"Updated {key} = {value} (reason: {reason})")
+
+def _set_config(
+    engine,
+    key: str,
+    value: str,
+    reason: str = "",
+    *,
+    sample_count: int = 0,
+    trading_days: int = 0,
+    confirmations: int = 0,
+    factor_coverage: float | None = None,
+    average_loss: float | None = None,
+):
+    """Update scoring_config only through the weight mutation gateway."""
+    from research.weight_mutation import request_weight_change
+
+    current = _get_config(engine, key)
+    previous = None if current in (None, "") else float(current)
+    proposed = float(value)
+    result = request_weight_change(
+        source="self_evolve",
+        previous=previous,
+        proposed=proposed,
+        persist=lambda: _persist_config(engine, key, str(value)),
+        sample_count=sample_count,
+        trading_days=trading_days,
+        confirmations=confirmations,
+        factor_coverage=factor_coverage,
+        average_loss=average_loss,
+        key=key,
+        reason=reason,
+    )
+    if result["persisted"]:
+        logger.info(f"Updated {key} = {value} (reason: {reason})")
+    else:
+        logger.warning(f"Blocked {key} = {value} via weight mutation gateway: {result['reasons']}")
+    return result
 
 
 def _check_performance_gate(engine) -> dict:
@@ -277,12 +312,27 @@ def run_self_evolution(engine, dry_run: bool = False) -> dict:
             "rollback": current,
         }
         proposal["ledger"] = ledger
+        metrics = gate.get("metrics") or {}
         if dry_run:
             logger.info(f"[DRY RUN] Would update {key} = {proposed} ({reason})")
             applied += 1
         else:
-            _set_config(engine, key, str(proposed), reason)
-            applied += 1
+            mutation = _set_config(
+                engine,
+                key,
+                str(proposed),
+                reason,
+                sample_count=int(metrics.get("total_completed") or 0),
+                trading_days=int(metrics.get("trading_days") or 0),
+                confirmations=int(metrics.get("confirmations") or 0),
+                factor_coverage=metrics.get("factor_coverage"),
+                average_loss=metrics.get("avg_return"),
+            )
+            proposal["weight_mutation"] = mutation
+            if mutation.get("persisted"):
+                applied += 1
+            else:
+                skipped += 1
 
     result = {
         "gate_status": gate_status,

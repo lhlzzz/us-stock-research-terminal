@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import statistics
 from .calibration import evaluate_calibration
 from collections import defaultdict
 from datetime import datetime
@@ -174,7 +175,7 @@ def write_capital_scoreboard(root: Path, engine=None) -> dict[str, Path]:
         "t5_accuracy": by_horizon["t5"]["direction_accuracy"],
         "win_rate": _ratio(len(wins), len(returns)),
         "avg_return": round(sum(returns) / len(returns), 6) if returns else None,
-        "median_return": sorted(returns)[len(returns) // 2] if returns else None,
+        "median_return": round(float(statistics.median(returns)), 6) if returns else None,
         "profit_factor": profit_factor,
         "mfe": "UNAVAILABLE_NOT_PERSISTED",
         "mae": "UNAVAILABLE_NOT_PERSISTED",

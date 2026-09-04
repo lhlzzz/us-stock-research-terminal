@@ -5,6 +5,7 @@ from typing import Any, Mapping
 
 from .boundary import PRODUCTION_BOUNDARY
 from .evidence import claim, observed_number, unknown
+from .providers import DATA_GAP
 
 FUNDAMENTAL_FIELDS = (
     "revenue", "revenue_growth", "gross_profit", "gross_margin",
@@ -32,9 +33,13 @@ def _as_of(facts: Mapping[str, Any]) -> str | None:
     return str(facts.get("as_of_date") or facts.get("as_of") or "") or None
 
 
-def company_fundamentals(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def company_fundamentals(facts: Mapping[str, Any] | None = None, provider=None) -> dict[str, Any]:
     facts = dict(facts or {})
     as_of = _as_of(facts)
+    if not facts and provider is not None:
+        fetched = provider.get(str(facts.get("symbol") or ""), as_of=as_of)
+        if fetched.get("status") == DATA_GAP:
+            return {**fetched, "layer": "company_fundamentals", "fields": {}, "data_gaps": list(FUNDAMENTAL_FIELDS), "coverage": 0.0, "produces_pick": False}
     fields = {}
     gaps = []
     for name in FUNDAMENTAL_FIELDS:
@@ -59,8 +64,12 @@ def company_fundamentals(facts: Mapping[str, Any] | None = None) -> dict[str, An
     }
 
 
-def sec_filing(record: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def sec_filing(record: Mapping[str, Any] | None = None, provider=None) -> dict[str, Any]:
     record = dict(record or {})
+    if provider is not None and not record:
+        fetched = provider.get("", as_of=None)
+        if fetched.get("status") == DATA_GAP:
+            return {**fetched, "layer": "sec_filing", "supported_types": list(SEC_FILING_TYPES), "data_gaps": ["source_url", "filing_type", "filing_date", "period_end", "effective_date", "retrieved_at", "company", "ticker"], "evidence_level": "LEVEL_6", "produces_pick": False}
     filing_type = record.get("filing_type")
     known = filing_type in SEC_FILING_TYPES
     required = ("source_url", "filing_type", "filing_date", "period_end", "effective_date", "retrieved_at", "company", "ticker")
@@ -137,13 +146,19 @@ def earnings_intelligence(facts: Mapping[str, Any] | None = None) -> dict[str, A
 
 def sbc_dilution(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
     facts = dict(facts or {})
-    gross_buyback = observed_number(facts.get("buyback_amount") or facts.get("gross_buyback")) or 0.0
-    sbc = observed_number(facts.get("stock_based_compensation")) or 0.0
-    issuance = observed_number(facts.get("share_issuance")) or 0.0
+    gross_buyback = observed_number(facts.get("buyback_amount") or facts.get("gross_buyback"))
+    sbc = observed_number(facts.get("stock_based_compensation"))
+    issuance = observed_number(facts.get("share_issuance"))
+    if facts.get("buyback_amount") in (None, "") and facts.get("gross_buyback") in (None, ""):
+        gross_buyback = None
+    present_buyback = 0.0 if gross_buyback is None else gross_buyback
+    present_sbc = 0.0 if sbc is None else sbc
+    present_issuance = 0.0 if issuance is None else issuance
+    missing_capital = gross_buyback is None or sbc is None or issuance is None
     share_start = observed_number(facts.get("share_count_start") or facts.get("share_count"))
     share_end = observed_number(facts.get("share_count_end") or facts.get("diluted_share_count") or facts.get("share_count"))
-    announced = bool(facts.get("buyback_announced") or (gross_buyback > 0))
-    net_return = round(gross_buyback - sbc - issuance, 6)
+    announced = bool(facts.get("buyback_announced") or (present_buyback > 0))
+    net_return = None if missing_capital else round(present_buyback - present_sbc - present_issuance, 6)
     share_change = None if share_start in (None, 0) or share_end is None else round(share_end - share_start, 6)
     warning = announced and (share_change is None or share_change >= 0)
     return {
@@ -151,6 +166,7 @@ def sbc_dilution(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
         "gross_buyback": gross_buyback,
         "stock_based_compensation": sbc,
         "share_issuance": issuance,
+        "missing_is_not_zero": True,
         "net_shareholder_capital_return": net_return,
         "net_share_count_change": share_change,
         "buyback_effectiveness": "INEFFECTIVE" if warning else "EFFECTIVE" if share_change is not None and share_change < 0 else "UNKNOWN",

@@ -5,6 +5,7 @@ from typing import Any, Mapping
 
 from .boundary import PRODUCTION_BOUNDARY
 from .evidence import claim, observed_number, unknown
+from .metric_semantics import quality_stance
 
 
 LAYERS = (
@@ -50,17 +51,7 @@ def _metric(facts: Mapping[str, Any], key: str, *, source: str, source_type: str
 
 
 def _stance(score: float | None) -> str:
-    if score is None:
-        return "UNKNOWN"
-    if score >= 0.70:
-        return "STRONG"
-    if score >= 0.55:
-        return "BULLISH"
-    if score >= 0.45:
-        return "NEUTRAL"
-    if score >= 0.30:
-        return "WEAK"
-    return "BEARISH"
+    return quality_stance(score)
 
 
 def build_buffett_context(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:

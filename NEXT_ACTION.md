@@ -1,5 +1,28 @@
 # NEXT_ACTION
 
+## Xiaomei 2.1 semantic correctness (2026-09-04)
+
+- Research scoring no longer clamp-averages raw units. MetricSpec +
+  `scripts/research/metric_semantics.py` refuse mixed USD/ratio/count
+  averages. High risk maps to CAUTION/HIGH, never STRONG.
+- Automatic weight writes go through `request_weight_change`
+  (`scripts/research/weight_mutation.py`). optimizer and self_evolve
+  cannot persist when the stability guard fails.
+- Short intelligence is a reachable state machine: short_build /
+  short_pressure / forced_cover / neutral. Obsidian tickers require
+  universe validation; AI/USA/SEC are not holdings. Evidence
+  `claim()` blocks `effective_date > as_of`. UNKNOWN is not INFERRED.
+- Concentration uses real weights or UNKNOWN (never 1/n). Median is
+  `statistics.median`. Analyst missing stays None. Thesis diffs are
+  structured. Similarity reports components. Failure lifecycle is
+  warning/evidence only. Providers return DATA_GAP honestly.
+- Tests: `tests/test_research_semantics.py` plus existing Research OS
+  suite. Full `PYTHONPATH=. pytest -q` = 181 passed. Production ranking
+  owner and Capital Brain formulas unchanged.
+- Remaining P2: live SEC / earnings / industry-graph ingest is still
+  DATA_GAP. Do not invent filings. Do not lower RESEARCH_DATA_READY.
+  Do not change production weights or live-trade boundary.
+
 ## Xiaomei 2.0 hidden gaps (2026-09-04)
 
 - Four-brain contracts attached on existing Research OS. Independent scores:

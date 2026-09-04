@@ -25,7 +25,7 @@ from .decision import (
     why_not,
     write_company_report,
 )
-from .evidence import CLAIM_KINDS, EVIDENCE_LEVELS, Claim, claim
+from .evidence import CLAIM_KINDS, EVIDENCE_LEVELS, Claim, claim, claim_kind, highest_evidence_quality
 from .learning import (
     DATA_QUALITY_GATES,
     assemble_research_sample,

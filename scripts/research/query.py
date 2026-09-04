@@ -7,7 +7,7 @@ from .boundary import PRODUCTION_BOUNDARY, assert_research_only
 from .contracts import independent_scores, research_horizon_contract
 from .decision import contradiction_status
 from .industry import persist_industry_graph, supply_chain_portfolio
-from .thesis import similar_failures, thesis_ledger
+from .thesis import retrieve_failure_context, similar_failures, thesis_ledger
 
 QUERY_KINDS = (
     "research company",
@@ -62,7 +62,7 @@ def research_query(
     elif kind == "research portfolio concentration":
         answer["payload"] = supply_chain_portfolio(holdings, industry_graph, symbol=None)
     elif kind == "research similar failures":
-        answer["payload"] = similar_failures({"failure_reason": target}, failures or [])
+        answer["payload"] = similar_failures({"failure_reason": target}, failures) if failures is not None else retrieve_failure_context({"failure_reason": target})
     elif kind == "research historical thesis":
         rows = [thesis_ledger(item) for item in theses or [] if not target or target.lower() in str(item).lower()]
         answer["payload"] = rows

@@ -51,30 +51,52 @@ def options_intelligence(facts: Mapping[str, Any] | None = None) -> dict[str, An
     }
 
 
+SHORT_STATES = ("short_build", "short_pressure", "forced_cover", "neutral")
+
+
 def short_intelligence(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
     facts = dict(facts or {})
     fields = {name: facts.get(name) for name in SHORT_FIELDS}
     change = observed_number(facts.get("short_interest_change"))
     si = observed_number(facts.get("short_interest"))
     tightness = observed_number(facts.get("borrow_tightness"))
-    if change is not None and change > 0:
+    dtc = observed_number(facts.get("days_to_cover"))
+    price_change = observed_number(facts.get("price_change"))
+    volume = observed_number(facts.get("volume") or facts.get("relative_volume"))
+    missing = all(item is None for item in (change, si, tightness, dtc))
+    # Covering while borrow is tight and price/volume confirm is forced_cover.
+    # Must be checked before tightness-only short_pressure, or it is unreachable.
+    if (
+        change is not None
+        and change < 0
+        and tightness is not None
+        and tightness >= 0.7
+        and (
+            (price_change is not None and price_change > 0)
+            or (volume is not None and volume >= 1.5)
+        )
+    ):
+        state = "forced_cover"
+    elif change is not None and change > 0:
         state = "short_build"
     elif tightness is not None and tightness >= 0.7:
         state = "short_pressure"
-    elif change is not None and change < 0 and tightness is not None and tightness >= 0.7:
-        state = "forced_cover"
-    elif si is not None and si >= 0.2:
-        state = "crowded_short"
+    elif dtc is not None and dtc >= 5 and si is not None and si >= 0.15:
+        state = "short_pressure"
+    elif missing:
+        state = "neutral"
     else:
-        state = "UNKNOWN" if si is None else "observed"
+        state = "neutral"
     return {
         "layer": "short_borrow",
         "role": "Capital / Risk Context",
         "fields": fields,
         "state": state,
+        "states": list(SHORT_STATES),
         "high_si_is_not_bullish": True,
         "stance": "UNKNOWN",
-        "status": "DATA_GAP" if si is None else "READY",
+        "status": "DATA_GAP" if si is None and change is None and tightness is None else "READY",
+        "missing_is_not_zero": True,
         "production_boundary": PRODUCTION_BOUNDARY,
     }
 
@@ -82,12 +104,21 @@ def short_intelligence(facts: Mapping[str, Any] | None = None) -> dict[str, Any]
 def analyst_revision(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
     facts = dict(facts or {})
     fields = {name: facts.get(name) for name in ANALYST_FIELDS}
-    ups = int(facts.get("analyst_upgrades") or 0)
-    downs = int(facts.get("analyst_downgrades") or 0)
-    total = ups + downs
-    breadth = None if total == 0 else round((ups - downs) / total, 4)
+    ups = observed_number(facts.get("analyst_upgrades"))
+    downs = observed_number(facts.get("analyst_downgrades"))
+    if ups is None and downs is None:
+        total = None
+        breadth = None
+        missing = "UNKNOWN"
+    else:
+        missing = None
+        up_count = 0.0 if ups is None else ups
+        down_count = 0.0 if downs is None else downs
+        total = up_count + down_count
+        breadth = None if total == 0 else round((up_count - down_count) / total, 4)
     acceleration = observed_number(facts.get("revision_acceleration"))
     dispersion = observed_number(facts.get("estimate_dispersion"))
+    surprise = facts.get("earnings_surprise")
     if breadth is None:
         momentum = "UNKNOWN"
     elif breadth > 0.2:
@@ -99,10 +130,15 @@ def analyst_revision(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
     return {
         "layer": "analyst_revision",
         "fields": fields,
+        "analyst_upgrades": ups,
+        "analyst_downgrades": downs,
+        "earnings_surprise": surprise if surprise not in (None, "") else None,
         "revision_breadth": breadth,
         "revision_acceleration": acceleration,
         "dispersion": dispersion,
         "estimate_momentum": momentum,
-        "status": "DATA_GAP" if total == 0 else "READY",
+        "missing": missing,
+        "missing_is_not_zero": True,
+        "status": "DATA_GAP" if total in (None, 0) else "READY",
         "production_boundary": PRODUCTION_BOUNDARY,
     }

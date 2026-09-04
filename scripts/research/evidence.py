@@ -1,7 +1,8 @@
 """Typed research claims. UNKNOWN is never promoted to a fact."""
 from __future__ import annotations
 
-from typing import Any, Mapping
+from datetime import date, datetime
+from typing import Any, Iterable, Mapping
 
 
 SEMANTICS = ("OBSERVED", "DERIVED", "INFERRED", "UNKNOWN")
@@ -54,9 +55,23 @@ def evidence_level(source_type: str | None, *, filing: bool = False, transcript:
     return "LEVEL_6"
 
 
+LEVEL_RANK = {level: index for index, level in enumerate(EVIDENCE_LEVELS)}
+
+
+def _as_of_text(value: Any) -> str | None:
+    if value in (None, ""):
+        return None
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+    if isinstance(value, date):
+        return value.isoformat()
+    text = str(value).strip()
+    return text[:10] if text else None
+
+
 def claim_kind(semantic: str) -> str:
     label = str(semantic or "UNKNOWN").upper()
-    if label in {"OBSERVED"}:
+    if label == "OBSERVED":
         return "FACT"
     if label == "DERIVED":
         return "DERIVED"
@@ -64,7 +79,7 @@ def claim_kind(semantic: str) -> str:
         return "INFERRED"
     if label == "PREDICTED":
         return "PREDICTED"
-    return "INFERRED" if label != "UNKNOWN" else "INFERRED"
+    return "UNKNOWN"
 
 
 def claim(
@@ -88,13 +103,33 @@ def claim(
         label = "INFERRED"
     if label not in SEMANTICS:
         label = "UNKNOWN"
-    resolved_level = level if level in EVIDENCE_LEVELS else evidence_level(source_type, inferred=label in {"INFERRED", "UNKNOWN"})
+    resolved_level = level if level in EVIDENCE_LEVELS else evidence_level(
+        source_type, inferred=label == "INFERRED"
+    )
     resolved_kind = kind if kind in CLAIM_KINDS else claim_kind(label)
+    as_of = _as_of_text(as_of_date)
+    effective = _as_of_text(effective_date)
+    if effective and as_of and effective > as_of:
+        return {
+            "value": None,
+            "semantic": "UNKNOWN",
+            "kind": "UNKNOWN",
+            "level": resolved_level,
+            "source": source,
+            "source_type": source_type,
+            "effective_date": effective,
+            "as_of_date": as_of,
+            "confidence": None,
+            "evidence_refs": list(evidence_refs or []),
+            "reason": "effective_date > as_of",
+            "status": "BLOCKED",
+            "blocked": True,
+        }
     if value is None or value == "" or label == "UNKNOWN":
         return {
             "value": None if label == "UNKNOWN" else value,
             "semantic": "UNKNOWN" if value is None or value == "" else label,
-            "kind": resolved_kind,
+            "kind": "UNKNOWN" if (value is None or value == "" or label == "UNKNOWN") else resolved_kind,
             "level": resolved_level,
             "source": source,
             "source_type": source_type,
@@ -103,6 +138,8 @@ def claim(
             "confidence": None if value is None or value == "" else confidence,
             "evidence_refs": list(evidence_refs or []),
             "reason": reason or ("no evidence" if value is None or value == "" else None),
+            "status": "UNKNOWN",
+            "blocked": False,
         }
     return {
         "value": value,
@@ -116,7 +153,59 @@ def claim(
         "confidence": confidence,
         "evidence_refs": list(evidence_refs or []),
         "reason": reason,
+        "status": "OK",
+        "blocked": False,
     }
+
+
+def iter_evidence(items: Any) -> list[dict[str, Any]]:
+    found: list[dict[str, Any]] = []
+
+    def _walk(node: Any, depth: int = 0) -> None:
+        if depth > 6 or node is None:
+            return
+        if isinstance(node, Mapping):
+            if node.get("level") in EVIDENCE_LEVELS or node.get("semantic") in SEMANTICS:
+                found.append(dict(node))
+            for value in node.values():
+                _walk(value, depth + 1)
+            return
+        if isinstance(node, (list, tuple)):
+            for child in node:
+                _walk(child, depth + 1)
+
+    _walk(items)
+    return found
+
+
+def highest_evidence_quality(claims: Any) -> str | None:
+    best = None
+    best_rank = 99
+    for item in iter_evidence(claims):
+        level = item.get("level")
+        if level not in LEVEL_RANK:
+            continue
+        rank = LEVEL_RANK[level]
+        if rank < best_rank:
+            best = level
+            best_rank = rank
+    return best
+
+
+def contradictory_evidence(claims: Iterable[Mapping[str, Any]] | None) -> list[dict[str, Any]]:
+    by_subject: dict[str, list[Mapping[str, Any]]] = {}
+    for item in claims or []:
+        subject = str(item.get("name") or item.get("subject") or item.get("source") or "")
+        if not subject:
+            continue
+        by_subject.setdefault(subject, []).append(item)
+    conflicts = []
+    for subject, rows in by_subject.items():
+        values = [row.get("value") for row in rows if row.get("semantic") not in (None, "UNKNOWN")]
+        unique = {str(value) for value in values}
+        if len(unique) > 1:
+            conflicts.append({"subject": subject, "values": list(unique), "status": "CONTRADICTED"})
+    return conflicts
 
 
 class Claim(dict):

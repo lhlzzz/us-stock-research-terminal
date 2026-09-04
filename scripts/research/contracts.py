@@ -5,6 +5,7 @@ from typing import Any, Mapping
 
 from .boundary import PRODUCTION_BOUNDARY
 from .evidence import claim, observed_number, unknown
+from .metric_semantics import quality_stance, risk_stance, score_from_claims
 
 COMPANY_QUALITY_FIELDS = (
     "business_quality",
@@ -111,26 +112,12 @@ def _as_of(facts: Mapping[str, Any]) -> str | None:
     return str(facts.get("as_of_date") or facts.get("as_of") or "") or None
 
 
-def _score_from_claims(claims: Mapping[str, Mapping[str, Any]]) -> tuple[float | None, float | None, list[str]]:
-    values = []
-    confidences = []
-    gaps = []
-    for name, item in claims.items():
-        if not item or item.get("semantic") == "UNKNOWN" or item.get("value") is None:
-            gaps.append(name)
-            continue
-        number = observed_number(item.get("value"))
-        if number is None:
-            gaps.append(name)
-            continue
-        values.append(min(1.0, max(0.0, float(number))))
-        if item.get("confidence") is not None:
-            confidences.append(float(item["confidence"]))
-    if not values:
-        return None, None, gaps
-    score = round(sum(values) / len(values), 4)
-    confidence = round(sum(confidences) / len(confidences), 4) if confidences else round(len(values) / max(1, len(claims)), 4)
-    return score, confidence, gaps
+def _score_from_claims(
+    claims: Mapping[str, Mapping[str, Any]],
+    *,
+    purpose: str = "quality",
+) -> tuple[float | None, float | None, list[str]]:
+    return score_from_claims(claims, purpose=purpose)
 
 
 def _dimension(facts: Mapping[str, Any], key: str, *, source: str, source_type: str, semantic: str = "OBSERVED") -> dict[str, Any]:
@@ -156,7 +143,8 @@ def brain_payload(
     facts = dict(facts or {})
     as_of = _as_of(facts)
     dimensions = {field: _dimension(facts, field, source=source, source_type=source_type) for field in fields}
-    score, confidence, gaps = _score_from_claims(dimensions)
+    purpose = "risk" if name == "risk" else "quality"
+    score, confidence, gaps = _score_from_claims(dimensions, purpose=purpose)
     payload = {
         "schema": name,
         "as_of_date": as_of,
@@ -216,6 +204,11 @@ def market_setup(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
 def risk_view(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
     payload = brain_payload("risk", RISK_FIELDS, facts, source="risk_brain", source_type="market_research")
     payload["horizon"] = "EVENT_TERM"
+    stance = risk_stance(payload.get("score"))
+    payload["risk_level"] = stance["risk_level"]
+    payload["stance"] = stance["stance"]
+    payload["stance_alias"] = stance["stance_alias"]
+    payload["higher_is_worse"] = True
     return payload
 
 
@@ -258,12 +251,15 @@ def independent_scores(
     research_values = [value for value in (company_score, industry_score, capital_score, market_score) if value is not None]
     research_composite = round(sum(research_values) / len(research_values), 4) if research_values else None
     alpha = observed_number(statistical_score)
+    risk_payload = risk_stance(risk_score)
     return {
         "company_quality_score": company_score,
         "industry_position_score": industry_score,
         "capital_behavior_score": capital_score,
         "market_setup_score": market_score,
         "risk_score": risk_score,
+        "quality": {"score": company_score, "stance": quality_stance(company_score)},
+        "risk": risk_payload,
         "research_composite": research_composite,
         "alpha_score": alpha,
         "research_composite_is_not_alpha": True,

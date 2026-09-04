@@ -7,6 +7,8 @@ from typing import Any, Iterable, Mapping
 
 from capital.case_retrieval import retrieve_similar_cases
 from .boundary import PRODUCTION_BOUNDARY
+from .evidence import highest_evidence_quality
+from .metric_semantics import capital_stance, market_stance, quality_stance, research_median, risk_stance
 from .brains import (
     build_buffett_context,
     build_future_buyer_map,
@@ -39,23 +41,29 @@ from .market_context import analyst_revision, options_intelligence, short_intell
 from .memory import portfolio_context
 from .outcomes import independent_price_outcomes
 from .regime import classify_research_regime, earnings_regime
-from .thesis import compare_thesis, failure_case, thesis_ledger
+from .thesis import compare_thesis, failure_case, research_failure_lifecycle, thesis_ledger
 
 
 STANCE_RANK = {
     "STRONG": 2,
     "BULLISH": 1,
+    "FAVORABLE": 1,
+    "LOW_RISK": 1,
     "NEUTRAL": 0,
     "WEAK": -1,
     "BEARISH": -2,
+    "CAUTION": -2,
+    "HIGH_RISK": -2,
     "UNKNOWN": None,
 }
 
 
-def _stance(view: Mapping[str, Any] | None) -> str:
+def _stance(view: Mapping[str, Any] | None, *, purpose: str = "quality") -> str:
     if not view:
         return "UNKNOWN"
-    if view.get("stance"):
+    if view.get("stance") and purpose != "risk":
+        return str(view["stance"]).upper()
+    if purpose == "risk" and view.get("stance") in {"CAUTION", "FAVORABLE", "HIGH_RISK", "LOW_RISK", "NEUTRAL", "UNKNOWN"}:
         return str(view["stance"]).upper()
     score = view.get("capital_behavior_score") or view.get("capital_quality") or view.get("score")
     if score is None:
@@ -64,28 +72,26 @@ def _stance(view: Mapping[str, Any] | None) -> str:
         value = float(score)
     except (TypeError, ValueError):
         return "UNKNOWN"
-    if value >= 0.70:
-        return "STRONG"
-    if value >= 0.55:
-        return "BULLISH"
-    if value >= 0.45:
-        return "NEUTRAL"
-    if value >= 0.30:
-        return "WEAK"
-    return "BEARISH"
+    if purpose == "risk":
+        return str(risk_stance(value)["stance"])
+    if purpose == "capital":
+        return capital_stance(value)
+    if purpose == "market":
+        return market_stance(value)
+    return quality_stance(value)
 
 
 def _label(stance: str) -> str:
-    if stance in {"STRONG", "BULLISH"}:
+    if stance in {"STRONG", "BULLISH", "FAVORABLE", "LOW_RISK"}:
         return "STRONG"
-    if stance in {"WEAK", "BEARISH"}:
+    if stance in {"WEAK", "BEARISH", "CAUTION", "HIGH_RISK"}:
         return "WEAK"
     if stance == "NEUTRAL":
         return "NEUTRAL"
     return "UNKNOWN"
 
 
-def contradiction_status(views: Mapping[str, str]) -> dict[str, Any]:
+def contradiction_status(views: Mapping[str, str], claims: Any = None) -> dict[str, Any]:
     usable = {name: stance for name, stance in views.items() if stance and stance != "UNKNOWN"}
     if len(usable) < 2:
         return {
@@ -93,7 +99,7 @@ def contradiction_status(views: Mapping[str, str]) -> dict[str, Any]:
             "views": dict(views),
             "summary": "insufficient overlapping evidence",
             "why_conflict": "insufficient overlapping evidence",
-            "highest_evidence_quality": None,
+            "highest_evidence_quality": highest_evidence_quality(claims),
             "timescale_mismatch": False,
             "missing_data": [name for name, stance in views.items() if stance in (None, "", "UNKNOWN")],
             "not_a_score": True,
@@ -128,7 +134,7 @@ def contradiction_status(views: Mapping[str, str]) -> dict[str, Any]:
         "lines": lines,
         "summary": " + ".join(narrative) if narrative else status,
         "why_conflict": "brains disagree across time scales" if status == "DIVERGENCE" else None,
-        "highest_evidence_quality": "LEVEL_1 filings over quotes over inference",
+        "highest_evidence_quality": highest_evidence_quality(claims),
         "timescale_mismatch": bool(long_pos and short_neg),
         "missing_data": [name for name, stance in views.items() if stance in (None, "", "UNKNOWN")],
         "not_a_score": True,
@@ -214,7 +220,7 @@ def historical_analogue(
         "historical_cases": cases,
         "sample_size": len(cases),
         "win_rate": win_rate,
-        "median_return": sorted(returns)[len(returns) // 2] if returns else None,
+        "median_return": research_median(returns),
         "tail_loss": min(returns) if returns else None,
         "mfe": sum(mfe) / len(mfe) if mfe else None,
         "mae": sum(mae) / len(mae) if mae else None,
@@ -245,7 +251,7 @@ def validation_metrics(samples: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
         losses = sum(v for v in values if v < 0)
         return {
             "mean": round(sum(values) / len(values), 6),
-            "median": round(sorted(values)[len(values) // 2], 6),
+            "median": None if research_median(values) is None else round(research_median(values), 6),
             "win_rate": round(sum(1 for v in values if v > 0) / len(values), 6),
             "profit_factor": round(gains / abs(losses), 6) if losses else None,
             "sample_size": len(values),
@@ -349,9 +355,19 @@ def build_company_research(
         "statistical": _stance(statistical_view),
         "options": str(options.get("stance") or "UNKNOWN"),
         "portfolio": "OVERWEIGHT" if portfolio.get("already_owned") else "UNKNOWN",
-        "risk": _stance(risk_schema),
+        "risk": _stance(risk_schema, purpose="risk"),
     }
-    contradiction = contradiction_status(views)
+    contradiction = contradiction_status(
+        views,
+        claims={
+            "company": company,
+            "industry": industry_pos,
+            "capital": capital_schema,
+            "market": market,
+            "risk": risk_schema,
+            "fundamentals": fundamentals,
+        },
+    )
     matrix = research_decision_matrix(views)
     rejected = why_not(views, capital=capital_view, options=options, portfolio=portfolio)
     if contradiction.get("status") == "DIVERGENCE" and portfolio.get("already_owned"):
@@ -443,12 +459,20 @@ def build_company_research(
         "thesis": thesis,
         "thesis_compare": thesis_cmp,
         "failure_case": failure_case(facts.get("failure") if isinstance(facts.get("failure"), Mapping) else {}),
+        "failure_lifecycle": research_failure_lifecycle(
+            {"symbol": symbol, **(facts["failure"] if isinstance(facts.get("failure"), Mapping) else {})},
+            facts.get("outcome") if isinstance(facts.get("outcome"), Mapping) else {},
+        ),
         "lineage": lineage,
         "research_conclusion": conclusion,
+        "quality": scores.get("quality"),
         "risk": {
             "unknown_fields": fundamental.get("unknown_fields"),
             "capital_distribution": capital_view.get("distribution_probability"),
             "portfolio_flags": portfolio.get("flags"),
+            "score": risk_schema.get("score"),
+            "risk_level": risk_schema.get("risk_level"),
+            "stance": risk_schema.get("stance"),
         },
         "confidence": {
             "fundamental": fundamental.get("buffett_quality", {}).get("confidence"),

@@ -14,7 +14,29 @@ POSITION_RE = re.compile(
     r"(持仓|持有|owned|position|watchlist|观察|thesis|买入|卖出|catalyst|管理层|估值|风险)",
     re.IGNORECASE,
 )
+HOLDING_RE = re.compile(r"(持仓|持有|\bowned\b|\bholding\b|\bposition\b)", re.IGNORECASE)
+WATCH_RE = re.compile(r"(watchlist|观察名单|\bwatching\b|\bwatch\b)", re.IGNORECASE)
 DATE_RE = re.compile(r"(20\d{2}-\d{2}-\d{2})")
+NOTE_KINDS = ("holding", "watching", "mention", "research_target", "benchmark")
+TICKER_STOP = {
+    "US", "AI", "CEO", "IPO", "ETF", "SEC", "FDA", "GDP", "THE", "AND", "FOR",
+    "README", "TODO", "USD", "USA", "NYSE", "NASDAQ", "AMEX", "GAAP", "IFRS",
+    "EPS", "YOY", "QOQ", "TTM", "CAGR", "EBIT", "EBITDA", "FCF", "ROE", "ROA",
+    "ROIC", "PE", "PEG", "EV", "ATM", "OTM", "ITM", "IV", "OI", "CPI", "PCE",
+    "FED", "FOMC", "IMF", "WTO", "OECD", "ISO", "API", "GPU", "CPU", "HBM",
+    "TSMC", "FAQ", "NOTE", "RISK", "CASH",
+}
+CORE_US_TICKERS = {
+    "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "GOOG", "META", "TSLA", "AVGO",
+    "AMD", "AMAT", "TSM", "MU", "INTC", "QCOM", "ARM", "ASML", "LRCX", "KLAC",
+    "SNPS", "CDNS", "ADI", "TXN", "MRVL", "SMCI", "DELL", "HPQ", "IBM", "ORCL",
+    "CRM", "NOW", "SNOW", "PLTR", "PANW", "CRWD", "NET", "DDOG", "ADBE", "INTU",
+    "NFLX", "DIS", "CMCSA", "T", "VZ", "JPM", "BAC", "WFC", "GS", "MS", "C",
+    "V", "MA", "AXP", "BRK", "UNH", "JNJ", "LLY", "PFE", "MRK", "ABBV", "TMO",
+    "XOM", "CVX", "COP", "CAT", "DE", "GE", "HON", "BA", "LMT", "RTX", "NOC",
+    "COST", "WMT", "HD", "TGT", "NKE", "SBUX", "MCD", "KO", "PEP", "PG", "CL",
+    "STX", "WDC", "KDP", "IR", "ANET", "CSCO", "AVGO", "NXPI", "ON", "MPWR",
+}
 
 DEFAULT_VAULTS = (
     Path("/mnt/d/obisidian/Obsidian/Project"),
@@ -87,20 +109,109 @@ def document_dates(path: Path | None, content: str, metadata: Mapping[str, Any] 
     }
 
 
-def extract_tickers(text: str) -> list[str]:
-    stop = {
-        "US", "AI", "CEO", "IPO", "ETF", "SEC", "FDA", "GDP", "THE", "AND", "FOR",
-        "README", "TODO",
+def portfolio_concentration(
+    owned: Iterable[str] | None = None,
+    weights: Mapping[str, Any] | None = None,
+    *,
+    sectors: Mapping[str, str] | None = None,
+    themes: Mapping[str, str] | None = None,
+    cash: float | None = None,
+) -> dict[str, Any]:
+    symbols = [str(item).upper() for item in owned or [] if str(item).upper() not in {"CASH", ""}]
+    raw = {str(k).upper(): v for k, v in dict(weights or {}).items()}
+    numeric: dict[str, float] = {}
+    for symbol, value in raw.items():
+        try:
+            number = float(value)
+        except (TypeError, ValueError):
+            continue
+        if number != number:
+            continue
+        numeric[symbol] = number
+    if cash is not None:
+        try:
+            numeric["CASH"] = float(cash)
+        except (TypeError, ValueError):
+            pass
+    has_weights = any(symbol in numeric for symbol in symbols)
+    if not has_weights:
+        return {
+            "symbol_count": len(symbols),
+            "position_count": len(symbols),
+            "position_weight": "UNKNOWN",
+            "portfolio_weight": "UNKNOWN",
+            "sector_weight": "UNKNOWN",
+            "theme_weight": "UNKNOWN",
+            "top_position": "UNKNOWN",
+            "top3_concentration": "UNKNOWN",
+            "sector_concentration": "UNKNOWN",
+            "theme_concentration": "UNKNOWN",
+            "forged_equal_weight": False,
+        }
+    ordered = sorted(((symbol, numeric.get(symbol, 0.0)) for symbol in symbols), key=lambda item: item[1], reverse=True)
+    top = ordered[0][1] if ordered else None
+    top3 = sum(item[1] for item in ordered[:3]) if ordered else None
+    sector_weights: dict[str, float] = {}
+    theme_weights: dict[str, float] = {}
+    for symbol, value in ordered:
+        sector = str((sectors or {}).get(symbol) or "UNKNOWN")
+        theme = str((themes or {}).get(symbol) or "UNKNOWN")
+        sector_weights[sector] = sector_weights.get(sector, 0.0) + value
+        theme_weights[theme] = theme_weights.get(theme, 0.0) + value
+    return {
+        "symbol_count": len(symbols),
+        "position_count": len(symbols),
+        "position_weight": {symbol: numeric.get(symbol, "UNKNOWN") for symbol in symbols},
+        "portfolio_weight": dict(numeric),
+        "sector_weight": sector_weights or "UNKNOWN",
+        "theme_weight": theme_weights or "UNKNOWN",
+        "top_position": top,
+        "top3_concentration": top3,
+        "sector_concentration": max(sector_weights.values()) if sector_weights else "UNKNOWN",
+        "theme_concentration": max(theme_weights.values()) if theme_weights else "UNKNOWN",
+        "forged_equal_weight": False,
     }
+
+
+def recognized_ticker(symbol: str, universe: Iterable[str] | None = None) -> bool:
+    token = str(symbol or "").upper()
+    if not token or token in TICKER_STOP:
+        return False
+    extra = {str(item).upper() for item in universe or []}
+    return token in CORE_US_TICKERS or token in extra
+
+
+def extract_tickers(text: str, universe: Iterable[str] | None = None) -> list[str]:
     found = []
     for match in TICKER_RE.findall(text or ""):
-        if match in stop or match in found:
+        if match in TICKER_STOP or match in found:
+            continue
+        if not recognized_ticker(match, universe):
             continue
         found.append(match)
     return found
 
 
-def classify_note(path: str, content: str) -> dict[str, Any]:
+def _note_kind_from_metadata(metadata: Mapping[str, Any] | None) -> str | None:
+    meta = dict(metadata or {})
+    kind = str(meta.get("kind") or meta.get("note_kind") or "").strip().lower().replace(" ", "_")
+    if kind in {"holding", "owned", "position"}:
+        return "holding"
+    if kind in {"watching", "watchlist", "watch"}:
+        return "watching"
+    if kind in {"research_target", "research", "thesis"}:
+        return "research_target"
+    if kind in {"benchmark", "index"}:
+        return "benchmark"
+    if kind in {"mention"}:
+        return "mention"
+    return None
+
+
+def classify_note(path: str, content: str, metadata: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    meta = dict(metadata or {})
+    if content and not meta:
+        meta = parse_frontmatter(content)
     text = f"{path}\n{content}"
     lower = text.lower()
     kinds = []
@@ -120,10 +231,28 @@ def classify_note(path: str, content: str) -> dict[str, Any]:
     for kind, needles in mapping:
         if any(needle in lower for needle in needles):
             kinds.append(kind)
+    meta_ticker = str(meta.get("ticker") or meta.get("symbol") or "").upper() or None
+    tickers = extract_tickers(text)
+    if meta_ticker and recognized_ticker(meta_ticker) and meta_ticker not in tickers:
+        tickers.insert(0, meta_ticker)
+    note_kind = _note_kind_from_metadata(meta)
+    if note_kind is None:
+        if HOLDING_RE.search(text) and tickers:
+            note_kind = "holding"
+        elif WATCH_RE.search(text) and tickers:
+            note_kind = "watching"
+        elif any(kind in kinds for kind in ("thesis", "catalyst", "valuation", "industry")):
+            note_kind = "research_target"
+        elif tickers:
+            note_kind = "mention"
+        else:
+            note_kind = "mention"
     return {
         "kinds": kinds or ["unclassified"],
-        "tickers": extract_tickers(text),
-        "personal": any(kind in {"position", "watchlist", "thesis", "note"} for kind in kinds),
+        "tickers": tickers,
+        "note_kind": note_kind,
+        "metadata_ticker": meta_ticker,
+        "personal": any(kind in {"position", "watchlist", "thesis", "note"} for kind in kinds) or note_kind in {"holding", "watching"},
     }
 
 
@@ -136,7 +265,7 @@ def ingest_note(
     metadata: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     dates = document_dates(Path(path) if path else None, content, metadata, created_at=created_at, updated_at=updated_at)
-    classified = classify_note(path, content)
+    classified = classify_note(path, content, metadata)
     return {
         "source_path": path,
         "title": next((line[2:].strip() for line in content.splitlines() if line.startswith("# ")), Path(path).stem),
@@ -183,21 +312,34 @@ def portfolio_context(
         scoped = filter_obsidian_as_of(scoped, as_of, historical=use_historical)
     owned = []
     watch = []
+    mentions = []
     theses = []
     industries: dict[str, int] = {}
+    weights: dict[str, float] = {}
     for note in scoped:
         tickers = [item.upper() for item in note.get("tickers") or []]
         kinds = set(note.get("kinds") or [])
-        if "position" in kinds:
+        note_kind = str(note.get("note_kind") or "")
+        if note_kind == "holding" or "position" in kinds:
             owned.extend(tickers)
-        if "watchlist" in kinds:
+        elif note_kind == "watching" or "watchlist" in kinds:
             watch.extend(tickers)
-        if "thesis" in kinds:
+        else:
+            mentions.extend(tickers)
+        if "thesis" in kinds or note_kind == "research_target":
             theses.append({"path": note.get("source_path"), "tickers": tickers, "title": note.get("title")})
+        weight = note.get("position_weight") or note.get("weight")
+        try:
+            if weight not in (None, "", "UNKNOWN"):
+                for ticker in tickers:
+                    weights[ticker] = float(weight)
+        except (TypeError, ValueError):
+            pass
         for industry in note.get("industries") or []:
             industries[str(industry)] = industries.get(str(industry), 0) + 1
     owned_unique = sorted(set(owned))
     watch_unique = sorted(set(watch) - set(owned_unique))
+    mention_unique = sorted(set(mentions) - set(owned_unique) - set(watch_unique))
     target = (symbol or "").upper() or None
     already_owned = bool(target and target in owned_unique)
     same_sector = False
@@ -210,11 +352,12 @@ def portfolio_context(
         relevance = "PORTFOLIO_RELEVANCE"
     elif same_sector:
         relevance = "PORTFOLIO_CONCENTRATION_RISK"
-    concentration = round(1.0 / max(1, len(owned_unique)), 4) if already_owned else 0.0
+    concentration = portfolio_concentration(owned_unique, weights)
     flags = []
     if already_owned:
         flags.append("PORTFOLIO_RELEVANCE")
-        if concentration >= 0.25:
+        top = concentration.get("top_position")
+        if isinstance(top, (int, float)) and top >= 0.25:
             flags.append("PORTFOLIO_CONCENTRATION_RISK")
     if same_sector:
         flags.append("PORTFOLIO_CONCENTRATION_RISK")
@@ -228,6 +371,7 @@ def portfolio_context(
         "does_not_change_alpha": True,
         "owned_symbols": owned_unique,
         "watchlist_symbols": watch_unique,
+        "mentioned_symbols": mention_unique,
         "position_size": None,
         "entry_context": [note.get("source_path") for note in scoped if "position" in (note.get("kinds") or [])],
         "personal_thesis": theses,
@@ -240,6 +384,8 @@ def portfolio_context(
         "already_owned": already_owned,
         "current_thesis": next((item for item in theses if not target or target in item["tickers"]), None),
         "concentration": concentration,
+        "top_position": concentration.get("top_position"),
+        "top3_concentration": concentration.get("top3_concentration"),
         "flags": flags,
         "relevance": relevance,
         "market_alpha_adjustment": 0,

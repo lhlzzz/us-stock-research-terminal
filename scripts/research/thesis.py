@@ -10,11 +10,26 @@ FAILURE_CLASSES = (
     "FALSE_BREAKOUT", "CATALYST_FAILURE", "DISTRIBUTION", "EARNINGS_MISS",
     "GUIDANCE_CUT", "LIQUIDITY_TRAP", "SHORT_PRESSURE", "VALUATION_TRAP",
     "THESIS_BREAK", "REGIME_MISMATCH",
+    "THESIS_FAILURE", "TIMING_FAILURE", "DATA_FAILURE", "VALUATION_FAILURE",
+    "CAPITAL_BEHAVIOR_FAILURE", "INDUSTRY_ASSUMPTION_FAILURE", "RISK_UNDERESTIMATION",
 )
-THESIS_COMPARE = ("CONFLICT", "CONFIRM", "UPDATE")
+THESIS_FIELDS = (
+    "company", "industry", "catalyst", "capital_behavior", "valuation", "risk", "evidence", "confidence",
+)
+THESIS_DIFF = ("ADDED", "REMOVED", "CHANGED", "UNCHANGED", "CONTRADICTED")
+THESIS_COMPARE = ("CONFLICT", "CONFIRM", "UPDATE", *THESIS_DIFF)
 SIMILARITY_DIMENSIONS = (
     "company", "industry", "setup", "capital", "thesis", "failure",
 )
+SIMILARITY_COMPONENTS = (
+    "ticker", "industry", "thesis", "factor", "market_regime", "capital_behavior", "outcome",
+)
+FAILURE_MEMORY: list[dict[str, Any]] = []
+CONTRADICTION_PAIRS = {
+    ("cheap", "expensive"), ("cheap", "rich"), ("cheap", "dear"),
+    ("undervalued", "overvalued"), ("bullish", "bearish"),
+    ("accumulation", "distribution"), ("strong", "weak"),
+}
 
 
 def thesis_ledger(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
@@ -34,25 +49,85 @@ def thesis_ledger(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
     }
 
 
+def _thesis_structure(payload: Mapping[str, Any] | None) -> dict[str, Any]:
+    payload = dict(payload or {})
+    nested = payload.get("thesis")
+    if isinstance(nested, Mapping):
+        source = dict(nested)
+    else:
+        source = dict(payload)
+    structured = {}
+    for field in THESIS_FIELDS:
+        value = source.get(field)
+        if value in (None, ""):
+            continue
+        structured[field] = value
+    if not structured and nested not in (None, ""):
+        structured["company"] = nested
+    return structured
+
+
+def _contradicted(old: Any, new: Any) -> bool:
+    a = str(old or "").strip().lower()
+    b = str(new or "").strip().lower()
+    if not a or not b or a == b:
+        return False
+    pair = tuple(sorted((a, b)))
+    if pair in {tuple(sorted(item)) for item in CONTRADICTION_PAIRS}:
+        return True
+    if a.startswith("not ") and a[4:] == b:
+        return True
+    if b.startswith("not ") and b[4:] == a:
+        return True
+    return False
+
+
 def compare_thesis(old: Mapping[str, Any] | None, new_evidence: Mapping[str, Any] | None) -> dict[str, Any]:
     old = dict(old or {})
     evidence = dict(new_evidence or {})
+    old_struct = _thesis_structure(old)
+    new_struct = _thesis_structure(evidence)
+    if not new_struct and not evidence:
+        new_struct = old_struct
+    fields: dict[str, str] = {}
+    all_keys = list(dict.fromkeys([*old_struct, *new_struct, *THESIS_FIELDS]))
+    for field in all_keys:
+        before = old_struct.get(field)
+        after = new_struct.get(field)
+        if before in (None, "") and after in (None, ""):
+            continue
+        if before in (None, "") and after not in (None, ""):
+            fields[field] = "ADDED"
+        elif before not in (None, "") and after in (None, ""):
+            fields[field] = "REMOVED"
+        elif _contradicted(before, after) or (evidence.get("conflicts") and field in {"valuation", "risk", "company"} and before != after):
+            fields[field] = "CONTRADICTED"
+        elif before != after:
+            fields[field] = "CHANGED"
+        else:
+            fields[field] = "UNCHANGED"
     old_text = str(old.get("thesis") or "")
     new_text = str(evidence.get("thesis") or old_text)
-    if not old_text:
-        status = "UPDATE"
-    elif evidence.get("conflicts"):
+    if evidence.get("conflicts") or "CONTRADICTED" in fields.values():
         status = "CONFLICT"
-    elif new_text == old_text:
+    elif not old_struct and new_struct:
+        status = "UPDATE"
+    elif fields and all(value == "UNCHANGED" for value in fields.values()):
+        status = "CONFIRM"
+    elif not old_text and not old_struct:
+        status = "UPDATE"
+    elif new_text == old_text and (not fields or all(value == "UNCHANGED" for value in fields.values())):
         status = "CONFIRM"
     else:
         status = "UPDATE"
     log = list(old.get("change_log") or [])
-    log.append({"status": status, "evidence": evidence.get("evidence"), "as_of": evidence.get("as_of")})
+    log.append({"status": status, "fields": fields, "evidence": evidence.get("evidence"), "as_of": evidence.get("as_of")})
     return {
         "status": status,
-        "old_thesis": old_text or None,
-        "new_thesis": new_text or None,
+        "old_thesis": old_text or old_struct or None,
+        "new_thesis": new_text or new_struct or None,
+        "fields": fields,
+        "diff": fields,
         "change_log": log,
         "allowed": list(THESIS_COMPARE),
         "production_boundary": PRODUCTION_BOUNDARY,
@@ -93,16 +168,69 @@ def failure_case(row: Mapping[str, Any] | None = None) -> dict[str, Any]:
     }
 
 
-def similar_failures(query: Mapping[str, Any], library: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
-    reason = str((query or {}).get("failure_reason") or "").upper()
-    matches = [dict(item) for item in library if str(item.get("failure_reason") or "").upper() == reason]
+def similar_failures(query: Mapping[str, Any], library: Iterable[Mapping[str, Any]] | None = None) -> dict[str, Any]:
+    reason = str((query or {}).get("failure_reason") or (query or {}).get("class") or "").upper()
+    rows = [dict(item) for item in (library if library is not None else FAILURE_MEMORY)]
+    matches = [item for item in rows if str(item.get("failure_reason") or item.get("class") or "").upper() == reason]
+    if not matches and (query or {}).get("symbol"):
+        symbol = str(query.get("symbol")).upper()
+        matches = [item for item in rows if str(item.get("symbol") or item.get("failure_case") or "").upper() == symbol]
     return {
         "query": reason or None,
         "matches": matches,
         "count": len(matches),
         "question": "有没有以前犯过类似错误？",
+        "role": "evidence / warning",
+        "not_a_production_signal": True,
         "production_boundary": PRODUCTION_BOUNDARY,
     }
+
+
+def research_failure_lifecycle(
+    conclusion: Mapping[str, Any] | None = None,
+    outcome: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    conclusion = dict(conclusion or {})
+    outcome = dict(outcome or {})
+    predicted = conclusion.get("prediction") or conclusion.get("thesis")
+    realized = outcome.get("outcome") or outcome.get("result")
+    failed = bool(conclusion.get("failed") or outcome.get("failed"))
+    if predicted is not None and realized is not None and predicted != realized:
+        failed = True
+    klass = str(conclusion.get("failure_reason") or outcome.get("failure_reason") or conclusion.get("class") or "").upper()
+    if failed and klass not in FAILURE_CLASSES:
+        klass = "THESIS_FAILURE"
+    if not failed:
+        klass = None
+    record = {
+        "symbol": conclusion.get("symbol") or outcome.get("symbol"),
+        "research_conclusion": conclusion,
+        "outcome": outcome,
+        "failed_hypothesis": failed,
+        "failure_reason": klass,
+        "class": klass,
+        "root_cause": conclusion.get("root_cause") or outcome.get("root_cause"),
+        "evidence_conflict": conclusion.get("evidence_conflict") or outcome.get("evidence_conflict"),
+        "role": "evidence / warning",
+        "not_a_production_signal": True,
+        "produces_pick": False,
+        "production_boundary": PRODUCTION_BOUNDARY,
+    }
+    if failed:
+        FAILURE_MEMORY.append(record)
+        record["memory"] = True
+        record["retrievable"] = True
+    else:
+        record["memory"] = False
+        record["retrievable"] = False
+    return record
+
+
+def retrieve_failure_context(query: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    payload = similar_failures(query or {}, FAILURE_MEMORY)
+    payload["future_research_context"] = True
+    payload["not_a_production_signal"] = True
+    return payload
 
 
 def calibrate_brain(name: str, rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
@@ -139,17 +267,70 @@ def calibrate_brain(name: str, rows: Iterable[Mapping[str, Any]]) -> dict[str, A
     }
 
 
+def _component_score(left: Mapping[str, Any], right: Mapping[str, Any], key: str, aliases: tuple[str, ...]) -> float | None:
+    a = None
+    b = None
+    for name in (key, *aliases):
+        if a in (None, ""):
+            a = left.get(name)
+        if b in (None, ""):
+            b = right.get(name)
+    if a in (None, "") or b in (None, ""):
+        return None
+    if a == b:
+        return 1.0
+    if isinstance(a, str) and isinstance(b, str):
+        left_tokens = {token for token in a.lower().replace(",", " ").split() if token}
+        right_tokens = {token for token in b.lower().replace(",", " ").split() if token}
+        if not left_tokens or not right_tokens:
+            return 0.0
+        overlap = len(left_tokens & right_tokens) / len(left_tokens | right_tokens)
+        return round(overlap, 4)
+    return 0.0
+
+
 def research_similarity(left: Mapping[str, Any], right: Mapping[str, Any]) -> dict[str, Any]:
     scores = {}
     for dim in SIMILARITY_DIMENSIONS:
         a = left.get(dim)
         b = right.get(dim)
         scores[dim] = 1.0 if a not in (None, "") and a == b else 0.0 if a and b else None
-    usable = [value for value in scores.values() if value is not None]
+    components = {
+        "ticker": _component_score(left, right, "ticker", ("company", "symbol")),
+        "industry": _component_score(left, right, "industry", ("sector",)),
+        "thesis": _component_score(left, right, "thesis", ("company_thesis",)),
+        "factor": _component_score(left, right, "factor", ("setup", "factors")),
+        "market_regime": _component_score(left, right, "market_regime", ("regime",)),
+        "capital_behavior": _component_score(left, right, "capital_behavior", ("capital", "capital_state")),
+        "outcome": _component_score(left, right, "outcome", ("failure",)),
+    }
+    weights = {
+        "ticker": 0.20,
+        "industry": 0.15,
+        "thesis": 0.20,
+        "factor": 0.10,
+        "market_regime": 0.15,
+        "capital_behavior": 0.15,
+        "outcome": 0.05,
+    }
+    numer = 0.0
+    present = 0
+    for key, weight in weights.items():
+        value = components.get(key)
+        if value is None:
+            continue
+        numer += weight * value
+        present += 1
+    score = round(numer / sum(weights.values()), 4) if present else None
+    explained = {key: value for key, value in components.items() if value is not None}
+    dim_usable = [value for value in scores.values() if value is not None]
     return {
+        "score": score,
+        "components": explained,
         "dimensions": scores,
         "not_text_only": True,
-        "composite": round(sum(usable) / len(usable), 4) if usable else None,
+        "same_industry_is_not_automatic_one": True,
+        "composite": score if score is not None else (round(sum(dim_usable) / len(dim_usable), 4) if dim_usable else None),
         "production_boundary": PRODUCTION_BOUNDARY,
     }
 
