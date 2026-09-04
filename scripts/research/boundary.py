@@ -73,4 +73,32 @@ def skill_inventory() -> list[dict[str, Any]]:
             "produces_pick": True,
             "note": "only paper-review classification, never live order",
         },
+        {
+            "name": "quant",
+            "path": "scripts/research/stability.py",
+            "role": "statistical validation",
+            "produces_pick": False,
+        },
+        {
+            "name": "obsidian",
+            "path": "scripts/research/memory.py",
+            "role": "memory / thesis ledger",
+            "produces_pick": False,
+        },
+        {
+            "name": "postgresql",
+            "path": "scripts/db/",
+            "role": "structured facts",
+            "produces_pick": False,
+        },
     ]
+
+
+SKILL_OWNERS = {
+    "Buffett": "Company Research",
+    "Serenity": "Industry Research",
+    "Capital": "Market Capital Behavior",
+    "Quant": "Statistical Validation",
+    "Obsidian": "Memory",
+    "PostgreSQL": "Structured Facts",
+}

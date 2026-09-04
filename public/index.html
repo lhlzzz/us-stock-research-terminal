@@ -228,6 +228,7 @@ const NAV = [
   {id:'records', icon:'📑', label:'出票记录'},
   {id:'research', icon:'🔬', label:'公司研究', children:[
     {id:'research/stock', icon:'🔎', label:'个股研究'},
+    {id:'research/os', icon:'🧠', label:'四Brain研究'},
     {id:'research/candidates', icon:'📋', label:'候选池'},
     {id:'research/universe', icon:'🌐', label:'Universe'},
   ]},
@@ -282,6 +283,7 @@ function miniBar(data, w=120, h=30) {
 // ─── Pages ──────────────────────────────────────────────────
 async function renderPage() {
   const m = $('main');
+  if (currentPage.startsWith('research/stock')) return renderResearchStock(m);
   switch(currentPage) {
     case 'dashboard': return renderDashboard(m);
     case 'simulation': return renderSimulation(m);
@@ -292,6 +294,7 @@ async function renderPage() {
     case 'signals/raw': return renderSignalsRaw(m);
     case 'records': return renderRecords(m);
     case 'research/stock': return renderResearchStock(m);
+    case 'research/os': return renderResearchOS(m);
     case 'research/candidates': return renderResearchCandidates(m);
     case 'research/universe': return renderResearchUniverse(m);
     case 'system/regime': return renderRegime(m);
@@ -907,10 +910,11 @@ async function renderResearchStock(m) {
   m.innerHTML += `<div id="stock-research-content"><div class="loading">加载 ${esc(sym)} 研究数据...</div></div>`;
 
   // Fetch all data in parallel
-  const [detail, factors, klines] = await Promise.all([
+  const [detail, factors, klines, brains] = await Promise.all([
     api(`/api/symbols/${sym}/detail`),
     api(`/api/factors?symbol=${sym}&limit=20`),
     api(`/api/klines/${sym}?limit=30`),
+    api(`/research/company/${sym}/brains`),
   ]);
 
   const el = $('stock-research-content');
@@ -1018,8 +1022,59 @@ async function renderResearchStock(m) {
     }
   }
 
-  el.innerHTML = ticketHtml + trackHtml + factorHtml + klineHtml;
+  el.innerHTML = brainHeroHtml(brains, sym) + ticketHtml + trackHtml + factorHtml + klineHtml;
   m.innerHTML += footer();
+}
+
+function brainHeroHtml(brains, sym) {
+  if (!brains || brains.produces_pick) return '';
+  const scores = brains.scores || {};
+  const contradiction = brains.contradictions || {};
+  const pill = (v) => {
+    const s = String(v||'UNKNOWN');
+    const cls = s==='STRONG'||s==='BULLISH'||s==='CONVERGENCE'?'pill-green':s==='WEAK'||s==='BEARISH'||s==='DIVERGENCE'?'pill-red':'pill-gray';
+    return `<span class="pill ${cls}">${esc(s)}</span>`;
+  };
+  const cell = (label, value) => `<div class="stat-card"><div class="label">${label}</div><div class="value">${value==null||value===''?'UNKNOWN':(typeof value==='number'?num(value,3):esc(String(value)))}</div></div>`;
+  return card(`🧠 ${esc(sym)} Research OS`, '四Brain独立分数 · 不是单一总分 · 不是 BUY/SELL',
+    `<div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px">
+      ${cell('Company Quality', scores.company_quality_score)}
+      ${cell('Industry Position', scores.industry_position_score)}
+      ${cell('Capital State', scores.capital_behavior_score)}
+      ${cell('Market Setup', scores.market_setup_score)}
+    </div>
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px">
+      ${cell('Risk', scores.risk_score)}
+      ${cell('Portfolio Exposure', (brains.portfolio_context&&brains.portfolio_context.already_owned)?'OWNED':'NEW')}
+      ${cell('Historical Evidence', (brains.historical_evidence&&brains.historical_evidence.score)!=null?brains.historical_evidence.score:'UNKNOWN')}
+    </div>
+    <div>Convergence / Divergence: ${pill(contradiction.status)}
+      <span style="margin-left:8px;font-size:12px;color:var(--text-2)">research_composite=${scores.research_composite==null?'n/a':num(scores.research_composite,3)} ≠ alpha_score=${scores.alpha_score==null?'n/a':num(scores.alpha_score,3)}</span>
+    </div>`);
+}
+
+async function renderResearchOS(m) {
+  m.innerHTML = header('🧠 四Brain研究', 'Company / Industry / Capital / Market 独立展示 · 禁止单一总分作为主角');
+  m.innerHTML += `<div class="card" style="margin-bottom:16px"><div class="card-body">
+    <div style="display:flex;gap:10px;align-items:center">
+      <input type="text" id="os-symbol" placeholder="NVDA" value="NVDA"
+        style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-family:monospace"
+        onkeydown="if(event.key==='Enter')loadResearchOS()">
+      <button onclick="loadResearchOS()" class="filter-btn active">查询</button>
+    </div>
+  </div></div><div id="os-content"><div class="empty">输入标的后显示四Brain，不显示 BUY/SELL</div></div>`;
+  m.innerHTML += footer();
+  loadResearchOS();
+}
+
+async function loadResearchOS() {
+  const input = $('os-symbol');
+  const el = $('os-content');
+  if (!input || !el) return;
+  const sym = (input.value||'NVDA').toUpperCase();
+  const brains = await api(`/research/company/${sym}/brains`);
+  if (!brains) { el.innerHTML = '<div class="empty">研究接口不可用</div>'; return; }
+  el.innerHTML = brainHeroHtml(brains, sym);
 }
 
 // Chinese name → symbol mapping for common US stocks

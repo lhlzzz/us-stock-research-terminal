@@ -27,6 +27,15 @@ ALLOWED_KNOBS = {
     "evidence_reversal_weight": (0.05, 0.25),
 }
 
+FROZEN_KEYS = {
+    "buffett_principles",
+    "serenity_ontology",
+    "fact_inference_semantics",
+    "evidence_hierarchy",
+    "no_lookahead_rules",
+    "production_safety_boundary",
+}
+
 # Max proposals per day
 MAX_PROPOSALS_PER_DAY = 3
 STRATEGY_VERSION = "observable_footprint_v1"
@@ -244,14 +253,30 @@ def run_self_evolution(engine, dry_run: bool = False) -> dict:
         proposed = proposal["proposed"]
         reason = proposal["reason"]
 
-        # Validate bounds
-        if key in ALLOWED_KNOBS:
-            min_val, max_val = ALLOWED_KNOBS[key]
-            if not (min_val <= proposed <= max_val):
-                logger.warning(f"Proposal {key}={proposed} out of bounds [{min_val}, {max_val}]")
-                skipped += 1
-                continue
+        if key in FROZEN_KEYS:
+            logger.warning(f"Proposal {key} is frozen and cannot be evolved")
+            skipped += 1
+            continue
+        if key not in ALLOWED_KNOBS:
+            logger.warning(f"Proposal {key} is not an allowed knob")
+            skipped += 1
+            continue
+        min_val, max_val = ALLOWED_KNOBS[key]
+        if not (min_val <= proposed <= max_val):
+            logger.warning(f"Proposal {key}={proposed} out of bounds [{min_val}, {max_val}]")
+            skipped += 1
+            continue
 
+        current = proposal.get("current")
+        ledger = {
+            "version": STRATEGY_VERSION,
+            "before": current,
+            "after": proposed,
+            "evidence": reason,
+            "validation": gate_status,
+            "rollback": current,
+        }
+        proposal["ledger"] = ledger
         if dry_run:
             logger.info(f"[DRY RUN] Would update {key} = {proposed} ({reason})")
             applied += 1

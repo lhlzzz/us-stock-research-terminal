@@ -1,5 +1,20 @@
 # NEXT_ACTION
 
+## Xiaomei 2.0 hidden gaps (2026-09-04)
+
+- Four-brain contracts attached on existing Research OS. Independent scores:
+  company_quality / industry_position / capital_behavior / market_setup / risk.
+  research_composite ≠ alpha_score. Portfolio never enters alpha.
+- Fundamentals / SEC / earnings / SBC / industry graph / chokepoint / universes
+  / factor guard / regimes / options-short-analyst / thesis-failure are
+  research layers only. Production ranking owner unchanged.
+- Completion: PARTIAL. Not COMPLETE_RESEARCH_OS. Live holes are DATA_GAP
+  (filings/earnings/graph), VALIDATION_GAP (VALID tickets=0, capital VALID=5),
+  MODEL_GAP (factor stability). Gates not lowered. No invented lineage.
+- Next operational action: accumulate independently versioned tickets with
+  complete T+1/3/5/10. Ingest SEC/earnings before claiming Company Brain
+  validated. Do not change production weights or live-trade boundary.
+
 ## Research OS + V3.1 validity (2026-09-04)
 
 - Research OS attached as research/shadow/replay/learning only. Production

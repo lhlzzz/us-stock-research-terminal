@@ -1591,6 +1591,91 @@ async def research_contradictions(symbol: str, as_of: Optional[str] = Query(None
     })
 
 
+@app.get("/research/company/{symbol}/brains")
+async def research_brains(symbol: str, as_of: Optional[str] = Query(None)):
+    payload = _research_payload(symbol, as_of)
+    return _traceable({
+        "source": "research_os_2",
+        "source_type": "skill",
+        "as_of_date": payload.get("as_of_date"),
+        "effective_date": payload.get("as_of_date"),
+        "company_quality": payload.get("company_quality"),
+        "industry_position": payload.get("industry_position"),
+        "capital_behavior": payload.get("capital_behavior"),
+        "market_setup": payload.get("market_setup"),
+        "risk": payload.get("risk_view"),
+        "portfolio_context": payload.get("portfolio_context"),
+        "historical_evidence": payload.get("historical_evidence"),
+        "scores": payload.get("scores"),
+        "contradictions": payload.get("contradictions"),
+        "decision_matrix": payload.get("decision_matrix"),
+        "why_not": payload.get("why_not"),
+        "research_conclusion": payload.get("research_conclusion"),
+        "not_a_single_total": True,
+        "produces_pick": False,
+    })
+
+
+@app.get("/research/query")
+async def research_query_endpoint(q: str = Query(..., description="research company NVDA")):
+    from research.query import research_query
+
+    payload = _research_payload(q.split()[-1]) if "company" in q.lower() else {}
+    return research_query(q, company=payload)
+
+
+@app.get("/research/industry/{name}")
+async def research_industry_name(name: str):
+    from research.industry import persist_industry_graph
+
+    return _traceable({
+        "source": "industry_graph",
+        "source_type": "skill",
+        "industry": name,
+        "graph": persist_industry_graph(None),
+        "produces_pick": False,
+    })
+
+
+@app.get("/research/chokepoint/{name}")
+async def research_chokepoint_name(name: str):
+    from research.industry import chokepoint_record
+
+    return _traceable({
+        "source": "chokepoint",
+        "source_type": "skill",
+        "name": name,
+        "record": chokepoint_record({"product": name}),
+        "produces_pick": False,
+    })
+
+
+@app.get("/research/failures")
+async def research_failures(reason: Optional[str] = Query(None)):
+    from research.thesis import similar_failures
+
+    return _traceable({
+        "source": "failure_library",
+        "source_type": "ticket",
+        "payload": similar_failures({"failure_reason": reason or ""}, []),
+        "produces_pick": False,
+    })
+
+
+@app.get("/research/thesis/{symbol}")
+async def research_thesis(symbol: str, as_of: Optional[str] = Query(None)):
+    payload = _research_payload(symbol, as_of)
+    return _traceable({
+        "source": "obsidian",
+        "source_type": "obsidian",
+        "as_of_date": payload.get("as_of_date"),
+        "effective_date": payload.get("as_of_date"),
+        "thesis": payload.get("thesis"),
+        "thesis_compare": payload.get("thesis_compare"),
+        "produces_pick": False,
+    })
+
+
 if __name__ == "__main__":
     raise SystemExit(
         "xiaomei no longer starts an independent HTTP server; "

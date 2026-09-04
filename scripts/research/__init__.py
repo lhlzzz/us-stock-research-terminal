@@ -16,13 +16,16 @@ from .brains import (
     build_tradingagents_adapter,
     build_uzi_adapter,
 )
+from .contracts import capital_behavior, company_quality, independent_scores, industry_position, market_setup
 from .decision import (
     build_company_research,
     contradiction_status,
     render_company_report,
+    research_decision_matrix,
+    why_not,
     write_company_report,
 )
-from .evidence import Claim, claim
+from .evidence import CLAIM_KINDS, EVIDENCE_LEVELS, Claim, claim
 from .learning import (
     DATA_QUALITY_GATES,
     assemble_research_sample,
@@ -37,6 +40,7 @@ from .memory import (
     portfolio_context,
     scan_obsidian_vault,
 )
+from .query import research_dashboard, research_query
 
 __all__ = [
     "Claim",
@@ -53,9 +57,18 @@ __all__ = [
     "build_tradingagents_adapter",
     "build_uzi_adapter",
     "claim",
+    "capital_behavior",
+    "company_quality",
     "contradiction_status",
     "filter_obsidian_as_of",
     "history_census",
+    "independent_scores",
+    "industry_position",
+    "market_setup",
+    "research_dashboard",
+    "research_decision_matrix",
+    "research_query",
+    "why_not",
     "independent_price_outcomes",
     "ingest_obsidian_assets",
     "portfolio_context",

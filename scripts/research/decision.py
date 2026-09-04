@@ -16,8 +16,30 @@ from .brains import (
     build_tradingagents_adapter,
     build_uzi_adapter,
 )
+from .contracts import (
+    capital_behavior,
+    company_quality,
+    historical_evidence,
+    independent_scores,
+    industry_position,
+    lineage_status,
+    market_setup,
+    research_horizon_contract,
+    risk_view,
+)
+from .fundamentals import (
+    company_fundamentals,
+    earnings_intelligence,
+    management_allocation,
+    sbc_dilution,
+    sec_filing,
+)
+from .industry import persist_industry_graph, portfolio_risk_graph, supply_chain_portfolio, update_industry_memory
+from .market_context import analyst_revision, options_intelligence, short_intelligence
 from .memory import portfolio_context
 from .outcomes import independent_price_outcomes
+from .regime import classify_research_regime, earnings_regime
+from .thesis import compare_thesis, failure_case, thesis_ledger
 
 
 STANCE_RANK = {
@@ -35,7 +57,7 @@ def _stance(view: Mapping[str, Any] | None) -> str:
         return "UNKNOWN"
     if view.get("stance"):
         return str(view["stance"]).upper()
-    score = view.get("capital_behavior_score") or view.get("capital_quality")
+    score = view.get("capital_behavior_score") or view.get("capital_quality") or view.get("score")
     if score is None:
         return "UNKNOWN"
     try:
@@ -53,6 +75,16 @@ def _stance(view: Mapping[str, Any] | None) -> str:
     return "BEARISH"
 
 
+def _label(stance: str) -> str:
+    if stance in {"STRONG", "BULLISH"}:
+        return "STRONG"
+    if stance in {"WEAK", "BEARISH"}:
+        return "WEAK"
+    if stance == "NEUTRAL":
+        return "NEUTRAL"
+    return "UNKNOWN"
+
+
 def contradiction_status(views: Mapping[str, str]) -> dict[str, Any]:
     usable = {name: stance for name, stance in views.items() if stance and stance != "UNKNOWN"}
     if len(usable) < 2:
@@ -60,6 +92,12 @@ def contradiction_status(views: Mapping[str, str]) -> dict[str, Any]:
             "status": "UNKNOWN",
             "views": dict(views),
             "summary": "insufficient overlapping evidence",
+            "why_conflict": "insufficient overlapping evidence",
+            "highest_evidence_quality": None,
+            "timescale_mismatch": False,
+            "missing_data": [name for name, stance in views.items() if stance in (None, "", "UNKNOWN")],
+            "not_a_score": True,
+            "not_averaged": True,
         }
     signs = [STANCE_RANK.get(stance, 0) or 0 for stance in usable.values()]
     if all(value > 0 for value in signs) or all(value < 0 for value in signs) or all(value == 0 for value in signs):
@@ -67,23 +105,88 @@ def contradiction_status(views: Mapping[str, str]) -> dict[str, Any]:
     elif any(value > 0 for value in signs) and any(value < 0 for value in signs):
         status = "DIVERGENCE"
     else:
-        status = "UNKNOWN"
+        status = "UNRESOLVED"
     lines = [f"{name}: {stance}" for name, stance in views.items()]
     narrative = []
-    if views.get("fundamental") in {"STRONG", "BULLISH"}:
+    if views.get("fundamental") in {"STRONG", "BULLISH"} or views.get("company") in {"STRONG", "BULLISH"}:
         narrative.append("优秀公司")
     if views.get("industry") in {"STRONG", "BULLISH"}:
         narrative.append("优秀产业链")
     if views.get("capital") in {"WEAK", "BEARISH", "UNKNOWN"}:
         narrative.append("短期资金行为未确认")
-    if views.get("statistical") in {"STRONG", "BULLISH"}:
+    if views.get("statistical") in {"STRONG", "BULLISH"} or views.get("market") in {"STRONG", "BULLISH"}:
         narrative.append("统计 setup 偏强")
+    if views.get("options") in {"WEAK", "BEARISH"}:
+        narrative.append("期权定位偏空")
+    if views.get("portfolio") in {"WEAK", "BEARISH", "OVERWEIGHT"}:
+        narrative.append("组合已超配")
+    long_pos = any(views.get(name) in {"STRONG", "BULLISH"} for name in ("fundamental", "company", "industry"))
+    short_neg = any(views.get(name) in {"WEAK", "BEARISH"} for name in ("capital", "market", "options"))
     return {
         "status": status,
         "views": dict(views),
         "lines": lines,
         "summary": " + ".join(narrative) if narrative else status,
+        "why_conflict": "brains disagree across time scales" if status == "DIVERGENCE" else None,
+        "highest_evidence_quality": "LEVEL_1 filings over quotes over inference",
+        "timescale_mismatch": bool(long_pos and short_neg),
+        "missing_data": [name for name, stance in views.items() if stance in (None, "", "UNKNOWN")],
         "not_a_score": True,
+        "not_averaged": True,
+    }
+
+
+def research_decision_matrix(views: Mapping[str, str]) -> dict[str, Any]:
+    rows = {}
+    aliases = {"company": ("company", "fundamental"), "market": ("market", "statistical")}
+    for name in ("company", "industry", "capital", "market", "risk"):
+        value = "UNKNOWN"
+        for key in aliases.get(name, (name,)):
+            if views.get(key) not in (None, "", "UNKNOWN"):
+                value = str(views[key])
+                break
+        rows[name] = _label(value)
+    unknown = sum(1 for value in rows.values() if value == "UNKNOWN")
+    divergence = len({value for value in rows.values() if value in {"STRONG", "WEAK"}}) > 1
+    if unknown >= 3:
+        priority = "FILL_DATA_GAPS"
+    elif divergence:
+        priority = "RESOLVE_CONTRADICTION"
+    elif rows.get("company") == "STRONG" and rows.get("industry") == "STRONG":
+        priority = "HIGH"
+    else:
+        priority = "WATCH"
+    return {
+        "matrix": rows,
+        "labels": ("STRONG", "WEAK", "NEUTRAL", "UNKNOWN"),
+        "research_priority": priority,
+        "not_only_score": True,
+    }
+
+
+def why_not(views: Mapping[str, str], *, capital: Mapping[str, Any] | None = None, options: Mapping[str, Any] | None = None, portfolio: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    reasons = []
+    capital = dict(capital or {})
+    options = dict(options or {})
+    portfolio = dict(portfolio or {})
+    if views.get("capital") in {"WEAK", "BEARISH"} or str(capital.get("capital_state") or "").upper() == "DISTRIBUTION":
+        reasons.append("Capital = distribution")
+    if views.get("market") in {"WEAK", "BEARISH"}:
+        reasons.append("Market = overextended")
+    if options.get("stance") in {"BEARISH", "WEAK"} or options.get("options_positioning") == "SUPPRESS":
+        reasons.append("Options = crowded")
+    if portfolio.get("already_owned") or portfolio.get("relevance") in {"PORTFOLIO_CONCENTRATION_RISK", "PORTFOLIO_RELEVANCE"}:
+        reasons.append("Portfolio = already overweight")
+    long_ok = views.get("fundamental") in {"STRONG", "BULLISH"} or views.get("company") in {"STRONG", "BULLISH"}
+    short_block = bool(reasons)
+    conclusion = "RESEARCH_BULLISH" if long_ok else "RESEARCH_INCOMPLETE"
+    if short_block:
+        conclusion = "RESEARCH_BULLISH / SHORT_TERM_NOT_READY" if long_ok else "SHORT_TERM_NOT_READY"
+    return {
+        "why_candidate": [f"{name}={stance}" for name, stance in views.items() if stance in {"STRONG", "BULLISH"}],
+        "why_not": reasons,
+        "conclusion": conclusion,
+        "not_a_buy_sell": True,
     }
 
 
@@ -171,9 +274,12 @@ def build_company_research(
     notes: Iterable[Mapping[str, Any]] | None = None,
     historical: Iterable[Mapping[str, Any]] | None = None,
     ohlcv=None,
+    industry_graph: Mapping[str, Any] | None = None,
+    previous_thesis: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     facts = dict(facts or {})
     facts.setdefault("as_of_date", str(as_of_date or ""))
+    facts.setdefault("symbol", symbol)
     fundamental = build_buffett_context(facts)
     industry = build_serenity_context(facts)
     supply = build_supply_context(facts)
@@ -198,19 +304,96 @@ def build_company_research(
         historical or [],
     )
     independent = independent_price_outcomes(ohlcv, as_of_date=as_of_date or date.today()) if ohlcv is not None else {"available": False}
+    company = company_quality(facts)
+    industry_pos = industry_position(facts)
+    capital_schema = capital_behavior({**facts, **capital_view})
+    market = market_setup(facts)
+    risk_schema = risk_view(facts)
+    scores = independent_scores(
+        company,
+        industry_pos,
+        capital_schema,
+        market,
+        risk_schema,
+        statistical_score=statistical_view.get("statistical_score") or statistical_view.get("score"),
+    )
+    options = options_intelligence(facts)
+    short = short_intelligence(facts)
+    analyst = analyst_revision(facts)
+    fundamentals = company_fundamentals(facts)
+    filings = sec_filing(facts.get("sec_filing") if isinstance(facts.get("sec_filing"), Mapping) else facts)
+    earnings = earnings_intelligence(facts)
+    sbc = sbc_dilution(facts)
+    management = management_allocation(facts)
+    graph = persist_industry_graph(industry_graph, entities=facts.get("entities"), relations=facts.get("relations"), as_of_date=str(as_of_date or ""))
+    memory = update_industry_memory({"graph": industry_graph} if industry_graph else None, {"entities": facts.get("entities"), "relations": facts.get("relations"), "as_of_date": str(as_of_date or ""), "note": facts.get("industry_note")})
+    chain = supply_chain_portfolio(portfolio.get("owned_symbols") or [], graph, symbol=symbol)
+    chain["enters_alpha_score"] = False
+    risk_graph = portfolio_risk_graph(
+        portfolio.get("owned_symbols") or [],
+        industries={symbol: facts.get("industry") or facts.get("sector")} if facts.get("industry") or facts.get("sector") else {},
+        themes={symbol: facts.get("theme")} if facts.get("theme") else {},
+        graph=graph,
+    )
+    market_regime = classify_research_regime(facts)
+    event_regime = earnings_regime(facts)
+    horizon = research_horizon_contract(facts)
+    thesis = thesis_ledger({"symbol": symbol, **(facts.get("thesis") if isinstance(facts.get("thesis"), Mapping) else facts)})
+    thesis_cmp = compare_thesis(previous_thesis, {"thesis": thesis.get("thesis"), "evidence": facts.get("new_evidence"), "conflicts": facts.get("thesis_conflicts"), "as_of": str(as_of_date or "")})
     views = {
         "fundamental": _stance(fundamental),
+        "company": _stance(fundamental),
         "industry": _stance(industry),
         "capital": _stance(capital_view),
+        "market": _stance(statistical_view) if statistical_view.get("stance") != "UNKNOWN" else _stance(market),
         "statistical": _stance(statistical_view),
+        "options": str(options.get("stance") or "UNKNOWN"),
+        "portfolio": "OVERWEIGHT" if portfolio.get("already_owned") else "UNKNOWN",
+        "risk": _stance(risk_schema),
     }
     contradiction = contradiction_status(views)
+    matrix = research_decision_matrix(views)
+    rejected = why_not(views, capital=capital_view, options=options, portfolio=portfolio)
     if contradiction.get("status") == "DIVERGENCE" and portfolio.get("already_owned"):
         flags = list(portfolio.get("flags") or [])
         if "THESIS_CONTRADICTION" not in flags:
             flags.append("THESIS_CONTRADICTION")
         portfolio["flags"] = flags
         portfolio["relevance"] = "THESIS_CONTRADICTION"
+    long_term = views.get("company")
+    short_term = views.get("capital") if views.get("capital") != "UNKNOWN" else views.get("market")
+    multi_horizon = {
+        "LONG_TERM": long_term,
+        "MEDIUM_TERM": views.get("industry"),
+        "SHORT_TERM": short_term,
+        "EVENT_TERM": event_regime.get("regime") or "UNKNOWN",
+        "allows_long_bull_short_bear": True,
+        "long_term_thesis_is_not_t1": True,
+    }
+    lineage = [
+        lineage_status(source="buffett", feature="company_quality", source_date=str(as_of_date or ""), effective_date=str(as_of_date or ""), as_of_date=str(as_of_date or ""), brain="Company"),
+        lineage_status(source="serenity", feature="industry_position", source_date=str(as_of_date or ""), effective_date=str(as_of_date or ""), as_of_date=str(as_of_date or ""), brain="Industry"),
+        lineage_status(source="capital_brain", feature="capital_behavior", source_date=str(as_of_date or ""), effective_date=str(as_of_date or ""), as_of_date=str(as_of_date or ""), brain="Capital"),
+        lineage_status(source="market_setup", feature="market_setup", source_date=str(as_of_date or ""), effective_date=str(as_of_date or ""), as_of_date=str(as_of_date or ""), brain="Market"),
+    ]
+    conclusion = {
+        "status": "RESEARCH_CONCLUSION",
+        "not_buy_sell": True,
+        "company": views.get("company"),
+        "industry": views.get("industry"),
+        "capital": views.get("capital"),
+        "market": views.get("market"),
+        "event": event_regime.get("setup"),
+        "options": options.get("options_positioning"),
+        "portfolio": portfolio.get("flags"),
+        "history": analogue.get("sample_size"),
+        "contradiction": contradiction.get("status"),
+        "risk": risk_schema.get("data_gaps"),
+        "confidence": scores.get("research_composite"),
+        "outcome": independent,
+        "why_not": rejected,
+        "priority": matrix.get("research_priority"),
+    }
     return {
         "symbol": symbol.upper(),
         "as_of_date": str(as_of_date or facts.get("as_of_date") or ""),
@@ -221,15 +404,47 @@ def build_company_research(
         "industry_view": industry,
         "capital_view": capital_view,
         "statistical_view": statistical_view,
+        "company_quality": company,
+        "industry_position": industry_pos,
+        "capital_behavior": capital_schema,
+        "market_setup": market,
+        "risk_view": risk_schema,
+        "scores": scores,
+        "research_composite": scores.get("research_composite"),
+        "alpha_score": scores.get("alpha_score"),
         "supply": supply,
         "pricing_gap": pricing,
         "future_buyer_map": buyers,
         "uzi_adapter": uzi,
         "tradingagents_adapter": tradingagents,
         "portfolio_context": portfolio,
+        "supply_chain_portfolio": chain,
+        "portfolio_risk_graph": risk_graph,
         "historical_analogue": analogue,
+        "historical_evidence": historical_evidence({"analogue_count": analogue.get("sample_size"), "failure_count": len(analogue.get("failure_modes") or []), "win_rate": analogue.get("win_rate")}),
         "independent_outcome_history": independent,
         "contradictions": contradiction,
+        "decision_matrix": matrix,
+        "why_not": rejected,
+        "horizon": horizon,
+        "multi_horizon": multi_horizon,
+        "fundamentals": fundamentals,
+        "sec_filing": filings,
+        "earnings": earnings,
+        "sbc_dilution": sbc,
+        "management": management,
+        "industry_graph": graph,
+        "industry_memory": memory,
+        "options": options,
+        "short_borrow": short,
+        "analyst_revision": analyst,
+        "research_regime": market_regime,
+        "earnings_regime": event_regime,
+        "thesis": thesis,
+        "thesis_compare": thesis_cmp,
+        "failure_case": failure_case(facts.get("failure") if isinstance(facts.get("failure"), Mapping) else {}),
+        "lineage": lineage,
+        "research_conclusion": conclusion,
         "risk": {
             "unknown_fields": fundamental.get("unknown_fields"),
             "capital_distribution": capital_view.get("distribution_probability"),
@@ -308,6 +523,24 @@ def render_company_report(research: Mapping[str, Any]) -> str:
         "## 12. Evidence",
         f"- refs: {research.get('evidence_refs')}",
         f"- boundary: {PRODUCTION_BOUNDARY['status']}",
+        "",
+        "## 13. Four-Brain Scores",
+        f"- company_quality_score: {(research.get('scores') or {}).get('company_quality_score')}",
+        f"- industry_position_score: {(research.get('scores') or {}).get('industry_position_score')}",
+        f"- capital_behavior_score: {(research.get('scores') or {}).get('capital_behavior_score')}",
+        f"- market_setup_score: {(research.get('scores') or {}).get('market_setup_score')}",
+        f"- risk_score: {(research.get('scores') or {}).get('risk_score')}",
+        f"- research_composite: {research.get('research_composite')} (not alpha_score={research.get('alpha_score')})",
+        "",
+        "## 14. Horizon / Why Not / Matrix",
+        f"- horizon: {research.get('horizon')}",
+        f"- multi_horizon: {research.get('multi_horizon')}",
+        f"- matrix: {research.get('decision_matrix')}",
+        f"- why_not: {research.get('why_not')}",
+        "",
+        "## 15. Research Conclusion",
+        f"- {research.get('research_conclusion')}",
+        "- This is RESEARCH_CONCLUSION, not BUY/SELL.",
         "",
     ])
 

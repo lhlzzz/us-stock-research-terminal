@@ -283,12 +283,55 @@ def run_weekly_optimization() -> dict:
             }
 
         weights = compute_optimal_weights(ic_scores)
-        save_weights(weights, ic_scores, decision)
+        from research.stability import factor_stability, weight_change_guard
+
+        previous = load_weights()
+        stability_rows = []
+        guarded = {}
+        kept = []
+        for factor, proposed in weights.items():
+            prior = previous.get(factor)
+            guard = weight_change_guard(
+                prior,
+                proposed,
+                sample_count=int(decision.get("sample_count") or 0),
+                trading_days=int(decision.get("trading_days") or 0),
+                sign_stability=None,
+                confirmations=int((decision.get("confirmations") or 0)),
+            )
+            if guard["action"] == "KEEP_PREVIOUS_WEIGHT":
+                guarded[factor] = prior if prior is not None else proposed
+                kept.append(factor)
+            else:
+                guarded[factor] = proposed
+            stability_rows.append(factor_stability({
+                "factor": factor,
+                "current_ic": ic_scores.get(factor),
+                "sample_count": decision.get("sample_count") or 0,
+                "coverage": decision.get("factor_coverage"),
+            }))
+        if kept:
+            decision = {
+                **decision,
+                "weight_change_guard": "KEEP_PREVIOUS_WEIGHT",
+                "kept_factors": kept,
+            }
+            save_validation_decision(decision)
+            return {
+                "status": "KEEP_PREVIOUS_WEIGHT",
+                "ic_scores": ic_scores,
+                "weights": previous,
+                "decision": decision,
+                "stability": stability_rows,
+                "weights_file": str(WEIGHTS_FILE),
+            }
+        save_weights(guarded, ic_scores, decision)
         return {
             "status": "done",
             "ic_scores": ic_scores,
-            "weights": weights,
+            "weights": guarded,
             "decision": decision,
+            "stability": stability_rows,
             "weights_file": str(WEIGHTS_FILE),
         }
     finally:
