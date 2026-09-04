@@ -1,0 +1,71 @@
+{
+  "skill_inventory": [
+    "us-stock-research",
+    "buffett",
+    "serenity",
+    "capital_behavior_v2",
+    "observable_footprint_v1"
+  ],
+  "skill_provenance": {
+    "buffett": "xiaogu uzi persona buffett.yaml; structured fields in scripts/research/brains.py",
+    "serenity": "xiaogu serenity-skill; US-adapted layers in scripts/research/brains.py"
+  },
+  "obsidian_asset_census": {
+    "db": 207,
+    "vault": 3346,
+    "replay_eligible": 3432
+  },
+  "historical_ticket_census": {
+    "total_tickets": 458,
+    "unique_symbols": 95,
+    "unique_dates": 27,
+    "date_range": {
+      "min": "2026-06-25",
+      "max": "2026-08-27"
+    },
+    "completed_forward_tracking": 1158,
+    "T+1": 295,
+    "T+3": 295,
+    "T+5": 276,
+    "T+10": 292,
+    "conflicts": 0
+  },
+  "imported_dataset_count": 458,
+  "valid_dataset_count": 0,
+  "invalid_dataset_count": 458,
+  "conflicting_outcomes": 0,
+  "distinct_dates": 0,
+  "distinct_symbols": 0,
+  "condition_coverage": {},
+  "leakage_test_result": "PASS",
+  "capital_score_independence_result": "PASS",
+  "production_boundary_result": {
+    "status": "RESEARCH_ONLY",
+    "paper": "PAPER_ONLY",
+    "broker": "NO_BROKER",
+    "live_order": "NO_LIVE_ORDER",
+    "ranking_owner": "observable_footprint_v1",
+    "ranking": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
+    "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    "allowed_surfaces": [
+      "research",
+      "shadow",
+      "replay",
+      "diagnostics",
+      "context",
+      "learning"
+    ],
+    "forbidden_outputs": [
+      "BUY",
+      "SELL",
+      "ORDER",
+      "PAPER_PICK"
+    ]
+  },
+  "research_sample_readiness": "BLOCKED",
+  "next_blocker": "VALID lineage+completed T+1/3/5/10 samples remain below MIN_SAMPLES=30 and MIN_CONDITION_SAMPLES=20; do not invent lineage or lower gates.",
+  "eligibility_reasons": {
+    "MISSING_LINEAGE": 446,
+    "INSUFFICIENT_FORWARD_DATA": 12
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "total_tickets": 458,
+  "unique_symbols": 95,
+  "unique_dates": 27,
+  "date_range": {
+    "min": "2026-06-25",
+    "max": "2026-08-27"
+  },
+  "completed_forward_tracking": 1158,
+  "pending_forward_tracking": 3,
+  "T+1": 295,
+  "T+3": 295,
+  "T+5": 276,
+  "T+10": 292,
+  "missing_outcomes": 3,
+  "conflicts": [],
+  "conflict_count": 0,
+  "duplicate_rows": 40,
+  "versioned_tickets": 12,
+  "research_runs": 146,
+  "production_boundary": {
+    "status": "RESEARCH_ONLY",
+    "paper": "PAPER_ONLY",
+    "broker": "NO_BROKER",
+    "live_order": "NO_LIVE_ORDER",
+    "ranking_owner": "observable_footprint_v1",
+    "ranking": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
+    "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    "allowed_surfaces": [
+      "research",
+      "shadow",
+      "replay",
+      "diagnostics",
+      "context",
+      "learning"
+    ],
+    "forbidden_outputs": [
+      "BUY",
+      "SELL",
+      "ORDER",
+      "PAPER_PICK"
+    ]
+  }
+}

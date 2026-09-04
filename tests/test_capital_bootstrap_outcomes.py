@@ -33,6 +33,21 @@ def test_complete_horizons_require_all_four_existing_returns():
     assert complete_horizons(outcome) == {"t1": True, "t3": True, "t5": True, "t10": True, "all": True}
 
 
+def test_pending_and_conflicting_returns_are_invalid():
+    pending = tracking_returns([
+        {"horizon_days": 1, "check_status": "pending", "forward_return": 0.9, "return_1d": 0.9},
+        {"horizon_days": 3, "check_status": "completed", "forward_return": 0.02},
+    ])
+    assert pending["return_1d"] is None
+    conflict = tracking_returns([
+        {"ticket_id": 1, "horizon_days": 1, "check_status": "completed", "forward_return": 0.032},
+        {"ticket_id": 1, "horizon_days": 1, "check_status": "completed", "forward_return": 0.048},
+    ])
+    assert conflict["outcome_conflict"] is True
+    assert conflict["eligibility_reason"] == "OUTCOME_CONFLICT"
+    assert conflict["return_1d"] is None
+
+
 def test_historical_outcome_semantic_is_post_hoc_public_proxy():
     prior = ohlcv(rows=40)
     as_of = prior["date"].iloc[-1].date()

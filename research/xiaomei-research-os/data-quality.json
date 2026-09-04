@@ -1,0 +1,85 @@
+{
+  "candidate_id_lineage": "NOT_AVAILABLE",
+  "candidate_id_column": false,
+  "imported": 458,
+  "valid": 0,
+  "invalid": 458,
+  "eligibility_reasons": {
+    "MISSING_LINEAGE": 446,
+    "INSUFFICIENT_FORWARD_DATA": 12
+  },
+  "conflicts": 0,
+  "ready": {
+    "status": "BLOCKED",
+    "sample_size": 0,
+    "imported": 458,
+    "invalid": 458,
+    "distinct_dates": 0,
+    "distinct_symbols": 0,
+    "condition_counts": {},
+    "min_samples": 30,
+    "min_condition_samples": 20,
+    "gates": {
+      "global_samples": false,
+      "distinct_dates": false,
+      "distinct_symbols": false,
+      "condition_samples": false,
+      "no_conflicts": true,
+      "no_future_leakage": true
+    },
+    "production_boundary": {
+      "status": "RESEARCH_ONLY",
+      "paper": "PAPER_ONLY",
+      "broker": "NO_BROKER",
+      "live_order": "NO_LIVE_ORDER",
+      "ranking_owner": "observable_footprint_v1",
+      "ranking": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
+      "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+      "allowed_surfaces": [
+        "research",
+        "shadow",
+        "replay",
+        "diagnostics",
+        "context",
+        "learning"
+      ],
+      "forbidden_outputs": [
+        "BUY",
+        "SELL",
+        "ORDER",
+        "PAPER_PICK"
+      ]
+    }
+  },
+  "leakage_test": "PASS (future Obsidian notes and future OHLCV snapshot_max_date invalidate samples)",
+  "capital_score_independence": "PASS (capital_behavior_score ignores statistical_score; combined_score mixes them)",
+  "production_boundary": {
+    "status": "RESEARCH_ONLY",
+    "paper": "PAPER_ONLY",
+    "broker": "NO_BROKER",
+    "live_order": "NO_LIVE_ORDER",
+    "ranking_owner": "observable_footprint_v1",
+    "ranking": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
+    "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    "allowed_surfaces": [
+      "research",
+      "shadow",
+      "replay",
+      "diagnostics",
+      "context",
+      "learning"
+    ],
+    "forbidden_outputs": [
+      "BUY",
+      "SELL",
+      "ORDER",
+      "PAPER_PICK"
+    ]
+  },
+  "dataset_rows": 23,
+  "dataset_valid": 5,
+  "capital_dataset": {
+    "INSUFFICIENT_FORWARD_DATA": 18,
+    "VALID": 5
+  }
+}

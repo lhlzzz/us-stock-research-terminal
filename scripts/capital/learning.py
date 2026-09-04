@@ -13,6 +13,7 @@ from typing import Any, Iterable, Mapping
 NOT_READY = "NOT_READY"
 RESEARCH_ONLY = "RESEARCH_ONLY"
 MIN_SAMPLES = 30
+MIN_CONDITION_SAMPLES = 20
 
 
 def _label(value: Any) -> str | None:
@@ -47,9 +48,15 @@ def empirical_distribution(
     condition_keys: tuple[str, ...],
     outcome_key: str,
     min_samples: int = MIN_SAMPLES,
+    min_condition_samples: int | None = None,
 ) -> dict[str, Any]:
     """Estimate P(outcome | condition) using stable sorted frequency counts."""
+    condition_floor = MIN_CONDITION_SAMPLES if min_condition_samples is None else int(min_condition_samples)
+    if min_samples < condition_floor:
+        condition_floor = min_samples
     grouped: dict[tuple[str, ...], Counter[str]] = defaultdict(Counter)
+    dates: set[str] = set()
+    symbols: set[str] = set()
     usable = 0
     for row in rows:
         outcome = _label(_read_nested(row, outcome_key))
@@ -58,25 +65,48 @@ def empirical_distribution(
             continue
         grouped[condition][outcome] += 1
         usable += 1
-    if usable < min_samples:
+        if row.get("as_of_date"):
+            dates.add(str(row.get("as_of_date")))
+        if row.get("symbol"):
+            symbols.add(str(row.get("symbol")).upper())
+    condition_counts = { "|".join(condition): int(sum(counter.values())) for condition, counter in grouped.items() }
+    qualified = {
+        condition: counter
+        for condition, counter in grouped.items()
+        if sum(counter.values()) >= condition_floor
+    }
+    qualified_count = sum(sum(counter.values()) for counter in qualified.values())
+    if usable < min_samples or qualified_count < min_samples or not qualified:
         return {
             "status": NOT_READY,
             "sample_count": usable,
+            "global_samples": usable,
+            "condition_samples": qualified_count,
+            "distinct_dates": len(dates),
+            "distinct_symbols": len(symbols),
             "min_samples": min_samples,
+            "min_condition_samples": condition_floor,
             "condition_keys": list(condition_keys),
             "outcome_key": outcome_key,
+            "condition_counts": condition_counts,
             "probabilities": {},
         }
     probabilities = {
         "|".join(condition): _normalize(counter)
-        for condition, counter in sorted(grouped.items())
+        for condition, counter in sorted(qualified.items())
     }
     return {
         "status": RESEARCH_ONLY,
         "sample_count": usable,
+        "global_samples": usable,
+        "condition_samples": qualified_count,
+        "distinct_dates": len(dates),
+        "distinct_symbols": len(symbols),
         "min_samples": min_samples,
+        "min_condition_samples": condition_floor,
         "condition_keys": list(condition_keys),
         "outcome_key": outcome_key,
+        "condition_counts": condition_counts,
         "probabilities": probabilities,
     }
 

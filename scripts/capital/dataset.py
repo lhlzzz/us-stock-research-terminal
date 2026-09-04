@@ -172,6 +172,8 @@ def _eligibility_reason(
             return "VERSION_INVALID"
     if snapshot.get("data_gap") is True:
         return "DATA_GAP"
+    if outcome and outcome.get("outcome_conflict"):
+        return "OUTCOME_CONFLICT"
     required_outcomes = ("return_1d", "return_3d", "return_5d", "return_10d")
     if not outcome or any(outcome.get(key) is None for key in required_outcomes):
         return "INSUFFICIENT_FORWARD_DATA"

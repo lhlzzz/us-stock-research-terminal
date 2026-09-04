@@ -55,6 +55,8 @@ ELIGIBILITY_REASONS = (
     "SOURCE_INVALID",
     "VERSION_INVALID",
     "DATA_GAP",
+    "OUTCOME_CONFLICT",
+    "INCOMPLETE_OUTCOME",
 )
 FAILURE_CLASSES = (
     "MISSING_TICKET",
@@ -284,17 +286,41 @@ def replay_capital_v2(frame: pd.DataFrame, *, statistical_score: float | None = 
 
 
 def tracking_returns(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
-    """Prefer existing forward_tracking returns. Do not invent missing horizons."""
-    outcome: dict[str, Any] = {f"return_{horizon}d": None for horizon in HORIZONS}
-    wide_fields = discover_horizon_fields(next(iter(rows), {}) or {})
+    """Use completed forward_tracking returns only. Conflicting values invalidate."""
+    collected: dict[int, list[float]] = {horizon: [] for horizon in HORIZONS}
+    conflicts: list[dict[str, Any]] = []
     for row in rows:
-        if row.get("check_status") == "completed" and row.get("forward_return") is not None:
-            horizon = int(row.get("horizon_days") or 0)
-            if horizon in HORIZONS and outcome[f"return_{horizon}d"] is None:
-                outcome[f"return_{horizon}d"] = _finite(row["forward_return"])
+        if str(row.get("check_status") or "").lower() != "completed":
+            continue
+        wide_fields = discover_horizon_fields(row)
+        long_horizon = int(row.get("horizon_days") or 0)
+        if long_horizon in HORIZONS and row.get("forward_return") is not None:
+            value = _finite(row["forward_return"])
+            if value is not None:
+                collected[long_horizon].append(value)
         for horizon, column in wide_fields.items():
-            if outcome[f"return_{horizon}d"] is None and row.get(column) is not None:
-                outcome[f"return_{horizon}d"] = _finite(row[column])
+            value = _finite(row.get(column))
+            if value is not None:
+                collected[horizon].append(value)
+    outcome: dict[str, Any] = {f"return_{horizon}d": None for horizon in HORIZONS}
+    for horizon, values in collected.items():
+        unique = []
+        for value in values:
+            if not any(abs(value - seen) < 1e-12 for seen in unique):
+                unique.append(value)
+        if len(unique) > 1:
+            conflicts.append({
+                "ticket_id": next((row.get("ticket_id") for row in rows), None),
+                "horizon": horizon,
+                "values": unique,
+            })
+            outcome[f"return_{horizon}d"] = None
+        elif unique:
+            outcome[f"return_{horizon}d"] = unique[0]
+    outcome["outcome_conflict"] = bool(conflicts)
+    outcome["outcome_conflicts"] = conflicts
+    if conflicts:
+        outcome["eligibility_reason"] = "OUTCOME_CONFLICT"
     return outcome
 
 
@@ -357,6 +383,8 @@ def assemble_historical_outcome(
     outcome["actual_path"] = labels.get("actual_path") or outcome.get("path_after_3d") or outcome.get("path_after_1d")
     outcome["actual_intent_proxy"] = labels.get("actual_intent_proxy") or outcome.get("intent_after_3d") or outcome.get("intent_after_1d")
     outcome["actual_intent_semantic"] = "POST_HOC_PUBLIC_DATA_INFERRED_PROXY"
+    outcome["state_correct_semantic"] = "POST_HOC_PUBLIC_DATA_INFERRED_PROXY"
+    outcome["intent_correct_semantic"] = "POST_HOC_PUBLIC_DATA_INFERRED_PROXY"
     if current_state and outcome.get("state_after_3d"):
         family = {
             "ACCUMULATION": "LONG", "EARLY_BUILD": "LONG", "ACTIVE_MARKUP": "LONG",
@@ -392,6 +420,8 @@ def eligibility_for_ticket(
         return "DATA_GAP"
     if any(not versions.get(key) for key in ("data_version", "model_version", "feature_version")):
         return "VERSION_INVALID"
+    if outcome and outcome.get("outcome_conflict"):
+        return "OUTCOME_CONFLICT"
     if not complete_horizons(outcome)["all"]:
         return "INSUFFICIENT_FORWARD_DATA"
     return "VALID"

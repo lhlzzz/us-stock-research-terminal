@@ -1,5 +1,32 @@
 # NEXT_ACTION
 
+## Research OS + V3.1 validity (2026-09-04)
+
+- Research OS attached as research/shadow/replay/learning only. Production
+  ranking owner remains `us_profit_ticket_pipeline` sort
+  `(ticket_score, market_score, volume_confirmation_ratio)`. No second
+  PAPER_PICK path. Boundary stays RESEARCH_ONLY / PAPER_ONLY / NO_BROKER /
+  NO_LIVE_ORDER.
+- Buffett / Serenity are structured evidence contexts
+  (`scripts/research/brains.py`), not buy gates. UNKNOWN is never guessed.
+- Obsidian portfolio context never changes market alpha
+  (`market_alpha_adjustment=0`). Historical replay requires
+  `effective_date <= ticket_as_of`; missing dates are
+  `DO_NOT_USE_IN_HISTORICAL_REPLAY`.
+- V3.1: `capital_behavior_score` independent of `statistical_score`;
+  `combined_score` is the mix. Outcomes require `check_status=completed`;
+  conflicts are `OUTCOME_CONFLICT`. `candidate_id` lineage is
+  `NOT_AVAILABLE` (no column on tickets; no nearest-run/symbol-only).
+  `state_correct` / `intent_correct` remain
+  `POST_HOC_PUBLIC_DATA_INFERRED_PROXY`. MIN_CONDITION_SAMPLES=20.
+- Live census 2026-09-04: tickets=458 / symbols=95 / dates=27
+  (2026-06-25..2026-08-27); FT completed=1158; conflicts=0;
+  versioned tickets=12. Research samples imported=458, VALID=0,
+  RESEARCH_DATA_READY=BLOCKED. Capital dataset still VALID=5.
+- Next operational action: accumulate independently versioned tickets
+  with complete T+1/3/5/10. Do not invent lineage. Do not lower gates.
+  Do not change production weights.
+
 ## Historical Lineage + As-of OHLCV + Bootstrap V2 (2026-09-03)
 
 - Baseline: `main @ 41e9430`. Replay of existing tickets through

@@ -72,7 +72,14 @@ def build_capital_assessment(
     )
     quality_label = "STRONG_BUT_DISTRIBUTING" if capital_strength >= 0.70 and capital_quality < 0.45 else "HEALTHY" if capital_quality >= 0.65 else "FRAGILE"
     statistical = clamp(statistical_score if statistical_score is not None else 0.0)
-    combined = clamp(0.70 * statistical + 0.30 * capital_strength - 0.10 * distribution_probability - 0.08 * trap_probability)
+    capital_behavior = clamp(
+        0.55 * capital_strength
+        + 0.25 * capital_quality
+        + 0.20 * clamp(abs(float(control.get("control_asymmetry") or 0.0)))
+        - 0.18 * distribution_probability
+        - 0.12 * trap_probability
+    )
+    combined = clamp(0.70 * statistical + 0.30 * capital_behavior)
     return {
         "model_version": MODEL_VERSION,
         "data_version": evidence.get("data_version", "PUBLIC_OHLCV_V2"),
@@ -84,7 +91,8 @@ def build_capital_assessment(
         "path": path,
         "scores": {
             "statistical_score": round(statistical, 6),
-            "capital_score": round(combined, 6),
+            "capital_behavior_score": round(capital_behavior, 6),
+            "capital_score": round(capital_behavior, 6),
             "combined_score": round(combined, 6),
             "capital_strength": round(capital_strength, 6),
             "capital_quality": round(capital_quality, 6),
@@ -101,7 +109,9 @@ def build_capital_assessment(
         },
         "decision": {
             "statistical_score": round(statistical, 6),
-            "capital_score": round(combined, 6),
+            "capital_behavior_score": round(capital_behavior, 6),
+            "capital_score": round(capital_behavior, 6),
+            "combined_score": round(combined, 6),
             "capital_strength": round(capital_strength, 6),
             "capital_quality": round(capital_quality, 6),
             "state": state["capital_state"],

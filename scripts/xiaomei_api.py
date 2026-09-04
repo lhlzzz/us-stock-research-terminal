@@ -1451,6 +1451,146 @@ async def get_symbol_detail(symbol: str):
         return {"symbol": sym, "tickets": tickets, "tracking": tracking}
 
 
+def _research_payload(symbol: str, as_of: Optional[str] = None) -> dict:
+    """Compose research views. Never a production ranking or paper pick."""
+    from sqlalchemy import text
+    from research.decision import build_company_research, write_company_report
+    from research.memory import load_knowledge_assets
+    from research.boundary import PRODUCTION_BOUNDARY
+
+    engine = get_engine()
+    facts: dict = {"as_of_date": as_of or ""}
+    capital: dict = {}
+    notes = []
+    historical = []
+    with engine.connect() as conn:
+        quote = conn.execute(text("""
+            SELECT pe_ttm, roe, dividend_yield FROM realtime_quotes
+            WHERE symbol = :symbol ORDER BY snap_time DESC LIMIT 1
+        """), {"symbol": symbol.upper()}).mappings().first()
+        universe = conn.execute(text(
+            "SELECT sector, name FROM universe WHERE symbol = :symbol"
+        ), {"symbol": symbol.upper()}).mappings().first()
+        ticket = conn.execute(text("""
+            SELECT as_of_date::text, capital_state, capital_intent, capital_score,
+                   capital_strength, capital_quality
+            FROM tickets WHERE symbol = :symbol
+            ORDER BY as_of_date DESC NULLS LAST, id DESC LIMIT 1
+        """), {"symbol": symbol.upper()}).mappings().first()
+        snapshot = conn.execute(text("""
+            SELECT as_of_date::text, capital_score, combined_score, statistical_score,
+                   capital_strength, capital_quality
+            FROM capital_daily_snapshot WHERE symbol = :symbol
+            ORDER BY as_of_date DESC LIMIT 1
+        """), {"symbol": symbol.upper()}).mappings().first()
+        try:
+            notes = load_knowledge_assets(conn)
+        except Exception:
+            notes = []
+        try:
+            hist = conn.execute(text("""
+                SELECT symbol, as_of_date::text, capital_state, eligibility_reason,
+                       future_outcome
+                FROM capital_behavior_dataset
+                WHERE eligibility_reason = 'VALID'
+                ORDER BY as_of_date DESC LIMIT 50
+            """)).mappings().fetchall()
+            historical = [dict(row) for row in hist]
+        except Exception:
+            historical = []
+    if quote:
+        facts.update({k: quote.get(k) for k in ("pe_ttm", "roe", "dividend_yield")})
+    if universe:
+        facts["sector"] = universe.get("sector")
+        facts["industry"] = universe.get("sector")
+    if snapshot:
+        capital = dict(snapshot)
+        capital["capital_behavior_score"] = snapshot.get("capital_score")
+        facts.setdefault("as_of_date", snapshot.get("as_of_date"))
+    elif ticket:
+        capital = dict(ticket)
+        capital["capital_behavior_score"] = ticket.get("capital_score")
+        facts.setdefault("as_of_date", ticket.get("as_of_date"))
+    as_of_date = as_of or facts.get("as_of_date")
+    research = build_company_research(
+        symbol,
+        as_of_date=as_of_date,
+        facts=facts,
+        capital=capital,
+        notes=notes,
+        historical=historical,
+    )
+    write_company_report(research)
+    research["production_boundary"] = PRODUCTION_BOUNDARY
+    return research
+
+
+def _traceable(view: dict | None) -> dict:
+    payload = dict(view or {})
+    payload.setdefault("source", payload.get("context_type") or "research")
+    payload.setdefault("source_type", "skill")
+    payload.setdefault("effective_date", payload.get("as_of_date"))
+    payload.setdefault("as_of_date", payload.get("as_of_date"))
+    payload.setdefault("confidence", payload.get("confidence"))
+    payload.setdefault("evidence_refs", payload.get("evidence_refs") or [])
+    return payload
+
+
+@app.get("/research/company/{symbol}")
+async def research_company(symbol: str, as_of: Optional[str] = Query(None)):
+    """Unified company research. Research-only; does not rank tickets."""
+    payload = _research_payload(symbol, as_of)
+    return _traceable(payload)
+
+
+@app.get("/research/company/{symbol}/fundamental")
+async def research_fundamental(symbol: str, as_of: Optional[str] = Query(None)):
+    return _traceable(_research_payload(symbol, as_of)["fundamental_view"])
+
+
+@app.get("/research/company/{symbol}/industry")
+async def research_industry(symbol: str, as_of: Optional[str] = Query(None)):
+    return _traceable(_research_payload(symbol, as_of)["industry_view"])
+
+
+@app.get("/research/company/{symbol}/capital")
+async def research_capital(symbol: str, as_of: Optional[str] = Query(None)):
+    return _traceable(_research_payload(symbol, as_of)["capital_view"])
+
+
+@app.get("/research/company/{symbol}/portfolio")
+async def research_portfolio(symbol: str, as_of: Optional[str] = Query(None)):
+    view = _research_payload(symbol, as_of)["portfolio_context"]
+    view["source"] = "obsidian"
+    view["source_type"] = "personal_portfolio"
+    return _traceable(view)
+
+
+@app.get("/research/company/{symbol}/history")
+async def research_history(symbol: str, as_of: Optional[str] = Query(None)):
+    payload = _research_payload(symbol, as_of)
+    return _traceable({
+        "source": "tickets",
+        "source_type": "ticket",
+        "as_of_date": payload.get("as_of_date"),
+        "effective_date": payload.get("as_of_date"),
+        "historical_analogue": payload.get("historical_analogue"),
+        "independent_outcome_history": payload.get("independent_outcome_history"),
+    })
+
+
+@app.get("/research/company/{symbol}/contradictions")
+async def research_contradictions(symbol: str, as_of: Optional[str] = Query(None)):
+    payload = _research_payload(symbol, as_of)
+    return _traceable({
+        "source": "contradiction_engine",
+        "source_type": "skill",
+        "as_of_date": payload.get("as_of_date"),
+        "effective_date": payload.get("as_of_date"),
+        "contradictions": payload.get("contradictions"),
+    })
+
+
 if __name__ == "__main__":
     raise SystemExit(
         "xiaomei no longer starts an independent HTTP server; "

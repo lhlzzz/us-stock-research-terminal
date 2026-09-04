@@ -19,8 +19,11 @@ def _samples(count=30):
 
 def test_empirical_distribution_is_gated_and_deterministic():
     not_ready = empirical_distribution(_samples(2), condition_keys=("capital_state",), outcome_key="future_outcome.state_after_3d")
-    ready = empirical_distribution(_samples(), condition_keys=("capital_state",), outcome_key="future_outcome.state_after_3d")
+    split_ready_not = empirical_distribution(_samples(30), condition_keys=("capital_state",), outcome_key="future_outcome.state_after_3d")
+    ready = empirical_distribution(_samples(40), condition_keys=("capital_state",), outcome_key="future_outcome.state_after_3d")
     assert not_ready["status"] == "NOT_READY"
+    assert split_ready_not["status"] == "NOT_READY"
+    assert split_ready_not["min_condition_samples"] == 20
     assert ready["status"] == "RESEARCH_ONLY"
     assert ready["probabilities"]["ACCUMULATION"] == {"EARLY_BUILD": 1.0}
 
