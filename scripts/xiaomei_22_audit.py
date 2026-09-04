@@ -114,6 +114,7 @@ def audit() -> dict[str, str]:
         freeze["production_research_status"] == "PRODUCTION_RESEARCH_READY"
         and freeze["strategy"] == "observable_footprint_v1"
         and freeze["strategy_status"] == "FROZEN"
+        and freeze.get("production_runtime_status") == "PRODUCTION_RUNTIME_READY"
         and freeze["research"] == "LIVE"
         and freeze["replay"] == "LIVE"
         and freeze["learning"] == "LIVE"

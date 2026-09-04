@@ -2383,7 +2383,7 @@ def build_forward_tracking_rows(
                     "due_date": bday_date(pd.Timestamp(row["as_of_date"]), horizon),
                     "review_window": f"{horizon}d",
                     "check_status": "pending",
-                    "track_key": f"{output_date}:{symbol}:{horizon}d",
+                    "track_key": f"{output_date}:{symbol}:{horizon}d:{row.get('ticket_id') or row.get('id') or ''}",
                     "as_of_close": row["adj_close"],
                     "as_of_adj_close": row["adj_close"],
                     "kline_source": row["kline_source"],

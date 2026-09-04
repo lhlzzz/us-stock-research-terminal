@@ -4,11 +4,21 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 
+class WeightMutationBlocked(AssertionError):
+    """Hard block: production weights cannot be mutated while strategy is FROZEN."""
+
+
+class ProductionApplyBlocked(AssertionError):
+    """Hard block: production apply is forbidden in research-runtime mode."""
+
+
 PRODUCTION_BOUNDARY = {
     "status": "RESEARCH_ONLY",
     "production_research_status": "PRODUCTION_RESEARCH_READY",
+    "production_runtime_status": "PRODUCTION_RUNTIME_READY",
     "strategy": "observable_footprint_v1",
     "strategy_status": "FROZEN",
+    "weights_status": "FROZEN",
     "research": "LIVE",
     "replay": "LIVE",
     "learning": "LIVE",
@@ -18,15 +28,48 @@ PRODUCTION_BOUNDARY = {
     "ranking_owner": "observable_footprint_v1",
     "ranking": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
     "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    "production_apply": "BLOCKED",
+    "auto_weight_change": "OFF",
+    "output_layers": (
+        "RESEARCH",
+        "RESEARCH_EVIDENCE",
+        "RESEARCH_RANKING",
+        "RESEARCH_RISK",
+        "RESEARCH_LEARNING",
+        "RESEARCH_PROPOSAL",
+    ),
     "allowed_surfaces": ("research", "shadow", "replay", "diagnostics", "context", "learning"),
-    "forbidden_outputs": ("BUY", "SELL", "ORDER", "PAPER_PICK"),
+    "forbidden_outputs": (
+        "BUY",
+        "SELL",
+        "ORDER",
+        "PAPER_PICK",
+        "PRODUCTION_ORDER",
+        "LIVE_SIGNAL",
+        "AUTO_BUY",
+        "AUTO_SELL",
+    ),
     "forbidden_transitions": (
         "RESEARCH_TO_ALPHA",
         "RESEARCH_TO_BUY_SELL",
         "LEARNING_TO_AUTO_WEIGHT_CHANGE",
         "BROKER_CONNECT",
         "LIVE_ORDER_ENABLE",
+        "PRODUCTION_APPLY",
+        "WEIGHT_BYPASS",
     ),
+}
+
+SCORE_SEMANTICS = {
+    "market_score": {"semantic": "observable_market_footprint_proxy"},
+    "ticket_score": {"semantic": "candidate_ranking_composite"},
+    "catalyst_score": {"semantic": "catalyst_evidence_proxy"},
+    "risk_score": {"semantic": "research_candidate_condition"},
+    "capital_score": {"semantic": "capital_behavior_research_proxy"},
+    "research_score": {"semantic": "research_composite_not_alpha"},
+    "alpha_status": "NOT_VALIDATED",
+    "not_institutional_order_flow": True,
+    "not_validated_alpha": True,
 }
 
 RANKING_KEY = ("ticket_score", "market_score", "volume_confirmation_ratio")
@@ -43,12 +86,14 @@ LEARNING_WEIGHT_SOURCES = frozenset(
 
 
 def freeze_snapshot() -> dict[str, Any]:
-    """Xiaomei 2.2 production-research freeze. Ranking owner stays frozen."""
+    """Xiaomei 2.2.1 production-runtime freeze. Ranking owner stays frozen."""
     return {
-        "xiaomei": "2.2",
+        "xiaomei": "2.2.1",
         "production_research_status": PRODUCTION_BOUNDARY["production_research_status"],
+        "production_runtime_status": PRODUCTION_BOUNDARY["production_runtime_status"],
         "strategy": PRODUCTION_BOUNDARY["strategy"],
         "strategy_status": PRODUCTION_BOUNDARY["strategy_status"],
+        "weights_status": PRODUCTION_BOUNDARY["weights_status"],
         "research": PRODUCTION_BOUNDARY["research"],
         "replay": PRODUCTION_BOUNDARY["replay"],
         "learning": PRODUCTION_BOUNDARY["learning"],
@@ -59,8 +104,50 @@ def freeze_snapshot() -> dict[str, Any]:
         "broker": PRODUCTION_BOUNDARY["broker"],
         "live_order": PRODUCTION_BOUNDARY["live_order"],
         "production_action": PRODUCTION_BOUNDARY["production_action"],
+        "production_apply": PRODUCTION_BOUNDARY["production_apply"],
+        "auto_weight_change": PRODUCTION_BOUNDARY["auto_weight_change"],
+        "score_semantics": dict(SCORE_SEMANTICS),
+        "output_layers": list(PRODUCTION_BOUNDARY["output_layers"]),
         "forbidden_transitions": list(PRODUCTION_BOUNDARY["forbidden_transitions"]),
     }
+
+
+def strategy_is_frozen() -> bool:
+    return PRODUCTION_BOUNDARY["strategy_status"] == "FROZEN"
+
+
+def weights_are_frozen() -> bool:
+    return PRODUCTION_BOUNDARY["weights_status"] == "FROZEN" or strategy_is_frozen()
+
+
+def assert_weight_mutation_allowed(*, source: str | None = None) -> dict[str, Any]:
+    """Hard-fail any production weight write while strategy/weights are frozen."""
+    if strategy_is_frozen() or weights_are_frozen():
+        raise WeightMutationBlocked(
+            f"FROZEN strategy forbids production weight mutation (source={source})"
+        )
+    if PRODUCTION_BOUNDARY["production_action"] == "NO_PRODUCTION_WEIGHT_CHANGE":
+        raise WeightMutationBlocked(
+            f"NO_PRODUCTION_WEIGHT_CHANGE (source={source})"
+        )
+    if PRODUCTION_BOUNDARY["auto_weight_change"] == "OFF":
+        raise WeightMutationBlocked(
+            f"auto_weight_change is OFF (source={source})"
+        )
+    if learning_cannot_auto_weight(source):
+        raise WeightMutationBlocked(
+            f"LEARNING_TO_AUTO_WEIGHT_CHANGE (source={source})"
+        )
+    return {"allowed": True, "source": source}
+
+
+def assert_production_apply_blocked(*, source: str | None = None) -> dict[str, Any]:
+    """Production apply is never legal in RESEARCH_ONLY / FROZEN runtime."""
+    if PRODUCTION_BOUNDARY["production_apply"] == "BLOCKED" or strategy_is_frozen():
+        raise ProductionApplyBlocked(
+            f"PRODUCTION_APPLY blocked (source={source})"
+        )
+    return {"allowed": True, "source": source}
 
 
 def learning_cannot_auto_weight(source: str | None) -> bool:
@@ -83,10 +170,14 @@ def assert_research_only(payload: Mapping[str, Any] | None = None) -> dict[str, 
             raise ValueError("research payload cannot change production ranking")
         if payload.get("auto_weight_change") is True:
             raise ValueError("learning cannot auto-change production weights")
+        if payload.get("production_apply") is True:
+            raise ValueError("research payload cannot apply production changes")
+        if payload.get("risk_pass_is_buy") is True or payload.get("risk_to_buy") is True:
+            raise ValueError("risk_pass is a research candidate condition, not BUY")
         action = str(payload.get("classification") or payload.get("action") or "")
         if action in PRODUCTION_BOUNDARY["forbidden_outputs"]:
             raise ValueError(f"research payload cannot emit production action {action}")
-        for key in ("BUY", "SELL", "ORDER", "BROKER", "LIVE_TRADE"):
+        for key in ("BUY", "SELL", "ORDER", "BROKER", "LIVE_TRADE", "AUTO_BUY", "AUTO_SELL", "LIVE_SIGNAL", "PRODUCTION_ORDER"):
             if payload.get(key) not in (None, False, "", "NO", "NO_BROKER", "NO_LIVE_ORDER"):
                 raise ValueError(f"research payload cannot enable {key}")
     return dict(PRODUCTION_BOUNDARY)

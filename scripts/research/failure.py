@@ -46,6 +46,8 @@ def failure_memory(
     replay_id: str | None = None,
     created_at: str | None = None,
     failure_id: str | None = None,
+    persist: bool = False,
+    db_path=None,
 ) -> dict[str, Any]:
     klass = str(failure_type or "").upper()
     if klass not in FAILURE_TYPES:
@@ -73,6 +75,8 @@ def failure_memory(
     }
     assert_research_only(payload)
     FAILURE_MEMORY.append(payload)
+    if persist:
+        persist_memory_record(payload, kind="failure", db_path=db_path)
     return payload
 
 
@@ -110,6 +114,8 @@ def learning_pattern(
     source_samples: Iterable[str] | None = None,
     pattern_id: str | None = None,
     created_at: str | None = None,
+    persist: bool = False,
+    db_path=None,
 ) -> dict[str, Any]:
     payload = {
         "pattern_id": pattern_id or str(uuid4()),
@@ -134,6 +140,8 @@ def learning_pattern(
     }
     assert_research_only(payload)
     LEARNING_PATTERNS.append(payload)
+    if persist:
+        persist_memory_record(payload, kind="pattern", db_path=db_path)
     return payload
 
 
@@ -149,6 +157,33 @@ def retrieve_patterns(
     if pattern_type:
         rows = [row for row in rows if row.get("pattern_type") == pattern_type]
     return rows
+
+
+def load_persistent_memory(db_path=None) -> dict[str, Any]:
+    """Reload failure/pattern memory from SQLite. Process-local dict is not the owner."""
+    from .store import connect, load_failures, load_patterns
+
+    conn = connect(db_path)
+    failures = load_failures(conn)
+    patterns = load_patterns(conn)
+    conn.close()
+    FAILURE_MEMORY.clear()
+    LEARNING_PATTERNS.clear()
+    FAILURE_MEMORY.extend(failures)
+    LEARNING_PATTERNS.extend(patterns)
+    return {"failures": failures, "patterns": patterns, "process_local_is_not_owner": True}
+
+
+def persist_memory_record(item: Mapping[str, Any], *, kind: str, db_path=None) -> None:
+    from .store import connect, persist_failure, persist_pattern
+
+    conn = connect(db_path)
+    if kind == "failure":
+        persist_failure(conn, item)
+    else:
+        persist_pattern(conn, item)
+    conn.commit()
+    conn.close()
 
 
 def previous_failure_warning(query: Mapping[str, Any] | None = None) -> dict[str, Any]:

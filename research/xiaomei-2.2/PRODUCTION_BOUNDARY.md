@@ -1,6 +1,6 @@
-# PRODUCTION_BOUNDARY — Xiaomei 2.2
+# PRODUCTION_BOUNDARY — Xiaomei 2.2.1
 
-Status: **PRODUCTION_RESEARCH_READY**
+Status: **PRODUCTION_RESEARCH_READY** + **PRODUCTION_RUNTIME_READY**
 
 | surface | state |
 | --- | --- |
@@ -12,6 +12,8 @@ Status: **PRODUCTION_RESEARCH_READY**
 | Research → Alpha | **FORBIDDEN** |
 | Research → BUY/SELL | **FORBIDDEN** |
 | Learning → auto weight change | **FORBIDDEN** |
+| Production apply | **BLOCKED** |
+| Weight mutation | **BLOCKED** |
 | Broker | **NO_BROKER** |
 | Live Order | **NO_LIVE_ORDER** |
 
@@ -58,6 +60,7 @@ Owner file: `scripts/us_profit_ticket_pipeline.py`
 
 - PRODUCTION_BOUNDARY=PASS
 - PRODUCTION_RESEARCH_READY=PASS
+- PRODUCTION_RUNTIME_READY=PASS
 - STRATEGY_FROZEN=PASS
 - RESEARCH_LIVE=PASS
 - REPLAY_LIVE=PASS

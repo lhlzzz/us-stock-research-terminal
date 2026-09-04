@@ -409,6 +409,8 @@ def seed_demo_learning(*, symbol: str, as_of: str, db_path: Path | None = None) 
         severity="HIGH",
         confidence=0.8,
         source_episode="xiaomei-2.2-demo",
+        persist=True,
+        db_path=db_path,
     )
     pattern = learning_pattern(
         research_layer="earnings",
@@ -421,6 +423,8 @@ def seed_demo_learning(*, symbol: str, as_of: str, db_path: Path | None = None) 
         confidence=0.5,
         source_failures=[failure["failure_id"]],
         source_samples=[f"{symbol}:{as_of}"],
+        persist=True,
+        db_path=db_path,
     )
     conn = connect(db_path)
     persist_failure(conn, failure)

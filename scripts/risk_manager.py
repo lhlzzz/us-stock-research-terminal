@@ -190,6 +190,12 @@ def assess_trade_risk(
     avg_loss_pct: float = 0.02,
     atr: float | None = None,
     risk_state: RiskState | None = None,
+    risk_per_trade: float = DEFAULT_RISK_PER_TRADE,
+    default_stop_loss_pct: float | None = None,
+    max_single_position_pct: float = MAX_SINGLE_POSITION_PCT,
+    max_total_exposure_pct: float = MAX_TOTAL_EXPOSURE_PCT,
+    max_consecutive_losses: int = MAX_CONSECUTIVE_LOSSES,
+    daily_max_loss_r: float = DAILY_MAX_LOSS_R,
 ) -> TradeRiskAssessment:
     """Full risk assessment for a single trade.
 
@@ -203,22 +209,22 @@ def assess_trade_risk(
     if risk_state is None:
         risk_state = RiskState()
 
-    stop_loss_pct = avg_loss_pct
+    stop_loss_pct = default_stop_loss_pct if default_stop_loss_pct is not None else avg_loss_pct
     stop_loss = calculate_stop_loss(entry_price, atr, stop_loss_pct)
     take_profit = calculate_take_profit(entry_price, stop_loss, 2.0)
 
-    position_size_pct = DEFAULT_RISK_PER_TRADE
+    position_size_pct = risk_per_trade
     kelly = calculate_kelly_fraction(win_rate, avg_win_pct, avg_loss_pct)
     half_kelly = kelly
 
     if kelly <= 0:
         position_size_pct = 0.0
     elif kelly < 0.05:
-        position_size_pct = min(DEFAULT_RISK_PER_TRADE, kelly * 2)
+        position_size_pct = min(risk_per_trade, kelly * 2)
     elif kelly < 0.10:
-        position_size_pct = min(DEFAULT_RISK_PER_TRADE, kelly * 1.5)
+        position_size_pct = min(risk_per_trade, kelly * 1.5)
     else:
-        position_size_pct = DEFAULT_RISK_PER_TRADE
+        position_size_pct = risk_per_trade
 
     risk_per_share = entry_price - stop_loss
     reward_per_share = take_profit - entry_price
@@ -233,16 +239,18 @@ def assess_trade_risk(
     allowed = True
     block_reason = ""
 
-    if risk_state.is_cooldown or risk_state.consecutive_losses >= MAX_CONSECUTIVE_LOSSES:
+    if risk_state.is_cooldown or risk_state.consecutive_losses >= max_consecutive_losses:
         allowed = False
         block_reason = f"cooldown_active: {risk_state.consecutive_losses} consecutive losses"
     elif risk_state.is_daily_limit_hit:
         allowed = False
         block_reason = f"daily_loss_limit_hit: daily_pnl={risk_state.daily_pnl:.2f}"
-    elif position_pct > MAX_SINGLE_POSITION_PCT:
-        position_pct = MAX_SINGLE_POSITION_PCT
-        shares = (account_balance * MAX_SINGLE_POSITION_PCT) / entry_price
-    elif risk_state.total_exposure_pct + position_pct > MAX_TOTAL_EXPOSURE_PCT:
+    elif position_pct > max_single_position_pct:
+        position_pct = max_single_position_pct
+        shares = (account_balance * max_single_position_pct) / entry_price if entry_price > 0 else 0.0
+        position_value = shares * entry_price
+        position_pct = position_value / account_balance if account_balance > 0 else 0.0
+    elif risk_state.total_exposure_pct + position_pct > max_total_exposure_pct:
         allowed = False
         block_reason = f"max_exposure_exceeded: current={risk_state.total_exposure_pct:.1%} + new={position_pct:.1%}"
 
@@ -274,9 +282,9 @@ def assess_trade_risk(
             half_kelly=half_kelly,
             trailing_stop_activation=trailing_activation,
             trailing_stop_pct=TRAILING_STOP_TRAIL_PCT,
-            daily_max_loss_r=DAILY_MAX_LOSS_R,
-            max_consecutive_losses=MAX_CONSECUTIVE_LOSSES,
-            cooldown_required=risk_state.consecutive_losses >= MAX_CONSECUTIVE_LOSSES,
+            daily_max_loss_r=daily_max_loss_r,
+            max_consecutive_losses=max_consecutive_losses,
+            cooldown_required=risk_state.consecutive_losses >= max_consecutive_losses,
         ),
         risk_state=risk_state,
         allowed=allowed,
@@ -368,22 +376,36 @@ def build_candidate_risk_record(
         avg_loss_pct=avg_loss_pct,
         atr=atr,
         risk_state=risk_state,
+        risk_per_trade=_rpt,
+        default_stop_loss_pct=_dsl,
+        max_single_position_pct=_mspp,
+        max_total_exposure_pct=_mtep,
+        max_consecutive_losses=_mcl,
+        daily_max_loss_r=_dmr,
     )
     rp = assessment.risk_parameters
     position_size_pct = rp.position_size_pct
-    if position_size_pct > _mspp:
+    shares = assessment.suggested_position_size
+    if position_size_pct > _mspp and entry_price > 0 and account_balance > 0:
         position_size_pct = _mspp
+        shares = (account_balance * position_size_pct) / entry_price
+    position_size_value = shares * entry_price if entry_price > 0 else 0.0
+    if account_balance > 0:
+        position_size_pct = position_size_value / account_balance
     return {
         "symbol": symbol,
         "risk_allowed": assessment.allowed,
         "risk_block_reason": assessment.block_reason,
+        "risk_pass_is_not_buy": True,
+        "research_candidate_condition": True,
         "entry_price": rp.entry_price,
         "stop_loss": assessment.suggested_stop_loss,
         "stop_loss_pct": rp.stop_loss_pct,
         "take_profit": assessment.suggested_take_profit,
         "take_profit_pct": rp.take_profit_pct,
         "risk_reward_ratio": rp.risk_reward_ratio,
-        "position_size_shares": assessment.suggested_position_size,
+        "position_size_shares": shares,
+        "position_size_value": position_size_value,
         "position_size_pct": position_size_pct,
         "kelly_fraction": rp.kelly_fraction,
         "half_kelly": rp.half_kelly,

@@ -985,7 +985,7 @@ def save_pipeline_to_db(
     # Save forward tracking rows
     for ft in forward_tracking_rows:
         try:
-            track_key = ft.get("track_key") or f"{output_date}:{ft['symbol']}:{ft.get('horizon_days', '')}d"
+            track_key = ft.get("track_key") or f"{output_date}:{ft['symbol']}:{ft.get('horizon_days', '')}d:{ft.get('ticket_id') or ''}"
             as_of_date = ft.get("as_of_date", output_date)
             ticket_id = ft.get("ticket_id")
             if ticket_id is None:

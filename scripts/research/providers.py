@@ -10,6 +10,7 @@ from .evidence import claim
 
 
 DATA_GAP = "DATA_GAP"
+INFRA_FAILURE = "INFRA_FAILURE"
 NOT_INGESTED = "not ingested"
 NOT_VALIDATED = "not validated"
 NOT_AVAILABLE = "not available"
@@ -22,6 +23,7 @@ ERROR_CLASSES = (
     "SCHEMA",
     "TEMPORAL",
     "DATA_QUALITY",
+    "INFRA_FAILURE",
     "UNKNOWN",
 )
 CROSS_SEMANTIC_FORBIDDEN = (
@@ -66,7 +68,7 @@ def provider_record(
     facts: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     label = str(status or DATA_GAP).upper()
-    if label not in {"OBSERVED", "DERIVED", DATA_GAP, "ERROR", "READY", "BLOCKED", "UNKNOWN"}:
+    if label not in {"OBSERVED", "DERIVED", DATA_GAP, "ERROR", "READY", "BLOCKED", "UNKNOWN", INFRA_FAILURE}:
         label = DATA_GAP
     if label == "READY":
         label = "OBSERVED"

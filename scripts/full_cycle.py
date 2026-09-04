@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Full Cycle Orchestrator: 出票 → 回填 → 回测 → 优化 → 升级
+"""Full Cycle Orchestrator: research pipeline → backfill → replay → proposal.
 
 Steps:
-1. 出票 (Pipeline) - Generate trading signals
-2. 回填 (Backfill) - Update forward tracking with actual returns
-3. 因子回测 (Factor Backtest) - Test all factors (existing + candidate)
-4. 权重优化 (Weight Optimization) - Compute optimal weights from IC
-5. 记分板 (Scoreboard) - Update lifecycle scoreboard
-6. 退化检测 (Degradation Check) - Meta-loop check
-7. 链路升级 (Pipeline Upgrade) - Apply best weights
+1. Pipeline - Generate research ranking candidates
+2. Backfill - Update forward tracking with actual returns
+3. Factor Backtest - Test all factors (existing + candidate)
+4. Weight Optimization - Propose weights from IC (never apply in FROZEN)
+5. Scoreboard - Update lifecycle scoreboard
+6. Degradation Check - Meta-loop check
+7. Pipeline Upgrade - Store RESEARCH_PROPOSAL only
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ import json
 import subprocess
 import sys
 import time
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -39,6 +39,10 @@ from candidate_factors import (
     compute_candidate_features,
 )
 from db.engine import SessionLocal, query_rows
+from market_calendar import CALENDAR
+from research.boundary import PRODUCTION_BOUNDARY, ProductionApplyBlocked, assert_production_apply_blocked
+from research.sample_identity import DuplicateSampleError, sample_id
+from research.weight_mutation import KEEP_PREVIOUS_WEIGHT, request_weight_change
 from sqlalchemy import text
 
 
@@ -129,12 +133,12 @@ def step_factor_backtest(backtest_days: int = 200) -> dict:
         # Load completed forward tracking
         tracking = session.execute(text("""
             SELECT t.output_date, t.symbol, t.horizon_days, t.forward_return,
-                   t.as_of_close, t.due_close,
+                   t.as_of_close, t.due_close, t.ticket_id,
                    tk.market_score, tk.catalyst_score, tk.ticket_score
             FROM forward_tracking t
-            LEFT JOIN tickets tk ON tk.symbol = t.symbol AND tk.output_date = t.output_date
+            LEFT JOIN tickets tk ON tk.id = t.ticket_id
             WHERE t.check_status = 'completed' AND t.forward_return IS NOT NULL
-            ORDER BY t.output_date, t.symbol
+            ORDER BY t.output_date, t.symbol, t.ticket_id
         """)).fetchall()
 
         if not tracking:
@@ -154,9 +158,36 @@ def step_factor_backtest(backtest_days: int = 200) -> dict:
         # Build DataFrames
         track_df = pd.DataFrame(tracking, columns=[
             "output_date", "symbol", "horizon_days", "forward_return",
-            "as_of_close", "due_close", "market_score", "catalyst_score", "ticket_score",
+            "as_of_close", "due_close", "ticket_id",
+            "market_score", "catalyst_score", "ticket_score",
         ])
         track_df["output_date"] = pd.to_datetime(track_df["output_date"])
+        identities = []
+        seen = set()
+        for row in track_df.itertuples(index=False):
+            if row.ticket_id in (None, ""):
+                continue
+            identity = sample_id(
+                ticket_id=row.ticket_id,
+                replay_horizon=row.horizon_days,
+                replay_date=row.output_date.date().isoformat() if hasattr(row.output_date, "date") else str(row.output_date)[:10],
+                symbol=row.symbol,
+                output_date=row.output_date.date().isoformat() if hasattr(row.output_date, "date") else str(row.output_date)[:10],
+            )
+            if identity in seen:
+                raise DuplicateSampleError(identity)
+            seen.add(identity)
+            identities.append(identity)
+        track_df["sample_id"] = [
+            sample_id(
+                ticket_id=row.ticket_id,
+                replay_horizon=row.horizon_days,
+                replay_date=row.output_date.date().isoformat() if hasattr(row.output_date, "date") else str(row.output_date)[:10],
+                symbol=row.symbol,
+                output_date=row.output_date.date().isoformat() if hasattr(row.output_date, "date") else str(row.output_date)[:10],
+            ) if row.ticket_id not in (None, "") else None
+            for row in track_df.itertuples(index=False)
+        ]
 
         factor_df = pd.DataFrame(factors, columns=[
             "trade_date", "symbol",
@@ -315,17 +346,15 @@ def step_weight_optimization(factor_backtest: dict) -> dict:
             continue  # Not statistically significant
         stable_factors[k] = v
 
-    # Fallback: if no factors pass stability filter, use top 5 by abs_ic
     if not stable_factors:
-        ranked = sorted(
-            [(k, v) for k, v in factors.items() if k in factor_key_map],
-            key=lambda x: x[1].get("abs_ic", 0),
-            reverse=True,
-        )
-        stable_factors = dict(ranked[:5])
-
-    if not stable_factors:
-        return {"status": "skipped", "reason": "no matching pipeline factors"}
+        return {
+            "status": KEEP_PREVIOUS_WEIGHT,
+            "decision": KEEP_PREVIOUS_WEIGHT,
+            "reason": "insufficient_evidence",
+            "production_apply": False,
+            "new_weights": {},
+            "old_weights": {},
+        }
 
     # Weight by abs IC, signed by IC direction
     abs_ic_sum = sum(v["abs_ic"] for v in stable_factors.values())
@@ -387,32 +416,32 @@ def step_weight_optimization(factor_backtest: dict) -> dict:
                 smoothed[key] = round(smoothed[key] / total_abs, 4)
         new_weights = smoothed
 
-    # Save new weights
-    WEIGHTS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    weight_data = {
-        "updated_at": date.today().isoformat(),
-        "weights": new_weights,
-        "ic_scores": {k: v["ic"] for k, v in factors.items()},
-        "source": "full_cycle_optimization",
-        "significant_factors": [k for k, v in factors.items() if v.get("significant")],
-        "ranking": ranking[:5],
-        "ema_alpha": WEIGHT_EMA_ALPHA,
-        "stability_filter": {
-            "min_sample_size": MIN_IC_SAMPLE_SIZE,
-            "max_single_weight": MAX_SINGLE_FACTOR_WEIGHT,
-            "factors_passing_filter": list(stable_factors.keys()),
-        },
-    }
-    WEIGHTS_FILE.write_text(json.dumps(weight_data, indent=2))
-
+    mutation = request_weight_change(
+        source="full_cycle",
+        previous=current_weights,
+        proposed=new_weights,
+        persist=None,
+        sample_count=int(factor_backtest.get("sample_size") or 0),
+        trading_days=0,
+        factor_coverage=None,
+        confirmations=0,
+        reason="full_cycle_optimization",
+    )
     return {
-        "status": "optimized",
-        "new_weights": new_weights,
+        "status": KEEP_PREVIOUS_WEIGHT,
+        "decision": mutation["decision"],
+        "production_apply": False,
+        "proposal_status": mutation["status"],
+        "current_weight": mutation["current_weight"],
+        "proposed_weight": mutation["proposed_weight"],
+        "new_weights": mutation["proposed_weight"],
         "old_weights": current_weights,
         "ema_smoothed": bool(current_weights),
         "top_factors": ranking[:5],
         "stable_factors": list(stable_factors.keys()),
         "significant_count": sum(1 for v in factors.values() if v.get("significant")),
+        "weight_mutation": mutation,
+        "strategy_status": PRODUCTION_BOUNDARY["strategy_status"],
     }
 
 
@@ -445,7 +474,12 @@ def step_degradation_check() -> dict:
 
 # ─── Step 7: Pipeline Upgrade ───────────────────────────────────
 def step_pipeline_upgrade(degradation: dict, weight_result: dict) -> dict:
-    """Decide if pipeline needs re-run with new weights."""
+    """Store a RESEARCH_PROPOSAL. Never PRODUCTION_APPLY while FROZEN."""
+    try:
+        assert_production_apply_blocked(source="pipeline_upgrade")
+        production_apply = False
+    except ProductionApplyBlocked:
+        production_apply = False
     actions = []
 
     # Check degradation
@@ -482,10 +516,11 @@ def step_pipeline_upgrade(degradation: dict, weight_result: dict) -> dict:
             max_diff = max(max_diff, diff)
         if max_diff > 0.1:
             actions.append({
-                "action": "WEIGHTS_UPDATED",
-                "reason": f"Weight change detected (max diff: {max_diff:.2%})",
+                "action": "RESEARCH_PROPOSAL",
+                "reason": f"Weight proposal detected (max diff: {max_diff:.2%})",
                 "old": old_w,
                 "new": new_w,
+                "production_apply": False,
             })
 
     # Note EMA smoothing status
@@ -499,9 +534,12 @@ def step_pipeline_upgrade(degradation: dict, weight_result: dict) -> dict:
         actions.append({"action": "NO_CHANGE", "reason": "System performing within normal range"})
 
     return {
+        "status": "RESEARCH_PROPOSAL",
         "actions": actions,
         "degradation_count": len(degradation_list),
         "has_critical": bool(critical),
+        "production_apply": production_apply,
+        "strategy_status": PRODUCTION_BOUNDARY["strategy_status"],
     }
 
 
@@ -509,7 +547,7 @@ def step_pipeline_upgrade(degradation: dict, weight_result: dict) -> dict:
 def run_full_cycle(output_date: str = None, skip_pipeline: bool = False) -> dict:
     """Run the complete cycle."""
     if not output_date:
-        output_date = date.today().isoformat()
+        output_date = CALENDAR.previous_completed_session().isoformat()
 
     cycle_start = time.time()
     results = {

@@ -373,17 +373,19 @@ def test_unvalidated_weight_run_preserves_existing_weights_and_records_decision(
     result = weight_optimizer.run_weekly_optimization()
     artifact = __import__("json").loads(weights_file.read_text())
 
-    assert result["status"] == "UNVALIDATED_NO_FIXED_CHAIN"
+    assert result["status"] == weight_optimizer.KEEP_PREVIOUS_WEIGHT
     assert result["decision"]["reason"] == "no_versioned_completed_returns"
+    assert result["production_apply"] is False
     assert artifact["weights"] == existing_weights
-    assert artifact["strategy_decision"]["status"] == "UNVALIDATED_NO_FIXED_CHAIN"
+    assert "strategy_decision" not in artifact
 
 
 def test_validated_weight_gate_requires_independent_sample_and_coverage(monkeypatch, tmp_path):
     decision = weight_optimizer.evaluate_validation_gate(_validated_feedback_frame())
     weights_file = tmp_path / "scoring_weights.json"
+    weights_file.write_text('{"weights": {"relative_strength_vs_equal_weight": 0.42}}')
     monkeypatch.setattr(weight_optimizer, "WEIGHTS_FILE", weights_file)
-    weight_optimizer.save_weights(
+    payload = weight_optimizer.save_weights(
         {"relative_strength": 1.0},
         {"relative_strength": 0.2},
         decision,
@@ -394,8 +396,9 @@ def test_validated_weight_gate_requires_independent_sample_and_coverage(monkeypa
     assert decision["sample_count"] == 20
     assert decision["trading_days"] == 10
     assert decision["factor_coverage"] == 1.0
-    assert artifact["strategy_decision"]["status"] == "VALIDATED_FOR_WEIGHT_UPDATE"
-    assert artifact["weights"]["relative_strength_vs_equal_weight"] == 1.0
+    assert payload["production_apply"] is False
+    assert payload["weights"]["relative_strength_vs_equal_weight"] == 1.0
+    assert artifact["weights"]["relative_strength_vs_equal_weight"] == 0.42
 
 
 def test_signal_effectiveness_excludes_unversioned_and_reconstructed_rows(monkeypatch):

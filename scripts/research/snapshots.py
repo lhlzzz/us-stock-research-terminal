@@ -7,7 +7,7 @@ from .boundary import PRODUCTION_BOUNDARY, assert_research_only
 from .evidence import content_hash, utc_now
 from .temporal import historical_claim_eligible
 
-RESEARCH_VERSION = "xiaomei-2.2"
+RESEARCH_VERSION = "xiaomei-2.2.1"
 
 
 def research_snapshot(
@@ -45,6 +45,9 @@ def research_snapshot(
         "blocked_evidence": blocked,
         "research_version": research_version,
         "code_commit": code_commit,
+        "strategy": PRODUCTION_BOUNDARY["strategy"],
+        "strategy_status": PRODUCTION_BOUNDARY["strategy_status"],
+        "calendar_version": "us_market_calendar_nyse",
     }
     hashed = content_hash(body)
     payload = {

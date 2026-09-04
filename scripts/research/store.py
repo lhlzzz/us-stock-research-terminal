@@ -262,18 +262,57 @@ CREATE TABLE IF NOT EXISTS research_outcomes (
     horizon INTEGER,
     return_value REAL,
     complete INTEGER,
+    ticket_id TEXT,
+    sample_id TEXT,
     UNIQUE(symbol, as_of, horizon)
 );
+CREATE TABLE IF NOT EXISTS replay_samples (
+    sample_id TEXT PRIMARY KEY,
+    ticket_id TEXT NOT NULL,
+    symbol TEXT,
+    output_date TEXT,
+    replay_date TEXT NOT NULL,
+    replay_horizon TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_replay_sample_identity
+    ON replay_samples(ticket_id, replay_horizon, replay_date);
 """
 
 
 def connect(path: Path | None = None) -> sqlite3.Connection:
+    """Single SQLite owner for research evidence / lineage / audit."""
     db_path = path or DEFAULT_DB
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     conn.executescript(SCHEMA)
     return conn
+
+
+def persist_replay_sample(conn: sqlite3.Connection, item: Mapping[str, Any]) -> bool:
+    from .sample_identity import sample_id
+
+    identity = item.get("sample_id") or sample_id(
+        ticket_id=item.get("ticket_id"),
+        replay_horizon=item.get("replay_horizon") or item.get("horizon_days"),
+        replay_date=item.get("replay_date") or item.get("as_of") or item.get("output_date"),
+        symbol=item.get("symbol"),
+        output_date=item.get("output_date"),
+    )
+    return insert_ignore(
+        conn,
+        """INSERT OR IGNORE INTO replay_samples(
+            sample_id, ticket_id, symbol, output_date, replay_date, replay_horizon
+        ) VALUES (?,?,?,?,?,?)""",
+        (
+            identity,
+            str(item.get("ticket_id")),
+            item.get("symbol"),
+            None if item.get("output_date") is None else str(item.get("output_date"))[:10],
+            str(item.get("replay_date") or item.get("as_of") or item.get("output_date"))[:10],
+            str(item.get("replay_horizon") or item.get("horizon_days")),
+        ),
+    )
 
 
 def _json(value: Any) -> str:

@@ -1,5 +1,16 @@
 # STATE
 
+## Xiaomei 2.2.1 — 2026-09-05
+
+Completion: **XIAOMEI 2.2.1 PRODUCTION_RUNTIME_READY**.
+
+Strategy `observable_footprint_v1` remains **FROZEN**. Weights remain
+**FROZEN**. Research / Replay / Learning remain **LIVE**. Production
+apply and automatic weight mutation are **BLOCKED**. Broker / live
+order remain **DISABLED**. Ranking owner is unchanged:
+`(ticket_score, market_score, volume_confirmation_ratio)`.
+`ticket_score` is a candidate ranking composite, not validated Alpha.
+
 ## Xiaomei 2.2 — 2026-09-04
 
 Completion: **XIAOMEI 2.2 PRODUCTION_RESEARCH_READY**.

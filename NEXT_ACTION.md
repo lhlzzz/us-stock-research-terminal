@@ -1,5 +1,29 @@
 # NEXT_ACTION
 
+## Xiaomei 2.2.1 PRODUCTION_RUNTIME_READY (2026-09-05)
+
+Completion: **XIAOMEI 2.2.1 PRODUCTION_RUNTIME_READY**.
+
+- Strategy `observable_footprint_v1` remains **FROZEN**. Weights remain
+  **FROZEN**. Research / Replay / Learning remain **LIVE**.
+- Production weight mutation owner is
+  `research.weight_mutation.request_weight_change`. Frozen runtime
+  never persists. Pipeline upgrade is RESEARCH_PROPOSAL only.
+- Daily loop uses canonical US session + fail-fast quality gate +
+  production gate PASS/BLOCK + run_manifest.json.
+- Score semantics: ticket_score is candidate ranking composite;
+  alpha_status = NOT_VALIDATED. Risk pass is not BUY.
+- Replay sample identity is ticket + horizon + replay_date.
+- Audit: `python scripts/xiaomei_production_release_audit.py`
+- Weight surface: `python scripts/audit_weight_mutation_surface.py`
+- Forbidden this phase: new Alpha, ranking formula change, broker,
+  live order, production weight apply, expanding universe.
+
+Next operational action: ingest a validated consensus/revision source
+and a true historical universe membership source if one becomes
+available. Do not invent those sources. Do not add scoring modules.
+Do not change production weights or live-trade boundary.
+
 ## Xiaomei 2.2 PRODUCTION_RESEARCH_READY (2026-09-04)
 
 Completion: **XIAOMEI 2.2 PRODUCTION_RESEARCH_READY**.

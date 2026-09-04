@@ -1347,7 +1347,7 @@ class DataProvider:
         )
 
     def fetch_sec(self, symbol: str, *, as_of: str | None = None) -> dict[str, Any]:
-        from research.providers import DATA_GAP
+        from research.providers import DATA_GAP, INFRA_FAILURE
         from research.sec import sec_research_bundle
 
         ticker = normalize_us_symbol(symbol)
@@ -1375,16 +1375,16 @@ class DataProvider:
                 request="fetch_sec",
                 symbol=ticker,
                 as_of=as_of,
-                status="ERROR" if sub_error else DATA_GAP,
+                status=INFRA_FAILURE if sub_error else DATA_GAP,
                 http_status=sub_status,
                 error=sub_error,
                 source="sec_edgar",
-                extra=sec_research_bundle(symbol=ticker, as_of=as_of or "", status="ERROR" if sub_error else DATA_GAP, error=sub_error),
+                extra=sec_research_bundle(symbol=ticker, as_of=as_of or "", status=INFRA_FAILURE if sub_error else DATA_GAP, error=sub_error),
             )
         facts, fact_status, fact_error = self._http_json(self.SEC_COMPANYFACTS_URL.format(cik=cik))
         bundle = sec_research_bundle(
             symbol=ticker,
-            as_of=as_of or datetime.now().date().isoformat(),
+            as_of=as_of or CALENDAR.previous_completed_session().isoformat(),
             submissions=submissions,
             companyfacts=facts,
             retrieved_at=datetime.now().isoformat(),
@@ -1418,7 +1418,7 @@ class DataProvider:
         sec = self.fetch_sec(symbol, as_of=as_of)
         bundle = earnings_from_sec_facts(
             symbol=symbol,
-            as_of=as_of or datetime.now().date().isoformat(),
+            as_of=as_of or CALENDAR.previous_completed_session().isoformat(),
             parsed=sec.get("parsed"),
             filings=sec.get("filings"),
             source="sec_edgar" if sec.get("status") == "OBSERVED" else None,
@@ -1440,7 +1440,7 @@ class DataProvider:
         from research.estimates import estimate_revision_bundle
         from research.providers import DATA_GAP
 
-        bundle = estimate_revision_bundle(symbol=symbol, as_of=as_of or datetime.now().date().isoformat(), history=None, source=None)
+        bundle = estimate_revision_bundle(symbol=symbol, as_of=as_of or CALENDAR.previous_completed_session().isoformat(), history=None, source=None)
         return self._research_fetch_result(
             provider="estimate_revision",
             request="fetch_estimates",
@@ -1456,7 +1456,7 @@ class DataProvider:
         from research.industry import industry_from_sec
 
         sec = self.fetch_sec(symbol, as_of=as_of)
-        graph = industry_from_sec(sec, as_of=as_of or datetime.now().date().isoformat())
+        graph = industry_from_sec(sec, as_of=as_of or CALENDAR.previous_completed_session().isoformat())
         return self._research_fetch_result(
             provider="sec_edgar",
             request="fetch_industry",

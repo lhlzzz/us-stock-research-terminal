@@ -196,6 +196,20 @@ class USMarketCalendar:
         close_at = datetime.combine(day, self.session_close_time(day), tzinfo=ET)
         return current >= close_at
 
+    def current_session(self, now: datetime | None = None) -> date:
+        current = (now or datetime.now(ET)).astimezone(ET)
+        day = current.date()
+        if self.is_trading_day(day):
+            return day
+        return self.prev_trading_day(day)
+
+    def next_session(self, now: datetime | None = None) -> date:
+        current = (now or datetime.now(ET)).astimezone(ET)
+        day = current.date()
+        if self.is_trading_day(day) and not self.session_completed(day, current):
+            return day
+        return self.next_trading_day(day)
+
     def previous_completed_session(self, now: datetime | None = None) -> date:
         """Last US session that has already closed. Monday 05:00 BJT → Friday."""
         current = (now or datetime.now(ET)).astimezone(ET)
@@ -270,6 +284,18 @@ def is_us_regular_session(now: datetime | None = None) -> bool:
 
 
 def previous_completed_session(now: datetime | None = None) -> date:
+    return CALENDAR.previous_completed_session(now)
+
+
+def current_session(now: datetime | None = None) -> date:
+    return CALENDAR.current_session(now)
+
+
+def next_session(now: datetime | None = None) -> date:
+    return CALENDAR.next_session(now)
+
+
+def canonical_us_session_date(now: datetime | None = None) -> date:
     return CALENDAR.previous_completed_session(now)
 
 

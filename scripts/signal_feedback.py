@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Signal feedback loop: analysis results → automatic weight adjustment."""
 import json
-from datetime import date, timedelta
+from datetime import timedelta
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +10,8 @@ from sqlalchemy import text
 
 from scripts.db.engine import SessionLocal
 from scripts.db.models import FactorSnapshot, ForwardTracking
+from market_calendar import CALENDAR
+from research.weight_mutation import KEEP_PREVIOUS_WEIGHT, request_weight_change
 
 WEIGHTS_FILE = Path(__file__).resolve().parent.parent / "data" / "scoring_weights.json"
 FEEDBACK_DIR = Path(__file__).resolve().parent.parent / "research" / "signal-feedback"
@@ -24,7 +26,7 @@ FACTORS = [
 def analyze_signal_effectiveness() -> dict:
     session = SessionLocal()
     try:
-        cutoff = date.today() - timedelta(days=90)
+        cutoff = CALENDAR.previous_completed_session() - timedelta(days=90)
         factors = session.execute(text(
             "SELECT trade_date, symbol, " + ", ".join(FACTORS) + " "
             "FROM factor_snapshots WHERE trade_date >= :cutoff"
@@ -85,20 +87,45 @@ def generate_weight_adjustments(effectiveness: dict) -> dict:
 
 def apply_adjustments(adjustments: dict):
     if not adjustments:
-        return
-    data = {"updated_at": date.today().isoformat(), "weights": adjustments, "source": "signal_feedback"}
-    WEIGHTS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    WEIGHTS_FILE.write_text(json.dumps(data, indent=2))
+        return {"status": KEEP_PREVIOUS_WEIGHT, "persisted": False, "production_apply": False}
+    current = {}
+    if WEIGHTS_FILE.exists():
+        try:
+            current = json.loads(WEIGHTS_FILE.read_text()).get("weights", {})
+        except Exception:
+            current = {}
+    session = CALENDAR.previous_completed_session().isoformat()
+    data = {
+        "updated_at": session,
+        "weights": adjustments,
+        "source": "signal_feedback",
+        "status": "PROPOSAL_ONLY",
+        "production_apply": False,
+    }
+    mutation = request_weight_change(
+        source="signal_feedback",
+        previous=current,
+        proposed=adjustments,
+        persist=None,
+        reason="signal_feedback",
+    )
     FEEDBACK_DIR.mkdir(parents=True, exist_ok=True)
-    log_file = FEEDBACK_DIR / f"feedback-{date.today().isoformat()}.json"
-    log_file.write_text(json.dumps(data, indent=2))
+    log_file = FEEDBACK_DIR / f"feedback-{session}.json"
+    log_file.write_text(json.dumps({**data, "weight_mutation": mutation}, indent=2))
+    return mutation
 
 
 def run_feedback_loop() -> dict:
     effectiveness = analyze_signal_effectiveness()
     adjustments = generate_weight_adjustments(effectiveness)
-    apply_adjustments(adjustments)
-    return {"effectiveness": effectiveness, "adjustments": adjustments}
+    mutation = apply_adjustments(adjustments)
+    return {
+        "effectiveness": effectiveness,
+        "adjustments": adjustments,
+        "weight_mutation": mutation,
+        "production_apply": False,
+        "decision": KEEP_PREVIOUS_WEIGHT,
+    }
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ from typing import Any, Iterable, Mapping
 from capital.historical_bootstrap import HORIZONS, classify_lineage, tracking_returns
 from capital.learning import MIN_CONDITION_SAMPLES, MIN_SAMPLES
 from .boundary import PRODUCTION_BOUNDARY
+from .sample_identity import sample_id
 from .memory import filter_obsidian_as_of
 from .outcomes import completed_horizon_returns, independent_price_outcomes
 
@@ -203,8 +204,19 @@ def assemble_research_sample(
         "valid_evidence": "INVALID_EVIDENCE",
     }
     eligibility = "VALID" if valid else reason_map.get(invalid_reasons[0], invalid_reasons[0].upper()) if invalid_reasons else "INVALID"
+    replay_date = as_of.isoformat() if as_of else None
+    identity = None
+    if ticket.get("id") not in (None, "") and replay_date:
+        identity = sample_id(
+            ticket_id=ticket.get("id"),
+            replay_horizon=ticket.get("horizon_days") or ticket.get("replay_horizon") or "ticket",
+            replay_date=replay_date,
+            symbol=ticket.get("symbol"),
+            output_date=ticket.get("output_date"),
+        )
     sample = {
         "ticket_id": ticket.get("id"),
+        "sample_id": identity,
         "symbol": str(ticket.get("symbol") or "").upper(),
         "as_of_date": as_of.isoformat() if as_of else None,
         "feature_as_of": feature_date.isoformat() if feature_date else None,

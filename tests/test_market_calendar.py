@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
-from market_calendar import BEIJING_TZ, CALENDAR, closed_us_session_date, is_trading_day
+from market_calendar import BEIJING_TZ, CALENDAR, canonical_us_session_date, closed_us_session_date, is_trading_day
 from us_profit_ticket_pipeline import bday_date
 from xiaomei_scheduler import closed_us_session_date as scheduler_closed_session
 
@@ -25,3 +25,11 @@ def test_holiday_maps_to_previous_us_session():
 
 def test_forward_dates_use_us_market_calendar():
     assert bday_date(__import__("pandas").Timestamp("2026-07-02"), 1) == "2026-07-06"
+
+
+def test_canonical_session_helpers():
+    monday = datetime(2026, 9, 7, 5, tzinfo=BEIJING_TZ)
+    assert canonical_us_session_date(monday).isoformat() == "2026-09-04"
+    assert CALENDAR.current_session(monday).isoformat() == "2026-09-04"
+    assert CALENDAR.next_session(monday).isoformat() == "2026-09-08"
+    assert CALENDAR.previous_completed_session(monday).isoformat() == "2026-09-04"

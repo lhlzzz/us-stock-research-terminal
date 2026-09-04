@@ -11,8 +11,10 @@
 - **只管美股**；虚拟币 / 加密归 `xiaobi`，不在本 workspace 扩展 crypto 主链路。
 - close-to-close replay。价格口径必须全链路一致（RAW 或 ADJUSTED）。
 - 每个 replay_date 只选 Top 1。
-- Xiaomei 2.2 = **PRODUCTION_RESEARCH_READY**。策略 `observable_footprint_v1` **FROZEN**；研究 / 回放 / Learning **LIVE**。
-- RESEARCH_ONLY / PAPER_ONLY / NO_BROKER / NO_LIVE_ORDER / NO_PRODUCTION_PICK / NO_PRODUCTION_WEIGHT_CHANGE。
+- Xiaomei 2.2.1 = **PRODUCTION_RESEARCH_READY** + **PRODUCTION_RUNTIME_READY**。策略 `observable_footprint_v1` **FROZEN**；权重 **FROZEN**；研究 / 回放 / Learning **LIVE**。
+- RESEARCH_ONLY / PAPER_ONLY / NO_BROKER / NO_LIVE_ORDER / NO_PRODUCTION_PICK / NO_PRODUCTION_WEIGHT_CHANGE / production_apply=BLOCKED。
+- 生产权重唯一写入入口：`research.weight_mutation.request_weight_change`。FROZEN 下任何 mutation 硬失败。
+- PostgreSQL = operational / ticket / production research state。SQLite (`scripts/research/store.py`) = research evidence / lineage / audit。
 - 生产 ranking owner：`observable_footprint_v1`，排序 `(ticket_score, market_score, volume_confirmation_ratio)`。
 - 禁止：Research → Alpha；Research → BUY/SELL；Learning → 自动改权；Broker → 接入；Live Order → 开启。
 - 不接 broker feed / paid market data。

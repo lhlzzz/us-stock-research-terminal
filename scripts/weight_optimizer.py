@@ -6,7 +6,7 @@ each factor and forward returns, then generates optimal scoring weights.
 """
 import json
 import sys
-from datetime import date, timedelta
+from datetime import timedelta
 from pathlib import Path
 
 import numpy as np
@@ -17,6 +17,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from db.engine import SessionLocal
 from db.models import FactorSnapshot, ForwardTracking
+from market_calendar import CALENDAR
+from research.weight_mutation import KEEP_PREVIOUS_WEIGHT, request_weight_change
 from sqlalchemy import text
 
 WEIGHTS_FILE = Path(__file__).resolve().parent.parent / "data" / "scoring_weights.json"
@@ -47,11 +49,11 @@ FACTORS = [
 
 def load_versioned_feedback(session, lookback_days: int = 60) -> pd.DataFrame:
     """Load only reproducible observable-footprint 1d outcomes."""
-    cutoff = date.today() - timedelta(days=lookback_days)
+    cutoff = CALENDAR.previous_completed_session() - timedelta(days=lookback_days)
 
     rows = session.execute(text(
         "SELECT fs.trade_date, fs.symbol, " + ", ".join(f"fs.{factor}" for factor in FACTORS) + ", "
-        "ft.forward_return "
+        "ft.forward_return, ft.ticket_id "
         "FROM factor_snapshots fs "
         "JOIN forward_tracking ft "
         "  ON ft.symbol = fs.symbol "
@@ -73,7 +75,7 @@ def load_versioned_feedback(session, lookback_days: int = 60) -> pd.DataFrame:
         "version_status": VERSION_STATUS,
     }).fetchall()
 
-    return pd.DataFrame(rows, columns=["trade_date", "symbol"] + FACTORS + ["forward_return"])
+    return pd.DataFrame(rows, columns=["trade_date", "symbol"] + FACTORS + ["forward_return", "ticket_id"])
 
 
 def evaluate_validation_gate(feedback: pd.DataFrame) -> dict:
@@ -180,44 +182,38 @@ def _load_weights_artifact() -> dict:
         return {"weights": DEFAULT_WEIGHTS.copy()}
 
 
+COLUMN_MAPPING = {
+    "relative_strength": "relative_strength_vs_equal_weight",
+    "volume_confirmation": "volume_confirmation_ratio",
+}
+
+
+def _map_factor_keys(values: dict[str, float]) -> dict[str, float]:
+    return {COLUMN_MAPPING.get(k, k): v for k, v in values.items()}
+
+
 def save_validation_decision(decision: dict):
-    """Persist validation evidence without changing active weights."""
+    """Record validation evidence in-memory only. Production weights stay frozen."""
     data = _load_weights_artifact()
     data["strategy_decision"] = decision
-    data["updated_at"] = date.today().isoformat()
-    WEIGHTS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    WEIGHTS_FILE.write_text(json.dumps(data, indent=2))
+    data["updated_at"] = CALENDAR.previous_completed_session().isoformat()
+    return data
 
 
 def save_weights(weights: dict[str, float], ic_scores: dict[str, float], decision: dict):
-    """Save validated weights, IC scores, and decision evidence."""
-    WEIGHTS_FILE.parent.mkdir(parents=True, exist_ok=True)
-
-    # Map database column names to pipeline expected names
-    COLUMN_MAPPING = {
-        "relative_strength": "relative_strength_vs_equal_weight",
-        "volume_confirmation": "volume_confirmation_ratio",
-    }
-
-    mapped_weights = {}
-    for k, v in weights.items():
-        mapped_key = COLUMN_MAPPING.get(k, k)
-        mapped_weights[mapped_key] = v
-
-    mapped_ic = {}
-    for k, v in ic_scores.items():
-        mapped_key = COLUMN_MAPPING.get(k, k)
-        mapped_ic[mapped_key] = v
-
+    """Build a weight payload. Persistence is owned by the mutation gateway."""
+    mapped_weights = _map_factor_keys(weights)
+    mapped_ic = _map_factor_keys(ic_scores)
     data = _load_weights_artifact()
     data.update({
-        "updated_at": date.today().isoformat(),
+        "updated_at": CALENDAR.previous_completed_session().isoformat(),
         "weights": mapped_weights,
         "ic_scores": mapped_ic,
         "source": "versioned_observable_footprint_ic_analysis",
         "strategy_decision": decision,
+        "production_apply": False,
     })
-    WEIGHTS_FILE.write_text(json.dumps(data, indent=2))
+    return data
 
 
 def load_weights() -> dict[str, float]:
@@ -261,9 +257,10 @@ def run_weekly_optimization() -> dict:
         if decision["status"] != "VALIDATED_FOR_WEIGHT_UPDATE":
             save_validation_decision(decision)
             return {
-                "status": "UNVALIDATED_NO_FIXED_CHAIN",
-                "decision": decision,
+                "status": KEEP_PREVIOUS_WEIGHT,
+                "decision": {**decision, "weight_change_guard": KEEP_PREVIOUS_WEIGHT},
                 "weights": load_weights(),
+                "production_apply": False,
                 "weights_file": str(WEIGHTS_FILE),
             }
 
@@ -271,22 +268,23 @@ def run_weekly_optimization() -> dict:
         if not ic_scores:
             decision = {
                 **decision,
-                "status": "UNVALIDATED_NO_FIXED_CHAIN",
+                "status": KEEP_PREVIOUS_WEIGHT,
                 "reason": "insufficient_valid_factor_pairs",
             }
             save_validation_decision(decision)
             return {
-                "status": "UNVALIDATED_NO_FIXED_CHAIN",
+                "status": KEEP_PREVIOUS_WEIGHT,
                 "decision": decision,
                 "weights": load_weights(),
+                "production_apply": False,
                 "weights_file": str(WEIGHTS_FILE),
             }
 
         weights = compute_optimal_weights(ic_scores)
         from research.stability import factor_stability
-        from research.weight_mutation import KEEP_PREVIOUS_WEIGHT, request_weight_change
 
         previous = load_weights()
+        mapped_proposed = _map_factor_keys(weights)
         stability_rows = [
             factor_stability({
                 "factor": factor,
@@ -299,8 +297,8 @@ def run_weekly_optimization() -> dict:
         mutation = request_weight_change(
             source="weight_optimizer",
             previous=previous,
-            proposed=weights,
-            persist=lambda: save_weights(weights, ic_scores, decision),
+            proposed=mapped_proposed,
+            persist=None,
             sample_count=int(decision.get("sample_count") or 0),
             trading_days=int(decision.get("trading_days") or 0),
             factor_coverage=decision.get("factor_coverage"),
@@ -308,28 +306,23 @@ def run_weekly_optimization() -> dict:
             average_loss=decision.get("average_loss"),
             reason="optimizer_ic",
         )
-        if mutation["action"] == KEEP_PREVIOUS_WEIGHT:
-            decision = {
-                **decision,
-                "weight_change_guard": KEEP_PREVIOUS_WEIGHT,
-                "kept_factors": list(previous),
-                "weight_mutation": mutation,
-            }
-            save_validation_decision(decision)
-            return {
-                "status": KEEP_PREVIOUS_WEIGHT,
-                "ic_scores": ic_scores,
-                "weights": previous,
-                "decision": decision,
-                "stability": stability_rows,
-                "weights_file": str(WEIGHTS_FILE),
-            }
+        decision = {
+            **decision,
+            "weight_change_guard": KEEP_PREVIOUS_WEIGHT,
+            "kept_factors": list(previous),
+            "weight_mutation": mutation,
+            "production_apply": False,
+        }
+        save_validation_decision(decision)
         return {
-            "status": "done",
+            "status": KEEP_PREVIOUS_WEIGHT,
             "ic_scores": ic_scores,
-            "weights": mutation["applied"],
-            "decision": {**decision, "weight_mutation": mutation},
+            "weights": previous,
+            "proposed_weight": mapped_proposed,
+            "current_weight": previous,
+            "decision": decision,
             "stability": stability_rows,
+            "production_apply": False,
             "weights_file": str(WEIGHTS_FILE),
         }
     finally:

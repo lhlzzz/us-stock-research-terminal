@@ -9,7 +9,14 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Callable, Mapping
 
-from .boundary import PRODUCTION_BOUNDARY, learning_cannot_auto_weight
+from .boundary import (
+    PRODUCTION_BOUNDARY,
+    WeightMutationBlocked,
+    assert_weight_mutation_allowed,
+    learning_cannot_auto_weight,
+    strategy_is_frozen,
+    weights_are_frozen,
+)
 from .stability import (
     CONFIRMATION_PERIODS,
     KEEP_PREVIOUS_WEIGHT,
@@ -18,11 +25,18 @@ from .stability import (
     weight_change_guard,
 )
 
-__all__ = ["KEEP_PREVIOUS_WEIGHT", "request_weight_change", "audit_records"]
+__all__ = [
+    "KEEP_PREVIOUS_WEIGHT",
+    "PROPOSAL_ONLY",
+    "request_weight_change",
+    "audit_records",
+    "WeightMutationBlocked",
+]
 
 MIN_FACTOR_COVERAGE = 0.75
 MAX_AVERAGE_LOSS = -0.05
 UPDATE_WEIGHT = "UPDATE_WEIGHT"
+PROPOSAL_ONLY = "PROPOSAL_ONLY"
 
 _AUDIT: list[dict[str, Any]] = []
 
@@ -46,8 +60,17 @@ def request_weight_change(
     key: str | None = None,
     reason: str | None = None,
 ) -> dict[str, Any]:
-    """Validate then optionally persist. Failed guards never write."""
+    """Validate then optionally persist. Failed guards never write.
+
+    Frozen strategy / frozen weights never persist. Callers may still
+    receive a PROPOSAL_ONLY record. Direct persist callbacks are not a
+    legal production mutation path.
+    """
     reasons: list[str] = []
+    frozen = strategy_is_frozen() or weights_are_frozen()
+    if frozen:
+        reasons.append("strategy_frozen")
+        reasons.append("weights_frozen")
     if learning_cannot_auto_weight(source):
         reasons.append("learning_cannot_auto_weight")
     if sample_count < MIN_SAMPLES:
@@ -98,20 +121,44 @@ def request_weight_change(
         applied = previous if keep else proposed
         factor_reasons = {str(key or "weight"): list(guard["reasons"])}
 
-    action = KEEP_PREVIOUS_WEIGHT if keep else UPDATE_WEIGHT
+    if frozen:
+        keep = True
+        applied = previous if not isinstance(previous, Mapping) else dict(previous or {})
+        action = KEEP_PREVIOUS_WEIGHT
+    else:
+        action = KEEP_PREVIOUS_WEIGHT if keep else UPDATE_WEIGHT
     persisted = False
     persist_result = None
+    production_apply = False
     if action == UPDATE_WEIGHT and persist is not None:
-        persist_result = persist()
-        persisted = True
+        try:
+            assert_weight_mutation_allowed(source=source)
+        except WeightMutationBlocked as exc:
+            keep = True
+            action = KEEP_PREVIOUS_WEIGHT
+            applied = previous if not isinstance(previous, Mapping) else dict(previous or {})
+            reasons.append("weight_mutation_blocked")
+            reasons.append(str(exc))
+        else:
+            persist_result = persist()
+            persisted = True
+            production_apply = True
+    if frozen and persist is not None:
+        reasons.append("proposal_only_frozen")
     record = {
+        "status": PROPOSAL_ONLY if frozen or not persisted else "PRODUCTION_WEIGHT",
         "source": source,
         "key": key,
         "action": action,
+        "decision": KEEP_PREVIOUS_WEIGHT if keep else UPDATE_WEIGHT,
+        "current_weight": previous if not isinstance(previous, Mapping) else dict(previous or {}),
+        "proposed_weight": proposed if not isinstance(proposed, Mapping) else dict(proposed or {}),
         "previous": previous if not isinstance(previous, Mapping) else dict(previous),
         "proposed": proposed if not isinstance(proposed, Mapping) else dict(proposed),
         "applied": applied,
         "persisted": persisted,
+        "production_apply": production_apply,
+        "strategy_status": PRODUCTION_BOUNDARY["strategy_status"],
         "reasons": reasons,
         "factor_reasons": factor_reasons,
         "sample_count": sample_count,

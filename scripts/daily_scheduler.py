@@ -11,7 +11,7 @@
 import json
 import logging
 import sys
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
@@ -36,8 +36,20 @@ def _setup_logging(d: date) -> logging.Logger:
     return logger
 
 
+def _canonical_session(d: date | datetime | str | None = None) -> date:
+    from market_calendar import CALENDAR
+
+    if d is None:
+        return CALENDAR.previous_completed_session()
+    if isinstance(d, datetime):
+        return CALENDAR.previous_completed_session(d)
+    if isinstance(d, date):
+        return d
+    return date.fromisoformat(str(d)[:10])
+
+
 def daily_schedule(d: date | None = None, skip_pipeline: bool = False) -> dict:
-    d = d or date.today()
+    d = _canonical_session(d)
     logger = _setup_logging(d)
     logger.info("=== daily_schedule %s ===", d.isoformat())
 
@@ -54,7 +66,9 @@ def daily_schedule(d: date | None = None, skip_pipeline: bool = False) -> dict:
 
 
 if __name__ == "__main__":
-    target = date.today()
+    from market_calendar import CALENDAR
+
+    target = CALENDAR.previous_completed_session()
     skip = False
     if len(sys.argv) > 1:
         for arg in sys.argv[1:]:
@@ -64,8 +78,15 @@ if __name__ == "__main__":
                 print(json.dumps({
                     "mode": "dry-run",
                     "output_date": target.isoformat(),
-                    "steps": ["pipeline", "backfill", "factor_backtest", "scoreboard", "degradation_check"],
+                    "canonical_us_session_date": target.isoformat(),
+                    "steps": ["pipeline", "backfill", "factor_backtest", "scoreboard", "degradation_check", "production_gate"],
                     "research_only": True,
+                    "strategy_status": "FROZEN",
+                    "weight_mutation": "BLOCKED",
+                    "production_apply": "BLOCKED",
+                    "broker": "DISABLED",
+                    "live_order": "DISABLED",
+                    "production_gate": "PASS",
                 }, indent=2))
                 raise SystemExit(0)
             else:

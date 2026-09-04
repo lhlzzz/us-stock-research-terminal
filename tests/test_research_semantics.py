@@ -112,7 +112,7 @@ def test_weight_mutation_gateway_blocks_bypass():
     assert failed["persisted"] is False
     assert writes == []
 
-    allowed = request_weight_change(
+    frozen = request_weight_change(
         source="weight_optimizer",
         previous=0.45,
         proposed=0.50,
@@ -122,9 +122,11 @@ def test_weight_mutation_gateway_blocks_bypass():
         confirmations=2,
         factor_coverage=0.9,
     )
-    assert allowed["action"] == "UPDATE_WEIGHT"
-    assert allowed["persisted"] is True
-    assert writes == ["wrote"]
+    assert frozen["action"] == KEEP_PREVIOUS_WEIGHT
+    assert frozen["persisted"] is False
+    assert frozen["production_apply"] is False
+    assert frozen["status"] == "PROPOSAL_ONLY"
+    assert writes == []
 
     learning_blocked = request_weight_change(
         source="learning",
@@ -139,7 +141,7 @@ def test_weight_mutation_gateway_blocks_bypass():
     assert learning_blocked["action"] == KEEP_PREVIOUS_WEIGHT
     assert learning_blocked["persisted"] is False
     assert "learning_cannot_auto_weight" in learning_blocked["reasons"]
-    assert writes == ["wrote"]
+    assert writes == []
 
 
 def test_self_evolve_cannot_bypass_guard(monkeypatch):
