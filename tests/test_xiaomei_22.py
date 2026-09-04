@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from research.boundary import PRODUCTION_BOUNDARY, RANKING_KEY, assert_research_only
+import pytest
+
+from research.boundary import PRODUCTION_BOUNDARY, RANKING_KEY, assert_research_only, freeze_snapshot, learning_cannot_auto_weight
 from research.coverage import research_coverage, research_readiness
 from research.earnings import earnings_as_of, earnings_event, guidance_change, split_surprises
 from research.estimates import derived_revision_windows, estimate_revision_bundle, revisions_as_of
@@ -214,6 +216,23 @@ def test_legacy_adapter_and_production_boundary():
     assert research["canonical_owner"] == "scripts.research"
     assert research["compatibility_adapter"] is True
     assert PRODUCTION_BOUNDARY["ranking_owner"] == "observable_footprint_v1"
+    freeze = freeze_snapshot()
+    assert freeze["production_research_status"] == "PRODUCTION_RESEARCH_READY"
+    assert freeze["strategy"] == "observable_footprint_v1"
+    assert freeze["strategy_status"] == "FROZEN"
+    assert freeze["research"] == "LIVE"
+    assert freeze["replay"] == "LIVE"
+    assert freeze["learning"] == "LIVE"
+    assert freeze["ranking_key"] == list(RANKING_KEY)
+    assert freeze["broker"] == "NO_BROKER"
+    assert freeze["live_order"] == "NO_LIVE_ORDER"
+    assert learning_cannot_auto_weight("learning") is True
+    with pytest.raises(ValueError):
+        assert_research_only({"enters_alpha_score": True})
+    with pytest.raises(ValueError):
+        assert_research_only({"classification": "BUY"})
+    with pytest.raises(ValueError):
+        assert_research_only({"auto_weight_change": True})
 
 
 def test_seed_learning_persists(tmp_path: Path):

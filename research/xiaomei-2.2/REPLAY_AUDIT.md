@@ -1,7 +1,8 @@
 # REPLAY_AUDIT — Xiaomei 2.2
 
-Replay uses published/effective/available ≤ as_of.
-`retrieved_at > as_of` is allowed and is not a leak.
+Replay is **LIVE**. Replay uses published/effective/available ≤ as_of.
+`retrieved_at > as_of` is allowed and is not a leak. Replay cannot
+write production ranking, Alpha, BUY/SELL, broker, or live orders.
 
 ## Temporal fixtures
 

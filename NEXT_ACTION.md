@@ -1,13 +1,17 @@
 # NEXT_ACTION
 
-## Xiaomei 2.2 research data and learning loop (2026-09-04)
+## Xiaomei 2.2 PRODUCTION_RESEARCH_READY (2026-09-04)
 
-Completion: **XIAOMEI 2.2**.
+Completion: **XIAOMEI 2.2 PRODUCTION_RESEARCH_READY**.
 
-- Research OS owner remains `scripts/research/`. Legacy `research_panel.py`
-  is a compatibility adapter. Production ranking owner remains
-  `observable_footprint_v1` with sort
+- Strategy `observable_footprint_v1` is **FROZEN**. Research / Replay /
+  Learning are **LIVE**. Operating classification remains RESEARCH_ONLY.
+- Production ranking owner remains `observable_footprint_v1` with sort
   `(ticket_score, market_score, volume_confirmation_ratio)`.
+- Forbidden: Research → Alpha; Research → BUY/SELL; Learning → auto
+  weight change; Broker connect; Live Order enable.
+- Research OS owner remains `scripts/research/`. Legacy `research_panel.py`
+  is a compatibility adapter.
 - Live SEC EDGAR ingest (submissions + XBRL companyfacts) for NVDA/AAPL/MSFT
   as_of 2026-09-03 is OBSERVED. Raw documents are immutable. Amendments and
   fact conflicts keep all evidence and record `supersedes`.
@@ -19,8 +23,9 @@ Completion: **XIAOMEI 2.2**.
 - CLI: `python scripts/research_cli.py research company NVDA --as-of 2026-09-03`
 - Audit: `python scripts/xiaomei_22_audit.py`
 - Tests: `python -m compileall -q .` pass; `PYTHONPATH=scripts pytest -q tests`
-  = **238 passed**. Named 2.2 files: `tests/test_xiaomei_22.py`,
-  `tests/research/test_xiaomei_22_layers.py`.
+  = **238 passed**. Audit: `python scripts/xiaomei_22_audit.py` =
+  **XIAOMEI_2.2_AUDIT=PASS** including PRODUCTION_RESEARCH_READY /
+  STRATEGY_FROZEN / RESEARCH_LIVE / REPLAY_LIVE / LEARNING_LIVE.
 - Reports: `research/xiaomei-2.2/SYSTEM_AUDIT.md`, `DATA_COVERAGE.md`,
   `REPLAY_AUDIT.md`, `LEARNING_AUDIT.md`, `PRODUCTION_BOUNDARY.md`.
 

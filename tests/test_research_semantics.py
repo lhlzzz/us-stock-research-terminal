@@ -126,6 +126,21 @@ def test_weight_mutation_gateway_blocks_bypass():
     assert allowed["persisted"] is True
     assert writes == ["wrote"]
 
+    learning_blocked = request_weight_change(
+        source="learning",
+        previous=0.45,
+        proposed=0.50,
+        persist=persist,
+        sample_count=40,
+        trading_days=20,
+        confirmations=2,
+        factor_coverage=0.9,
+    )
+    assert learning_blocked["action"] == KEEP_PREVIOUS_WEIGHT
+    assert learning_blocked["persisted"] is False
+    assert "learning_cannot_auto_weight" in learning_blocked["reasons"]
+    assert writes == ["wrote"]
+
 
 def test_self_evolve_cannot_bypass_guard(monkeypatch):
     import xiaomei_self_evolve

@@ -1,6 +1,24 @@
 # PRODUCTION_BOUNDARY — Xiaomei 2.2
 
-Frozen boundary:
+Status: **PRODUCTION_RESEARCH_READY**
+
+| surface | state |
+| --- | --- |
+| strategy `observable_footprint_v1` | **FROZEN** |
+| research | **LIVE** |
+| replay | **LIVE** |
+| learning | **LIVE** |
+| production ranking | `(ticket_score, market_score, volume_confirmation_ratio)` |
+| Research → Alpha | **FORBIDDEN** |
+| Research → BUY/SELL | **FORBIDDEN** |
+| Learning → auto weight change | **FORBIDDEN** |
+| Broker | **NO_BROKER** |
+| Live Order | **NO_LIVE_ORDER** |
+
+Operating classification remains **RESEARCH_ONLY**. Readiness does not
+open a live-order or production-pick path.
+
+Frozen flags:
 
 - RESEARCH_ONLY
 - PAPER_ONLY
@@ -39,6 +57,16 @@ Owner file: `scripts/us_profit_ticket_pipeline.py`
 `scripts/xiaomei_22_audit.py`:
 
 - PRODUCTION_BOUNDARY=PASS
+- PRODUCTION_RESEARCH_READY=PASS
+- STRATEGY_FROZEN=PASS
+- RESEARCH_LIVE=PASS
+- REPLAY_LIVE=PASS
+- LEARNING_LIVE=PASS
+- LEARNING_NO_AUTO_WEIGHT=PASS
+- RESEARCH_NO_ALPHA=PASS
+- RESEARCH_NO_BUY_SELL=PASS
+- NO_BROKER=PASS
+- NO_LIVE_ORDER=PASS
 - PRODUCTION_RANKING_UNCHANGED=PASS
 - LEGACY_ADAPTER=PASS
 - LEGACY_SINGLE_OWNER=PASS

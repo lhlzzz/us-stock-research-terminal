@@ -1,11 +1,15 @@
 # SYSTEM_AUDIT — Xiaomei 2.2
 
-Status: **XIAOMEI 2.2 RESEARCH DATA + LEARNING HARDENED**
+Status: **XIAOMEI 2.2 PRODUCTION_RESEARCH_READY**
 
 Date: 2026-09-04
 Baseline: Xiaomei 2.1.1 Hardened (`eff260b`)
+Strategy: `observable_footprint_v1` **FROZEN**
+Research / Replay / Learning: **LIVE**
 Boundary: RESEARCH_ONLY / PAPER_ONLY / NO_BROKER / NO_LIVE_ORDER /
 NO_PRODUCTION_PICK / NO_PRODUCTION_WEIGHT_CHANGE
+Forbidden: Research → Alpha, Research → BUY/SELL, Learning → auto
+weight change, Broker connect, Live Order enable
 Production ranking owner: `observable_footprint_v1`
 Ranking: `(ticket_score, market_score, volume_confirmation_ratio)`
 
@@ -102,6 +106,11 @@ Seeded demo (not a ranking input):
 - LearningPattern `62a04570-6a86-4650-80da-512fa9bb9beb` (`eps_beat_guidance_cut`)
 
 ## G. Production boundary
+
+Xiaomei 2.2 is **PRODUCTION_RESEARCH_READY**. Strategy
+`observable_footprint_v1` is FROZEN. Research, replay, and learning
+are LIVE. They cannot write Alpha, BUY/SELL, production weights,
+broker, or live orders.
 
 Research classification for NVDA/AAPL/MSFT = WATCHLIST.
 Pipeline dry-run for each symbol = RESEARCH_ONLY SUCCESS,

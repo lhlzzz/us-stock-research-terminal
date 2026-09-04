@@ -2,13 +2,16 @@
 
 ## Xiaomei 2.2 — 2026-09-04
 
-Completion: **XIAOMEI 2.2**.
+Completion: **XIAOMEI 2.2 PRODUCTION_RESEARCH_READY**.
 
-Research OS owner remains `scripts/research/`. Production ranking owner
-remains `observable_footprint_v1` with sort
+Strategy `observable_footprint_v1` is **FROZEN**. Research / Replay /
+Learning are **LIVE**. Research OS owner remains `scripts/research/`.
+Production ranking owner remains `observable_footprint_v1` with sort
 `(ticket_score, market_score, volume_confirmation_ratio)`. Boundary
 unchanged: RESEARCH_ONLY / PAPER_ONLY / NO_BROKER / NO_LIVE_ORDER /
-NO_PRODUCTION_PICK / NO_PRODUCTION_WEIGHT_CHANGE.
+NO_PRODUCTION_PICK / NO_PRODUCTION_WEIGHT_CHANGE. Forbidden: Research
+→ Alpha, Research → BUY/SELL, Learning auto-weight-change, Broker,
+Live Order.
 
 Live SEC EDGAR + XBRL ingest is OBSERVED for NVDA/AAPL/MSFT as_of
 2026-09-03. Earnings reported facts from SEC are OBSERVED. Consensus

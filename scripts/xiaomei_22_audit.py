@@ -47,7 +47,7 @@ def _contains_assignment(source: str, token: str) -> bool:
 
 
 def audit() -> dict[str, str]:
-    from research.boundary import PRODUCTION_BOUNDARY, RANKING_KEY
+    from research.boundary import PRODUCTION_BOUNDARY, RANKING_KEY, freeze_snapshot, learning_cannot_auto_weight
     from research.providers import DATA_GAP, forbid_cross_semantic_fallback
     from research.evidence import research_evidence
     from research.sec import filings_as_of, resolve_amendments, resolve_fact_conflicts
@@ -65,6 +65,16 @@ def audit() -> dict[str, str]:
         "CALENDAR_OWNER": "PASS" if (ROOT / "scripts/market_calendar.py").exists() else "FAIL",
         "DATA_PROVIDER_OWNER": "PASS" if (ROOT / "scripts/data_provider.py").exists() else "FAIL",
         "PRODUCTION_BOUNDARY": "PASS" if PRODUCTION_BOUNDARY["live_order"] == "NO_LIVE_ORDER" else "FAIL",
+        "PRODUCTION_RESEARCH_READY": "UNKNOWN",
+        "STRATEGY_FROZEN": "UNKNOWN",
+        "RESEARCH_LIVE": "UNKNOWN",
+        "REPLAY_LIVE": "UNKNOWN",
+        "LEARNING_LIVE": "UNKNOWN",
+        "LEARNING_NO_AUTO_WEIGHT": "UNKNOWN",
+        "RESEARCH_NO_ALPHA": "UNKNOWN",
+        "RESEARCH_NO_BUY_SELL": "UNKNOWN",
+        "NO_BROKER": "UNKNOWN",
+        "NO_LIVE_ORDER": "UNKNOWN",
         "LEGACY_ADAPTER": "UNKNOWN",
         "LEGACY_SINGLE_OWNER": "UNKNOWN",
         "PRODUCTION_RANKING_UNCHANGED": "UNKNOWN",
@@ -94,9 +104,38 @@ def audit() -> dict[str, str]:
     status["LEGACY_SINGLE_OWNER"] = "PASS" if panel.get("canonical_owner") == "scripts.research" else "FAIL"
     ranking_ok = list(RANKING_KEY) == ["ticket_score", "market_score", "volume_confirmation_ratio"]
     ranking_ok = ranking_ok and PRODUCTION_BOUNDARY["ranking_owner"] == "observable_footprint_v1"
+    ranking_ok = ranking_ok and PRODUCTION_BOUNDARY["strategy"] == "observable_footprint_v1"
+    ranking_ok = ranking_ok and PRODUCTION_BOUNDARY["strategy_status"] == "FROZEN"
     pipeline = _read("scripts/us_profit_ticket_pipeline.py")
     ranking_ok = ranking_ok and "key=lambda row: (row[\"ticket_score\"], row[\"market_score\"], row[\"volume_confirmation_ratio\"])" in pipeline
     status["PRODUCTION_RANKING_UNCHANGED"] = "PASS" if ranking_ok else "FAIL"
+    freeze = freeze_snapshot()
+    freeze_ok = (
+        freeze["production_research_status"] == "PRODUCTION_RESEARCH_READY"
+        and freeze["strategy"] == "observable_footprint_v1"
+        and freeze["strategy_status"] == "FROZEN"
+        and freeze["research"] == "LIVE"
+        and freeze["replay"] == "LIVE"
+        and freeze["learning"] == "LIVE"
+        and freeze["broker"] == "NO_BROKER"
+        and freeze["live_order"] == "NO_LIVE_ORDER"
+        and freeze["ranking_key"] == ["ticket_score", "market_score", "volume_confirmation_ratio"]
+        and "RESEARCH_TO_ALPHA" in freeze["forbidden_transitions"]
+        and "RESEARCH_TO_BUY_SELL" in freeze["forbidden_transitions"]
+        and "LEARNING_TO_AUTO_WEIGHT_CHANGE" in freeze["forbidden_transitions"]
+        and "BROKER_CONNECT" in freeze["forbidden_transitions"]
+        and "LIVE_ORDER_ENABLE" in freeze["forbidden_transitions"]
+    )
+    status["PRODUCTION_RESEARCH_READY"] = "PASS" if freeze_ok else "FAIL"
+    status["STRATEGY_FROZEN"] = "PASS" if freeze["strategy_status"] == "FROZEN" else "FAIL"
+    status["RESEARCH_LIVE"] = "PASS" if freeze["research"] == "LIVE" else "FAIL"
+    status["REPLAY_LIVE"] = "PASS" if freeze["replay"] == "LIVE" else "FAIL"
+    status["LEARNING_LIVE"] = "PASS" if freeze["learning"] == "LIVE" else "FAIL"
+    status["LEARNING_NO_AUTO_WEIGHT"] = "PASS" if learning_cannot_auto_weight("learning") else "FAIL"
+    status["RESEARCH_NO_ALPHA"] = "PASS" if "RESEARCH_TO_ALPHA" in PRODUCTION_BOUNDARY["forbidden_transitions"] else "FAIL"
+    status["RESEARCH_NO_BUY_SELL"] = "PASS" if "BUY" in PRODUCTION_BOUNDARY["forbidden_outputs"] and "SELL" in PRODUCTION_BOUNDARY["forbidden_outputs"] else "FAIL"
+    status["NO_BROKER"] = "PASS" if PRODUCTION_BOUNDARY["broker"] == "NO_BROKER" else "FAIL"
+    status["NO_LIVE_ORDER"] = "PASS" if PRODUCTION_BOUNDARY["live_order"] == "NO_LIVE_ORDER" else "FAIL"
 
     leaked = []
     for rel in FORBIDDEN_RANKING_FILES:
@@ -191,6 +230,16 @@ def main() -> int:
     hard = [
         "PRODUCTION_RANKING_UNCHANGED",
         "PRODUCTION_BOUNDARY",
+        "PRODUCTION_RESEARCH_READY",
+        "STRATEGY_FROZEN",
+        "RESEARCH_LIVE",
+        "REPLAY_LIVE",
+        "LEARNING_LIVE",
+        "LEARNING_NO_AUTO_WEIGHT",
+        "RESEARCH_NO_ALPHA",
+        "RESEARCH_NO_BUY_SELL",
+        "NO_BROKER",
+        "NO_LIVE_ORDER",
         "LEGACY_ADAPTER",
         "LEGACY_SINGLE_OWNER",
         "EVIDENCE",

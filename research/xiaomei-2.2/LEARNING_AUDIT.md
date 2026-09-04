@@ -1,7 +1,9 @@
 # LEARNING_AUDIT — Xiaomei 2.2
 
 Failure memory and learning patterns are research diagnosis only.
-They do not change production ranking weights.
+Learning is **LIVE**. Learning cannot auto-change production weights
+(`LEARNING_TO_AUTO_WEIGHT_CHANGE` is forbidden). They do not change
+production ranking weights.
 
 ## Failure taxonomy
 

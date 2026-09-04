@@ -54,3 +54,8 @@ def test_research_output_must_pass_boundary_validate():
     payload = validate({"produces_pick": False, "allow_trade": False, "classification": "RESEARCH_ONLY"})
     assert payload["status"] == "RESEARCH_ONLY"
     assert payload["ranking_owner"] == "observable_footprint_v1"
+    assert payload["production_research_status"] == "PRODUCTION_RESEARCH_READY"
+    assert payload["strategy_status"] == "FROZEN"
+    assert payload["research"] == "LIVE"
+    assert payload["replay"] == "LIVE"
+    assert payload["learning"] == "LIVE"

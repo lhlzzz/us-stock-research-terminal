@@ -6,7 +6,7 @@ or paper-pick owner. Production ranking remains
 """
 from __future__ import annotations
 
-from .boundary import PRODUCTION_BOUNDARY, assert_research_only, validate
+from .boundary import PRODUCTION_BOUNDARY, RANKING_KEY, assert_research_only, freeze_snapshot, validate
 from .brains import (
     build_buffett_context,
     build_future_buyer_map,
@@ -48,7 +48,9 @@ __all__ = [
     "Claim",
     "DATA_QUALITY_GATES",
     "PRODUCTION_BOUNDARY",
+    "RANKING_KEY",
     "assert_research_only",
+    "freeze_snapshot",
     "validate",
     "assemble_research_sample",
     "brain_readiness",

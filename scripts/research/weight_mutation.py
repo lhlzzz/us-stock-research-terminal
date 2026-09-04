@@ -9,7 +9,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Callable, Mapping
 
-from .boundary import PRODUCTION_BOUNDARY
+from .boundary import PRODUCTION_BOUNDARY, learning_cannot_auto_weight
 from .stability import (
     CONFIRMATION_PERIODS,
     KEEP_PREVIOUS_WEIGHT,
@@ -48,6 +48,8 @@ def request_weight_change(
 ) -> dict[str, Any]:
     """Validate then optionally persist. Failed guards never write."""
     reasons: list[str] = []
+    if learning_cannot_auto_weight(source):
+        reasons.append("learning_cannot_auto_weight")
     if sample_count < MIN_SAMPLES:
         reasons.append("min_samples")
     if trading_days < MIN_TRADING_DAYS:

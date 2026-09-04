@@ -233,5 +233,7 @@ def test_company_research_keeps_production_boundary():
     assert research["research_conclusion"]["not_buy_sell"] is True
     assert research["supply_chain_portfolio"]["enters_alpha_score"] is False
     assert PRODUCTION_BOUNDARY["live_order"] == "NO_LIVE_ORDER"
+    assert PRODUCTION_BOUNDARY["production_research_status"] == "PRODUCTION_RESEARCH_READY"
+    assert PRODUCTION_BOUNDARY["strategy_status"] == "FROZEN"
     validations = all_brain_validations([])
     assert validations["company_quality"]["status"] == "VALIDATION_GAP"

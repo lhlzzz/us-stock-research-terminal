@@ -253,6 +253,12 @@ def test_historical_analogue():
 
 def test_production_boundary():
     assert PRODUCTION_BOUNDARY["status"] == "RESEARCH_ONLY"
+    assert PRODUCTION_BOUNDARY["production_research_status"] == "PRODUCTION_RESEARCH_READY"
+    assert PRODUCTION_BOUNDARY["strategy"] == "observable_footprint_v1"
+    assert PRODUCTION_BOUNDARY["strategy_status"] == "FROZEN"
+    assert PRODUCTION_BOUNDARY["research"] == "LIVE"
+    assert PRODUCTION_BOUNDARY["replay"] == "LIVE"
+    assert PRODUCTION_BOUNDARY["learning"] == "LIVE"
     assert PRODUCTION_BOUNDARY["paper"] == "PAPER_ONLY"
     assert PRODUCTION_BOUNDARY["broker"] == "NO_BROKER"
     assert PRODUCTION_BOUNDARY["live_order"] == "NO_LIVE_ORDER"
