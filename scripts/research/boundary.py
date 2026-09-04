@@ -29,7 +29,15 @@ def assert_research_only(payload: Mapping[str, Any] | None = None) -> dict[str, 
         action = str(payload.get("classification") or payload.get("action") or "")
         if action in PRODUCTION_BOUNDARY["forbidden_outputs"]:
             raise ValueError(f"research payload cannot emit production action {action}")
+        for key in ("BUY", "SELL", "ORDER", "BROKER", "LIVE_TRADE"):
+            if payload.get(key) not in (None, False, "", "NO", "NO_BROKER", "NO_LIVE_ORDER"):
+                raise ValueError(f"research payload cannot enable {key}")
     return dict(PRODUCTION_BOUNDARY)
+
+
+def validate(payload: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    """Canonical ResearchOutput gate. Flags are not sufficient by themselves."""
+    return assert_research_only(payload)
 
 
 def ranking_unchanged(before: Mapping[str, Any], after: Mapping[str, Any]) -> bool:

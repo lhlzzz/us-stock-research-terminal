@@ -42,6 +42,7 @@ from eastmoney_us import (
 )
 from data_provider import get_provider
 from market_calendar import CALENDAR, add_trading_days
+from research.temporal import historical_claim_eligible
 
 EASTMONEY_HISTORICAL_SOURCE_DISPLAY = "DataProvider historical OHLCV"
 AKSHARE_HISTORICAL_SOURCE_DISPLAY = "DataProvider fallback historical OHLCV"
@@ -179,11 +180,19 @@ def fetch_realtime_quote(symbol: str) -> dict[str, Any] | None:
     quote, provider_name, metadata = get_provider().fetch_realtime_quote(symbol)
     if quote is None:
         return None
+    stamp = CALENDAR.quote_session_stamp()
     return {
         **quote,
         "provider": provider_name,
         "source_status": metadata.get("provider_status", "unavailable"),
         "source_attempts": metadata.get("source_attempts", []),
+        "session_date": metadata.get("session_date") or stamp["session_date"],
+        "quote_session": stamp["quote_session"],
+        "prev_close_session": stamp["prev_close_session"],
+        "bar_type": "SNAPSHOT",
+        "is_complete": False,
+        "time_basis": "latest_price",
+        "prev_close_time_basis": "prev_close",
     }
 
 
@@ -643,6 +652,7 @@ def summarize_last30days_result(
     top_items = scored_items[:3]
     relevant_items = [item for item in scored_items if item["relevance_type"] == "relevant"]
     source_diversity = int(len(nonzero_sources))
+    primary_source = any(bool(item.get("primary_source")) for item in relevant_items)
     raw_top_score = None if not ranked else float(ranked[0].get("final_score") or 0.0)
     freshness_values = [float(item.get("freshness")) for item in ranked if item.get("freshness") is not None]
     if relevant_items:
@@ -685,7 +695,7 @@ def summarize_last30days_result(
         "relevance_score": relevance_score,
         "source_quality": None if not relevant_items else relevant_items[0].get("source_quality"),
         "freshness_max": None if not freshness_values else float(max(freshness_values)),
-        "primary_source": any(bool(item.get("primary_source")) for item in relevant_items),
+        "primary_source": primary_source,
         "corroboration": max(0, source_diversity - 1),
         "rss_fallback": any(str(item.get("source") or "").endswith("_rss") for item in scored_items),
         "evidence_strength": None if not relevant_items else round(
@@ -1569,16 +1579,26 @@ def quote_cross_check(
     historical_close = _safe_float(yahoo_close)
     prev_close = _safe_float(provider_profile.get("prev_close"))
     latest_price = _safe_float(provider_profile.get("latest_price"))
-    hist_session = historical_session or provider_profile.get("historical_session") or provider_profile.get("session_date")
-    q_session = quote_session or provider_profile.get("quote_session") or provider_profile.get("session_date")
+    hist_session = historical_session or provider_profile.get("historical_session")
+    q_session = quote_session
+    quote_basis_name = "prev_close" if prev_close not in (None, 0) else ("latest_price" if latest_price not in (None, 0) else "unavailable")
+    if q_session is None:
+        if quote_basis_name == "prev_close":
+            q_session = provider_profile.get("prev_close_session") or provider_profile.get("quote_session")
+        elif quote_basis_name == "latest_price":
+            q_session = provider_profile.get("quote_session") or provider_profile.get("session_date")
     same_symbol = True
     if quote_symbol and historical_symbol:
         same_symbol = str(quote_symbol).upper() == str(historical_symbol).upper()
-    same_session = compatible_sessions(hist_session, q_session) if hist_session and q_session else hist_session is None and q_session is None
+    same_session = compatible_sessions(hist_session, q_session) if hist_session and q_session else False
     compatible_basis = True
-    if time_basis and quote_time_basis:
-        compatible_basis = str(time_basis) == str(quote_time_basis)
-    if not same_symbol or not same_session or not compatible_basis:
+    hist_basis = time_basis or "close"
+    quote_basis_label = quote_time_basis or quote_basis_name
+    if hist_basis and quote_basis_label not in (None, "", "unavailable"):
+        compatible_basis = hist_basis == quote_basis_label or (
+            hist_basis in {"close", "adj_close"} and quote_basis_label == "prev_close"
+        )
+    if not same_symbol or not same_session or not compatible_basis or not hist_session or not q_session:
         return {
             "kline_source": kline_source or EASTMONEY_HISTORICAL_SOURCE_DISPLAY,
             "quote_source": QUOTE_SOURCE_DISPLAY,
@@ -1877,7 +1897,20 @@ def build_candidate_record(
 
     research = run_full_research_panel(symbol, row, narrative_summary, business_summary, company_profile)
     provider_profile = company_profile.get("provider_profile", {}) or {}
-    cross_check = quote_cross_check(row.get("close"), provider_profile, kline_source=kline_source)
+    historical_session = str(pd.Timestamp(as_of_date).date())
+    quote_basis_hint = "prev_close" if provider_profile.get("prev_close") not in (None, 0, "") else "latest_price"
+    quote_session = provider_profile.get("prev_close_session") if quote_basis_hint == "prev_close" else provider_profile.get("quote_session")
+    cross_check = quote_cross_check(
+        row.get("close"),
+        provider_profile,
+        kline_source=kline_source,
+        historical_session=historical_session,
+        quote_session=quote_session,
+        historical_symbol=symbol,
+        quote_symbol=provider_profile.get("symbol") or symbol,
+        time_basis="close",
+        quote_time_basis=quote_basis_hint,
+    )
     eastmoney_detail_urls = candidate_enhanced_urls(symbol)
     information_coverage = information_coverage_audit(symbol)
 
@@ -1892,7 +1925,15 @@ def build_candidate_record(
     weak_rss = rss_only and source_count <= 1 and not primary_source and corroboration <= 0
     research_evidence_pass = has_relevant_evidence and strongest_relevance >= 0.7 and not weak_rss
     data_complete = data_source_ok
-    temporal_ok = True
+    temporal_ok = bool(historical_claim_eligible(
+        {
+            "published_at": narrative_summary.get("range_to") or business_summary.get("range_to") or historical_session,
+            "effective_date": historical_session,
+            "retrieved_at": provider_profile.get("as_of"),
+            "as_of": historical_session,
+        },
+        as_of=historical_session,
+    ).get("eligible", False))
     risk_recommendation = research["risk_checklist"].get("recommendation")
     risk_evidence_pass = risk_recommendation not in {"NEED_MORE_EVIDENCE", "DO_NOT_ADVANCE"}
     gate_pass = bool(

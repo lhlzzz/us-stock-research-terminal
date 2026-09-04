@@ -1118,14 +1118,22 @@ class DataProvider:
 
                 if quote and quote.get("latest_price", 0) > 0:
                     self._save_cache(symbol, "quote", quote, "realtime")
+                    stamp = CALENDAR.quote_session_stamp()
                     metadata = {
                         "provider_status": "available",
                         "provider_latency_ms": latency_ms,
+                        "data_as_of": stamp["session_date"],
+                        "source_timestamp": datetime.now().isoformat(),
+                        "session_date": stamp["session_date"],
                         "source_attempts": attempts + [{
                             "provider": provider.name,
                             "status": "available",
                             "latency_ms": latency_ms,
+                            "data_as_of": stamp["session_date"],
+                            "timestamp": datetime.now().isoformat(),
                         }],
+                        "chosen_provider": provider.name,
+                        "fallback_chain": [item.get("provider") for item in attempts] + [provider.name],
                     }
                     if provider.name == "eastmoney_direct":
                         self._api_status["eastmoney_quote"] = "available"

@@ -204,6 +204,25 @@ class USMarketCalendar:
             return day
         return self.prev_trading_day(day)
 
+    def quote_session_stamp(self, now: datetime | None = None) -> dict[str, Any]:
+        """Session labels for a realtime quote. latest_price belongs to quote_session."""
+        current = (now or datetime.now(ET)).astimezone(ET)
+        day = current.date()
+        if self.is_trading_day(day):
+            session = day
+        else:
+            session = self.previous_completed_session(current)
+        completed = self.session_completed(session, current) if self.is_trading_day(session) else True
+        return {
+            "session_date": session.isoformat(),
+            "quote_session": session.isoformat(),
+            "prev_close_session": self.prev_trading_day(session).isoformat(),
+            "session_status": self.session_kind(current),
+            "session_completed": completed,
+            "bar_type": "DAILY_COMPLETE" if completed else "SNAPSHOT",
+            "is_complete": completed,
+        }
+
     def pipeline_session(self, now: datetime | None = None) -> dict[str, Any]:
         current = (now or datetime.now(BEIJING_TZ)).astimezone(BEIJING_TZ)
         target = self.previous_completed_session(current)

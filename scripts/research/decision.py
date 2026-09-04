@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 from capital.case_retrieval import retrieve_similar_cases
-from .boundary import PRODUCTION_BOUNDARY
+from .boundary import PRODUCTION_BOUNDARY, validate
 from .evidence import highest_evidence_quality
 from .metric_semantics import capital_stance, market_stance, quality_stance, research_median, risk_stance
 from .brains import (
@@ -330,9 +330,9 @@ def build_company_research(
     options = options_intelligence(facts)
     short = short_intelligence(facts)
     analyst = analyst_revision(facts)
-    fundamentals = company_fundamentals(facts)
-    filings = sec_filing(facts.get("sec_filing") if isinstance(facts.get("sec_filing"), Mapping) else facts)
-    earnings = earnings_intelligence(facts)
+    fundamentals = company_fundamentals(facts, symbol=symbol, as_of=str(as_of_date or facts.get("as_of_date") or "") or None)
+    filings = sec_filing(facts.get("sec_filing") if isinstance(facts.get("sec_filing"), Mapping) else facts, symbol=symbol, as_of=str(as_of_date or facts.get("as_of_date") or "") or None)
+    earnings = earnings_intelligence(facts, symbol=symbol, as_of=str(as_of_date or facts.get("as_of_date") or "") or None)
     sbc = sbc_dilution(facts)
     management = management_allocation(facts)
     graph = persist_industry_graph(industry_graph, entities=facts.get("entities"), relations=facts.get("relations"), as_of_date=str(as_of_date or ""))
@@ -510,6 +510,11 @@ def build_company_research(
         "evidence_refs": list(industry.get("evidence_refs") or []),
         "production_boundary": PRODUCTION_BOUNDARY,
         "market_alpha_from_portfolio": 0,
+        "boundary": validate({
+            "produces_pick": False,
+            "allow_trade": False,
+            "classification": PRODUCTION_BOUNDARY["status"],
+        }),
     }
 
 

@@ -1,16 +1,18 @@
 # RULES
 
 - US ticker，不是 A 股六位代码。
-- 美股历史 kline 来源：akshare（底层调用东财数据接口）；东财 push2delay kline 对美股返回 0 行，不可用。
-- 美股实时行情来源：EastMoney US realtime/delayed quote（`scripts/eastmoney_us.py`）。
-- EastMoney provider 负责 realtime OHLCV / Close / detail；akshare 负责 historical daily kline；当前 `Adj Close` 仅镜像 `Close`。
-- `last30days` 只做 Reddit / HN / Polymarket / GitHub / YouTube 等社交 / 公开资料研究。
+- Canonical market-data owner：`scripts/data_provider.py`。禁止 research_panel / 回填脚本直接 `requests` / `yfinance` / `akshare`。
+- 美股实时行情：EastMoney US realtime/delayed quote，仅用于 display / cross-check / intraday。不得伪装成 `DAILY_COMPLETE` bar。
+- 美股历史 kline：DataProvider fallback 链（Yahoo → EastMoney → Browser → Akshare），每次 attempt 必须可审计。
+- `last30days` 只做社交 / 公开资料研究。Yahoo/Google RSS 只能做 candidate discovery / supporting evidence，不能因为一条 RSS 就 paper-review gate pass。
 - `last30days` 不提供正式行情价格，也不作为行情源。
-- 不默认接其他行情源；禁止回退到 legacy market-data source。
+- 时间语义 owner：`scripts/research/temporal.py` + `scripts/market_calendar.py` `USMarketCalendar`。
+- Monday 05:00 BJT → 最近一个已完成的 US session（通常是 Friday），禁止 weekend skip。
 - **只管美股**；虚拟币 / 加密归 `xiaobi`，不在本 workspace 扩展 crypto 主链路。
-- close-to-close replay。
+- close-to-close replay。价格口径必须全链路一致（RAW 或 ADJUSTED）。
 - 每个 replay_date 只选 Top 1。
-- no broker / no order / no ledger / no paper-trade / no live-trade。
+- RESEARCH_ONLY / PAPER_ONLY / NO_BROKER / NO_LIVE_ORDER / NO_PRODUCTION_PICK / NO_PRODUCTION_WEIGHT_CHANGE。
+- 生产 ranking owner：`observable_footprint_v1`，排序 `(ticket_score, market_score, volume_confirmation_ratio)`。
 - 不接 broker feed / paid market data。
 - 不接交易所 API / 钱包 / order endpoint。
 - 不复用 A 股东财、龙虎榜、涨停、一手、6000 元逻辑。

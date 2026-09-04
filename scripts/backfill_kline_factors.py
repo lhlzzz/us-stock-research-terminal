@@ -20,6 +20,7 @@ from candidate_factors import (
     compute_atr, compute_stochastic, compute_williams_r,
     compute_obv, compute_mfi, compute_vwap_ratio,
 )
+from data_provider import get_provider
 
 
 def safe(val):
@@ -43,16 +44,20 @@ def fetch_and_backfill():
         ).fetchall()]
         print(f"Ticket dates: {dates}")
 
-        import akshare as ak
-
         stats = {"symbols": 0, "factor_rows": 0, "errors": 0}
+        provider = get_provider()
+        lookback_start = (date.today() - timedelta(days=400)).strftime("%Y-%m-%d")
+        lookback_end = date.today().strftime("%Y-%m-%d")
 
         for sym in symbols:
             print(f"  {sym}...", end=" ", flush=True)
             try:
-                # Fetch kline via akshare
-                df = ak.stock_us_daily(symbol=sym, adjust="qfq")
-                if df is None or df.empty:
+                rows, _src, _meta = provider.fetch_klines(sym, lookback_start, lookback_end)
+                if not rows:
+                    print("no data")
+                    continue
+                df = pd.DataFrame(rows)
+                if df.empty:
                     print("no data")
                     continue
 
@@ -72,7 +77,7 @@ def fetch_and_backfill():
                     try:
                         session.execute(text("""
                             INSERT INTO daily_klines (symbol, trade_date, open, high, low, close, volume, source)
-                            VALUES (:sym, :d, :o, :h, :l, :c, :v, 'akshare')
+                            VALUES (:sym, :d, :o, :h, :l, :c, :v, 'data_provider')
                             ON CONFLICT (symbol, trade_date) DO NOTHING
                         """), {
                             "sym": sym, "d": idx.date(),

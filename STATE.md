@@ -1,5 +1,33 @@
 # STATE
 
+## Xiaomei 2.1.1 — 2026-09-04
+
+Completion: **XIAOMEI 2.1.1 HARDENED**.
+
+Research OS canonical owner is `scripts/research/`. Legacy
+`research_panel.py` is a compatibility adapter only. Production ranking
+owner remains `observable_footprint_v1` with sort
+`(ticket_score, market_score, volume_confirmation_ratio)`. Boundary
+unchanged: RESEARCH_ONLY / PAPER_ONLY / NO_BROKER / NO_LIVE_ORDER /
+NO_PRODUCTION_PICK / NO_PRODUCTION_WEIGHT_CHANGE.
+
+Verified this session:
+
+- `python -m compileall -q .` pass
+- `PYTHONPATH=. pytest -q tests` = 218 passed
+- NVDA dry-run `--skip-last30days --top-k 1` = RESEARCH_ONLY SUCCESS,
+  `as_of_date`/`target_session` = `2026-09-03`,
+  classification = MARKET_WATCHLIST_NEEDS_EVIDENCE, paper_review_count = 0
+
+Honest DATA_GAP (do not convert to READY): SEC ingestion, earnings
+ingestion, estimate revision, industry graph, chokepoint, true historical
+universe snapshots, persistent failure memory.
+
+Next: Xiaomei 2.2 real SEC + earnings + industry-graph ingestion. Do not
+add scoring modules.
+
+---
+
 ## 全量对齐完成 — 2026-07-24
 
 ### 新增模块（对齐 xiaogu 架构）

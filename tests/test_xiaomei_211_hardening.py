@@ -135,7 +135,18 @@ def test_universe_as_of_survivorship():
 
 
 def test_quote_cross_check_same_session_only():
-    mismatch = quote_cross_check(100.0, {"prev_close": 102.0, "latest_price": 103.0})
+    missing_session = quote_cross_check(100.0, {"prev_close": 102.0, "latest_price": 103.0})
+    assert missing_session["data_source_mismatch_reason"] == "CROSS_CHECK_NOT_COMPARABLE"
+    mismatch = quote_cross_check(
+        100.0,
+        {"prev_close": 102.0, "latest_price": 103.0, "prev_close_session": "2026-09-03"},
+        historical_session="2026-09-03",
+        quote_session="2026-09-03",
+        historical_symbol="NVDA",
+        quote_symbol="NVDA",
+        time_basis="close",
+        quote_time_basis="prev_close",
+    )
     assert mismatch["quote_cross_check_basis"] == "prev_close"
     assert round(mismatch["quote_cross_check_gap_pct"], 4) == 0.02
     incomparable = quote_cross_check(
@@ -200,5 +211,6 @@ def test_pipeline_lock_exists():
     text = script.read_text()
     assert "daily-pipeline.lock" in text
     assert "acquire_lock" in text
+    assert "skip_if_completed" in text
     assert "step_status" in text
     assert "artifact_hash" in text

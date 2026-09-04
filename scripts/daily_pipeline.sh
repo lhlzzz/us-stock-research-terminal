@@ -71,6 +71,16 @@ step_state() {
         "$RUN_ID" "$step_id" "$status" "$now" "$artifact_hash" > "$file"
 }
 
+skip_if_completed() {
+    local step_id="$1"
+    local file="$STATE_DIR/${step_id}.json"
+    if [ -f "$file" ] && grep -q '"step_status":"completed"' "$file"; then
+        log "=== $step_id already completed, skipping (idempotent rerun) ==="
+        return 0
+    fi
+    return 1
+}
+
 check_services() {
     log "Checking infrastructure..."
     if ! pg_isready -h localhost -p 5432 >/dev/null 2>&1; then
@@ -93,6 +103,7 @@ check_timezone() {
 }
 
 run_backfill() {
+    if skip_if_completed "1_backfill"; then return; fi
     log "=== Step 1: Backfill forward tracking ==="
     step_state "1_backfill" started
     cd "$PROJECT_DIR"
@@ -102,6 +113,7 @@ run_backfill() {
 }
 
 run_scoreboard() {
+    if skip_if_completed "2_scoreboard"; then return; fi
     log "=== Step 2: Lifecycle scoreboard ==="
     step_state "2_scoreboard" started
     cd "$PROJECT_DIR"
@@ -111,6 +123,7 @@ run_scoreboard() {
 }
 
 run_tickets() {
+    if skip_if_completed "3_tickets"; then return; fi
     log "=== Step 3: Generate tickets ==="
     step_state "3_tickets" started
     cd "$PROJECT_DIR"
@@ -120,37 +133,52 @@ run_tickets() {
 }
 
 run_factor_optimization() {
+    if skip_if_completed "4_factor_optimization"; then return; fi
     log "=== Step 4: Factor weight optimization ==="
+    step_state "4_factor_optimization" started
     cd "$PROJECT_DIR"
     python3 scripts/weight_optimizer.py 2>&1 | tee -a "$LOG_FILE"
+    step_state "4_factor_optimization" completed
     log "Factor optimization complete"
 }
 
 run_signal_effectiveness() {
+    if skip_if_completed "5_signal_effectiveness"; then return; fi
     log "=== Step 5: Signal effectiveness analysis ==="
+    step_state "5_signal_effectiveness" started
     cd "$PROJECT_DIR"
     python3 scripts/signal_effectiveness.py --db 2>&1 | tee -a "$LOG_FILE"
+    step_state "5_signal_effectiveness" completed
     log "Signal effectiveness complete"
 }
 
 run_knowledge_export() {
+    if skip_if_completed "6_knowledge_export"; then return; fi
     log "=== Step 6: Knowledge asset export ==="
+    step_state "6_knowledge_export" started
     cd "$PROJECT_DIR"
     python3 scripts/knowledge_asset_export.py --date "$DATE" 2>&1 | tee -a "$LOG_FILE"
+    step_state "6_knowledge_export" completed
     log "Knowledge export complete"
 }
 
 run_obsidian_sync() {
+    if skip_if_completed "7_obsidian_sync"; then return; fi
     log "=== Step 7: Obsidian sync ==="
+    step_state "7_obsidian_sync" started
     cd "$PROJECT_DIR"
     python3 scripts/obsidian/sync_obsidian.py 2>&1 | tee -a "$LOG_FILE"
+    step_state "7_obsidian_sync" completed
     log "Obsidian sync complete"
 }
 
 run_vector_update() {
+    if skip_if_completed "8_vector_update"; then return; fi
     log "=== Step 8: Vector embedding update ==="
+    step_state "8_vector_update" started
     cd "$PROJECT_DIR"
     python3 scripts/obsidian/generate_embeddings.py 2>&1 | tee -a "$LOG_FILE"
+    step_state "8_vector_update" completed
     log "Vector update complete"
 }
 

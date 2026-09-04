@@ -25,6 +25,7 @@ from candidate_factors import (
     compute_atr, compute_stochastic, compute_williams_r,
     compute_obv, compute_mfi, compute_vwap_ratio,
 )
+from data_provider import get_provider
 
 
 def get_kline_data(session, symbol: str, start_date: str, end_date: str) -> pd.DataFrame | None:
@@ -153,7 +154,6 @@ def compute_all_factors(df: pd.DataFrame) -> dict | None:
 
 def backfill_candidate_factors(
     lookback_days: int = 90,
-    use_akshare: bool = True,
     batch_size: int = 20,
 ) -> dict:
     """Backfill candidate factors for all symbols with forward_tracking records."""
@@ -180,32 +180,26 @@ def backfill_candidate_factors(
         end_date = date.today()
         start_date = end_date - timedelta(days=lookback_days + 60)
 
-        # Fetch kline data using akshare if available
         kline_cache: dict[str, pd.DataFrame] = {}
-        if use_akshare:
+        provider = get_provider()
+        print(f"Fetching kline data via DataProvider for {len(symbols)} symbols...")
+        for i, sym in enumerate(symbols):
+            if i % 50 == 0:
+                print(f"  Fetching {i}/{len(symbols)}...")
             try:
-                import akshare as ak
-                print(f"Fetching kline data via akshare for {len(symbols)} symbols...")
-                for i, sym in enumerate(symbols):
-                    if i % 50 == 0:
-                        print(f"  Fetching {i}/{len(symbols)}...")
-                    try:
-                        df = ak.stock_us_daily(symbol=sym, adjust="qfq")
-                        if df is not None and not df.empty:
-                            df = df.rename(columns={"date": "date", "open": "open", "high": "high",
-                                                     "low": "low", "close": "close", "volume": "volume"})
-                            df["date"] = pd.to_datetime(df["date"])
-                            df = df.set_index("date").sort_index()
-                            df = df.loc[str(start_date):str(end_date)]
-                            if len(df) >= 20:
-                                kline_cache[sym] = df
-                        time.sleep(0.1)  # Rate limit
-                    except Exception:
-                        continue
-                print(f"  Cached kline data for {len(kline_cache)} symbols")
-            except ImportError:
-                print("  akshare not available, falling back to DB")
-                use_akshare = False
+                rows, _src, _meta = provider.fetch_klines(sym, str(start_date), str(end_date))
+                if not rows:
+                    continue
+                df = pd.DataFrame(rows)
+                if "date" not in df.columns:
+                    continue
+                df["date"] = pd.to_datetime(df["date"])
+                df = df.set_index("date").sort_index()
+                if len(df) >= 20:
+                    kline_cache[sym] = df
+            except Exception:
+                continue
+        print(f"  Cached kline data for {len(kline_cache)} symbols")
 
         # Process each symbol + date combination
         for sym in symbols:
@@ -321,11 +315,9 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Backfill candidate factors")
     parser.add_argument("--lookback", type=int, default=90, help="Lookback days for kline data")
-    parser.add_argument("--no-akshare", action="store_true", help="Don't use akshare, only DB data")
     args = parser.parse_args()
 
     result = backfill_candidate_factors(
         lookback_days=args.lookback,
-        use_akshare=not args.no_akshare,
     )
     print(f"\nResult: {result}")

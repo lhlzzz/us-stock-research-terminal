@@ -488,7 +488,6 @@ def build_replay_hypothesis(
         "take_profit": take_profit,
         "holding_period": holding_period,
         "heuristic_confidence": round(heuristic_confidence, 2),
-        "confidence": round(heuristic_confidence, 2),
         "model_probability": None,
         "historically_calibrated_probability": None,
         "status": "UNCALIBRATED_HYPOTHESIS",

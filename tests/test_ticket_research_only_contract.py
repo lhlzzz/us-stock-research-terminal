@@ -84,7 +84,16 @@ def _candidate_row() -> dict:
 
 
 def test_quote_cross_check_flags_large_source_mismatch():
-    result = quote_cross_check(100.0, {"prev_close": 102.0, "latest_price": 103.0})
+    result = quote_cross_check(
+        100.0,
+        {"prev_close": 102.0, "latest_price": 103.0, "prev_close_session": "2026-09-03"},
+        historical_session="2026-09-03",
+        quote_session="2026-09-03",
+        historical_symbol="NVDA",
+        quote_symbol="NVDA",
+        time_basis="close",
+        quote_time_basis="prev_close",
+    )
 
     assert result["quote_cross_check_basis"] == "prev_close"
     assert round(result["quote_cross_check_gap_pct"], 4) == 0.02

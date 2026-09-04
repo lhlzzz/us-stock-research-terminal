@@ -43,6 +43,16 @@ def company_fundamentals(
     facts = dict(facts or {})
     ticker = str(symbol or facts.get("symbol") or facts.get("ticker") or "").upper() or None
     as_of = as_of or _as_of(facts)
+    if not ticker:
+        return {
+            **provider_record(symbol="", as_of=as_of, source="company_fundamentals", status="ERROR", facts={}),
+            "layer": "company_fundamentals",
+            "fields": {},
+            "data_gaps": ["symbol", *FUNDAMENTAL_FIELDS],
+            "coverage": 0.0,
+            "produces_pick": False,
+            "reason": "symbol required",
+        }
     if provider is not None and ticker:
         fetched = provider.get(ticker, as_of=as_of)
         if fetched.get("status") == DATA_GAP:
@@ -79,7 +89,7 @@ def company_fundamentals(
         "fields": fields,
         "data_gaps": gaps,
         "coverage": coverage,
-        "status": "DATA_GAP" if gaps else "READY",
+        "status": status,
         "produces_pick": False,
         "production_boundary": PRODUCTION_BOUNDARY,
     }

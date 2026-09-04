@@ -175,8 +175,22 @@ production signals.
 
 ## Q. Test Results
 
-See test run in this task. Required 2.1.1 cases live in
-`tests/test_xiaomei_211_hardening.py`:
+Verified 2026-09-04 this session:
+
+- `python -m compileall -q .` pass
+- `PYTHONPATH=. pytest -q tests` = **218 passed**
+- NVDA dry-run `--universe-source explicit --universe NVDA --skip-last30days --top-k 1 --candidate-pool-size 1`
+  = RESEARCH_ONLY SUCCESS, `as_of_date`/`target_session` `2026-09-03`,
+  `final_classification` MARKET_WATCHLIST_NEEDS_EVIDENCE, paper_review_count=0
+
+Required 2.1.1 cases live in `tests/test_xiaomei_211_hardening.py` plus:
+
+`test_legacy_compatibility.py`, `test_market_calendar.py`,
+`test_temporal_integrity.py`, `test_provider_contracts.py`,
+`test_universe_survivorship.py`, `test_pipeline_idempotency.py`,
+`test_research_gate.py`, `test_research_integration.py`.
+
+Covered:
 
 - adapter / DETERMINISTIC_PANEL_RULE / UNCALIBRATED_HYPOTHESIS
 - missing risk UNKNOWN not GREEN
@@ -190,8 +204,9 @@ See test run in this task. Required 2.1.1 cases live in
 - already_owned ≠ overweight
 - composite coverage
 - independent outcomes per horizon
-- pipeline lock
+- pipeline lock + skip_if_completed
 - forward dates use USMarketCalendar
+- RSS cannot auto-pass paper-review gate
 
 ## R. Known Data Gaps
 

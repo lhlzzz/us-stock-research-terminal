@@ -17,8 +17,10 @@
 ## Canonical entry
 
 - Scripts:
-  - `workspaces/xiaomei/scripts/historical_replay_baseline.py`
-  - `workspaces/xiaomei/scripts/us_profit_ticket_pipeline.py`
+  - `scripts/research/` (canonical Research OS)
+  - `scripts/us_profit_ticket_pipeline.py` (production ranking + paper-review gate)
+  - `scripts/historical_replay_baseline.py`
+  - `scripts/market_calendar.py` (USMarketCalendar)
 - Canonical probe command:
   - `/root/hermes/company-ai-system/tools/external/bin/quant-python workspaces/xiaomei/scripts/us_profit_ticket_pipeline.py --help`
 
@@ -41,19 +43,14 @@
 3. Pull social/public context from last30days if available
 4. Build catalyst map
 5. Build supply-chain/theme map (Serenity Skill)
-6. Run research panel (TradingAgents):
-   - fundamental analyst (EastMoney detail fields + explicit provider data gaps)
-   - news analyst (last30days narrative)
-   - sentiment analyst (last30days business)
-   - technical analyst (momentum/RS/volume)
-   - bull case
-   - bear case
-   - risk manager
-7. Buffett-style quality check (EastMoney available fields; unavailable financial statement fields remain explicit data gaps)
-8. UZI-style trap/risk checklist (short interest, dilution, debt, price patterns, news flags)
-9. QuantDinger-style replay hypothesis (entry/exit/SL/TP/holding period)
-10. Build forward tracking sheet (1d / 3d / 5d / 10d)
-11. Final research-only classification
+6. Run Research OS (`scripts/research/`). Legacy `research_panel.py` is a compatibility adapter only.
+   Panel verdicts are `method = DETERMINISTIC_PANEL_RULE`, not a 7-agent AI vote.
+   Missing risk is UNKNOWN/GRAY, never GREEN. Insufficient data is NEED_MORE_EVIDENCE, not PROCEED.
+7. Buffett-style quality check via `ResearchMetricRegistry` (EastMoney available fields; unavailable statements stay DATA_GAP)
+8. UZI-style trap/risk checklist (short interest, dilution, debt stay UNKNOWN when missing)
+9. Replay hypothesis is `UNCALIBRATED_HYPOTHESIS` with `heuristic_confidence`, not a calibrated prediction
+10. Build forward tracking sheet (T+1 / T+3 / T+5 / T+10, independent completeness)
+11. Final research-only classification. Production ranking owner remains `observable_footprint_v1`.
 
 ## Profit-Ticket Pipeline
 1. Build current-listed Nasdaq100/S&P500 union snapshot.

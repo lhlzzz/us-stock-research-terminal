@@ -78,7 +78,7 @@ def test_four_brain_schemas_are_independent():
 
 
 def test_fundamentals_sec_earnings_sbc():
-    fundamentals = company_fundamentals({"revenue": 100, "as_of_date": "2026-08-27"})
+    fundamentals = company_fundamentals({"revenue": 100, "as_of_date": "2026-08-27"}, symbol="NVDA", as_of="2026-08-27")
     assert "free_cash_flow" in fundamentals["data_gaps"]
     assert fundamentals["status"] == "DATA_GAP"
     filing = sec_filing({"filing_type": "10-K", "ticker": "NVDA"})

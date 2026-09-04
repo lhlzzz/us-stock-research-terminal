@@ -19,13 +19,20 @@ Completion: **XIAOMEI 2.1.1 HARDENED**.
   `symbol` + `as_of`. MetricSpec has `value_encoding`. Composite exposes
   coverage/readiness. Portfolio already_owned ≠ overweight. Universe is
   temporal. Outcomes are per-horizon T+1/3/5/10. Tickets upsert. Daily pipeline
-  has a single-flight lock.
+  has a single-flight lock + `skip_if_completed`.
 - Inventory: `research/xiaomei-2.1.1/RESEARCH_ENGINE_INVENTORY.md`
 - Audit: `research/xiaomei-2.1.1/SYSTEM_AUDIT.md`
-- Tests: `PYTHONPATH=. pytest -q tests` = **196 passed**. Dry-run NVDA
-  `--skip-last30days --top-k 1` = RESEARCH_ONLY SUCCESS, as_of/target_session
-  `2026-09-03`, classification MARKET_WATCHLIST_NEEDS_EVIDENCE (no invented
-  catalyst). Production ranking owner unchanged: `observable_footprint_v1`.
+- Tests: `python -m compileall -q .` pass; `PYTHONPATH=. pytest -q tests` =
+  **218 passed**. Named 2.1.1 files:
+  `test_xiaomei_211_hardening.py`, `test_legacy_compatibility.py`,
+  `test_market_calendar.py`, `test_temporal_integrity.py`,
+  `test_provider_contracts.py`, `test_universe_survivorship.py`,
+  `test_pipeline_idempotency.py`, `test_research_gate.py`,
+  `test_research_integration.py`.
+- Dry-run NVDA `--universe-source explicit --universe NVDA --skip-last30days
+  --top-k 1` = RESEARCH_ONLY SUCCESS, `as_of_date`/`target_session`
+  `2026-09-03`, classification MARKET_WATCHLIST_NEEDS_EVIDENCE, paper_review=0.
+  Production ranking owner unchanged: `observable_footprint_v1`.
 - Remaining honest DATA_GAP (do not fake READY): SEC, earnings, estimate
   revision, industry graph, chokepoint, true historical universe snapshots,
   persistent failure memory.

@@ -29,69 +29,28 @@ def normalize_us_symbol(symbol: str) -> str:
     return symbol.replace(".", "-")
 
 
-def fetch_close_price_akshare(symbol: str, target_date: date) -> float | None:
-    """Fetch closing price using akshare stock_us_daily."""
-    try:
-        import akshare as ak
-        ticker = normalize_us_symbol(symbol)
-        df = ak.stock_us_daily(symbol=ticker, adjust="qfq")
-        if df is None or df.empty:
-            return None
-
-        df["date"] = pd.to_datetime(df["date"])
-        df = df.set_index("date").sort_index()
-        target_dt = pd.Timestamp(target_date)
-
-        if target_dt in df.index:
-            return float(df.loc[target_dt, "close"])
-
-        closest_idx = df.index.get_indexer([target_dt], method="nearest")[0]
-        if closest_idx >= 0 and closest_idx < len(df):
-            return float(df["close"].iloc[closest_idx])
-        return None
-    except Exception as e:
-        print(f"  akshare error for {symbol}: {e}")
-        return None
-
-
 def fetch_close_price(symbol: str, target_date: date) -> float | None:
-    """Fetch closing price using DataProvider with fallback chain.
+    """Fetch a completed daily close through DataProvider only.
 
-    For today's date, always prefer realtime quote.
-    For historical dates, use klines from provider.
+    Realtime quotes never substitute for a historical daily bar.
     """
     provider = get_provider()
 
-    # If target_date is not a trading day, use the latest trading day before it
     if not is_trading_day(target_date):
         target_date = latest_us_trading_day(target_date)
 
-    today = date.today()
-
-    # For today, use realtime quote
-    if target_date == today:
-        quote, _, _ = provider.fetch_realtime_quote(symbol)
-        if quote and quote.get("latest_price", 0) > 0:
-            return float(quote["latest_price"])
-
-    # For historical dates, use klines
     from datetime import timedelta
     beg = (target_date - timedelta(days=30)).strftime("%Y-%m-%d")
     end = target_date.strftime("%Y-%m-%d")
-    rows, src, _ = provider.fetch_klines(symbol, beg, end)
+    rows, _src, _meta = provider.fetch_klines(symbol, beg, end)
     if rows:
-        # Find exact date or closest
+        target = target_date.strftime("%Y-%m-%d")
         for row in reversed(rows):
-            if row["date"] <= target_date.strftime("%Y-%m-%d"):
+            if row["date"] == target:
                 return float(row["close"])
-        # If no earlier date, use first available
-        return float(rows[0]["close"])
-
-    # Fallback to realtime quote
-    quote, _, _ = provider.fetch_realtime_quote(symbol)
-    if quote and quote.get("latest_price", 0) > 0:
-        return float(quote["latest_price"])
-
+        for row in reversed(rows):
+            if row["date"] <= target:
+                return float(row["close"])
     return None
 
 
@@ -643,11 +602,14 @@ def _analyze_loss_context(
     loss_reason: str,
 ) -> str:
     try:
-        import akshare as ak
         ticker = normalize_us_symbol(symbol)
-        df = ak.stock_us_daily(symbol=ticker, adjust="qfq")
-        if df is None or df.empty:
+        provider = get_provider()
+        beg = (as_of_date - timedelta(days=40)).strftime("%Y-%m-%d")
+        end = due_date.strftime("%Y-%m-%d")
+        rows, _src, _meta = provider.fetch_klines(ticker, beg, end)
+        if not rows:
             return loss_reason
+        df = pd.DataFrame(rows)
         df["date"] = pd.to_datetime(df["date"]).dt.normalize()
         df = df.set_index("date").sort_index()
 
@@ -675,8 +637,9 @@ def _analyze_loss_context(
                 gap_notes.append(f"vol spike {cur_vol/avg_vol:.1f}x")
 
         try:
-            spy_df = ak.stock_us_daily(symbol="SPY", adjust="qfq")
-            if spy_df is not None and not spy_df.empty:
+            spy_rows, _spy_src, _spy_meta = provider.fetch_klines("SPY", beg, end)
+            if spy_rows:
+                spy_df = pd.DataFrame(spy_rows)
                 spy_df["date"] = pd.to_datetime(spy_df["date"]).dt.normalize()
                 spy_df = spy_df.set_index("date").sort_index()
                 as_of_ts = pd.Timestamp(as_of_date)
@@ -766,16 +729,15 @@ def _load_us_trading_days() -> set[pd.Timestamp]:
     global _US_TRADING_DAY_CACHE
     if _US_TRADING_DAY_CACHE is not None:
         return _US_TRADING_DAY_CACHE
-    try:
-        import akshare as ak
-        df = ak.stock_us_daily(symbol="SPY", adjust="qfq")
-        if df is not None and not df.empty:
-            df["date"] = pd.to_datetime(df["date"])
-            _US_TRADING_DAY_CACHE = set(df["date"].dt.normalize())
-            return _US_TRADING_DAY_CACHE
-    except Exception:
-        pass
-    _US_TRADING_DAY_CACHE = set(pd.bdate_range(end=pd.Timestamp(date.today()), periods=90).normalize())
+    end = date.today()
+    start = end - timedelta(days=180)
+    days = []
+    cursor = start
+    while cursor <= end:
+        if is_trading_day(cursor):
+            days.append(pd.Timestamp(cursor).normalize())
+        cursor += timedelta(days=1)
+    _US_TRADING_DAY_CACHE = set(days)
     return _US_TRADING_DAY_CACHE
 
 
