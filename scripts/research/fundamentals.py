@@ -5,7 +5,7 @@ from typing import Any, Mapping
 
 from .boundary import PRODUCTION_BOUNDARY
 from .evidence import claim, observed_number, unknown
-from .providers import DATA_GAP
+from .providers import DATA_GAP, provider_record
 
 FUNDAMENTAL_FIELDS = (
     "revenue", "revenue_growth", "gross_profit", "gross_margin",
@@ -33,13 +33,32 @@ def _as_of(facts: Mapping[str, Any]) -> str | None:
     return str(facts.get("as_of_date") or facts.get("as_of") or "") or None
 
 
-def company_fundamentals(facts: Mapping[str, Any] | None = None, provider=None) -> dict[str, Any]:
+def company_fundamentals(
+    facts: Mapping[str, Any] | None = None,
+    provider=None,
+    *,
+    symbol: str | None = None,
+    as_of: str | None = None,
+) -> dict[str, Any]:
     facts = dict(facts or {})
-    as_of = _as_of(facts)
-    if not facts and provider is not None:
-        fetched = provider.get(str(facts.get("symbol") or ""), as_of=as_of)
+    ticker = str(symbol or facts.get("symbol") or facts.get("ticker") or "").upper() or None
+    as_of = as_of or _as_of(facts)
+    if provider is not None and ticker:
+        fetched = provider.get(ticker, as_of=as_of)
         if fetched.get("status") == DATA_GAP:
-            return {**fetched, "layer": "company_fundamentals", "fields": {}, "data_gaps": list(FUNDAMENTAL_FIELDS), "coverage": 0.0, "produces_pick": False}
+            return {
+                **fetched,
+                **provider_record(symbol=ticker, as_of=as_of, source="company_fundamentals", status=DATA_GAP, facts={}),
+                "layer": "company_fundamentals",
+                "fields": {},
+                "data_gaps": list(FUNDAMENTAL_FIELDS),
+                "coverage": 0.0,
+                "produces_pick": False,
+            }
+        if isinstance(fetched.get("facts"), Mapping):
+            facts = {**fetched["facts"], **facts}
+        elif fetched.get("status") not in {DATA_GAP, "ERROR", None}:
+            facts = {**fetched, **facts}
     fields = {}
     gaps = []
     for name in FUNDAMENTAL_FIELDS:
@@ -52,7 +71,9 @@ def company_fundamentals(facts: Mapping[str, Any] | None = None, provider=None) 
         else:
             fields[name] = claim(facts.get(name), semantic="OBSERVED", source="company_fundamentals", source_type="public_quote", as_of_date=as_of, evidence_refs=[name])
     coverage = round((len(FUNDAMENTAL_FIELDS) - len(gaps)) / len(FUNDAMENTAL_FIELDS), 4)
+    status = "DATA_GAP" if gaps else "OBSERVED"
     return {
+        **provider_record(symbol=ticker, as_of=as_of, source="company_fundamentals", status=status, facts=facts),
         "layer": "company_fundamentals",
         "as_of_date": as_of,
         "fields": fields,
@@ -64,17 +85,57 @@ def company_fundamentals(facts: Mapping[str, Any] | None = None, provider=None) 
     }
 
 
-def sec_filing(record: Mapping[str, Any] | None = None, provider=None) -> dict[str, Any]:
+def sec_filing(
+    record: Mapping[str, Any] | None = None,
+    provider=None,
+    *,
+    symbol: str | None = None,
+    as_of: str | None = None,
+) -> dict[str, Any]:
     record = dict(record or {})
-    if provider is not None and not record:
-        fetched = provider.get("", as_of=None)
+    ticker = str(symbol or record.get("ticker") or record.get("symbol") or "").upper() or None
+    as_of = as_of or _as_of(record)
+    if provider is not None:
+        if not ticker:
+            return {
+                **provider_record(symbol="", as_of=as_of, source="sec_filing", status="ERROR", facts={}),
+                "layer": "sec_filing",
+                "supported_types": list(SEC_FILING_TYPES),
+                "data_gaps": ["ticker", "symbol"],
+                "evidence_level": "LEVEL_6",
+                "produces_pick": False,
+                "reason": "symbol required",
+            }
+        fetched = provider.get(ticker, as_of=as_of)
         if fetched.get("status") == DATA_GAP:
-            return {**fetched, "layer": "sec_filing", "supported_types": list(SEC_FILING_TYPES), "data_gaps": ["source_url", "filing_type", "filing_date", "period_end", "effective_date", "retrieved_at", "company", "ticker"], "evidence_level": "LEVEL_6", "produces_pick": False}
+            return {
+                **fetched,
+                **provider_record(symbol=ticker, as_of=as_of, source="sec_filing", status=DATA_GAP, facts={}),
+                "layer": "sec_filing",
+                "supported_types": list(SEC_FILING_TYPES),
+                "data_gaps": ["source_url", "filing_type", "filing_date", "period_end", "effective_date", "retrieved_at", "company", "ticker"],
+                "evidence_level": "LEVEL_6",
+                "produces_pick": False,
+            }
+        if isinstance(fetched.get("facts"), Mapping):
+            record = {**fetched["facts"], **record}
     filing_type = record.get("filing_type")
     known = filing_type in SEC_FILING_TYPES
     required = ("source_url", "filing_type", "filing_date", "period_end", "effective_date", "retrieved_at", "company", "ticker")
     gaps = [key for key in required if record.get(key) in (None, "")]
+    status = "DATA_GAP" if gaps or not known else "READY"
     return {
+        **provider_record(
+            symbol=ticker,
+            as_of=as_of,
+            published_at=record.get("published_at") or record.get("filing_date"),
+            effective_date=record.get("effective_date") or record.get("filing_date"),
+            retrieved_at=record.get("retrieved_at"),
+            source="sec_filing",
+            source_type="sec_filing",
+            status="DATA_GAP" if status == "DATA_GAP" else "OBSERVED",
+            facts=record,
+        ),
         "layer": "sec_filing",
         "supported_types": list(SEC_FILING_TYPES),
         "filing_type": filing_type if known else None,
@@ -84,9 +145,9 @@ def sec_filing(record: Mapping[str, Any] | None = None, provider=None) -> dict[s
         "effective_date": record.get("effective_date"),
         "retrieved_at": record.get("retrieved_at"),
         "company": record.get("company"),
-        "ticker": record.get("ticker") or record.get("symbol"),
+        "ticker": ticker,
         "data_gaps": gaps,
-        "status": "DATA_GAP" if gaps or not known else "READY",
+        "status": status,
         "evidence_level": "LEVEL_1" if not gaps and known else "LEVEL_6",
         "produces_pick": False,
         "production_boundary": PRODUCTION_BOUNDARY,
@@ -117,9 +178,38 @@ def estimate_revision_direction(history: list[Any] | None = None) -> dict[str, A
     }
 
 
-def earnings_intelligence(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def earnings_intelligence(
+    facts: Mapping[str, Any] | None = None,
+    provider=None,
+    *,
+    symbol: str | None = None,
+    as_of: str | None = None,
+) -> dict[str, Any]:
     facts = dict(facts or {})
-    as_of = _as_of(facts)
+    ticker = str(symbol or facts.get("symbol") or facts.get("ticker") or "").upper() or None
+    as_of = as_of or _as_of(facts)
+    if provider is not None:
+        if not ticker:
+            return {
+                **provider_record(symbol="", as_of=as_of, source="earnings", status="ERROR", facts={}),
+                "layer": "earnings_intelligence",
+                "fields": {},
+                "data_gaps": list(EARNINGS_FIELDS),
+                "produces_pick": False,
+                "reason": "symbol required",
+            }
+        fetched = provider.get(ticker, as_of=as_of)
+        if fetched.get("status") == DATA_GAP:
+            return {
+                **fetched,
+                **provider_record(symbol=ticker, as_of=as_of, source="earnings", status=DATA_GAP, facts={}),
+                "layer": "earnings_intelligence",
+                "fields": {},
+                "data_gaps": list(EARNINGS_FIELDS),
+                "produces_pick": False,
+            }
+        if isinstance(fetched.get("facts"), Mapping):
+            facts = {**fetched["facts"], **facts}
     fields = {}
     gaps = []
     for name in EARNINGS_FIELDS:
@@ -130,7 +220,16 @@ def earnings_intelligence(facts: Mapping[str, Any] | None = None) -> dict[str, A
             fields[name] = claim(facts.get(name), semantic="OBSERVED", source="earnings", source_type="public_quote", as_of_date=as_of, evidence_refs=[name])
     revision = estimate_revision_direction(facts.get("eps_estimate_history") or facts.get("estimate_history"))
     price_up = bool(facts.get("price_up"))
+    status = "DATA_GAP" if gaps else "READY"
     return {
+        **provider_record(
+            symbol=ticker,
+            as_of=as_of,
+            source="earnings",
+            source_type="earnings",
+            status="DATA_GAP" if status == "DATA_GAP" else "OBSERVED",
+            facts=facts,
+        ),
         "layer": "earnings_intelligence",
         "as_of_date": as_of,
         "fields": fields,
@@ -138,7 +237,7 @@ def earnings_intelligence(facts: Mapping[str, Any] | None = None) -> dict[str, A
         "price_up": price_up,
         "fundamental_improvement": False if price_up and revision["estimate_revision_direction"] != "UP" else revision["estimate_revision_direction"] == "UP",
         "data_gaps": gaps,
-        "status": "DATA_GAP" if gaps else "READY",
+        "status": status,
         "produces_pick": False,
         "production_boundary": PRODUCTION_BOUNDARY,
     }

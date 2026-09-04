@@ -111,11 +111,78 @@ def chokepoint_record(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
     }
 
 
-def research_universes(*, core: Iterable[str] | None = None, industry: Iterable[str] | None = None, chokepoint: Iterable[str] | None = None) -> dict[str, Any]:
+def universe_snapshot(
+    *,
+    universe_name: str,
+    symbol: str,
+    effective_from: str | None,
+    effective_to: str | None = None,
+    source: str | None = None,
+    source_url: str | None = None,
+    snapshot_date: str | None = None,
+    version: str | None = None,
+) -> dict[str, Any]:
     return {
-        "CORE_UNIVERSE": sorted({str(item).upper() for item in core or []}),
+        "universe_name": universe_name,
+        "symbol": str(symbol).upper(),
+        "effective_from": effective_from,
+        "effective_to": effective_to,
+        "source": source,
+        "source_url": source_url,
+        "snapshot_date": snapshot_date or effective_from,
+        "version": version,
+        "true_historical_snapshot": bool(source and source_url and effective_from),
+        "status": "READY" if source and effective_from else "DATA_GAP",
+    }
+
+
+def universe_as_of(
+    snapshots: Iterable[Mapping[str, Any]] | None,
+    *,
+    as_of: str,
+    universe_name: str | None = None,
+) -> list[str]:
+    cutoff = str(as_of)[:10]
+    visible = []
+    for row in snapshots or []:
+        payload = dict(row)
+        if universe_name and payload.get("universe_name") != universe_name:
+            continue
+        start = str(payload.get("effective_from") or "")[:10]
+        end = str(payload.get("effective_to") or "")[:10] or None
+        if not start or start > cutoff:
+            continue
+        if end and end < cutoff:
+            continue
+        symbol = str(payload.get("symbol") or "").upper()
+        if symbol:
+            visible.append(symbol)
+    return sorted(set(visible))
+
+
+def historical_universe_eligible(symbol: str, snapshots: Iterable[Mapping[str, Any]] | None, *, as_of: str, universe_name: str | None = None) -> bool:
+    return str(symbol).upper() in universe_as_of(snapshots, as_of=as_of, universe_name=universe_name)
+
+
+def research_universes(
+    *,
+    core: Iterable[str] | None = None,
+    industry: Iterable[str] | None = None,
+    chokepoint: Iterable[str] | None = None,
+    snapshots: Iterable[Mapping[str, Any]] | None = None,
+    as_of: str | None = None,
+) -> dict[str, Any]:
+    if snapshots is not None and as_of:
+        core_symbols = universe_as_of(snapshots, as_of=as_of, universe_name="CORE_UNIVERSE") or sorted({str(item).upper() for item in core or []})
+    else:
+        core_symbols = sorted({str(item).upper() for item in core or []})
+    return {
+        "CORE_UNIVERSE": core_symbols,
         "INDUSTRY_DISCOVERY_UNIVERSE": sorted({str(item).upper() for item in industry or []}),
         "CHOKEPOINT_UNIVERSE": sorted({str(item).upper() for item in chokepoint or []}),
+        "as_of": as_of,
+        "uses_current_universe": snapshots is None,
+        "true_historical_universe_snapshots": "DATA_GAP" if not snapshots else "READY",
         "rules": {
             "CORE_UNIVERSE": "default research; production ranking universe remains nasdaq100_sp500_union",
             "INDUSTRY_DISCOVERY_UNIVERSE": "expand when industry changes",

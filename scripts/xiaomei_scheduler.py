@@ -22,7 +22,7 @@ import logging
 import os
 import subprocess
 import sys
-from datetime import datetime, time, timedelta
+from datetime import datetime, time
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -45,26 +45,12 @@ except ImportError:
 
 from datetime import date as date_cls
 
-# ── US market holidays (fixed + floating, 2025-2027) ──────────────
-# New Year, MLK Day, Presidents Day, Good Friday, Memorial Day,
-# Juneteenth, Independence Day, Labor Day, Thanksgiving, Christmas
-US_HOLIDAYS: set[date_cls] = {
-    # 2025
-    date_cls(2025, 1, 1), date_cls(2025, 1, 20), date_cls(2025, 2, 17),
-    date_cls(2025, 4, 18), date_cls(2025, 5, 26), date_cls(2025, 6, 19),
-    date_cls(2025, 7, 4), date_cls(2025, 9, 1), date_cls(2025, 11, 27),
-    date_cls(2025, 12, 25),
-    # 2026
-    date_cls(2026, 1, 1), date_cls(2026, 1, 19), date_cls(2026, 2, 16),
-    date_cls(2026, 4, 3), date_cls(2026, 5, 25), date_cls(2026, 6, 19),
-    date_cls(2026, 7, 3), date_cls(2026, 9, 7), date_cls(2026, 11, 26),
-    date_cls(2026, 12, 25),
-    # 2027
-    date_cls(2027, 1, 1), date_cls(2027, 1, 18), date_cls(2027, 2, 15),
-    date_cls(2027, 3, 26), date_cls(2027, 5, 31), date_cls(2027, 6, 18),
-    date_cls(2027, 7, 5), date_cls(2027, 9, 6), date_cls(2027, 11, 25),
-    date_cls(2027, 12, 24),
-}
+from market_calendar import (
+    CALENDAR,
+    closed_us_session_date,
+    is_trading_day,
+    previous_completed_session,
+)
 
 # ── A-share / China market holidays (2025-2027) ──────────────────
 # Spring Festival, Qingming, Labor Day, Dragon Boat, Mid-Autumn, National Day
@@ -111,20 +97,7 @@ PIPELINE_SCHEDULE_DAYS = "tue-sat"
 INTRADAY_PAPER_SCHEDULE_HOURS = "0-5,20-23"
 
 
-def is_trading_day(session_date: date_cls | None = None) -> bool:
-    """Check whether a US market session date is tradable."""
-    session_date = session_date or datetime.now(BEIJING_TZ).date()
-    if session_date.weekday() >= 5:
-        return False
-    if session_date in US_HOLIDAYS:
-        return False
-    return True
 
-
-def closed_us_session_date(now: datetime | None = None) -> date_cls:
-    """Map a post-close Beijing timestamp to the US session that just closed."""
-    now = now or datetime.now(BEIJING_TZ)
-    return now.astimezone(BEIJING_TZ).date() - timedelta(days=1)
 
 
 def is_a_share_trading_day() -> bool:
@@ -276,13 +249,15 @@ def daily_pipeline_job(now: datetime | None = None):
         logger.warning(f"Too early to run pipeline: {now.hour}:00 Beijing time")
         return
 
-    session_date = closed_us_session_date(now)
-    if not is_trading_day(session_date):
-        logger.info("US session %s was not a trading day, skipping pipeline", session_date)
-        return
-
-    logger.info("Starting daily pipeline job")
+    session = CALENDAR.pipeline_session(now)
+    logger.info(
+        "Starting daily pipeline job target_session=%s actual_previous_trading_session=%s execution_time_bjt=%s",
+        session["target_session"],
+        session["actual_previous_trading_session"],
+        session["execution_time_bjt"],
+    )
     result = run_pipeline("full")
+    result["pipeline_session"] = session
 
     if result.get("success"):
         logger.info("Daily pipeline completed successfully")

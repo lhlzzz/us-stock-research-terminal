@@ -133,12 +133,14 @@ def portfolio_concentration(
             numeric["CASH"] = float(cash)
         except (TypeError, ValueError):
             pass
-    has_weights = any(symbol in numeric for symbol in symbols)
-    if not has_weights:
+    known = [symbol for symbol in symbols if symbol in numeric]
+    missing = [symbol for symbol in symbols if symbol not in numeric]
+    incomplete = bool(missing) or not known
+    if incomplete:
         return {
             "symbol_count": len(symbols),
             "position_count": len(symbols),
-            "position_weight": "UNKNOWN",
+            "position_weight": "UNKNOWN" if not known else {symbol: numeric.get(symbol, "UNKNOWN") for symbol in symbols},
             "portfolio_weight": "UNKNOWN",
             "sector_weight": "UNKNOWN",
             "theme_weight": "UNKNOWN",
@@ -146,9 +148,12 @@ def portfolio_concentration(
             "top3_concentration": "UNKNOWN",
             "sector_concentration": "UNKNOWN",
             "theme_concentration": "UNKNOWN",
+            "concentration_status": "INCOMPLETE",
+            "missing_weight_symbols": missing,
             "forged_equal_weight": False,
+            "missing_weight_excluded_from_sum": True,
         }
-    ordered = sorted(((symbol, numeric.get(symbol, 0.0)) for symbol in symbols), key=lambda item: item[1], reverse=True)
+    ordered = sorted(((symbol, numeric[symbol]) for symbol in known), key=lambda item: item[1], reverse=True)
     top = ordered[0][1] if ordered else None
     top3 = sum(item[1] for item in ordered[:3]) if ordered else None
     sector_weights: dict[str, float] = {}
@@ -161,7 +166,7 @@ def portfolio_concentration(
     return {
         "symbol_count": len(symbols),
         "position_count": len(symbols),
-        "position_weight": {symbol: numeric.get(symbol, "UNKNOWN") for symbol in symbols},
+        "position_weight": {symbol: numeric[symbol] for symbol in symbols},
         "portfolio_weight": dict(numeric),
         "sector_weight": sector_weights or "UNKNOWN",
         "theme_weight": theme_weights or "UNKNOWN",
@@ -169,7 +174,10 @@ def portfolio_concentration(
         "top3_concentration": top3,
         "sector_concentration": max(sector_weights.values()) if sector_weights else "UNKNOWN",
         "theme_concentration": max(theme_weights.values()) if theme_weights else "UNKNOWN",
+        "concentration_status": "COMPLETE",
+        "missing_weight_symbols": [],
         "forged_equal_weight": False,
+        "missing_weight_excluded_from_sum": True,
     }
 
 
@@ -347,11 +355,14 @@ def portfolio_context(
         for note in scoped:
             if target in [item.upper() for item in note.get("tickers") or []] and "industry" in (note.get("kinds") or []):
                 same_sector = True
+    watching = bool(target and target in watch_unique)
     relevance = "NEW_EXPOSURE"
     if already_owned:
-        relevance = "PORTFOLIO_RELEVANCE"
+        relevance = "ALREADY_OWNED"
+    elif watching:
+        relevance = "WATCHING"
     elif same_sector:
-        relevance = "PORTFOLIO_CONCENTRATION_RISK"
+        relevance = "SAME_THEME"
     concentration = portfolio_concentration(owned_unique, weights)
     flags = []
     if already_owned:
@@ -382,8 +393,20 @@ def portfolio_context(
         "existing_notes": [note.get("source_path") for note in scoped],
         "last_updated": max((note.get("document_updated_at") or "") for note in scoped) if scoped else None,
         "already_owned": already_owned,
+        "watching": watching,
+        "overweight": False,
+        "already_owned_is_not_overweight": True,
+        "portfolio_status": (
+            "ALREADY_OWNED" if already_owned else
+            "WATCHING" if watching else
+            "CONCENTRATION_RISK" if "PORTFOLIO_CONCENTRATION_RISK" in flags else
+            "SAME_THEME" if same_sector else
+            "UNKNOWN" if not target else
+            "NEW_EXPOSURE"
+        ),
         "current_thesis": next((item for item in theses if not target or target in item["tickers"]), None),
         "concentration": concentration,
+        "concentration_status": concentration.get("concentration_status"),
         "top_position": concentration.get("top_position"),
         "top3_concentration": concentration.get("top3_concentration"),
         "flags": flags,

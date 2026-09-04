@@ -1,5 +1,39 @@
 # NEXT_ACTION
 
+## Xiaomei 2.1.1 full-system integration hardening (2026-09-04)
+
+Completion: **XIAOMEI 2.1.1 HARDENED**.
+
+- Single Research OS owner: `scripts/research/`. Legacy `research_panel.py` is a
+  compatibility adapter (`canonical_owner=scripts.research`). No second quality /
+  risk / panel / replay scoring engine.
+- Missing risk is UNKNOWN/GRAY, never GREEN. Risk manager maps insufficient data
+  to NEED_MORE_EVIDENCE, not PROCEED. Paper-review gate now requires market +
+  research + risk + completeness + temporal validity. RSS cannot auto-pass.
+- Realtime quotes do not mutate canonical daily bars. Intraday fallback is
+  INTRADAY_PARTIAL / is_complete=false and is unused by `choose_universe`.
+- `USMarketCalendar` is the only US session/holiday owner. Monday 05:00 BJT maps
+  to Friday. Pipeline artifacts emit `target_session` /
+  `actual_previous_trading_session` / `pipeline_execution_time`.
+- Temporal model in `scripts/research/temporal.py`. Providers take explicit
+  `symbol` + `as_of`. MetricSpec has `value_encoding`. Composite exposes
+  coverage/readiness. Portfolio already_owned ≠ overweight. Universe is
+  temporal. Outcomes are per-horizon T+1/3/5/10. Tickets upsert. Daily pipeline
+  has a single-flight lock.
+- Inventory: `research/xiaomei-2.1.1/RESEARCH_ENGINE_INVENTORY.md`
+- Audit: `research/xiaomei-2.1.1/SYSTEM_AUDIT.md`
+- Tests: `PYTHONPATH=. pytest -q tests` = **196 passed**. Dry-run NVDA
+  `--skip-last30days --top-k 1` = RESEARCH_ONLY SUCCESS, as_of/target_session
+  `2026-09-03`, classification MARKET_WATCHLIST_NEEDS_EVIDENCE (no invented
+  catalyst). Production ranking owner unchanged: `observable_footprint_v1`.
+- Remaining honest DATA_GAP (do not fake READY): SEC, earnings, estimate
+  revision, industry graph, chokepoint, true historical universe snapshots,
+  persistent failure memory.
+
+Next operational action: Xiaomei 2.2 real SEC + earnings + industry-graph
+ingestion. Do not add more scoring modules. Do not change production weights
+or live-trade boundary.
+
 ## Xiaomei 2.1 semantic correctness (2026-09-04)
 
 - Research scoring no longer clamp-averages raw units. MetricSpec +

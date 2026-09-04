@@ -19,6 +19,7 @@ from .brains import (
     build_uzi_adapter,
 )
 from .contracts import (
+    brain_readiness,
     capital_behavior,
     company_quality,
     historical_evidence,
@@ -181,8 +182,10 @@ def why_not(views: Mapping[str, str], *, capital: Mapping[str, Any] | None = Non
         reasons.append("Market = overextended")
     if options.get("stance") in {"BEARISH", "WEAK"} or options.get("options_positioning") == "SUPPRESS":
         reasons.append("Options = crowded")
-    if portfolio.get("already_owned") or portfolio.get("relevance") in {"PORTFOLIO_CONCENTRATION_RISK", "PORTFOLIO_RELEVANCE"}:
-        reasons.append("Portfolio = already overweight")
+    if portfolio.get("already_owned") or portfolio.get("relevance") in {"PORTFOLIO_CONCENTRATION_RISK", "PORTFOLIO_RELEVANCE", "ALREADY_OWNED"}:
+        reasons.append("Portfolio = already owned")
+    if portfolio.get("overweight"):
+        reasons.append("Portfolio = overweight")
     long_ok = views.get("fundamental") in {"STRONG", "BULLISH"} or views.get("company") in {"STRONG", "BULLISH"}
     short_block = bool(reasons)
     conclusion = "RESEARCH_BULLISH" if long_ok else "RESEARCH_INCOMPLETE"
@@ -323,6 +326,7 @@ def build_company_research(
         risk_schema,
         statistical_score=statistical_view.get("statistical_score") or statistical_view.get("score"),
     )
+    readiness = brain_readiness(company, industry_pos, capital_schema, statistical_view)
     options = options_intelligence(facts)
     short = short_intelligence(facts)
     analyst = analyst_revision(facts)
@@ -354,7 +358,12 @@ def build_company_research(
         "market": _stance(statistical_view) if statistical_view.get("stance") != "UNKNOWN" else _stance(market),
         "statistical": _stance(statistical_view),
         "options": str(options.get("stance") or "UNKNOWN"),
-        "portfolio": "OVERWEIGHT" if portfolio.get("already_owned") else "UNKNOWN",
+        "portfolio": (
+            "OVERWEIGHT" if portfolio.get("overweight") else
+            "ALREADY_OWNED" if portfolio.get("already_owned") else
+            "WATCHING" if portfolio.get("watching") else
+            "UNKNOWN"
+        ),
         "risk": _stance(risk_schema, purpose="risk"),
     }
     contradiction = contradiction_status(
@@ -392,6 +401,14 @@ def build_company_research(
         lineage_status(source="capital_brain", feature="capital_behavior", source_date=str(as_of_date or ""), effective_date=str(as_of_date or ""), as_of_date=str(as_of_date or ""), brain="Capital"),
         lineage_status(source="market_setup", feature="market_setup", source_date=str(as_of_date or ""), effective_date=str(as_of_date or ""), as_of_date=str(as_of_date or ""), brain="Market"),
     ]
+    if readiness["overall"] == "READY":
+        research_mode = "FULL_RESEARCH"
+    elif all(status == "DATA_GAP" for status in readiness["brains"].values()):
+        research_mode = "MARKET_ONLY_RESEARCH" if views.get("market") not in (None, "", "UNKNOWN") else "DATA_GAP_RESEARCH"
+    elif readiness["brains"].get("Company") == "DATA_GAP" and readiness["brains"].get("Industry") == "DATA_GAP":
+        research_mode = "MARKET_ONLY_RESEARCH"
+    else:
+        research_mode = "PARTIAL_RESEARCH"
     conclusion = {
         "status": "RESEARCH_CONCLUSION",
         "not_buy_sell": True,
@@ -406,9 +423,16 @@ def build_company_research(
         "contradiction": contradiction.get("status"),
         "risk": risk_schema.get("data_gaps"),
         "confidence": scores.get("research_composite"),
+        "coverage": scores.get("coverage"),
+        "readiness": scores.get("readiness"),
+        "brain_readiness": readiness,
+        "research_mode": research_mode,
         "outcome": independent,
         "why_not": rejected,
         "priority": matrix.get("research_priority"),
+        "why_partial": [
+            f"{name}={status}" for name, status in readiness["brains"].items() if status != "READY"
+        ],
     }
     return {
         "symbol": symbol.upper(),
@@ -428,6 +452,10 @@ def build_company_research(
         "scores": scores,
         "research_composite": scores.get("research_composite"),
         "alpha_score": scores.get("alpha_score"),
+        "brain_readiness": readiness,
+        "evidence_coverage": scores.get("coverage"),
+        "validation_status": readiness["overall"],
+        "research_mode": research_mode,
         "supply": supply,
         "pricing_gap": pricing,
         "future_buyer_map": buyers,

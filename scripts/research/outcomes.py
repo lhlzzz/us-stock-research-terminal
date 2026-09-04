@@ -49,7 +49,11 @@ def independent_price_outcomes(
     future = bars.loc[bars.index > cutoff]
     if prior.empty:
         return {"available": False, "as_of_date": str(as_of_date), "label_kind": "INDEPENDENT_PRICE"}
-    entry = _finite(prior.iloc[-1]["close"])
+    close_col = "adj_close" if "adj_close" in prior.columns else "close" if "close" in prior.columns else None
+    high_col = "high" if "high" in prior.columns else close_col
+    low_col = "low" if "low" in prior.columns else close_col
+    price_basis = "ADJUSTED" if close_col == "adj_close" else "RAW"
+    entry = _finite(prior.iloc[-1][close_col]) if close_col else None
     if not entry or entry <= 0:
         return {"available": False, "as_of_date": str(as_of_date), "label_kind": "INDEPENDENT_PRICE"}
     outcome: dict[str, Any] = {
@@ -57,23 +61,46 @@ def independent_price_outcomes(
         "as_of_date": str(pd.Timestamp(as_of_date).date()),
         "label_kind": "INDEPENDENT_PRICE",
         "entry_close": round(entry, 6),
+        "entry_price_basis": price_basis,
+        "outcome_price_basis": price_basis,
+        "price_basis": price_basis,
+        "horizons": {},
     }
     for horizon in HORIZONS:
-        if len(future) < horizon:
-            outcome[f"return_{horizon}d"] = None
-            continue
-        close = _finite(future.iloc[horizon - 1]["close"])
-        outcome[f"return_{horizon}d"] = None if close is None else round(close / entry - 1.0, 6)
+        complete = len(future) >= horizon
+        payload = {
+            "available": complete,
+            "complete": complete,
+            "return": None,
+            "mfe": None,
+            "mae": None,
+            "max_drawdown": None,
+        }
+        if complete:
+            close = _finite(future.iloc[horizon - 1][close_col])
+            payload["return"] = None if close is None else round(close / entry - 1.0, 6)
+            window = future.iloc[:horizon]
+            if high_col in window.columns and low_col in window.columns:
+                highs = window[high_col].astype(float) / entry - 1.0
+                lows = window[low_col].astype(float) / entry - 1.0
+                payload["mfe"] = round(float(highs.max()), 6)
+                payload["mae"] = round(float(lows.min()), 6)
+                payload["max_drawdown"] = round(float(lows.min()), 6)
+        outcome[f"return_{horizon}d"] = payload["return"]
+        outcome[f"MFE_T{horizon}"] = payload["mfe"]
+        outcome[f"MAE_T{horizon}"] = payload["mae"]
+        outcome[f"DD_T{horizon}"] = payload["max_drawdown"]
+        outcome["horizons"][horizon] = payload
     window = future.iloc[: max((h for h in HORIZONS if len(future) >= h), default=0)] if not future.empty else future
     if window.empty:
         outcome.update({"mfe": None, "mae": None, "max_drawdown": None, "volatility": None, "gap_risk": None})
     else:
-        highs = window["high"].astype(float) / entry - 1.0
-        lows = window["low"].astype(float) / entry - 1.0
-        closes = window["close"].astype(float)
-        outcome["mfe"] = round(float(highs.max()), 6)
-        outcome["mae"] = round(float(lows.min()), 6)
-        outcome["max_drawdown"] = round(float(lows.min()), 6)
+        highs = window[high_col].astype(float) / entry - 1.0
+        lows = window[low_col].astype(float) / entry - 1.0
+        closes = window[close_col].astype(float)
+        outcome["mfe"] = outcome.get("MFE_T1")
+        outcome["mae"] = outcome.get("MAE_T1")
+        outcome["max_drawdown"] = outcome.get("DD_T1")
         rets = closes.pct_change().dropna()
         outcome["volatility"] = round(float(rets.std()), 6) if len(rets) else None
         if "open" in prior.columns:
@@ -82,6 +109,7 @@ def independent_price_outcomes(
             outcome["gap_risk"] = None if first_open is None else round(first_open / last_close - 1.0, 6)
         else:
             outcome["gap_risk"] = None
+    outcome["missing_horizon_does_not_invalidate_available"] = True
 
     def _relative(other: pd.DataFrame | None, name: str) -> None:
         if other is None or getattr(other, "empty", True):

@@ -785,7 +785,7 @@ def save_pipeline_to_db(
     Returns counts of inserted records.
     """
     from scripts.db.crud import (
-        create_ticket, upsert_forward_tracking,
+        upsert_ticket, upsert_forward_tracking,
         create_runtime_decision, create_research_run, finish_research_run,
         upsert_market_snapshot, upsert_factor_snapshot,
     )
@@ -902,7 +902,7 @@ def save_pipeline_to_db(
                 entry_parts.append(f"risk: {risk_verdict_detail}")
             entry_reason = " | ".join(entry_parts)
 
-            ticket = create_ticket(
+            ticket = upsert_ticket(
                 db,
                 output_date=output_date,
                 symbol=row["symbol"],

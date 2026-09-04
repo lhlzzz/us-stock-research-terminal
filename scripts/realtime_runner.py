@@ -30,7 +30,7 @@ from trading_engine import (
     SLIPPAGE_BPS,
 )
 from capital.intraday import build_intraday_capital_assessment
-from xiaomei_scheduler import US_HOLIDAYS
+from market_calendar import is_us_regular_session as calendar_is_us_regular_session
 
 try:
     from zoneinfo import ZoneInfo
@@ -53,10 +53,7 @@ def now_et() -> datetime:
 
 def is_us_regular_session(now: datetime | None = None) -> bool:
     """Return whether ``now`` falls in a non-holiday 09:30-16:00 ET session."""
-    current = (now or now_et()).astimezone(ET)
-    if current.weekday() >= 5 or current.date() in US_HOLIDAYS:
-        return False
-    return time(9, 30) <= current.time().replace(tzinfo=None) < time(16, 0)
+    return calendar_is_us_regular_session(now)
 
 
 def quote_age_seconds(quote: dict[str, Any], now: datetime | None = None) -> float | None:

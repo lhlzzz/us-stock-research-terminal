@@ -5,7 +5,7 @@ from typing import Any, Mapping
 
 from .boundary import PRODUCTION_BOUNDARY
 from .evidence import claim, observed_number, unknown
-from .metric_semantics import quality_stance
+from .metric_semantics import normalize_metric, quality_stance
 
 
 LAYERS = (
@@ -68,12 +68,15 @@ def build_buffett_context(facts: Mapping[str, Any] | None = None) -> dict[str, A
     quality_score = None
     if observed:
         scores = []
-        if roe["value"] is not None:
-            scores.append(min(1.0, max(0.0, float(roe["value"]) / 0.30)))
-        if pe["value"] is not None and pe["value"] > 0:
-            scores.append(min(1.0, max(0.0, 1.0 - max(0.0, float(pe["value"]) - 10.0) / 50.0)))
-        if dividend["value"] is not None:
-            scores.append(min(1.0, max(0.0, float(dividend["value"]) / 0.04)))
+        roe_n = normalize_metric("roe", roe["value"])
+        if roe_n is not None:
+            scores.append(roe_n)
+        pe_n = normalize_metric("pe_ttm", pe["value"])
+        if pe_n is not None:
+            scores.append(pe_n)
+        div_n = normalize_metric("dividend_yield", dividend["value"])
+        if div_n is not None:
+            scores.append(div_n)
         quality_score = round(sum(scores) / len(scores), 4) if scores else None
     quality = claim(
         quality_score,

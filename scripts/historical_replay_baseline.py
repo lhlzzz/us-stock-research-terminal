@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 import requests
 from eastmoney_us import normalize_us_symbol
+from market_calendar import CALENDAR
 
 
 DEFAULT_UNIVERSE = ["AAPL", "MSFT", "NVDA", "META", "AMZN", "TSLA"]
@@ -70,7 +71,7 @@ def project_root() -> Path:
 
 
 def output_date_string() -> str:
-    return datetime.now().astimezone().date().isoformat()
+    return CALENDAR.previous_completed_session().isoformat()
 
 
 def normalize_index(index: pd.Index) -> pd.DatetimeIndex:

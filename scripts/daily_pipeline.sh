@@ -30,9 +30,45 @@ fi
 
 DATE=$(date +%Y-%m-%d)
 LOG_FILE="$LOG_DIR/pipeline-$DATE.log"
+LOCK_DIR="$PROJECT_DIR/run/daily-pipeline.lock"
+STATE_DIR="$PROJECT_DIR/run/pipeline-state/$DATE"
+RUN_ID="${DATE}-$(date +%H%M%S)"
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"
+}
+
+acquire_lock() {
+    mkdir -p "$PROJECT_DIR/run"
+    if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+        if [ -f "$LOCK_DIR/pid" ] && kill -0 "$(cat "$LOCK_DIR/pid")" 2>/dev/null; then
+            log "ERROR: daily pipeline already running (pid $(cat "$LOCK_DIR/pid"))"
+            exit 1
+        fi
+        rm -rf "$LOCK_DIR"
+        mkdir "$LOCK_DIR"
+    fi
+    echo $$ > "$LOCK_DIR/pid"
+    echo "$RUN_ID" > "$LOCK_DIR/run_id"
+    trap 'rm -rf "$LOCK_DIR"' EXIT
+}
+
+step_state() {
+    local step_id="$1"
+    local status="$2"
+    mkdir -p "$STATE_DIR"
+    local now
+    now="$(date --iso-8601=seconds)"
+    local file="$STATE_DIR/${step_id}.json"
+    local artifact_hash
+    artifact_hash="$(printf '%s|%s|%s' "$RUN_ID" "$step_id" "$status" | sha256sum | awk '{print $1}')"
+    if [ "$status" = "started" ]; then
+        printf '{"run_id":"%s","step_id":"%s","step_status":"started","started_at":"%s","completed_at":null,"artifact_hash":"%s"}\n' \
+            "$RUN_ID" "$step_id" "$now" "$artifact_hash" > "$file"
+        return
+    fi
+    printf '{"run_id":"%s","step_id":"%s","step_status":"%s","completed_at":"%s","artifact_hash":"%s"}\n' \
+        "$RUN_ID" "$step_id" "$status" "$now" "$artifact_hash" > "$file"
 }
 
 check_services() {
@@ -58,22 +94,28 @@ check_timezone() {
 
 run_backfill() {
     log "=== Step 1: Backfill forward tracking ==="
+    step_state "1_backfill" started
     cd "$PROJECT_DIR"
     python3 scripts/backfill_forward_tracking.py --db 2>&1 | tee -a "$LOG_FILE"
+    step_state "1_backfill" completed
     log "Backfill complete"
 }
 
 run_scoreboard() {
     log "=== Step 2: Lifecycle scoreboard ==="
+    step_state "2_scoreboard" started
     cd "$PROJECT_DIR"
     python3 scripts/lifecycle_scoreboard.py --db 2>&1 | tee -a "$LOG_FILE"
+    step_state "2_scoreboard" completed
     log "Scoreboard complete"
 }
 
 run_tickets() {
     log "=== Step 3: Generate tickets ==="
+    step_state "3_tickets" started
     cd "$PROJECT_DIR"
     python3 scripts/us_profit_ticket_pipeline.py --save-db --top-k 3 2>&1 | tee -a "$LOG_FILE"
+    step_state "3_tickets" completed
     log "Tickets complete"
 }
 
@@ -136,10 +178,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Main execution
+acquire_lock
 log "=========================================="
 log "xiaomei daily pipeline starting"
 log "Mode: $MODE"
 log "Date: $DATE"
+log "Run: $RUN_ID"
 log "=========================================="
 
 check_services

@@ -35,8 +35,39 @@ def _as_date(value: Any) -> str | None:
     return text if len(text) == 10 else None
 
 
+def provider_record(
+    *,
+    symbol: str | None = None,
+    as_of: str | None = None,
+    published_at: str | None = None,
+    effective_date: str | None = None,
+    retrieved_at: str | None = None,
+    source: str | None = None,
+    source_type: str | None = None,
+    status: str = DATA_GAP,
+    facts: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    label = str(status or DATA_GAP).upper()
+    if label not in {"OBSERVED", DATA_GAP, "ERROR", "READY", "BLOCKED"}:
+        label = DATA_GAP
+    if label == "READY":
+        label = "OBSERVED"
+    return {
+        "symbol": symbol,
+        "as_of": as_of,
+        "published_at": published_at,
+        "effective_date": effective_date or published_at,
+        "retrieved_at": retrieved_at,
+        "source": source,
+        "source_type": source_type or source,
+        "status": label,
+        "facts": dict(facts or {}),
+    }
+
+
 def gap_payload(layer: str, *, reason: str = NOT_INGESTED, symbol: str | None = None, as_of: str | None = None) -> dict[str, Any]:
     return {
+        **provider_record(symbol=symbol, as_of=as_of, source=layer, status=DATA_GAP, facts={}),
         "layer": layer,
         "symbol": symbol,
         "as_of": as_of,

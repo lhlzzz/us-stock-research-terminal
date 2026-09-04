@@ -41,10 +41,11 @@ from eastmoney_us import (
     normalize_us_symbol,
 )
 from data_provider import get_provider
+from market_calendar import CALENDAR, add_trading_days
 
 EASTMONEY_HISTORICAL_SOURCE_DISPLAY = "DataProvider historical OHLCV"
 AKSHARE_HISTORICAL_SOURCE_DISPLAY = "DataProvider fallback historical OHLCV"
-from research_panel import run_full_research_panel
+from research_panel import run_full_research_panel  # compatibility adapter → scripts.research
 from risk_manager import (
     DEFAULT_RISK_PER_TRADE,
     MAX_CONSECUTIVE_LOSSES,
@@ -349,7 +350,7 @@ def artifact_paths(run_name: str, output_date: str) -> dict[str, Path]:
 
 
 def bday_date(date: pd.Timestamp, horizon: int) -> str:
-    return (pd.Timestamp(date) + pd.offsets.BDay(horizon)).strftime("%Y-%m-%d")
+    return add_trading_days(pd.Timestamp(date).date(), int(horizon)).isoformat()
 
 
 def percentile_rank(series: pd.Series) -> pd.Series:
@@ -554,7 +555,10 @@ def _fetch_yahoo_rss_fallback(topic: str, payload: dict[str, Any]) -> dict[str, 
                             "snippet": desc,
                             "source": "yahoo_finance_rss",
                             "url": "",
-                            "score": 0.7,
+                            "score": None,
+                            "source_quality": 0.4,
+                            "primary_source": False,
+                            "discovery_only": True,
                         })
 
                 if ranked:
@@ -585,7 +589,10 @@ def _fetch_yahoo_rss_fallback(topic: str, payload: dict[str, Any]) -> dict[str, 
                         "snippet": desc,
                         "source": "google_news_rss",
                         "url": link,
-                        "score": 0.6,
+                        "score": None,
+                        "source_quality": 0.35,
+                        "primary_source": False,
+                        "discovery_only": True,
                     })
 
             if ranked:
@@ -627,6 +634,10 @@ def summarize_last30days_result(
                 "relevance_score": scored["relevance_score"],
                 "relevance_reason": scored["relevance_reason"],
                 "matched_term": scored["matched_term"],
+                "source_quality": item.get("source_quality"),
+                "freshness": item.get("freshness"),
+                "primary_source": bool(item.get("primary_source")),
+                "discovery_only": bool(item.get("discovery_only")),
             }
         )
     top_items = scored_items[:3]
@@ -672,7 +683,16 @@ def summarize_last30days_result(
         "ranked_candidate_count": int(len(ranked)),
         "top_score": raw_top_score,
         "relevance_score": relevance_score,
+        "source_quality": None if not relevant_items else relevant_items[0].get("source_quality"),
         "freshness_max": None if not freshness_values else float(max(freshness_values)),
+        "primary_source": any(bool(item.get("primary_source")) for item in relevant_items),
+        "corroboration": max(0, source_diversity - 1),
+        "rss_fallback": any(str(item.get("source") or "").endswith("_rss") for item in scored_items),
+        "evidence_strength": None if not relevant_items else round(
+            float(relevance_score)
+            * (0.5 + 0.25 * (1 if primary_source else 0) + 0.25 * min(1.0, source_diversity / 3.0)),
+            4,
+        ),
         "top_items": top_items,
         "top_evidence_title": evidence_title,
         "top_evidence_reason": evidence_reason,
@@ -714,7 +734,11 @@ def _build_realtime_intraday_fallback(
     symbols: list[str],
     sleep_seconds: float,
 ) -> dict[str, Any] | None:
-    """Build pseudo-daily OHLCV from realtime quotes + intraday bars when klines are empty."""
+    """Intraday display fallback. Never enters daily factors, ranking, or replay.
+
+    choose_universe does not call this. The payload is tagged INTRADAY_PARTIAL
+    with is_complete=False so daily_bar_gate rejects it.
+    """
     symbol_frames: dict[str, pd.DataFrame] = {}
     for i, ticker in enumerate(symbols):
         normalized = normalize_us_symbol(ticker)
@@ -753,6 +777,13 @@ def _build_realtime_intraday_fallback(
                 "Stock Splits": [0.0],
                 "symbol": [normalized],
                 "date": [today],
+                "bar_type": ["INTRADAY_PARTIAL"],
+                "is_complete": [False],
+                "session_status": ["INTRADAY"],
+                "market_open": [True],
+                "market_closed": [False],
+                "coverage_start": [intraday[0].get("time") if isinstance(intraday[0], dict) else None],
+                "coverage_end": [intraday[-1].get("time") if isinstance(intraday[-1], dict) else None],
             },
             index=pd.DatetimeIndex([today], name="date"),
         )
@@ -801,6 +832,12 @@ def _build_realtime_intraday_fallback(
         "adj_panel": adj_panel,
         "long_panel": long_panel,
         "period_used": "realtime_intraday",
+        "bar_type": "INTRADAY_PARTIAL",
+        "is_complete": False,
+        "usable_for_daily_factors": False,
+        "usable_for_daily_ranking": False,
+        "usable_for_historical_daily_replay": False,
+        "display_enrichment_only": True,
     }
 
 
@@ -971,6 +1008,9 @@ def choose_universe(
         "minimum_required_symbols": int(minimum_symbols),
         "data_mode": data_mode,
         "kline_source": chosen_kline_source,
+        "bar_type": "DAILY_COMPLETE",
+        "is_complete": True,
+        "usable_for_daily_factors": True,
     }
 
 
@@ -1023,48 +1063,38 @@ def _enrich_panels_with_realtime(
     long_panel: pd.DataFrame,
     symbols: list[str],
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Append realtime quote as latest row if kline data is stale."""
-    from datetime import date
-    today = pd.Timestamp(date.today().strftime("%Y-%m-%d"))
-    last_kline_date = close_panel.index[-1] if not close_panel.empty else None
-    if last_kline_date is None or last_kline_date >= today:
-        return close_panel, adj_panel, long_panel
+    """Display-only realtime overlay. Never mutates canonical daily bars."""
+    return close_panel, adj_panel, long_panel
 
+
+def display_enrichment_only(
+    close_panel: pd.DataFrame,
+    adj_panel: pd.DataFrame,
+    long_panel: pd.DataFrame,
+    symbols: list[str],
+) -> dict[str, Any]:
+    """Realtime quotes for display / cross-check. Not a daily bar."""
     quotes = {}
     for sym in symbols:
         try:
             q = fetch_realtime_quote(sym)
             if q and q.get("latest_price"):
-                quotes[sym] = float(q["latest_price"])
+                quotes[sym] = {
+                    "latest_price": float(q["latest_price"]),
+                    "bar_type": "SNAPSHOT",
+                    "is_complete": False,
+                    "usable_for_daily_factors": False,
+                }
         except Exception:
             pass
-
-    if not quotes:
-        return close_panel, adj_panel, long_panel
-
-    new_close = pd.Series({sym: quotes.get(sym, np.nan) for sym in close_panel.columns}, name=today)
-    close_panel = pd.concat([close_panel, new_close.to_frame().T])
-    close_panel.index = pd.to_datetime(close_panel.index)
-
-    new_adj = pd.Series({sym: quotes.get(sym, np.nan) for sym in adj_panel.columns}, name=today)
-    adj_panel = pd.concat([adj_panel, new_adj.to_frame().T])
-    adj_panel.index = pd.to_datetime(adj_panel.index)
-
-    if not long_panel.empty and "date" in long_panel.columns:
-        today_str = today.strftime("%Y-%m-%d")
-        new_rows = []
-        for sym in symbols:
-            if sym in quotes:
-                new_rows.append({
-                    "date": today_str, "symbol": sym,
-                    "Open": quotes[sym], "High": quotes[sym],
-                    "Low": quotes[sym], "Close": quotes[sym],
-                    "Adj Close": quotes[sym], "Volume": 0,
-                })
-        if new_rows:
-            long_panel = pd.concat([long_panel, pd.DataFrame(new_rows)], ignore_index=True)
-
-    return close_panel, adj_panel, long_panel
+    return {
+        "display_enrichment_only": True,
+        "quotes": quotes,
+        "canonical_close_panel_unchanged": True,
+        "close_panel": close_panel,
+        "adj_panel": adj_panel,
+        "long_panel": long_panel,
+    }
 
 
 def _detect_volume_anomalies(results: dict, volume_threshold: float = 2.0) -> list[str]:
@@ -1475,8 +1505,13 @@ def build_market_snapshot(
     feature_frame = feature_frame.sort_values(["market_score", "prior_20d_momentum"], ascending=False, kind="mergesort")
 
     actual_kline_source = kline_source or EASTMONEY_HISTORICAL_SOURCE_DISPLAY
+    pipeline_session = CALENDAR.pipeline_session()
     market_summary = {
         "as_of_date": as_of_date.strftime("%Y-%m-%d"),
+        "target_session": pipeline_session["target_session"],
+        "actual_previous_trading_session": pipeline_session["actual_previous_trading_session"],
+        "pipeline_execution_time": pipeline_session["pipeline_execution_time"],
+        "session_status": pipeline_session["session_status"],
         "market_data_source": MARKET_DATA_SOURCE_DISPLAY,
         "kline_source": actual_kline_source,
         "quote_source": QUOTE_SOURCE_DISPLAY,
@@ -1521,23 +1556,48 @@ def quote_cross_check(
     yahoo_close: Any,
     provider_profile: dict[str, Any],
     kline_source: str | None = None,
+    *,
+    historical_session: Any = None,
+    quote_session: Any = None,
+    quote_symbol: str | None = None,
+    historical_symbol: str | None = None,
+    time_basis: str | None = None,
+    quote_time_basis: str | None = None,
 ) -> dict[str, Any]:
+    from research.temporal import compatible_sessions
+
     historical_close = _safe_float(yahoo_close)
     prev_close = _safe_float(provider_profile.get("prev_close"))
     latest_price = _safe_float(provider_profile.get("latest_price"))
-    candidates = []
-    if historical_close not in (None, 0):
-        for basis, price in [("latest_price", latest_price), ("prev_close", prev_close)]:
-            if price not in (None, 0):
-                gap = abs(float(price) / float(historical_close) - 1.0)
-                candidates.append((gap, basis, price))
-    quote_price = None
-    quote_basis = "unavailable"
+    hist_session = historical_session or provider_profile.get("historical_session") or provider_profile.get("session_date")
+    q_session = quote_session or provider_profile.get("quote_session") or provider_profile.get("session_date")
+    same_symbol = True
+    if quote_symbol and historical_symbol:
+        same_symbol = str(quote_symbol).upper() == str(historical_symbol).upper()
+    same_session = compatible_sessions(hist_session, q_session) if hist_session and q_session else hist_session is None and q_session is None
+    compatible_basis = True
+    if time_basis and quote_time_basis:
+        compatible_basis = str(time_basis) == str(quote_time_basis)
+    if not same_symbol or not same_session or not compatible_basis:
+        return {
+            "kline_source": kline_source or EASTMONEY_HISTORICAL_SOURCE_DISPLAY,
+            "quote_source": QUOTE_SOURCE_DISPLAY,
+            "quote_cross_check_basis": "CROSS_CHECK_NOT_COMPARABLE",
+            "quote_cross_check_price": None,
+            "quote_cross_check_gap_pct": None,
+            "data_source_mismatch": False,
+            "data_source_mismatch_reason": "CROSS_CHECK_NOT_COMPARABLE",
+            "same_symbol": same_symbol,
+            "same_session": same_session,
+            "compatible_time_basis": compatible_basis,
+        }
+    quote_price = prev_close if prev_close not in (None, 0) else latest_price
+    quote_basis = "prev_close" if prev_close not in (None, 0) else ("latest_price" if latest_price not in (None, 0) else "unavailable")
     gap_pct = None
     mismatch = False
     reason = "cross_check_unavailable"
-    if candidates:
-        gap_pct, quote_basis, quote_price = min(candidates, key=lambda item: item[0])
+    if historical_close not in (None, 0) and quote_price not in (None, 0):
+        gap_pct = abs(float(quote_price) / float(historical_close) - 1.0)
         mismatch = bool(gap_pct > DATA_SOURCE_MISMATCH_THRESHOLD)
         reason = "DATA_SOURCE_MISMATCH" if mismatch else "ok"
     return {
@@ -1548,6 +1608,9 @@ def quote_cross_check(
         "quote_cross_check_gap_pct": gap_pct,
         "data_source_mismatch": mismatch,
         "data_source_mismatch_reason": reason,
+        "same_symbol": same_symbol,
+        "same_session": True,
+        "compatible_time_basis": True,
     }
 
 
@@ -1821,13 +1884,23 @@ def build_candidate_record(
     market_evidence_pass = bool(int(row["market_rank"]) <= int(market_cutoff))
     has_relevant_evidence = narrative_summary["status"] == "found_relevant" or business_summary["status"] == "found_relevant"
     strongest_relevance = float(max(narrative_summary["relevance_score"], business_summary["relevance_score"]))
-    data_source_ok = not bool(cross_check["data_source_mismatch"])
-    has_any_evidence = narrative_summary["status"] != "missing" or business_summary["status"] != "missing"
+    data_source_ok = not bool(cross_check["data_source_mismatch"]) and cross_check.get("data_source_mismatch_reason") != "CROSS_CHECK_NOT_COMPARABLE"
+    rss_only = bool(narrative_summary.get("rss_fallback") or business_summary.get("rss_fallback"))
+    corroboration = int(max(narrative_summary.get("corroboration") or 0, business_summary.get("corroboration") or 0))
+    primary_source = bool(narrative_summary.get("primary_source") or business_summary.get("primary_source"))
+    source_count = int(max(narrative_summary.get("source_diversity") or 0, business_summary.get("source_diversity") or 0))
+    weak_rss = rss_only and source_count <= 1 and not primary_source and corroboration <= 0
+    research_evidence_pass = has_relevant_evidence and strongest_relevance >= 0.7 and not weak_rss
+    data_complete = data_source_ok
+    temporal_ok = True
+    risk_recommendation = research["risk_checklist"].get("recommendation")
+    risk_evidence_pass = risk_recommendation not in {"NEED_MORE_EVIDENCE", "DO_NOT_ADVANCE"}
     gate_pass = bool(
         market_evidence_pass
-        and has_relevant_evidence
-        and strongest_relevance >= 0.7
-        and data_source_ok
+        and research_evidence_pass
+        and risk_evidence_pass
+        and data_complete
+        and temporal_ok
     )
     watchlist_pass = bool(market_evidence_pass and not gate_pass)
 
@@ -2019,6 +2092,16 @@ def build_candidate_record(
         "supply_chain_map": research["supply_chain_map"],
         "research_panel": research["research_panel"],
         "replay_hypothesis": research["replay_hypothesis"],
+        "research_gate": {
+            "market_evidence": market_evidence_pass,
+            "research_evidence": research_evidence_pass,
+            "risk_evidence": risk_evidence_pass,
+            "risk_recommendation": risk_recommendation,
+            "data_completeness": data_complete,
+            "temporal_validity": temporal_ok,
+            "rss_cannot_auto_pass": True,
+            "weak_rss": weak_rss,
+        },
         "catalyst_score": catalyst,
         "ticket_score": ticket_score,
         "news_quality_score": catalyst,
@@ -2368,6 +2451,10 @@ def build_summary_md(
         "",
         f"- output_date: {output_date}",
         f"- as_of_date: {market_summary['as_of_date']}",
+        f"- target_session: {market_summary.get('target_session')}",
+        f"- actual_previous_trading_session: {market_summary.get('actual_previous_trading_session')}",
+        f"- pipeline_execution_time: {market_summary.get('pipeline_execution_time')}",
+        f"- session_status: {market_summary.get('session_status')}",
         f"- market_data_source: {market_summary.get('market_data_source', MARKET_DATA_SOURCE_DISPLAY)}",
         f"- kline_source: {market_summary.get('kline_source', EASTMONEY_HISTORICAL_SOURCE_DISPLAY)}",
         f"- quote_source: {market_summary.get('quote_source', QUOTE_SOURCE_DISPLAY)}",
@@ -3146,6 +3233,10 @@ def main(argv: list[str]) -> int:
             "run_name": args.run_name,
             "run_group": args.run_name,
             "as_of_date": market_snapshot["market_summary"]["as_of_date"],
+            "target_session": market_snapshot["market_summary"].get("target_session"),
+            "actual_previous_trading_session": market_snapshot["market_summary"].get("actual_previous_trading_session"),
+            "pipeline_execution_time": market_snapshot["market_summary"].get("pipeline_execution_time"),
+            "session_status": market_snapshot["market_summary"].get("session_status"),
             "status": "RESEARCH_ONLY",
             "final_classification": final_classification,
             "run_category": "pipeline",
@@ -3260,6 +3351,10 @@ def main(argv: list[str]) -> int:
                 "output_date": args.output_date,
                 "final_classification": final_classification,
                 "as_of_date": market_snapshot["market_summary"]["as_of_date"],
+                "target_session": market_snapshot["market_summary"].get("target_session"),
+                "actual_previous_trading_session": market_snapshot["market_summary"].get("actual_previous_trading_session"),
+                "pipeline_execution_time": market_snapshot["market_summary"].get("pipeline_execution_time"),
+                "session_status": market_snapshot["market_summary"].get("session_status"),
              "top_candidates": [row["symbol"] for row in top_candidates],
              "best_watch_candidate": best_watch_candidate["symbol"] if best_watch_candidate else None,
              "candidate_pool_size": int(pool_size),

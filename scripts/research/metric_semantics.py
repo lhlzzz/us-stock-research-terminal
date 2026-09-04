@@ -8,6 +8,18 @@ from typing import Any, Iterable, Mapping, Sequence
 from .evidence import observed_number
 
 
+VALUE_ENCODINGS = (
+    "ratio_0_1",
+    "percent_0_100",
+    "decimal",
+    "multiple",
+    "absolute",
+    "count",
+    "currency",
+    "text",
+)
+
+
 @dataclass(frozen=True)
 class MetricSpec:
     name: str
@@ -17,19 +29,24 @@ class MetricSpec:
     family: str = "company"
     missing: str = "UNKNOWN"
     confidence: float | None = None
+    value_encoding: str = "decimal"
 
 
 COMPANY_SPECS: dict[str, MetricSpec] = {
     "revenue": MetricSpec("revenue", "higher_better", "relative", "USD", "company"),
-    "revenue_growth": MetricSpec("revenue_growth", "higher_better", "relative", "ratio", "company"),
-    "gross_margin": MetricSpec("gross_margin", "higher_better", "bounded", "ratio", "company"),
-    "operating_margin": MetricSpec("operating_margin", "higher_better", "bounded", "ratio", "company"),
-    "net_margin": MetricSpec("net_margin", "higher_better", "bounded", "ratio", "company"),
+    "revenue_growth": MetricSpec("revenue_growth", "higher_better", "relative", "ratio", "company", value_encoding="ratio_0_1"),
+    "gross_margin": MetricSpec("gross_margin", "higher_better", "bounded", "ratio", "company", value_encoding="ratio_0_1"),
+    "operating_margin": MetricSpec("operating_margin", "higher_better", "bounded", "ratio", "company", value_encoding="ratio_0_1"),
+    "net_margin": MetricSpec("net_margin", "higher_better", "bounded", "ratio", "company", value_encoding="ratio_0_1"),
     "free_cash_flow": MetricSpec("free_cash_flow", "higher_better", "relative", "USD", "company"),
     "fcf_margin": MetricSpec("fcf_margin", "higher_better", "bounded", "ratio", "company"),
-    "roe": MetricSpec("roe", "higher_better", "bounded", "ratio", "company"),
-    "roic": MetricSpec("roic", "higher_better", "bounded", "ratio", "company"),
-    "roa": MetricSpec("roa", "higher_better", "bounded", "ratio", "company"),
+    "roe": MetricSpec("roe", "higher_better", "bounded", "ratio", "company", value_encoding="ratio_0_1"),
+    "pe_ttm": MetricSpec("pe_ttm", "lower_better", "relative", "multiple", "company", value_encoding="multiple"),
+    "dividend_yield": MetricSpec("dividend_yield", "higher_better", "bounded", "ratio", "company", value_encoding="ratio_0_1"),
+    "roic": MetricSpec("roic", "higher_better", "bounded", "ratio", "company", value_encoding="ratio_0_1"),
+    "roa": MetricSpec("roa", "higher_better", "bounded", "ratio", "company", value_encoding="ratio_0_1"),
+    "liquidity_amount": MetricSpec("liquidity_amount", "higher_better", "relative", "USD", "company", value_encoding="currency"),
+    "price_position_52w": MetricSpec("price_position_52w", "neutral", "bounded", "ratio", "company", value_encoding="ratio_0_1"),
     "debt_to_equity": MetricSpec("debt_to_equity", "lower_better", "relative", "multiple", "company"),
     "net_debt": MetricSpec("net_debt", "lower_better", "relative", "USD", "company"),
     "cash": MetricSpec("cash", "higher_better", "relative", "USD", "company"),
@@ -69,6 +86,22 @@ RISK_SPECS: dict[str, MetricSpec] = {
 }
 
 METRIC_SPECS: dict[str, MetricSpec] = {**COMPANY_SPECS, **CAPITAL_SPECS, **RISK_SPECS}
+
+
+class ResearchMetricRegistry:
+    """Single owner for research metric semantics."""
+
+    def get(self, name: str) -> MetricSpec | None:
+        return METRIC_SPECS.get(name)
+
+    def require(self, name: str) -> MetricSpec:
+        spec = self.get(name)
+        if spec is None:
+            raise KeyError(f"metric {name} is not registered")
+        return spec
+
+
+REGISTRY = ResearchMetricRegistry()
 
 PRENORMALIZED_FAMILIES = {
     "business_quality",
@@ -113,7 +146,23 @@ PRENORMALIZED_FAMILIES = {
 
 
 def get_spec(name: str) -> MetricSpec | None:
-    return METRIC_SPECS.get(name)
+    return REGISTRY.get(name)
+
+
+def decode_metric_value(value: Any, encoding: str | None) -> float | None:
+    number = observed_number(value)
+    if number is None:
+        return None
+    label = str(encoding or "").strip() or None
+    if label == "percent_0_100":
+        return number / 100.0
+    if label == "ratio_0_1":
+        if number > 1.5 or number < -1.5:
+            return None
+        return number
+    if label in {"text"}:
+        return None
+    return number
 
 
 def research_median(values: Sequence[Any] | None) -> float | None:
@@ -129,12 +178,26 @@ def normalize_metric(
     spec: MetricSpec | None = None,
     *,
     purpose: str = "quality",
+    value_encoding: str | None = None,
 ) -> float | None:
     """Map a typed metric onto [0, 1], or refuse mixed/raw units."""
-    number = observed_number(value)
+    spec = spec or get_spec(name)
+    encoding = value_encoding or (spec.value_encoding if spec is not None else None)
+    if encoding in (None, "", "decimal") and spec is None:
+        number = observed_number(value)
+        if number is None:
+            return None
+        if number not in (0, 1) and (number > 1.5 or (number > 1 and number == int(number))):
+            return None
+    number = decode_metric_value(value, encoding)
     if number is None:
         return None
-    spec = spec or get_spec(name)
+    if encoding in (None, "") and spec is not None and spec.value_encoding in VALUE_ENCODINGS:
+        encoding = spec.value_encoding
+    if encoding in (None, "") and observed_number(value) is not None:
+        raw = observed_number(value)
+        if raw is not None and name in {"roe", "dividend_yield", "gross_margin"} and raw > 1.5:
+            return None
     if spec is None:
         if 0.0 <= number <= 1.0 and (
             name in PRENORMALIZED_FAMILIES or name.endswith(("_score", "_quality", "_risk", "_strength"))
@@ -188,9 +251,16 @@ def score_research_metrics(items: Iterable[Mapping[str, Any]], *, purpose: str =
         if number is None or item.get("semantic") == "UNKNOWN":
             gaps.append(name or "unnamed")
             continue
+        encoding = item.get("value_encoding")
+        if encoding in (None, "") and spec is not None:
+            encoding = spec.value_encoding
+        if encoding in (None, "") and spec is None:
+            refused.append(name or "unnamed")
+            gaps.append(name or "unnamed")
+            continue
         if spec is not None:
             families.add(spec.family)
-        normalized = normalize_metric(name, number, spec, purpose=purpose)
+        normalized = normalize_metric(name, number, spec, purpose=purpose, value_encoding=encoding)
         if normalized is None:
             refused.append(name)
             gaps.append(name)
@@ -271,10 +341,67 @@ def capital_stance(score: float | None) -> str:
     return quality_stance(score)
 
 
+RISK_STATUS = ("LOW_RISK", "MODERATE_RISK", "ELEVATED_RISK", "HIGH_RISK", "UNKNOWN")
+RISK_DISPLAY = {
+    "LOW_RISK": "GREEN",
+    "MODERATE_RISK": "YELLOW",
+    "ELEVATED_RISK": "YELLOW",
+    "HIGH_RISK": "RED",
+    "UNKNOWN": "GRAY",
+}
+
+
+def risk_status_from_score(score: float | None, *, known: bool = True) -> dict[str, Any]:
+    if not known or score is None:
+        return {
+            "status": "UNKNOWN",
+            "risk_known": False,
+            "display": "GRAY",
+            "flag": "GRAY",
+        }
+    value = float(score)
+    if value >= 0.70:
+        status = "HIGH_RISK"
+    elif value >= 0.55:
+        status = "ELEVATED_RISK"
+    elif value >= 0.45:
+        status = "MODERATE_RISK"
+    else:
+        status = "LOW_RISK"
+    display = RISK_DISPLAY[status]
+    return {
+        "status": status,
+        "risk_known": True,
+        "display": display,
+        "flag": display,
+        "score": round(value, 4),
+    }
+
+
+def risk_manager_recommendation(*, known_blocked: bool, known_elevated: bool, known_clean: bool, insufficient: bool) -> str:
+    if insufficient:
+        return "NEED_MORE_EVIDENCE"
+    if known_blocked:
+        return "DO_NOT_ADVANCE"
+    if known_elevated:
+        return "PROCEED_WITH_CAUTION"
+    if known_clean:
+        return "PROCEED"
+    return "NEED_MORE_EVIDENCE"
+
+
 def risk_stance(score: float | None) -> dict[str, Any]:
     """Higher risk score is worse. Never maps high risk to STRONG."""
     if score is None:
-        return {"score": None, "risk_level": "UNKNOWN", "stance": "UNKNOWN", "stance_alias": "UNKNOWN"}
+        return {
+            "score": None,
+            "risk_level": "UNKNOWN",
+            "stance": "UNKNOWN",
+            "stance_alias": "UNKNOWN",
+            "status": "UNKNOWN",
+            "display": "GRAY",
+            "risk_known": False,
+        }
     value = float(score)
     if value >= 0.70:
         level, stance = "HIGH", "CAUTION"
@@ -288,15 +415,24 @@ def risk_stance(score: float | None) -> dict[str, Any]:
         level, stance = "LOW", "FAVORABLE"
     if value >= 0.70:
         stance_alias = "HIGH_RISK"
+        status = "HIGH_RISK"
     elif value < 0.30:
         stance_alias = "LOW_RISK"
+        status = "LOW_RISK"
+    elif value >= 0.55:
+        stance_alias = stance
+        status = "ELEVATED_RISK"
     else:
         stance_alias = stance
+        status = "MODERATE_RISK" if value >= 0.45 else "LOW_RISK"
     return {
         "score": round(value, 4),
         "risk_level": level,
         "stance": stance,
         "stance_alias": stance_alias,
+        "status": status,
+        "display": RISK_DISPLAY.get(status, "GRAY"),
+        "risk_known": True,
     }
 
 
@@ -318,6 +454,7 @@ def metric_record(
         "unit": None if spec is None else spec.unit,
         "direction": None if spec is None else spec.direction,
         "normalization": None if spec is None else spec.normalization,
+        "value_encoding": None if spec is None else spec.value_encoding,
         "source": source,
         "effective_date": effective_date,
         "as_of": as_of,

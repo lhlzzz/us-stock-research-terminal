@@ -70,8 +70,27 @@ def _flush_or_commit(db: Session, commit: bool):
 
 
 def create_ticket(db: Session, *, commit: bool = True, **kwargs) -> Ticket:
-    obj = Ticket(**kwargs)
-    db.add(obj)
+    return upsert_ticket(db, commit=commit, **kwargs)
+
+
+def upsert_ticket(db: Session, *, commit: bool = True, **kwargs) -> Ticket:
+    output_date = kwargs.get("output_date")
+    symbol = kwargs.get("symbol")
+    as_of_date = kwargs.get("as_of_date")
+    research_run_id = kwargs.get("research_run_id")
+    obj = None
+    if output_date is not None and symbol not in (None, "") and as_of_date is not None:
+        query = db.query(Ticket).filter_by(output_date=output_date, symbol=symbol, as_of_date=as_of_date)
+        if research_run_id is not None:
+            query = query.filter_by(research_run_id=research_run_id)
+        obj = query.order_by(Ticket.id.desc()).first()
+    if obj:
+        for k, v in kwargs.items():
+            if v is not None:
+                setattr(obj, k, v)
+    else:
+        obj = Ticket(**kwargs)
+        db.add(obj)
     _flush_or_commit(db, commit)
     db.refresh(obj)
     return obj

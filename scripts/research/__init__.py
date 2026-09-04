@@ -16,7 +16,7 @@ from .brains import (
     build_tradingagents_adapter,
     build_uzi_adapter,
 )
-from .contracts import capital_behavior, company_quality, independent_scores, industry_position, market_setup
+from .contracts import brain_readiness, capital_behavior, company_quality, independent_scores, industry_position, market_setup
 from .decision import (
     build_company_research,
     contradiction_status,
@@ -41,6 +41,7 @@ from .memory import (
     scan_obsidian_vault,
 )
 from .query import research_dashboard, research_query
+from .temporal import classify_bar, daily_bar_gate, historical_claim_eligible, temporal_record
 
 __all__ = [
     "Claim",
@@ -48,6 +49,7 @@ __all__ = [
     "PRODUCTION_BOUNDARY",
     "assert_research_only",
     "assemble_research_sample",
+    "brain_readiness",
     "build_buffett_context",
     "build_company_research",
     "build_future_buyer_map",
@@ -77,4 +79,8 @@ __all__ = [
     "research_data_ready",
     "write_company_report",
     "write_history_census",
+    "classify_bar",
+    "daily_bar_gate",
+    "historical_claim_eligible",
+    "temporal_record",
 ]

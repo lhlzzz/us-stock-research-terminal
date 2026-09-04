@@ -297,8 +297,8 @@ def test_post_close_beijing_time_maps_to_prior_us_session():
 def test_post_close_pipeline_skips_us_market_holidays():
     post_close_after_independence_day = datetime(2026, 7, 4, 5, tzinfo=BEIJING_TZ)
 
-    assert closed_us_session_date(post_close_after_independence_day) == date(2026, 7, 3)
-    assert is_trading_day(closed_us_session_date(post_close_after_independence_day)) is False
+    assert closed_us_session_date(post_close_after_independence_day) == date(2026, 7, 2)
+    assert is_trading_day(closed_us_session_date(post_close_after_independence_day)) is True
 
 
 class _RowsResult:

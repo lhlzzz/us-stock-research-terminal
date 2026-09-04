@@ -12,7 +12,7 @@ PROJECT_DIR = str(Path(os.environ.get('XIAOMEI_HOME') or Path(__file__).resolve(
 def run_pipeline(self, output_date: str = None):
     """Run the xiaomei ticket pipeline and store results in PostgreSQL."""
     from scripts.db.engine import SessionLocal
-    from scripts.db.crud import create_ticket, create_runtime_decision, create_research_run, finish_research_run
+    from scripts.db.crud import upsert_ticket, create_runtime_decision, create_research_run, finish_research_run
     import subprocess
     import json
 
@@ -35,7 +35,7 @@ def run_pipeline(self, output_date: str = None):
             try:
                 output = json.loads(result.stdout.strip().split("\n")[-1])
                 for sym_data in output.get("top_candidates", []):
-                    create_ticket(db, output_date=target_date, symbol=sym_data,
+                    upsert_ticket(db, output_date=target_date, symbol=sym_data,
                                   as_of_date=target_date, lifecycle_stage="paper_review_candidate")
                 create_runtime_decision(db, output_date=target_date, run_name="pipeline",
                                         final_classification=output.get("final_classification"),

@@ -28,7 +28,7 @@ import time
 from urllib.parse import urlencode, urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field, asdict
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -77,19 +77,16 @@ KLINE_FIELDS1 = "f1,f2,f3,f4,f5,f6"
 KLINE_FIELDS2 = "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61"
 STOCK_DETAIL_FIELDS = "f43,f44,f45,f46,f47,f48,f50,f51,f52,f57,f58,f60,f84,f85,f162,f167,f173,f191"
 
-# US stock market holidays 2026 (NYSE observed)
-US_MARKET_HOLIDAYS_2026 = {
-    date(2026, 1, 1),   # New Year's Day
-    date(2026, 1, 19),  # MLK Jr. Day
-    date(2026, 2, 16),  # Presidents' Day
-    date(2026, 4, 3),   # Good Friday
-    date(2026, 5, 25),  # Memorial Day
-    date(2026, 6, 19),  # Juneteenth
-    date(2026, 7, 3),   # Independence Day observed
-    date(2026, 9, 7),   # Labor Day
-    date(2026, 11, 26), # Thanksgiving
-    date(2026, 12, 25), # Christmas
-}
+from market_calendar import (
+    CALENDAR,
+    add_trading_days,
+    is_trading_day,
+    latest_us_trading_day,
+    next_trading_day,
+    prev_trading_day,
+)
+
+US_MARKET_HOLIDAYS_2026 = CALENDAR.holidays(2026)
 
 
 def _fnum(v) -> float | None:
@@ -395,47 +392,7 @@ class ScrapyApiBridge:
             }
 
 
-def is_trading_day(d: date) -> bool:
-    """Check if a date is a US stock market trading day."""
-    if d.weekday() >= 5:  # Saturday or Sunday
-        return False
-    return d not in US_MARKET_HOLIDAYS_2026
 
-
-def next_trading_day(d: date) -> date:
-    """Get the next trading day after d."""
-    d = d + timedelta(days=1)
-    while not is_trading_day(d):
-        d += timedelta(days=1)
-    return d
-
-
-def prev_trading_day(d: date) -> date:
-    """Get the previous trading day before d."""
-    d = d - timedelta(days=1)
-    while not is_trading_day(d):
-        d -= timedelta(days=1)
-    return d
-
-
-def add_trading_days(d: date, n: int) -> date:
-    """Add n trading days to date d."""
-    if n >= 0:
-        for _ in range(n):
-            d = next_trading_day(d)
-    else:
-        for _ in range(-n):
-            d = prev_trading_day(d)
-    return d
-
-
-def latest_us_trading_day(ref_date: date | None = None) -> date:
-    """Get the latest US trading day on or before ref_date."""
-    if ref_date is None:
-        ref_date = date.today()
-    while not is_trading_day(ref_date):
-        ref_date -= timedelta(days=1)
-    return ref_date
 
 
 @dataclass
@@ -860,12 +817,25 @@ class DataProvider:
     def _get_cache_path(self, symbol: str, data_type: str, date_str: str = "") -> Path:
         return self.cache_dir / f"{symbol}_{data_type}_{date_str}.json"
 
+    def _session_stamp(self, date_str: str = "", data_type: str = "") -> str | None:
+        if date_str and len(date_str) >= 10 and date_str[4] == "-" and date_str[7] == "-":
+            return date_str[:10]
+        if data_type == "quote":
+            return datetime.now(CALENDAR.timezone).date().isoformat()
+        return None
+
     def _load_cache(self, symbol: str, data_type: str, date_str: str = "", max_age_hours: int = 24) -> Any | None:
         cache_path = self._get_cache_path(symbol, data_type, date_str)
         if cache_path.exists():
             try:
                 cached = json.loads(cache_path.read_text())
                 cache_time = datetime.fromisoformat(cached.get("_cache_time", "2000-01-01"))
+                data_as_of = cached.get("data_as_of")
+                requested_as_of = self._session_stamp(date_str, data_type)
+                if requested_as_of and data_as_of and str(data_as_of)[:10] != requested_as_of:
+                    return None
+                if requested_as_of and not data_as_of:
+                    return None
                 if (datetime.now() - cache_time).total_seconds() < max_age_hours * 3600:
                     return cached.get("data")
             except Exception:
@@ -874,8 +844,12 @@ class DataProvider:
 
     def _save_cache(self, symbol: str, data_type: str, data: Any, date_str: str = ""):
         cache_path = self._get_cache_path(symbol, data_type, date_str)
+        session_date = self._session_stamp(date_str, data_type)
         cache_path.write_text(json.dumps({
             "_cache_time": datetime.now().isoformat(),
+            "data_as_of": session_date,
+            "source_timestamp": datetime.now().isoformat(),
+            "session_date": session_date,
             "data": data,
         }, ensure_ascii=False, default=str))
 
@@ -1121,7 +1095,19 @@ class DataProvider:
         # Check cache (30s for realtime)
         cached = self._load_cache(symbol, "quote", "realtime", max_age_hours=0.008)
         if cached:
-            return cached, "cache", {"provider_status": "cached"}
+            cache_path = self._get_cache_path(symbol, "quote", "realtime")
+            record: dict[str, Any] = {}
+            try:
+                record = json.loads(cache_path.read_text())
+            except Exception:
+                record = {}
+            return cached, "cache", {
+                "provider_status": "cached",
+                "data_as_of": record.get("data_as_of"),
+                "source_timestamp": record.get("source_timestamp"),
+                "session_date": record.get("session_date"),
+                "historical_research_must_not_use_current_cache": True,
+            }
 
         attempts: list[dict[str, Any]] = []
         for provider in self.quote_providers:

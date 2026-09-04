@@ -252,6 +252,15 @@ def independent_scores(
     research_composite = round(sum(research_values) / len(research_values), 4) if research_values else None
     alpha = observed_number(statistical_score)
     risk_payload = risk_stance(risk_score)
+    brain_total = 4
+    brain_count = len(research_values)
+    coverage = round(brain_count / brain_total, 4)
+    if brain_count == 0:
+        readiness = "DATA_GAP"
+    elif brain_count < brain_total:
+        readiness = "PARTIAL"
+    else:
+        readiness = "READY"
     return {
         "company_quality_score": company_score,
         "industry_position_score": industry_score,
@@ -261,6 +270,11 @@ def independent_scores(
         "quality": {"score": company_score, "stance": quality_stance(company_score)},
         "risk": risk_payload,
         "research_composite": research_composite,
+        "score": research_composite,
+        "coverage": coverage,
+        "brain_count": brain_count,
+        "brain_total": brain_total,
+        "readiness": readiness,
         "alpha_score": alpha,
         "research_composite_is_not_alpha": True,
         "long_term_quality": company_score,
@@ -268,7 +282,67 @@ def independent_scores(
         "capital_edge": capital_score,
         "short_term_edge": market_score,
         "not_a_single_total": True,
+        "not_fully_validated": readiness != "READY",
         "production_boundary": PRODUCTION_BOUNDARY,
+    }
+
+
+BRAIN_READY = "READY"
+BRAIN_PARTIAL = "PARTIAL"
+BRAIN_DATA_GAP = "DATA_GAP"
+BRAIN_VALIDATION_GAP = "VALIDATION_GAP"
+BRAIN_BLOCKED = "BLOCKED"
+
+
+def _brain_status(view: Mapping[str, Any] | None) -> str:
+    if not view:
+        return BRAIN_DATA_GAP
+    status = str(view.get("status") or view.get("readiness") or "").upper()
+    if status in {BRAIN_READY, BRAIN_PARTIAL, BRAIN_DATA_GAP, BRAIN_VALIDATION_GAP, BRAIN_BLOCKED}:
+        return status
+    if view.get("blocked") or view.get("status") == "BLOCKED":
+        return BRAIN_BLOCKED
+    score = observed_number(view.get("score") or view.get("capital_behavior_score"))
+    gaps = list(view.get("data_gaps") or [])
+    if score is None and not gaps and view.get("semantic") == "UNKNOWN":
+        return BRAIN_DATA_GAP
+    if score is None:
+        return BRAIN_DATA_GAP
+    if gaps:
+        return BRAIN_PARTIAL
+    return BRAIN_PARTIAL if view.get("validation_status") in (None, "", "VALIDATION_GAP", "UNVALIDATED") else BRAIN_READY
+
+
+def brain_readiness(
+    company: Mapping[str, Any] | None = None,
+    industry: Mapping[str, Any] | None = None,
+    capital: Mapping[str, Any] | None = None,
+    statistical: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    brains = {
+        "Company": _brain_status(company),
+        "Industry": _brain_status(industry),
+        "Capital": _brain_status(capital),
+        "Statistical": _brain_status(statistical),
+    }
+    ready = sum(1 for status in brains.values() if status == BRAIN_READY)
+    if any(status == BRAIN_BLOCKED for status in brains.values()):
+        overall = BRAIN_BLOCKED
+    elif ready == 4:
+        overall = BRAIN_READY
+    elif all(status == BRAIN_DATA_GAP for status in brains.values()):
+        overall = BRAIN_DATA_GAP
+    elif any(status == BRAIN_VALIDATION_GAP for status in brains.values()) and ready == 0:
+        overall = BRAIN_VALIDATION_GAP
+    else:
+        overall = BRAIN_PARTIAL
+    return {
+        "brains": brains,
+        "overall": overall,
+        "ready_count": ready,
+        "brain_total": 4,
+        "allows_partial_research": True,
+        "does_not_require_all_ready": True,
     }
 
 
