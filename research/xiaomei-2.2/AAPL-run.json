@@ -1,0 +1,137 @@
+{
+  "run_id": "AAPL|2026-09-03|xiaomei-2.2|fc00d195a9a5c2e5299afd8882bdd248529945a6cf2c91c1bc272fa95b4a5e53",
+  "symbol": "AAPL",
+  "as_of": "2026-09-03",
+  "classification": "WATCHLIST",
+  "readiness": {
+    "status": "PARTIAL",
+    "reasons": [
+      "market=DATA_GAP",
+      "fundamentals=DATA_GAP",
+      "revision=DATA_GAP",
+      "risk=DATA_GAP",
+      "catalyst=DATA_GAP",
+      "management=DATA_GAP"
+    ],
+    "ready_count": 4,
+    "layer_total": 10,
+    "not_a_bool": true,
+    "produces_pick": false,
+    "production_boundary": {
+      "status": "RESEARCH_ONLY",
+      "paper": "PAPER_ONLY",
+      "broker": "NO_BROKER",
+      "live_order": "NO_LIVE_ORDER",
+      "ranking_owner": "observable_footprint_v1",
+      "ranking": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
+      "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+      "allowed_surfaces": [
+        "research",
+        "shadow",
+        "replay",
+        "diagnostics",
+        "context",
+        "learning"
+      ],
+      "forbidden_outputs": [
+        "BUY",
+        "SELL",
+        "ORDER",
+        "PAPER_PICK"
+      ]
+    }
+  },
+  "data_gaps": [
+    "revision",
+    "chokepoint",
+    "universe"
+  ],
+  "evidence_count": 765,
+  "providers": {
+    "sec": "OBSERVED",
+    "earnings": "OBSERVED",
+    "estimates": "DATA_GAP",
+    "industry": "OBSERVED",
+    "universe": "DATA_GAP",
+    "fundamentals": "OBSERVED"
+  },
+  "produces_pick": false,
+  "ranking_owner": "observable_footprint_v1",
+  "production_ranking_key": [
+    "ticket_score",
+    "market_score",
+    "volume_confirmation_ratio"
+  ],
+  "reused": false,
+  "sec_status": "OBSERVED",
+  "cik": "0000320193",
+  "company_name": "Apple Inc.",
+  "filing_count": 765,
+  "document_count": 765,
+  "parsed_gaps": [
+    "rpo",
+    "guidance",
+    "segment",
+    "customer_concentration"
+  ],
+  "parsed_fields": {
+    "revenue": 109417000000,
+    "gross_profit": 54770000000,
+    "operating_income": 35695000000,
+    "net_income": 29789000000,
+    "operating_cash_flow": 116996000000,
+    "capex": 6799000000,
+    "cash": 39544000000,
+    "debt": 71340000000,
+    "shares": 14594180000,
+    "diluted_shares": 14714676000,
+    "sbc": 10523000000,
+    "buyback": 62094000000,
+    "rpo": null,
+    "backlog": 14900000000,
+    "eps_diluted": 2.02,
+    "fcf": 110197000000.0,
+    "guidance": null,
+    "segment": null,
+    "customer_concentration": null
+  },
+  "earnings_status": "OBSERVED",
+  "revision_status": "DATA_GAP",
+  "industry_status": "OBSERVED",
+  "industry_entities": [
+    [
+      "company",
+      "AAPL"
+    ],
+    [
+      "industry",
+      "Electronic Computers"
+    ]
+  ],
+  "chokepoint_status": "DATA_GAP",
+  "universe_status": "DATA_GAP",
+  "thesis_status": "ALIGNED",
+  "contradiction": "UNKNOWN",
+  "why_not": {
+    "why_candidate": [],
+    "why_not": [
+      "missing revision",
+      "risk unverified",
+      "market=DATA_GAP",
+      "fundamentals=DATA_GAP",
+      "revision=DATA_GAP",
+      "risk=DATA_GAP",
+      "catalyst=DATA_GAP",
+      "management=DATA_GAP"
+    ],
+    "conclusion": "SHORT_TERM_NOT_READY",
+    "not_a_buy_sell": true
+  },
+  "outcomes_available": false,
+  "snapshot_hash": "fc00d195a9a5c2e5299afd8882bdd248529945a6cf2c91c1bc272fa95b4a5e53",
+  "error_count": 0,
+  "duration_ms": 1509,
+  "provider_attempt_count": 6,
+  "failure_warning_count": 0,
+  "learning_pattern_count": 1
+}

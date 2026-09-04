@@ -1,8 +1,11 @@
 """Typed research claims. UNKNOWN is never promoted to a fact."""
 from __future__ import annotations
 
-from datetime import date, datetime
+import hashlib
+import json
+from datetime import date, datetime, timezone
 from typing import Any, Iterable, Mapping
+from uuid import uuid4
 
 
 SEMANTICS = ("OBSERVED", "DERIVED", "INFERRED", "UNKNOWN")
@@ -16,13 +19,14 @@ EVIDENCE_LEVELS = (
     "LEVEL_6",
 )
 EVIDENCE_HIERARCHY = {
-    "LEVEL_1": "Primary filings / company disclosure",
-    "LEVEL_2": "Official company materials / transcripts",
-    "LEVEL_3": "Regulatory / authoritative data",
-    "LEVEL_4": "High-quality financial/news sources",
-    "LEVEL_5": "Social / community",
-    "LEVEL_6": "Model inference",
+    "LEVEL_1": "official filing / company primary source",
+    "LEVEL_2": "official transcript / official company publication",
+    "LEVEL_3": "regulated/public primary dataset",
+    "LEVEL_4": "reputable secondary source",
+    "LEVEL_5": "public research / media",
+    "LEVEL_6": "discovery-only",
 }
+EVIDENCE_STATUSES = ("OBSERVED", "DERIVED", "DATA_GAP", "UNKNOWN", "ERROR")
 SOURCE_TYPES = (
     "public_quote",
     "public_ohlcv",
@@ -36,14 +40,21 @@ SOURCE_TYPES = (
     "market_research",
     "sec_filing",
     "earnings",
+    "estimate_revision",
+    "industry_graph",
+    "universe",
+    "rss",
+    "xbrl",
 )
 
 
 def evidence_level(source_type: str | None, *, filing: bool = False, transcript: bool = False, social: bool = False, inferred: bool = False) -> str:
-    if filing or source_type == "sec_filing":
+    if filing or source_type in {"sec_filing", "xbrl"}:
         return "LEVEL_1"
     if transcript or source_type == "earnings":
         return "LEVEL_2"
+    if source_type in {"rss", "discovery"}:
+        return "LEVEL_6"
     if source_type in {"forward_tracking", "ticket"}:
         return "LEVEL_3"
     if source_type in {"public_quote", "public_ohlcv", "capital_brain"}:
@@ -237,4 +248,104 @@ def provenance(item: Mapping[str, Any]) -> dict[str, Any]:
         "confidence": item.get("confidence"),
         "evidence_refs": list(item.get("evidence_refs") or []),
         "semantic": item.get("semantic") or "UNKNOWN",
+    }
+
+
+def utc_now() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def content_hash(payload: Any) -> str:
+    encoded = json.dumps(payload, sort_keys=True, default=str, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def research_evidence(
+    *,
+    symbol: str | None = None,
+    as_of: str | None = None,
+    published_at: str | None = None,
+    effective_date: str | None = None,
+    available_at: str | None = None,
+    retrieved_at: str | None = None,
+    source: str | None = None,
+    source_type: str | None = None,
+    source_url: str | None = None,
+    document_id: str | None = None,
+    claim_id: str | None = None,
+    status: str = "UNKNOWN",
+    level: str | None = None,
+    confidence: float | None = None,
+    raw_hash: str | None = None,
+    facts: Mapping[str, Any] | None = None,
+    metadata: Mapping[str, Any] | None = None,
+    evidence_id: str | None = None,
+) -> dict[str, Any]:
+    """Canonical ResearchEvidence. OBSERVED requires a source."""
+    label = str(status or "UNKNOWN").upper()
+    if label == "READY":
+        label = "OBSERVED"
+    if label not in EVIDENCE_STATUSES:
+        label = "UNKNOWN"
+    if label == "OBSERVED" and not source:
+        label = "ERROR"
+        metadata = {**(metadata or {}), "reason": "OBSERVED requires source"}
+    facts_payload = dict(facts or {})
+    hashed = raw_hash or content_hash({"facts": facts_payload, "source": source, "source_url": source_url})
+    return {
+        "evidence_id": evidence_id or str(uuid4()),
+        "symbol": None if symbol in (None, "") else str(symbol).upper(),
+        "as_of": _as_of_text(as_of),
+        "published_at": _as_of_text(published_at),
+        "effective_date": _as_of_text(effective_date) or _as_of_text(published_at),
+        "available_at": _as_of_text(available_at) or _as_of_text(published_at),
+        "retrieved_at": retrieved_at or utc_now(),
+        "source": source,
+        "source_type": source_type or source,
+        "source_url": source_url,
+        "document_id": document_id,
+        "claim_id": claim_id,
+        "status": label,
+        "evidence_level": level if level in EVIDENCE_LEVELS else evidence_level(source_type),
+        "confidence": confidence,
+        "raw_hash": hashed,
+        "content_hash": hashed,
+        "facts": facts_payload,
+        "metadata": dict(metadata or {}),
+        "produces_pick": False,
+    }
+
+
+def evidence_quality(
+    item: Mapping[str, Any] | None = None,
+    *,
+    independent_sources: int = 1,
+) -> dict[str, Any]:
+    payload = dict(item or {})
+    level = payload.get("evidence_level") or payload.get("level")
+    status = str(payload.get("status") or payload.get("semantic") or "UNKNOWN").upper()
+    published = _as_of_text(payload.get("published_at") or payload.get("effective_date"))
+    as_of = _as_of_text(payload.get("as_of") or payload.get("as_of_date"))
+    temporal_ok = True
+    if published and as_of and published > as_of:
+        temporal_ok = False
+    corroborated = independent_sources >= 2 and status == "OBSERVED"
+    return {
+        "source_reliability": level,
+        "directness": "PRIMARY" if level in {"LEVEL_1", "LEVEL_2", "LEVEL_3"} else "SECONDARY",
+        "recency": published,
+        "temporal_validity": temporal_ok,
+        "independence": independent_sources,
+        "corroboration": "CORROBORATED" if corroborated else "SINGLE_SOURCE" if status == "OBSERVED" else "NONE",
+        "not_a_production_score": True,
+    }
+
+
+def corroboration(sources: Iterable[str] | None = None) -> dict[str, Any]:
+    unique = sorted({str(item) for item in (sources or []) if item})
+    return {
+        "sources": unique,
+        "independent_count": len(unique),
+        "status": "CORROBORATED" if len(unique) >= 2 else "SINGLE_SOURCE" if unique else "NONE",
+        "one_source_cannot_corroborate": True,
     }

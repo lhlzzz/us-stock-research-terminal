@@ -2,8 +2,11 @@
 from __future__ import annotations
 
 from typing import Any, Iterable, Mapping
+from uuid import uuid4
 
 from .boundary import PRODUCTION_BOUNDARY
+from .evidence import content_hash
+from .providers import DATA_GAP
 
 ENTITY_TYPES = (
     "industry", "system", "platform", "equipment", "module", "component",
@@ -12,6 +15,8 @@ ENTITY_TYPES = (
 RELATION_TYPES = (
     "supplies", "depends_on", "competes_with", "enables", "replaces",
     "bottlenecks", "certified_by", "capacity_constrained",
+    "company_industry", "supplier", "manufacturer", "customer",
+    "distribution", "technology_dependency", "chokepoint",
 )
 CHOKEPOINT_STATUSES = ("EMERGING", "CONFIRMED", "STRESSED", "RELAXING", "BROKEN")
 UNIVERSES = {
@@ -65,7 +70,22 @@ def persist_industry_graph(
             continue
         graph["relations"].append(dict(relation))
         seen_relations.add(key)
-    graph["status"] = "READY" if graph["entities"] else "DATA_GAP"
+    for relation in graph["relations"]:
+        if not relation.get("source"):
+            relation["status"] = "UNKNOWN"
+            relation.setdefault("confidence", None)
+        else:
+            relation.setdefault("status", "OBSERVED")
+        relation.setdefault("directional", True)
+        relation.setdefault("relationship_type", relation.get("type"))
+        relation.setdefault("effective_date", as_of_date)
+        relation.setdefault("retrieved_at", None)
+        relation.setdefault("source_url", None)
+    graph["status"] = "OBSERVED" if graph["entities"] else DATA_GAP
+    graph["graph_snapshot_id"] = graph.get("graph_snapshot_id") or str(as_of_date or uuid4())
+    graph["valid_from"] = graph.get("valid_from") or as_of_date
+    graph["valid_to"] = graph.get("valid_to")
+    graph["content_hash"] = content_hash({"entities": graph["entities"], "relations": graph["relations"], "as_of_date": graph["as_of_date"]})
     graph["produces_pick"] = False
     graph["production_boundary"] = PRODUCTION_BOUNDARY
     return graph
@@ -89,8 +109,70 @@ def update_industry_memory(previous: Mapping[str, Any] | None, new_evidence: Map
     }
 
 
+def industry_from_sec(sec_bundle: Mapping[str, Any], *, as_of: str) -> dict[str, Any]:
+    sic = sec_bundle.get("sic_description")
+    symbol = sec_bundle.get("symbol")
+    if not sic:
+        graph = persist_industry_graph(None, as_of_date=as_of)
+        graph["chokepoint"] = chokepoint_record()
+        return graph
+    entities = [
+        {"type": "company", "id": symbol, "name": symbol, "source": "sec_edgar", "source_url": "https://data.sec.gov/", "effective_date": as_of},
+        {"type": "industry", "id": sic, "name": sic, "source": "sec_edgar", "source_url": "https://data.sec.gov/", "effective_date": as_of},
+    ]
+    relations = [{
+        "type": "depends_on",
+        "src": symbol,
+        "dst": sic,
+        "relationship_type": "company_industry",
+        "source": "sec_edgar",
+        "source_url": "https://data.sec.gov/submissions/",
+        "effective_date": as_of,
+        "retrieved_at": None,
+        "confidence": 1.0,
+        "directional": True,
+    }]
+    graph = persist_industry_graph(None, entities=entities, relations=relations, as_of_date=as_of)
+    graph["graph_snapshot_id"] = f"{symbol}:{as_of}:sec-sic"
+    graph["valid_from"] = as_of
+    graph["valid_to"] = None
+    graph["chokepoint"] = chokepoint_record()
+    return graph
+
+
+def industry_graph_as_of(snapshots: Iterable[Mapping[str, Any]] | None, *, as_of: str) -> dict[str, Any]:
+    cutoff = str(as_of)[:10]
+    visible = None
+    for row in snapshots or []:
+        start = str(row.get("valid_from") or row.get("as_of_date") or "")[:10]
+        end = str(row.get("valid_to") or "")[:10] or None
+        if start and start > cutoff:
+            continue
+        if end and end < cutoff:
+            continue
+        visible = dict(row)
+    if visible is None:
+        return {"status": DATA_GAP, "reason": "no industry graph snapshot as_of", "entities": [], "relations": [], "as_of_date": as_of}
+    return visible
+
+
 def chokepoint_record(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
     facts = dict(facts or {})
+    if not facts:
+        return {
+            "schema": "chokepoint",
+            "component": None,
+            "technology": None,
+            "capacity": None,
+            "supplier_concentration": None,
+            "geographic_concentration": None,
+            "switching_cost": None,
+            "regulatory_dependency": None,
+            "status": DATA_GAP,
+            "coverage_status": DATA_GAP,
+            "produces_pick": False,
+            "production_boundary": PRODUCTION_BOUNDARY,
+        }
     status = str(facts.get("status") or "EMERGING").upper()
     if status not in CHOKEPOINT_STATUSES:
         status = "EMERGING"
@@ -132,7 +214,7 @@ def universe_snapshot(
         "snapshot_date": snapshot_date or effective_from,
         "version": version,
         "true_historical_snapshot": bool(source and source_url and effective_from),
-        "status": "READY" if source and effective_from else "DATA_GAP",
+        "status": "OBSERVED" if source and effective_from else "DATA_GAP",
     }
 
 
@@ -182,7 +264,7 @@ def research_universes(
         "CHOKEPOINT_UNIVERSE": sorted({str(item).upper() for item in chokepoint or []}),
         "as_of": as_of,
         "uses_current_universe": snapshots is None,
-        "true_historical_universe_snapshots": "DATA_GAP" if not snapshots else "READY",
+        "true_historical_universe_snapshots": "DATA_GAP" if not snapshots else "OBSERVED",
         "rules": {
             "CORE_UNIVERSE": "default research; production ranking universe remains nasdaq100_sp500_union",
             "INDUSTRY_DISCOVERY_UNIVERSE": "expand when industry changes",

@@ -25,7 +25,7 @@ from .decision import (
     why_not,
     write_company_report,
 )
-from .evidence import CLAIM_KINDS, EVIDENCE_LEVELS, Claim, claim, claim_kind, highest_evidence_quality
+from .evidence import CLAIM_KINDS, EVIDENCE_LEVELS, Claim, claim, claim_kind, highest_evidence_quality, research_evidence
 from .learning import (
     DATA_QUALITY_GATES,
     assemble_research_sample,
@@ -41,6 +41,7 @@ from .memory import (
     scan_obsidian_vault,
 )
 from .query import research_dashboard, research_query
+from .runtime import run_symbol_research, seed_demo_learning
 from .temporal import classify_bar, daily_bar_gate, historical_claim_eligible, temporal_record
 
 __all__ = [
@@ -60,6 +61,7 @@ __all__ = [
     "build_tradingagents_adapter",
     "build_uzi_adapter",
     "claim",
+    "research_evidence",
     "capital_behavior",
     "company_quality",
     "contradiction_status",
@@ -71,6 +73,8 @@ __all__ = [
     "research_dashboard",
     "research_decision_matrix",
     "research_query",
+    "run_symbol_research",
+    "seed_demo_learning",
     "why_not",
     "independent_price_outcomes",
     "ingest_obsidian_assets",

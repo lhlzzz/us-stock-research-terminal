@@ -30,6 +30,7 @@ from .contracts import (
     research_horizon_contract,
     risk_view,
 )
+from .coverage import research_coverage, research_readiness
 from .fundamentals import (
     company_fundamentals,
     earnings_intelligence,
@@ -37,6 +38,7 @@ from .fundamentals import (
     sbc_dilution,
     sec_filing,
 )
+from .failure import previous_failure_warning
 from .industry import persist_industry_graph, portfolio_risk_graph, supply_chain_portfolio, update_industry_memory
 from .market_context import analyst_revision, options_intelligence, short_intelligence
 from .memory import portfolio_context
@@ -186,6 +188,14 @@ def why_not(views: Mapping[str, str], *, capital: Mapping[str, Any] | None = Non
         reasons.append("Portfolio = already owned")
     if portfolio.get("overweight"):
         reasons.append("Portfolio = overweight")
+    if "sec" in views and views.get("sec") in {None, "", "UNKNOWN", "DATA_GAP"}:
+        reasons.append("missing SEC")
+    if "revision" in views and views.get("revision") in {None, "", "UNKNOWN", "DATA_GAP"}:
+        reasons.append("missing revision")
+    if "industry" in views and views.get("industry") in {None, "", "UNKNOWN", "DATA_GAP"}:
+        reasons.append("industry relationship uncertain")
+    if "risk" in views and views.get("risk") in {None, "", "UNKNOWN", "DATA_GAP"}:
+        reasons.append("risk unverified")
     long_ok = views.get("fundamental") in {"STRONG", "BULLISH"} or views.get("company") in {"STRONG", "BULLISH"}
     short_block = bool(reasons)
     conclusion = "RESEARCH_BULLISH" if long_ok else "RESEARCH_INCOMPLETE"
@@ -409,6 +419,21 @@ def build_company_research(
         research_mode = "MARKET_ONLY_RESEARCH"
     else:
         research_mode = "PARTIAL_RESEARCH"
+    coverage_matrix = research_coverage(
+        symbol=symbol,
+        as_of=str(as_of_date or facts.get("as_of_date") or ""),
+        market=market,
+        fundamentals=fundamentals,
+        sec=filings,
+        earnings=earnings,
+        revision=analyst,
+        industry=graph,
+        risk=risk_schema,
+        catalyst=event_regime,
+        management=management,
+        supply_chain=chain,
+    )
+    readiness_matrix = research_readiness(coverage_matrix)
     conclusion = {
         "status": "RESEARCH_CONCLUSION",
         "not_buy_sell": True,
@@ -508,6 +533,9 @@ def build_company_research(
             "capital": capital_view.get("capital_state_confidence") or capital_view.get("state_confidence"),
         },
         "evidence_refs": list(industry.get("evidence_refs") or []),
+        "coverage_matrix": coverage_matrix,
+        "research_readiness": readiness_matrix,
+        "failure_warning": previous_failure_warning({"symbol": symbol, "as_of": str(as_of_date or "")}),
         "production_boundary": PRODUCTION_BOUNDARY,
         "market_alpha_from_portfolio": 0,
         "boundary": validate({
@@ -598,6 +626,13 @@ def render_company_report(research: Mapping[str, Any]) -> str:
         "## 15. Research Conclusion",
         f"- {research.get('research_conclusion')}",
         "- This is RESEARCH_CONCLUSION, not BUY/SELL.",
+        "",
+        "## 16. SEC / Earnings / Industry / Failures",
+        f"- sec: {research.get('sec_filing')}",
+        f"- earnings: {research.get('earnings')}",
+        f"- coverage: {research.get('coverage_matrix')}",
+        f"- readiness: {research.get('research_readiness')}",
+        f"- failure_warning: {research.get('failure_warning')}",
         "",
     ])
 

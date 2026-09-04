@@ -1,5 +1,30 @@
 # STATE
 
+## Xiaomei 2.2 — 2026-09-04
+
+Completion: **XIAOMEI 2.2**.
+
+Research OS owner remains `scripts/research/`. Production ranking owner
+remains `observable_footprint_v1` with sort
+`(ticket_score, market_score, volume_confirmation_ratio)`. Boundary
+unchanged: RESEARCH_ONLY / PAPER_ONLY / NO_BROKER / NO_LIVE_ORDER /
+NO_PRODUCTION_PICK / NO_PRODUCTION_WEIGHT_CHANGE.
+
+Live SEC EDGAR + XBRL ingest is OBSERVED for NVDA/AAPL/MSFT as_of
+2026-09-03. Earnings reported facts from SEC are OBSERVED. Consensus
+revision history, chokepoint facts, and true historical universe
+membership remain honest DATA_GAP. FailureMemory and LearningPattern
+persist and do not mutate ranking.
+
+Verified this session:
+
+- `python -m compileall -q .` pass
+- `PYTHONPATH=scripts pytest -q tests` = 238 passed
+- `python scripts/xiaomei_22_audit.py` pass
+- `python scripts/db/migrate.py verify` pass
+- NVDA/AAPL/MSFT pipeline dry-run = RESEARCH_ONLY SUCCESS,
+  classification MARKET_WATCHLIST_NEEDS_EVIDENCE, paper_review_count = 0
+
 ## Xiaomei 2.1.1 — 2026-09-04
 
 Completion: **XIAOMEI 2.1.1 HARDENED**.

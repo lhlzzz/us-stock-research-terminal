@@ -133,7 +133,7 @@ def sec_filing(
     known = filing_type in SEC_FILING_TYPES
     required = ("source_url", "filing_type", "filing_date", "period_end", "effective_date", "retrieved_at", "company", "ticker")
     gaps = [key for key in required if record.get(key) in (None, "")]
-    status = "DATA_GAP" if gaps or not known else "READY"
+    status = "DATA_GAP" if gaps or not known else "OBSERVED"
     return {
         **provider_record(
             symbol=ticker,
@@ -230,7 +230,7 @@ def earnings_intelligence(
             fields[name] = claim(facts.get(name), semantic="OBSERVED", source="earnings", source_type="public_quote", as_of_date=as_of, evidence_refs=[name])
     revision = estimate_revision_direction(facts.get("eps_estimate_history") or facts.get("estimate_history"))
     price_up = bool(facts.get("price_up"))
-    status = "DATA_GAP" if gaps else "READY"
+    status = "DATA_GAP" if gaps else "OBSERVED"
     return {
         **provider_record(
             symbol=ticker,
@@ -280,7 +280,7 @@ def sbc_dilution(facts: Mapping[str, Any] | None = None) -> dict[str, Any]:
         "net_share_count_change": share_change,
         "buyback_effectiveness": "INEFFECTIVE" if warning else "EFFECTIVE" if share_change is not None and share_change < 0 else "UNKNOWN",
         "warnings": ["BUYBACK_QUALITY_WARNING"] if warning else [],
-        "status": "DATA_GAP" if share_change is None else "READY",
+        "status": "DATA_GAP" if share_change is None else "OBSERVED",
         "produces_pick": False,
         "production_boundary": PRODUCTION_BOUNDARY,
     }
@@ -314,7 +314,7 @@ def management_allocation(facts: Mapping[str, Any] | None = None) -> dict[str, A
         "guidance_hit_rate": hit_rate,
         "guidance_revision_rate": revision_rate,
         "capital_allocation_consistency": consistency,
-        "status": "DATA_GAP" if hit_rate is None else "READY",
+        "status": "DATA_GAP" if hit_rate is None else "OBSERVED",
         "produces_pick": False,
         "production_boundary": PRODUCTION_BOUNDARY,
     }

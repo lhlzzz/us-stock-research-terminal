@@ -811,6 +811,7 @@ class DataProvider:
         self._yahoo_chart_cooldown_until: float = 0
         self._last_batch_quote_status = "unknown"
         self._all_metrics: list[ProviderMetrics] = []
+        self._sec_research_cache: dict[tuple[str, str | None], dict[str, Any]] = {}
 
     # ─── Cache helpers ───────────────────────────────────────────────
 
@@ -1223,6 +1224,270 @@ class DataProvider:
     def fetch_financials(self, symbol: str) -> dict | None:
         """Return no financials until an approved provider is integrated."""
         return None
+
+    SEC_UA = "XiaomeiResearch/2.2 research@xiaomei.local"
+    SEC_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
+    SEC_SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik}.json"
+    SEC_COMPANYFACTS_URL = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
+
+    def _sec_headers(self) -> dict[str, str]:
+        return {
+            "User-Agent": os.environ.get("SEC_USER_AGENT", self.SEC_UA),
+            "Accept": "application/json",
+            "Accept-Encoding": "gzip, deflate",
+        }
+
+    def _http_json(self, url: str) -> tuple[dict[str, Any] | None, int | None, str | None]:
+        import urllib.error
+        import urllib.request
+
+        request = urllib.request.Request(url, headers=self._sec_headers())
+        time.sleep(0.2)
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                raw = response.read()
+                encoding = response.headers.get("Content-Encoding")
+                if encoding == "gzip":
+                    import gzip
+                    raw = gzip.decompress(raw)
+                return json.loads(raw), int(response.status), None
+        except urllib.error.HTTPError as exc:
+            return None, int(exc.code), str(exc)
+        except Exception as exc:
+            return None, None, str(exc)
+
+    def _lookup_cik(self, symbol: str) -> tuple[str | None, dict[str, Any]]:
+        cached = self._load_cache("SEC", "tickers", "company_tickers", max_age_hours=24 * 7)
+        payload = cached
+        http_status = None
+        error = None
+        if payload is None:
+            payload, http_status, error = self._http_json(self.SEC_TICKERS_URL)
+            if payload is not None:
+                self._save_cache("SEC", "tickers", payload, "company_tickers")
+        if not payload:
+            return None, {"http_status": http_status, "error": error, "status": "ERROR" if error else "DATA_GAP"}
+        ticker = normalize_us_symbol(symbol).upper()
+        for item in payload.values() if isinstance(payload, dict) else []:
+            if str(item.get("ticker") or "").upper() == ticker:
+                return str(item.get("cik_str")).zfill(10), {"http_status": http_status or 200, "error": None, "status": "OBSERVED"}
+        return None, {"http_status": http_status or 200, "error": "ticker not found", "status": "DATA_GAP"}
+
+    def _research_fetch_result(
+        self,
+        *,
+        provider: str,
+        request: str,
+        symbol: str | None,
+        as_of: str | None,
+        status: str,
+        facts: dict[str, Any] | None = None,
+        http_status: int | None = None,
+        error: str | None = None,
+        fallback: str | None = None,
+        fallback_used: bool = False,
+        source: str | None = None,
+        extra: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        from research.providers import DATA_GAP, record_provider_attempt
+
+        started = datetime.now().isoformat()
+        attempt = record_provider_attempt(
+            provider=provider,
+            request=request,
+            symbol=symbol,
+            as_of=as_of,
+            status=status,
+            http_status=http_status,
+            source=source or provider,
+            fallback=fallback,
+            fallback_used=fallback_used,
+            error=error,
+            started_at=started,
+            completed_at=datetime.now().isoformat(),
+        )
+        payload = {
+            "symbol": None if symbol in (None, "") else str(symbol).upper(),
+            "as_of": as_of,
+            "status": status,
+            "facts": dict(facts or {}),
+            "source": source or provider,
+            "http_status": http_status,
+            "error": error,
+            "fallback_used": fallback_used,
+            "fallback": fallback,
+            "attempt": attempt,
+            "produces_pick": False,
+        }
+        if extra:
+            payload.update(extra)
+        if status == "READY":
+            payload["status"] = DATA_GAP
+        return payload
+
+    def fetch_fundamentals(self, symbol: str, *, as_of: str | None = None) -> dict[str, Any]:
+        sec = self.fetch_sec(symbol, as_of=as_of)
+        parsed = (sec.get("parsed") or {}).get("fields") or {}
+        facts = {}
+        for key, item in parsed.items():
+            if isinstance(item, dict) and item.get("value") is not None:
+                facts[key] = item["value"]
+        status = "OBSERVED" if facts else sec.get("status") or "DATA_GAP"
+        return self._research_fetch_result(
+            provider="sec_edgar",
+            request="fetch_fundamentals",
+            symbol=symbol,
+            as_of=as_of,
+            status=status,
+            facts=facts,
+            http_status=sec.get("http_status"),
+            error=sec.get("error"),
+            source="sec_edgar",
+            extra={"parsed": sec.get("parsed"), "sec_status": sec.get("status")},
+        )
+
+    def fetch_sec(self, symbol: str, *, as_of: str | None = None) -> dict[str, Any]:
+        from research.providers import DATA_GAP
+        from research.sec import sec_research_bundle
+
+        ticker = normalize_us_symbol(symbol)
+        cache_key = (ticker, as_of)
+        cached = self._sec_research_cache.get(cache_key)
+        if cached is not None:
+            return cached
+        cik, lookup = self._lookup_cik(ticker)
+        if not cik:
+            return self._research_fetch_result(
+                provider="sec_edgar",
+                request="fetch_sec",
+                symbol=ticker,
+                as_of=as_of,
+                status=lookup.get("status") or DATA_GAP,
+                http_status=lookup.get("http_status"),
+                error=lookup.get("error") or "CIK not found",
+                source="sec_edgar",
+                extra=sec_research_bundle(symbol=ticker, as_of=as_of or "", status=DATA_GAP, error=lookup.get("error") or "CIK not found"),
+            )
+        submissions, sub_status, sub_error = self._http_json(self.SEC_SUBMISSIONS_URL.format(cik=cik))
+        if submissions is None:
+            return self._research_fetch_result(
+                provider="sec_edgar",
+                request="fetch_sec",
+                symbol=ticker,
+                as_of=as_of,
+                status="ERROR" if sub_error else DATA_GAP,
+                http_status=sub_status,
+                error=sub_error,
+                source="sec_edgar",
+                extra=sec_research_bundle(symbol=ticker, as_of=as_of or "", status="ERROR" if sub_error else DATA_GAP, error=sub_error),
+            )
+        facts, fact_status, fact_error = self._http_json(self.SEC_COMPANYFACTS_URL.format(cik=cik))
+        bundle = sec_research_bundle(
+            symbol=ticker,
+            as_of=as_of or datetime.now().date().isoformat(),
+            submissions=submissions,
+            companyfacts=facts,
+            retrieved_at=datetime.now().isoformat(),
+            status="OBSERVED",
+            error=fact_error,
+        )
+        if facts is None:
+            bundle["xbrl_status"] = DATA_GAP if fact_status == 404 else "ERROR"
+            bundle["xbrl_error"] = fact_error
+        result = self._research_fetch_result(
+            provider="sec_edgar",
+            request="fetch_sec",
+            symbol=ticker,
+            as_of=as_of,
+            status=bundle.get("status") or "OBSERVED",
+            http_status=sub_status,
+            error=sub_error or fact_error,
+            fallback="companyfacts" if facts is None else None,
+            fallback_used=facts is None,
+            source="sec_edgar",
+            extra=bundle,
+        )
+        result["submissions"] = submissions
+        result["companyfacts"] = facts
+        self._sec_research_cache[cache_key] = result
+        return result
+
+    def fetch_earnings(self, symbol: str, *, as_of: str | None = None) -> dict[str, Any]:
+        from research.earnings import earnings_from_sec_facts
+
+        sec = self.fetch_sec(symbol, as_of=as_of)
+        bundle = earnings_from_sec_facts(
+            symbol=symbol,
+            as_of=as_of or datetime.now().date().isoformat(),
+            parsed=sec.get("parsed"),
+            filings=sec.get("filings"),
+            source="sec_edgar" if sec.get("status") == "OBSERVED" else None,
+            retrieved_at=datetime.now().isoformat(),
+        )
+        return self._research_fetch_result(
+            provider="sec_edgar",
+            request="fetch_earnings",
+            symbol=symbol,
+            as_of=as_of,
+            status=bundle.get("status") or "DATA_GAP",
+            http_status=sec.get("http_status"),
+            error=sec.get("error"),
+            source="sec_edgar",
+            extra=bundle,
+        )
+
+    def fetch_estimates(self, symbol: str, *, as_of: str | None = None) -> dict[str, Any]:
+        from research.estimates import estimate_revision_bundle
+        from research.providers import DATA_GAP
+
+        bundle = estimate_revision_bundle(symbol=symbol, as_of=as_of or datetime.now().date().isoformat(), history=None, source=None)
+        return self._research_fetch_result(
+            provider="estimate_revision",
+            request="fetch_estimates",
+            symbol=symbol,
+            as_of=as_of,
+            status=DATA_GAP,
+            error="no validated consensus estimate source",
+            source=None,
+            extra=bundle,
+        )
+
+    def fetch_industry(self, symbol: str, *, as_of: str | None = None) -> dict[str, Any]:
+        from research.industry import industry_from_sec
+
+        sec = self.fetch_sec(symbol, as_of=as_of)
+        graph = industry_from_sec(sec, as_of=as_of or datetime.now().date().isoformat())
+        return self._research_fetch_result(
+            provider="sec_edgar",
+            request="fetch_industry",
+            symbol=symbol,
+            as_of=as_of,
+            status=graph.get("status") or "DATA_GAP",
+            http_status=sec.get("http_status"),
+            error=sec.get("error"),
+            source="sec_edgar",
+            extra=graph,
+        )
+
+    def fetch_universe(self, name: str, *, as_of: str | None = None, entity_id: str | None = None) -> dict[str, Any]:
+        from research.providers import DATA_GAP
+
+        return self._research_fetch_result(
+            provider="historical_universe",
+            request="fetch_universe",
+            symbol=entity_id or name,
+            as_of=as_of,
+            status=DATA_GAP,
+            error="no true historical universe membership source",
+            source=None,
+            extra={
+                "universe_name": name,
+                "entity_id": entity_id or name,
+                "membership": [],
+                "forbids_current_backfill": True,
+                "status": DATA_GAP,
+            },
+        )
 
     def fetch_klines_to_dataframe(self, symbol: str, beg: str, end: str, fqt: int = 1) -> tuple[pd.DataFrame, str]:
         """Fetch klines and return as DataFrame."""

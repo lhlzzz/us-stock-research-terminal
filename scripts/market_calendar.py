@@ -271,3 +271,13 @@ def is_us_regular_session(now: datetime | None = None) -> bool:
 
 def previous_completed_session(now: datetime | None = None) -> date:
     return CALENDAR.previous_completed_session(now)
+
+
+if __name__ == "__main__":
+    now = datetime.now(BEIJING_TZ)
+    session = CALENDAR.pipeline_session(now)
+    print("calendar_owner=scripts/market_calendar.py")
+    print("now_bjt", now.isoformat())
+    print("target_session", session.get("target_session"))
+    print("previous_completed_session", CALENDAR.previous_completed_session(now).isoformat())
+    print("is_trading_day", CALENDAR.is_trading_day(CALENDAR.previous_completed_session(now)))

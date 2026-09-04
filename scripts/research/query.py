@@ -7,6 +7,7 @@ from .boundary import PRODUCTION_BOUNDARY, assert_research_only
 from .contracts import independent_scores, research_horizon_contract
 from .decision import contradiction_status
 from .industry import persist_industry_graph, supply_chain_portfolio
+from .failure import previous_failure_warning, retrieve_patterns
 from .thesis import retrieve_failure_context, similar_failures, thesis_ledger
 
 QUERY_KINDS = (
@@ -16,6 +17,10 @@ QUERY_KINDS = (
     "research portfolio concentration",
     "research similar failures",
     "research historical thesis",
+    "show evidence",
+    "research why-not",
+    "failure show",
+    "learning show",
 )
 
 
@@ -34,6 +39,14 @@ def parse_query(text: str) -> dict[str, Any]:
         return {"kind": "research similar failures", "target": raw[len("research similar failures"):].strip()}
     if lower.startswith("research historical thesis"):
         return {"kind": "research historical thesis", "target": raw[len("research historical thesis"):].strip()}
+    if lower.startswith("show evidence"):
+        return {"kind": "show evidence", "target": raw[len("show evidence"):].strip().upper()}
+    if lower.startswith("research why-not") or lower.startswith("research why not"):
+        return {"kind": "research why-not", "target": raw.split()[-1].upper()}
+    if lower.startswith("failure show"):
+        return {"kind": "failure show", "target": raw[len("failure show"):].strip()}
+    if lower.startswith("learning show"):
+        return {"kind": "learning show", "target": raw[len("learning show"):].strip()}
     return {"kind": None, "target": raw}
 
 
@@ -66,6 +79,18 @@ def research_query(
     elif kind == "research historical thesis":
         rows = [thesis_ledger(item) for item in theses or [] if not target or target.lower() in str(item).lower()]
         answer["payload"] = rows
+    elif kind == "show evidence":
+        answer["payload"] = {
+            "claim": target,
+            "evidence": (company or {}).get("evidence") or (company or {}).get("sec") or company,
+            "lineage": ["claim", "evidence", "source", "document", "retrieved", "as_of", "research sample", "conclusion"],
+        }
+    elif kind == "research why-not":
+        answer["payload"] = (company or {}).get("why_not") or {"why_not": ["missing evidence"], "not_a_buy_sell": True}
+    elif kind == "failure show":
+        answer["payload"] = previous_failure_warning({"symbol": target or None, "failure_type": target or None})
+    elif kind == "learning show":
+        answer["payload"] = retrieve_patterns(pattern_type=target or None)
     else:
         answer["payload"] = None
         answer["status"] = "UNKNOWN_QUERY"
