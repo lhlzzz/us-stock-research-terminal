@@ -1,0 +1,17 @@
+# xiaomei session MCP. Shared vaults, US-stock daily folder.
+# Does not replace xiaogu/bian; those set their own daily folders.
+
+[mcp_servers.obsidian]
+command = "/root/.local/bin/node"
+args = [
+    "/root/.local/share/obsidian-mcp/dist/stdio.js",
+    "project=/mnt/d/obisidian/Obsidian/Project",
+    "shenlin=/mnt/d/obisidian/Obsidian/神临",
+]
+enabled = true
+
+[mcp_servers.obsidian.env]
+OBSIDIAN_MAX_SEARCH_RESULTS = "80"
+OBSIDIAN_ENABLE_DELETE = "0"
+OBSIDIAN_DEFAULT_VAULT = "project"
+OBSIDIAN_DAILY_FOLDER = "美股/xiaomei_memory/daily"

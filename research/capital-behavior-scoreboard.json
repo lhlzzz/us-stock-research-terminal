@@ -2,7 +2,7 @@
   "status": "RESEARCH_ONLY",
   "model_version": "capital_behavior_v2",
   "validation_status": "UNVALIDATED_NO_FIXED_CHAIN",
-  "generated_at": "2026-08-28T06:11:35.177849Z",
+  "generated_at": "2026-09-08T05:45:47.438500Z",
   "sample_count": 0,
   "capital_state_accuracy": null,
   "intent_accuracy": null,

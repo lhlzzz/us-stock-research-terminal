@@ -11,6 +11,7 @@ Steps:
 7. Production gate - PASS or BLOCK
 """
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -38,6 +39,14 @@ from research.run_quality import (
 
 
 HARD_FAIL_STATUSES = {"failed", "error", "timeout", STEP_FAILED, STEP_BLOCKED}
+
+
+def _python_env() -> dict:
+    env = os.environ.copy()
+    extra = os.pathsep.join((str(PROJECT_ROOT), str(SCRIPTS_DIR)))
+    existing = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = extra if not existing else extra + os.pathsep + existing
+    return env
 
 
 def _canonical_session(output_date: str | None = None) -> str:
@@ -154,6 +163,7 @@ def step_pipeline(output_date: str) -> dict:
          "--save-db", "--skip-last30days"],
         capture_output=True, text=True, timeout=900,
         cwd=str(PROJECT_ROOT),
+        env=_python_env(),
     )
     if result.returncode == 0:
         try:
@@ -178,6 +188,7 @@ def step_backfill(timeout: int = 120) -> dict:
             [sys.executable, str(SCRIPTS_DIR / "backfill_forward_tracking.py"), "--db"],
             capture_output=True, text=True, timeout=timeout,
             cwd=str(PROJECT_ROOT),
+            env=_python_env(),
         )
         return {"status": "ok" if result.returncode == 0 else "failed", "hard_fail": result.returncode != 0}
     except subprocess.TimeoutExpired:
@@ -212,6 +223,7 @@ def step_scoreboard() -> dict:
         [sys.executable, str(SCRIPTS_DIR / "lifecycle_scoreboard.py"), "--db"],
         capture_output=True, text=True, timeout=120,
         cwd=str(PROJECT_ROOT),
+        env=_python_env(),
     )
     return {"status": "ok" if result.returncode == 0 else "failed", "hard_fail": result.returncode != 0}
 
@@ -221,6 +233,7 @@ def step_degradation() -> dict:
         [sys.executable, str(SCRIPTS_DIR / "meta_loop.py")],
         capture_output=True, text=True, timeout=60,
         cwd=str(PROJECT_ROOT),
+        env=_python_env(),
     )
     if result.returncode == 0:
         try:

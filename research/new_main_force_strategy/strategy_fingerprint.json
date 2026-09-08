@@ -1,0 +1,21 @@
+{
+  "fingerprint_sha256": "defbef8be7b2f1dc845f9a04597ab43dae9d6cd5285fb11c6e01952815e50b18",
+  "source_sha256": {
+    "scripts/capital/scoring.py": "50020da0674fac61543237adca17dfea36e1561841dda30999967f34b772668f",
+    "scripts/capital/features.py": "3a5f4817d06f8557e58f0bf1cc52dfd3d5752332bb3eb56a1f0f66e551022d08",
+    "scripts/capital/evidence.py": "cdfc08645bbd6eb7ef7dd89b8b4a6e5a745d83e1cf8a6bd5bc2ed42b207e93ac",
+    "scripts/capital/control.py": "07af1c62fff80ad32a6eae2cecf7ce4665c0acb329c4e15d01aef865228a1d01",
+    "scripts/capital/state.py": "41eb0613bfb54601005d56c9a54da50a3b1347a0a9e542017cc30fe9eacd19b1",
+    "scripts/capital/intent.py": "510fda2a4451ad071d23e6730ce08a7cb55e8570af052ee4fe520a4873b4af3a",
+    "scripts/capital/path.py": "b8c81df7257cc6fc0008ab828a8d386254891a974cb939a55416fc6bdc2b97fa",
+    "scripts/capital/__init__.py": "03132a03f12a593e9e4ae32b2ea45e2a942f3c4134d8f9153175fbd2d1a2ccef"
+  },
+  "NEW_STRATEGY_ID": "capital_behavior_v2",
+  "NEW_STRATEGY_VERSION": "capital_behavior_v2",
+  "NEW_RANKING_KEY": [
+    "capital_behavior_score",
+    "capital_strength",
+    "demand_persistence"
+  ],
+  "NEW_STRATEGY_FORMULA": "clamp(0.55*capital_strength + 0.25*capital_quality + 0.20*|control_asymmetry| - 0.18*distribution_probability - 0.12*trap_probability)"
+}

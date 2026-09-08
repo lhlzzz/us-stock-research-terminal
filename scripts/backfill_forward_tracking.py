@@ -532,7 +532,7 @@ def backfill_db(anchor_date: date, lookback_business_days: int) -> int:
             print(f"  {symbol} {horizon_days}d: {as_of:.2f} -> {price:.2f} ({ret:+.4f}) [{direction}]")
 
         db.commit()
-        from scripts.db.pipeline_bridge import _refresh_capital_dataset_splits
+        from db.pipeline_bridge import _refresh_capital_dataset_splits
         _refresh_capital_dataset_splits(db)
         db.commit()
         from capital.lifecycle import write_capital_scoreboard

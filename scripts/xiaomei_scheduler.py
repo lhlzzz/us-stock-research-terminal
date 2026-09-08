@@ -33,6 +33,14 @@ PIPELINE_SCRIPT = PROJECT_DIR / "scripts" / "daily_pipeline.sh"
 LOG_DIR = PROJECT_DIR / "logs"
 SCHEDULER_PID_FILE = PROJECT_DIR / "run" / "xiaomei_scheduler.pid"
 
+
+def _python_env() -> dict:
+    env = os.environ.copy()
+    extra = os.pathsep.join((str(PROJECT_DIR), str(PROJECT_DIR / "scripts")))
+    existing = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = extra if not existing else extra + os.pathsep + existing
+    return env
+
 # Beijing time timezone
 try:
     from zoneinfo import ZoneInfo
@@ -125,6 +133,7 @@ def run_pipeline(mode: str = "full") -> dict:
             capture_output=True,
             text=True,
             timeout=3600,  # 1 hour timeout
+            env=_python_env(),
         )
 
         # Log output
@@ -193,6 +202,7 @@ def morning_health_check(require_scheduler: bool = False):
         "redis": False,
         "pipeline_script": False,
         "disk_space": False,
+        "obsidian_vault": False,
     }
 
     # Check PostgreSQL
@@ -217,6 +227,13 @@ def morning_health_check(require_scheduler: bool = False):
 
     # Check pipeline script
     checks["pipeline_script"] = PIPELINE_SCRIPT.exists()
+
+    try:
+        from obsidian.paths import require_production_vaults
+        require_production_vaults()
+        checks["obsidian_vault"] = True
+    except Exception:
+        checks["obsidian_vault"] = False
 
     # Check disk space
     try:
@@ -283,27 +300,27 @@ def signal_effectiveness_job():
             [sys.executable, str(PROJECT_DIR / "scripts" / "signal_effectiveness.py")],
             cwd=str(PROJECT_DIR),
             capture_output=True,
-            timeout=600
+            timeout=600,
+            env=_python_env(),
         )
         logger.info("Signal effectiveness analysis complete")
     except Exception as e:
         logger.error(f"Signal effectiveness error: {e}")
 
 
-def knowledge_export_job():
-    """Knowledge export job (runs after daily pipeline)."""
-    logger.info("Running knowledge export")
-
+def knowledge_loop_job():
+    """US-stock knowledge loop: export → vault sync → embeddings."""
+    logger.info("Running US-stock knowledge loop")
     try:
-        subprocess.run(
-            [sys.executable, str(PROJECT_DIR / "scripts" / "knowledge_asset_export.py")],
-            cwd=str(PROJECT_DIR),
-            capture_output=True,
-            timeout=300
-        )
-        logger.info("Knowledge export complete")
+        result = run_pipeline("knowledge")
+        if not result.get("success"):
+            logger.error("Knowledge loop failed: %s", result)
+        else:
+            logger.info("Knowledge loop complete")
+        return result
     except Exception as e:
-        logger.error(f"Knowledge export error: {e}")
+        logger.error("Knowledge loop error: %s", e)
+        return {"success": False, "error": str(e)}
 
 
 def run_scheduler():
@@ -358,6 +375,15 @@ def run_scheduler():
         id="signal_effectiveness",
         name="Signal Effectiveness",
         misfire_grace_time=600,
+    )
+
+    # Knowledge loop after the 05:00 pipeline, still on the US close calendar.
+    scheduler.add_job(
+        knowledge_loop_job,
+        CronTrigger(hour=5, minute=20, day_of_week=PIPELINE_SCHEDULE_DAYS),
+        id="knowledge_loop",
+        name="US-stock Knowledge Loop",
+        misfire_grace_time=1800,
     )
 
     try:

@@ -16,6 +16,7 @@ if [ -f "$ROOT/.env" ]; then
 fi
 
 : "${DATABASE_URL:?DATABASE_URL must be set in the environment or .env}"
+export PYTHONPATH="$ROOT:$ROOT/scripts${PYTHONPATH:+:$PYTHONPATH}"
 DB_URL="$DATABASE_URL"
 DB_PORT=5432
 
@@ -84,6 +85,28 @@ else
         echo "Scheduler: FAILED liveness verification"
         exit 1
     fi
+fi
+
+FOS_DIR="$(cd "$ROOT/../financial-os" 2>/dev/null && pwd || true)"
+if ss -ltn 2>/dev/null | grep -q ':3000 '; then
+    echo "Financial OS: already listening on 3000"
+elif [ -n "$FOS_DIR" ] && [ -f "$FOS_DIR/apps/web/package.json" ]; then
+    mkdir -p "$FOS_DIR/logs"
+    export XIAOMEI_DATABASE_URL="${XIAOMEI_DATABASE_URL:-$DATABASE_URL}"
+    nohup npm --prefix "$FOS_DIR" run dev --workspace financial-os-web -- --hostname 0.0.0.0 --port 3000 \
+        >> "$FOS_DIR/logs/xiaomei-web.log" 2>&1 &
+    for _ in 1 2 3 4 5 6 7 8 9 10; do
+        if ss -ltn 2>/dev/null | grep -q ':3000 '; then
+            echo "Financial OS: started on 3000"
+            break
+        fi
+        sleep 1
+    done
+    if ! ss -ltn 2>/dev/null | grep -q ':3000 '; then
+        echo "Financial OS: WARN not listening on 3000 (dashboard unavailable)"
+    fi
+else
+    echo "Financial OS: WARN workspace not found"
 fi
 
 echo "=== Infrastructure ready (DB $DB_PORT) ==="

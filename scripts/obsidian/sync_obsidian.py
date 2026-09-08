@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import psycopg2
 
 from db.engine import DATABASE_URL
+from obsidian.paths import require_production_vaults
 
 # 配置 - 直接挂载 Windows 路径
 OBSIDIAN_REPOS = {
@@ -274,6 +275,7 @@ def main():
     print("=" * 60)
     print(f"时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print()
+    require_production_vaults()
 
     total_synced = 0
 

@@ -1,6 +1,6 @@
 {
   "trade_date": "2026-08-27",
-  "exported_at": "2026-08-27T05:18:59.243224",
+  "exported_at": "2026-09-08T14:19:55.348685",
   "tickets": [
     {
       "ticket_id": 515,
@@ -123,17 +123,17 @@
       "selection_reason": "narrative=Target (TGT) Q2 2026 Earnings Call Transcript | matched ticker boundary 'TGT' with narrative context 'earnings'; business=Target (TGT) Q2 2026 Earnings Call Transcript | matched ticker boundary 'TGT' with business context 'sales'",
       "outcomes": {
         "1d": {
-          "status": "pending",
-          "forward_return": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "status": "completed",
+          "forward_return": "0.011522",
+          "outcome_classification": "WIN",
+          "outcome_reason": "WIN +1.2% | thesis: Target (TGT) Q2 2026 Earnings Call Transcript | panel BULLISH confirmed | high catalyst score validated",
           "due_date": "2026-08-28"
         },
         "3d": {
-          "status": "pending",
-          "forward_return": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "status": "completed",
+          "forward_return": "-0.001768",
+          "outcome_classification": "LOSS",
+          "outcome_reason": "LOSS -0.2% | thesis: Target (TGT) Q2 2026 Earnings Call Transcript | risk=WATCH validated — caution was warranted | panel BULLISH was wrong — re-examine consensus | high catalyst score failed — catalyst was noise | context: SPY down -1.2%",
           "due_date": "2026-09-01"
         },
         "10d": {
@@ -148,23 +148,23 @@
         {
           "ticket_id": 515,
           "record_type": "forward_tracking",
-          "record_status": "pending",
+          "record_status": "completed",
           "horizon_days": 1,
-          "forward_return": null,
+          "forward_return": "0.011522",
           "pnl": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "outcome_classification": "WIN",
+          "outcome_reason": "WIN +1.2% | thesis: Target (TGT) Q2 2026 Earnings Call Transcript | panel BULLISH confirmed | high catalyst score validated",
           "paper_reason": null
         },
         {
           "ticket_id": 515,
           "record_type": "forward_tracking",
-          "record_status": "pending",
+          "record_status": "completed",
           "horizon_days": 3,
-          "forward_return": null,
+          "forward_return": "-0.001768",
           "pnl": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "outcome_classification": "LOSS",
+          "outcome_reason": "LOSS -0.2% | thesis: Target (TGT) Q2 2026 Earnings Call Transcript | risk=WATCH validated — caution was warranted | panel BULLISH was wrong — re-examine consensus | high catalyst score failed — catalyst was noise | context: SPY down -1.2%",
           "paper_reason": null
         },
         {
@@ -190,7 +190,7 @@
           "paper_reason": null
         }
       ],
-      "research_case_text": "US research case: TGT\nSelection: catalyst: Target (TGT) Q2 2026 Earnings Call Transcript | business: Target (TGT) Q2 2026 Earnings Call Transcript | scores: market=0.667 catalyst=0.725 | panel: BULLISH_CONSENSUS | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 146; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.6827066238475225, footprint_factor_coverage=0.8333333333333334, market_participation_score=0.5760000000000001, breakout_score=0.5163580862804011, relative_strength_vs_equal_weight=0.07649696754092868, volume_confirmation_ratio=0.28672576817423634\nEvidence availability: {\"news\": {\"score\": 0.725, \"status\": \"OBSERVED\", \"business_title\": \"Target (TGT) Q2 2026 Earnings Call Transcript\", \"narrative_title\": \"Target (TGT) Q2 2026 Earnings Call Transcript\", \"business_relevance\": 0.75, \"narrative_relevance\": 0.75}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": 0.747534516765286, \"relative_strength\": 0.863905325443787, \"breakout_acceptance\": 0.5163580862804011, \"volume_price_alignment\": 1.0, \"relative_volume_expansion\": 0.9684418145956607}, \"median_dollar_volume_20d\": 671927241.22, \"volume_weighted_momentum\": 0.14140013267676907, \"volume_confirmation_ratio\": 0.28672576817423634, \"large_participant_footprint_score\": 0.6827066238475225}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.6827066238475225, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.8333333333333334}, \"market_participation\": {\"score\": 0.5760000000000001, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+      "research_case_text": "US research case: TGT\nSelection: catalyst: Target (TGT) Q2 2026 Earnings Call Transcript | business: Target (TGT) Q2 2026 Earnings Call Transcript | scores: market=0.667 catalyst=0.725 | panel: BULLISH_CONSENSUS | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 146; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.6827066238475225, footprint_factor_coverage=0.8333333333333334, market_participation_score=0.5760000000000001, breakout_score=0.5163580862804011, relative_strength_vs_equal_weight=0.07649696754092868, volume_confirmation_ratio=0.28672576817423634\nEvidence availability: {\"news\": {\"score\": 0.725, \"status\": \"OBSERVED\", \"business_title\": \"Target (TGT) Q2 2026 Earnings Call Transcript\", \"narrative_title\": \"Target (TGT) Q2 2026 Earnings Call Transcript\", \"business_relevance\": 0.75, \"narrative_relevance\": 0.75}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": 0.747534516765286, \"relative_strength\": 0.863905325443787, \"breakout_acceptance\": 0.5163580862804011, \"volume_price_alignment\": 1.0, \"relative_volume_expansion\": 0.9684418145956607}, \"median_dollar_volume_20d\": 671927241.22, \"volume_weighted_momentum\": 0.14140013267676907, \"volume_confirmation_ratio\": 0.28672576817423634, \"large_participant_footprint_score\": 0.6827066238475225}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.6827066238475225, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.8333333333333334}, \"market_participation\": {\"score\": 0.5760000000000001, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=completed, return=+1.15%, outcome=WIN, reason=WIN +1.2% | thesis: Target (TGT) Q2 2026 Earnings Call Transcript | panel BULLISH confirmed | high catalyst score validated; 3d: status=completed, return=-0.18%, outcome=LOSS, reason=LOSS -0.2% | thesis: Target (TGT) Q2 2026 Earnings Call Transcript | risk=WATCH validated — caution was warranted | panel BULLISH was wrong — re-examine consensus | high catalyst score failed — catalyst was noise | context: SPY down -1.2%"
     },
     {
       "ticket_id": 516,
@@ -313,17 +313,17 @@
       "selection_reason": "narrative=Targa Resources Corp. Announces Addition of Experienced Industry Executive and Leadership Changes to Support Continued Long-Term Growth | matched company term 'Targa Resources Corp' with narrative context 'news'; business=Targa Resources (TRGP) Stock Looks Fairly Valued Following Its 7x Five Year Run | matched company term 'targa resources' with business context 'margin'",
       "outcomes": {
         "1d": {
-          "status": "pending",
-          "forward_return": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "status": "completed",
+          "forward_return": "-0.017277",
+          "outcome_classification": "LOSS",
+          "outcome_reason": "LOSS -1.7% | thesis: Targa Resources Corp. Announces Addition of Experienced Industry Executive and L | risk=WATCH validated — caution was warranted | high catalyst score failed — catalyst was noise",
           "due_date": "2026-08-28"
         },
         "3d": {
-          "status": "pending",
-          "forward_return": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "status": "completed",
+          "forward_return": "0.006904",
+          "outcome_classification": "WIN",
+          "outcome_reason": "WIN +0.7% | thesis: Targa Resources Corp. Announces Addition of Experienced Industry Executive and L | high catalyst score validated | context: SPY down -1.2%",
           "due_date": "2026-09-01"
         },
         "10d": {
@@ -338,23 +338,23 @@
         {
           "ticket_id": 516,
           "record_type": "forward_tracking",
-          "record_status": "pending",
+          "record_status": "completed",
           "horizon_days": 1,
-          "forward_return": null,
+          "forward_return": "-0.017277",
           "pnl": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "outcome_classification": "LOSS",
+          "outcome_reason": "LOSS -1.7% | thesis: Targa Resources Corp. Announces Addition of Experienced Industry Executive and L | risk=WATCH validated — caution was warranted | high catalyst score failed — catalyst was noise",
           "paper_reason": null
         },
         {
           "ticket_id": 516,
           "record_type": "forward_tracking",
-          "record_status": "pending",
+          "record_status": "completed",
           "horizon_days": 3,
-          "forward_return": null,
+          "forward_return": "0.006904",
           "pnl": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "outcome_classification": "WIN",
+          "outcome_reason": "WIN +0.7% | thesis: Targa Resources Corp. Announces Addition of Experienced Industry Executive and L | high catalyst score validated | context: SPY down -1.2%",
           "paper_reason": null
         },
         {
@@ -380,7 +380,7 @@
           "paper_reason": null
         }
       ],
-      "research_case_text": "US research case: TRGP\nSelection: catalyst: Targa Resources Corp. Announces Addition of Experienced Industry Executive and Leadership Changes to Support Continued Long-Term Growth | business: Targa Resources (TRGP) Stock Looks Fairly Valued Following Its 7x Five Year Run | scores: market=0.615 catalyst=0.865 | panel: NEUTRAL | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 146; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.6222392298339079, footprint_factor_coverage=0.8333333333333334, market_participation_score=0.5760000000000001, breakout_score=0.48491466894427526, relative_strength_vs_equal_weight=0.06836749602300458, volume_confirmation_ratio=0.27261576260952913\nEvidence availability: {\"news\": {\"score\": 0.865, \"status\": \"OBSERVED\", \"business_title\": \"Targa Resources (TRGP) Stock Looks Fairly Valued Following Its 7x Five Year Run\", \"narrative_title\": \"Targa Resources Corp. Announces Addition of Experienced Industry Executive and Leadership Changes to Support Continued Long-Term Growth\", \"business_relevance\": 0.95, \"narrative_relevance\": 0.95}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": 0.4536489151873767, \"relative_strength\": 0.8461538461538461, \"breakout_acceptance\": 0.48491466894427526, \"volume_price_alignment\": 1.0, \"relative_volume_expansion\": 0.9487179487179487}, \"median_dollar_volume_20d\": 308147777.12, \"volume_weighted_momentum\": 0.12244721453825998, \"volume_confirmation_ratio\": 0.27261576260952913, \"large_participant_footprint_score\": 0.6222392298339079}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.6222392298339079, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.8333333333333334}, \"market_participation\": {\"score\": 0.5760000000000001, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+      "research_case_text": "US research case: TRGP\nSelection: catalyst: Targa Resources Corp. Announces Addition of Experienced Industry Executive and Leadership Changes to Support Continued Long-Term Growth | business: Targa Resources (TRGP) Stock Looks Fairly Valued Following Its 7x Five Year Run | scores: market=0.615 catalyst=0.865 | panel: NEUTRAL | risk: WATCH\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 146; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.6222392298339079, footprint_factor_coverage=0.8333333333333334, market_participation_score=0.5760000000000001, breakout_score=0.48491466894427526, relative_strength_vs_equal_weight=0.06836749602300458, volume_confirmation_ratio=0.27261576260952913\nEvidence availability: {\"news\": {\"score\": 0.865, \"status\": \"OBSERVED\", \"business_title\": \"Targa Resources (TRGP) Stock Looks Fairly Valued Following Its 7x Five Year Run\", \"narrative_title\": \"Targa Resources Corp. Announces Addition of Experienced Industry Executive and Leadership Changes to Support Continued Long-Term Growth\", \"business_relevance\": 0.95, \"narrative_relevance\": 0.95}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": 0.4536489151873767, \"relative_strength\": 0.8461538461538461, \"breakout_acceptance\": 0.48491466894427526, \"volume_price_alignment\": 1.0, \"relative_volume_expansion\": 0.9487179487179487}, \"median_dollar_volume_20d\": 308147777.12, \"volume_weighted_momentum\": 0.12244721453825998, \"volume_confirmation_ratio\": 0.27261576260952913, \"large_participant_footprint_score\": 0.6222392298339079}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.6222392298339079, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.8333333333333334}, \"market_participation\": {\"score\": 0.5760000000000001, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=completed, return=-1.73%, outcome=LOSS, reason=LOSS -1.7% | thesis: Targa Resources Corp. Announces Addition of Experienced Industry Executive and L | risk=WATCH validated — caution was warranted | high catalyst score failed — catalyst was noise; 3d: status=completed, return=+0.69%, outcome=WIN, reason=WIN +0.7% | thesis: Targa Resources Corp. Announces Addition of Experienced Industry Executive and L | high catalyst score validated | context: SPY down -1.2%"
     },
     {
       "ticket_id": 517,
@@ -503,17 +503,17 @@
       "selection_reason": "narrative=Thousands of bans just teamed up to build their own blockchain | matched ticker boundary 'MSTR' with narrative context 'news'; business=UNRELATED: Thousands of bans just teamed up to build their own blockchain | matched ticker boundary 'MSTR' but no business context term",
       "outcomes": {
         "1d": {
-          "status": "pending",
-          "forward_return": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "status": "completed",
+          "forward_return": "0.115350",
+          "outcome_classification": "STRONG_WIN",
+          "outcome_reason": "STRONG WIN +11.5% | thesis: Thousands of bans just teamed up to build their own blockchain | risk=ELEVATED but still won — high-risk paid off | high catalyst score validated",
           "due_date": "2026-08-28"
         },
         "3d": {
-          "status": "pending",
-          "forward_return": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "status": "completed",
+          "forward_return": "0.013719",
+          "outcome_classification": "WIN",
+          "outcome_reason": "WIN +1.4% | thesis: Thousands of bans just teamed up to build their own blockchain | risk=ELEVATED but still won — high-risk paid off | high catalyst score validated | context: gap down -3.7%, SPY down -1.2%",
           "due_date": "2026-09-01"
         },
         "10d": {
@@ -528,23 +528,23 @@
         {
           "ticket_id": 517,
           "record_type": "forward_tracking",
-          "record_status": "pending",
+          "record_status": "completed",
           "horizon_days": 1,
-          "forward_return": null,
+          "forward_return": "0.115350",
           "pnl": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "outcome_classification": "STRONG_WIN",
+          "outcome_reason": "STRONG WIN +11.5% | thesis: Thousands of bans just teamed up to build their own blockchain | risk=ELEVATED but still won — high-risk paid off | high catalyst score validated",
           "paper_reason": null
         },
         {
           "ticket_id": 517,
           "record_type": "forward_tracking",
-          "record_status": "pending",
+          "record_status": "completed",
           "horizon_days": 3,
-          "forward_return": null,
+          "forward_return": "0.013719",
           "pnl": null,
-          "outcome_classification": null,
-          "outcome_reason": null,
+          "outcome_classification": "WIN",
+          "outcome_reason": "WIN +1.4% | thesis: Thousands of bans just teamed up to build their own blockchain | risk=ELEVATED but still won — high-risk paid off | high catalyst score validated | context: gap down -3.7%, SPY down -1.2%",
           "paper_reason": null
         },
         {
@@ -570,7 +570,7 @@
           "paper_reason": null
         }
       ],
-      "research_case_text": "US research case: MSTR\nSelection: catalyst: Thousands of bans just teamed up to build their own blockchain | business: Thousands of bans just teamed up to build their own blockchain | scores: market=0.678 catalyst=0.575 | panel: NEUTRAL | risk: ELEVATED\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 146; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.8136094674556215, footprint_factor_coverage=0.8333333333333334, market_participation_score=0.5760000000000001, breakout_score=1.0, relative_strength_vs_equal_weight=0.2721052313335673, volume_confirmation_ratio=1.3828270658969628\nEvidence availability: {\"news\": {\"score\": 0.575, \"status\": \"OBSERVED\", \"business_title\": \"Thousands of bans just teamed up to build their own blockchain\", \"narrative_title\": \"Thousands of bans just teamed up to build their own blockchain\", \"business_relevance\": 0.0, \"narrative_relevance\": 0.75}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": 0.9151873767258383, \"relative_strength\": 0.9684418145956607, \"breakout_acceptance\": 1.0, \"volume_price_alignment\": 1.0, \"relative_volume_expansion\": 0.9980276134122288}, \"median_dollar_volume_20d\": 1672557832.09, \"volume_weighted_momentum\": 0.47882060721487796, \"volume_confirmation_ratio\": 1.3828270658969628, \"large_participant_footprint_score\": 0.8136094674556215}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.8136094674556215, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.8333333333333334}, \"market_participation\": {\"score\": 0.5760000000000001, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 3d: status=pending, return=pending, outcome=PENDING, reason=unavailable"
+      "research_case_text": "US research case: MSTR\nSelection: catalyst: Thousands of bans just teamed up to build their own blockchain | business: Thousands of bans just teamed up to build their own blockchain | scores: market=0.678 catalyst=0.575 | panel: NEUTRAL | risk: ELEVATED\nClassification: CANDIDATE_FOR_PAPER_REVIEW\nResearch run: 146; commit: bedb58e1f15ddc8d26b5860359e2bbd3640990c1\nObservable footprint: large_participant_footprint_score=0.8136094674556215, footprint_factor_coverage=0.8333333333333334, market_participation_score=0.5760000000000001, breakout_score=1.0, relative_strength_vs_equal_weight=0.2721052313335673, volume_confirmation_ratio=1.3828270658969628\nEvidence availability: {\"news\": {\"score\": 0.575, \"status\": \"OBSERVED\", \"business_title\": \"Thousands of bans just teamed up to build their own blockchain\", \"narrative_title\": \"Thousands of bans just teamed up to build their own blockchain\", \"business_relevance\": 0.0, \"narrative_relevance\": 0.75}, \"price_volume\": {\"status\": \"OBSERVED\", \"factor_contributions\": {\"close_strength\": null, \"liquidity_quality\": 0.9151873767258383, \"relative_strength\": 0.9684418145956607, \"breakout_acceptance\": 1.0, \"volume_price_alignment\": 1.0, \"relative_volume_expansion\": 0.9980276134122288}, \"median_dollar_volume_20d\": 1672557832.09, \"volume_weighted_momentum\": 0.47882060721487796, \"volume_confirmation_ratio\": 1.3828270658969628, \"large_participant_footprint_score\": 0.8136094674556215}, \"social_sentiment\": {\"status\": \"UNAVAILABLE_NO_VALIDATED_CORPUS\", \"definition\": \"No validated social sentiment corpus was available for this run.\"}, \"capital_flow_proxy\": {\"score\": 0.8136094674556215, \"status\": \"OBSERVED_PRICE_VOLUME_FOOTPRINT\", \"definition\": \"Observable price-volume footprint proxy; not verified institutional order flow.\", \"factor_coverage\": 0.8333333333333334}, \"market_participation\": {\"score\": 0.5760000000000001, \"status\": \"OBSERVED\", \"definition\": \"Cross-sectional breadth and advance ratio; not social sentiment.\"}}\nLifecycle outcome: 10d: status=pending, return=pending, outcome=PENDING, reason=unavailable; 1d: status=completed, return=+11.54%, outcome=STRONG_WIN, reason=STRONG WIN +11.5% | thesis: Thousands of bans just teamed up to build their own blockchain | risk=ELEVATED but still won — high-risk paid off | high catalyst score validated; 3d: status=completed, return=+1.37%, outcome=WIN, reason=WIN +1.4% | thesis: Thousands of bans just teamed up to build their own blockchain | risk=ELEVATED but still won — high-risk paid off | high catalyst score validated | context: gap down -3.7%, SPY down -1.2%"
     }
   ],
   "top10": [
@@ -1507,18 +1507,18 @@
   ],
   "returns": {
     "MSTR": {
-      "forward_1d": null,
-      "forward_3d": null,
+      "forward_1d": "0.115350",
+      "forward_3d": "0.013719",
       "forward_10d": null
     },
     "TGT": {
-      "forward_1d": null,
-      "forward_3d": null,
+      "forward_1d": "0.011522",
+      "forward_3d": "-0.001768",
       "forward_10d": null
     },
     "TRGP": {
-      "forward_1d": null,
-      "forward_3d": null,
+      "forward_1d": "-0.017277",
+      "forward_3d": "0.006904",
       "forward_10d": null
     }
   },
@@ -1527,20 +1527,20 @@
       "ticket_id": 517,
       "symbol": "MSTR",
       "horizon_days": 1,
-      "check_status": "pending",
-      "forward_return": null,
-      "outcome_classification": null,
-      "outcome_reason": null,
+      "check_status": "completed",
+      "forward_return": "0.115350",
+      "outcome_classification": "STRONG_WIN",
+      "outcome_reason": "STRONG WIN +11.5% | thesis: Thousands of bans just teamed up to build their own blockchain | risk=ELEVATED but still won — high-risk paid off | high catalyst score validated",
       "due_date": "2026-08-28"
     },
     {
       "ticket_id": 517,
       "symbol": "MSTR",
       "horizon_days": 3,
-      "check_status": "pending",
-      "forward_return": null,
-      "outcome_classification": null,
-      "outcome_reason": null,
+      "check_status": "completed",
+      "forward_return": "0.013719",
+      "outcome_classification": "WIN",
+      "outcome_reason": "WIN +1.4% | thesis: Thousands of bans just teamed up to build their own blockchain | risk=ELEVATED but still won — high-risk paid off | high catalyst score validated | context: gap down -3.7%, SPY down -1.2%",
       "due_date": "2026-09-01"
     },
     {
@@ -1557,20 +1557,20 @@
       "ticket_id": 515,
       "symbol": "TGT",
       "horizon_days": 1,
-      "check_status": "pending",
-      "forward_return": null,
-      "outcome_classification": null,
-      "outcome_reason": null,
+      "check_status": "completed",
+      "forward_return": "0.011522",
+      "outcome_classification": "WIN",
+      "outcome_reason": "WIN +1.2% | thesis: Target (TGT) Q2 2026 Earnings Call Transcript | panel BULLISH confirmed | high catalyst score validated",
       "due_date": "2026-08-28"
     },
     {
       "ticket_id": 515,
       "symbol": "TGT",
       "horizon_days": 3,
-      "check_status": "pending",
-      "forward_return": null,
-      "outcome_classification": null,
-      "outcome_reason": null,
+      "check_status": "completed",
+      "forward_return": "-0.001768",
+      "outcome_classification": "LOSS",
+      "outcome_reason": "LOSS -0.2% | thesis: Target (TGT) Q2 2026 Earnings Call Transcript | risk=WATCH validated — caution was warranted | panel BULLISH was wrong — re-examine consensus | high catalyst score failed — catalyst was noise | context: SPY down -1.2%",
       "due_date": "2026-09-01"
     },
     {
@@ -1587,20 +1587,20 @@
       "ticket_id": 516,
       "symbol": "TRGP",
       "horizon_days": 1,
-      "check_status": "pending",
-      "forward_return": null,
-      "outcome_classification": null,
-      "outcome_reason": null,
+      "check_status": "completed",
+      "forward_return": "-0.017277",
+      "outcome_classification": "LOSS",
+      "outcome_reason": "LOSS -1.7% | thesis: Targa Resources Corp. Announces Addition of Experienced Industry Executive and L | risk=WATCH validated — caution was warranted | high catalyst score failed — catalyst was noise",
       "due_date": "2026-08-28"
     },
     {
       "ticket_id": 516,
       "symbol": "TRGP",
       "horizon_days": 3,
-      "check_status": "pending",
-      "forward_return": null,
-      "outcome_classification": null,
-      "outcome_reason": null,
+      "check_status": "completed",
+      "forward_return": "0.006904",
+      "outcome_classification": "WIN",
+      "outcome_reason": "WIN +0.7% | thesis: Targa Resources Corp. Announces Addition of Experienced Industry Executive and L | high catalyst score validated | context: SPY down -1.2%",
       "due_date": "2026-09-01"
     },
     {

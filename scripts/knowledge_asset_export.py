@@ -19,6 +19,8 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+from obsidian.paths import DAILY_DIR, INBOX_DIR, STATUS_PATH, require_production_vaults
+
 # Obsidian paths (WSL mount)
 OBSIDIAN_PROJECT_PATH = os.environ.get(
     "XIAOMEI_OBSIDIAN_PROJECT", "/mnt/d/obisidian/Obsidian/Project"
@@ -302,10 +304,12 @@ def export_daily_knowledge(
     summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False, default=str))
     logger.info(f"Summary written: {summary_path}")
 
+    require_production_vaults()
+
     # 6. Write Obsidian project note
     obsidian_project_path = None
     if os.path.exists(OBSIDIAN_PROJECT_PATH):
-        inbox_dir = _ensure_dir(Path(OBSIDIAN_PROJECT_PATH) / "美股" / "inbox")
+        inbox_dir = _ensure_dir(INBOX_DIR)
         note_path = inbox_dir / f"{trade_date.isoformat()}-知识资产.md"
 
         # Build note content
@@ -353,7 +357,7 @@ def export_daily_knowledge(
         logger.info(f"Obsidian project note written: {note_path}")
 
         # Update status.md
-        status_path = Path(OBSIDIAN_PROJECT_PATH) / "美股" / "状态.md"
+        status_path = STATUS_PATH
         if status_path.exists():
             status_content = status_path.read_text()
             # Update head section with stamped status block
@@ -379,6 +383,28 @@ def export_daily_knowledge(
 
             status_path.write_text(status_content)
             logger.info(f"Obsidian status updated: {status_path}")
+
+        daily_dir = _ensure_dir(DAILY_DIR)
+        daily_path = daily_dir / f"{trade_date.isoformat()}.md"
+        top_symbols = ", ".join(t.get("symbol", "?") for t in tickets) or "none"
+        daily_path.write_text(
+            "\n".join([
+                f"# {trade_date.isoformat()}",
+                "",
+                "## Xiaomei US-stock knowledge loop",
+                "",
+                f"- Tickets: {len(tickets)}",
+                f"- Symbols: {top_symbols}",
+                f"- Inbox: `美股/inbox/{trade_date.isoformat()}-知识资产.md`",
+                f"- Status: `美股/状态.md`",
+                f"- Exported: {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+                "",
+                "This folder is the US-stock daily entry. It is not A股/xiaogu_memory/daily.",
+                "",
+            ]),
+            encoding="utf-8",
+        )
+        logger.info("Obsidian daily note written: %s", daily_path)
 
     # 7. Write 神临 pointer note
     obsidian_shenlin_path = None

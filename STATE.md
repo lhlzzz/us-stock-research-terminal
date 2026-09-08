@@ -1,5 +1,61 @@
 # STATE
 
+## Xiaomei knowledge loop — 2026-09-08
+
+US-stock Obsidian path `美股/xiaomei_memory/daily` is a production
+dependency. Shared vaults remain `project` + `shenlin`. MCP daily folder
+is per workspace, not a global A-share path. Broker / live order remain
+**DISABLED**; there is no US execution adapter.
+
+## Xiaomei runtime surfaces — 2026-09-08
+
+Completion: **RUNTIME_SURFACES_RESTORED**.
+
+PostgreSQL 18.4 on host 5432, Redis 6379, scheduler, and Financial OS
+`:3000` are up. Schema verify=PASS. Knowledge assets=207,
+embeddings=393 (0 missing), pick_case_embeddings=292. Overview and
+dashboard read live PostgreSQL, including Obsidian counts. Daily
+pipeline import path is fixed; 2026-09-05 `scripts` ModuleNotFoundError
+does not reproduce.
+
+Strategy `observable_footprint_v1` remains **FROZEN**. Weights remain
+**FROZEN**. Broker / live order remain **DISABLED**. Latest ticket date
+in the live DB is 2026-08-27.
+
+## Xiaomei NEW MAIN FORCE STRATEGY — 2026-09-06
+
+Completion: **NEW_MAIN_FORCE_STRATEGY_PROFITABILITY = NOT_VALIDATED**.
+
+Locked current 主力行为 owner is `capital_behavior_v2`
+(`UNVALIDATED_NO_FIXED_CHAIN`). Production ranking owner remains
+frozen `observable_footprint_v1`. Weights remain **FROZEN**. Auto
+weight change remains **OFF**. Broker / live order remain **DISABLED**.
+
+Independent as-of replay of `capital_behavior_v2` on the same-day
+`daily_klines` quality-filtered universe (394 FULL_ASOF_PANEL days;
+statistical_score=0 as-of; unadjusted close) produced Top1 T+1
+53.18% / +0.12% / PF 1.17, n=393. Holdout is positive. Cost 25+ bps
+FAIL. Random Top1 beats the strategy. Ranking is inverted
+(Bottom 20% beats Top 20%). NOT_VALIDATED is the honest outcome, not
+a reason to retune. See `research/new_main_force_strategy/13_final_verdict.md`.
+
+## Xiaomei 2.2.2 — 2026-09-05
+
+Completion: **PROFITABILITY_NOT_VALIDATED**.
+
+Profitability label: **NOT_PROFITABLE**. Strategy `observable_footprint_v1`
+remains **FROZEN**. Weights remain **FROZEN**. Auto weight change remains
+**OFF**. Broker / live order remain **DISABLED**.
+
+Read-only as-of replay of frozen `observable_footprint_v1` on the
+same-day `daily_klines` quality-filtered universe (47 FULL_ASOF_PANEL
+days; catalyst_score=0 as-of; unadjusted close) produced Top1 T+1
+50% / +0.02% / PF 1.014. Recent holdout is negative. Cost 10+ bps
+FAIL. Historical realized T+1 is −0.26% / PF 0.84. Ranking is inverted
+(Bottom 20% beats Top1). NOT_PROFITABLE is the honest outcome, not a
+reason to retune. See
+`research/production-profitability/production_profitability_report.md`.
+
 ## Xiaomei 2.2.1 — 2026-09-05
 
 Completion: **XIAOMEI 2.2.1 PRODUCTION_RUNTIME_READY**.

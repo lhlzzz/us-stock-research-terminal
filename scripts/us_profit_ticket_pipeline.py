@@ -2771,8 +2771,9 @@ def save_outputs(package: dict[str, Any], output_date: str, save_db: bool = Fals
             import sys
             from pathlib import Path
             sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-            from scripts.db.engine import SessionLocal
-            from scripts.db.pipeline_bridge import save_pipeline_to_db
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            from db.engine import SessionLocal
+            from db.pipeline_bridge import save_pipeline_to_db
             db = SessionLocal()
             db_counts = save_pipeline_to_db(
                 db, output_date, package["metrics"],

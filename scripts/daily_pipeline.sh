@@ -27,6 +27,7 @@ if [ -f "$PROJECT_DIR/.env" ]; then
 fi
 
 : "${DATABASE_URL:?DATABASE_URL must be set in the environment or .env}"
+export PYTHONPATH="$PROJECT_DIR:$SCRIPT_DIR${PYTHONPATH:+:$PYTHONPATH}"
 
 DATE=$(date +%Y-%m-%d)
 LOG_FILE="$LOG_DIR/pipeline-$DATE.log"
@@ -91,6 +92,7 @@ check_services() {
         log "Redis not ready, attempting start..."
         redis-server --daemonize yes 2>/dev/null || true
     fi
+    python3 -c "from obsidian.paths import require_production_vaults; require_production_vaults(); print('Obsidian vaults OK')"
     log "Infrastructure OK"
 }
 

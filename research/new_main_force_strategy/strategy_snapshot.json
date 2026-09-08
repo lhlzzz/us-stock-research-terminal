@@ -1,0 +1,132 @@
+{
+  "NEW_STRATEGY_ID": "capital_behavior_v2",
+  "NEW_STRATEGY_VERSION": "capital_behavior_v2",
+  "NEW_STRATEGY_STATUS": "UNVALIDATED_NO_FIXED_CHAIN",
+  "NEW_STRATEGY_FORMULA": "clamp(0.55*capital_strength + 0.25*capital_quality + 0.20*|control_asymmetry| - 0.18*distribution_probability - 0.12*trap_probability)",
+  "NEW_STRATEGY_FACTORS": [
+    "upward_pressure",
+    "downward_pressure",
+    "volume_pressure",
+    "demand_persistence",
+    "supply_exhaustion",
+    "absorption",
+    "accumulation",
+    "markup",
+    "distribution",
+    "crowding",
+    "trap",
+    "selling_activity",
+    "price_damage",
+    "damage_efficiency",
+    "absorption_failure",
+    "price_response_efficiency",
+    "control_asymmetry",
+    "capital_strength",
+    "capital_quality",
+    "distribution_probability",
+    "trap_probability",
+    "capital_behavior_score"
+  ],
+  "NEW_STRATEGY_WEIGHTS": {
+    "capital_strength": 0.55,
+    "capital_quality": 0.25,
+    "abs_control_asymmetry": 0.2,
+    "distribution_probability": -0.18,
+    "trap_probability": -0.12,
+    "capital_strength_components": {
+      "direction_pressure": 0.22,
+      "demand_persistence": 0.16,
+      "selling_activity": 0.14,
+      "absorption": 0.14,
+      "price_response_efficiency": 0.14,
+      "state_confidence": 0.1,
+      "transition_confidence": 0.1,
+      "regime_alignment": 0.04
+    }
+  },
+  "NEW_RANKING_KEY": [
+    "capital_behavior_score",
+    "capital_strength",
+    "demand_persistence"
+  ],
+  "NEW_TICKET_RULE": "Top1 by NEW_RANKING_KEY after quality filter; no capital MIN_SCORE",
+  "NEW_UNIVERSE_RULE": "daily_klines as-of membership; history>=200; close>=5; median dollar volume>=5e6; as_of bar required",
+  "NEW_ENTRY_TIME": "US regular session close complete bar; paper ticket after BJT 04:00",
+  "NEW_FORWARD_RULE": "unadjusted kline close[as_of] -> close[CALENDAR.add_trading_days(as_of,h)]",
+  "DATA_VERSION": "PUBLIC_OHLCV_V2",
+  "SOURCE_SEMANTIC": "OBSERVABLE_MARKET_BEHAVIOR_PROXY_NOT_INSTITUTIONAL_ORDER_FLOW",
+  "PRODUCTION_RANKING_OWNER": "observable_footprint_v1",
+  "PRODUCTION_RANKING_KEY": [
+    "ticket_score",
+    "market_score",
+    "volume_confirmation_ratio"
+  ],
+  "PRODUCTION_BOUNDARY": {
+    "status": "RESEARCH_ONLY",
+    "production_research_status": "PRODUCTION_RESEARCH_READY",
+    "production_runtime_status": "PRODUCTION_RUNTIME_READY",
+    "strategy": "observable_footprint_v1",
+    "strategy_status": "FROZEN",
+    "weights_status": "FROZEN",
+    "research": "LIVE",
+    "replay": "LIVE",
+    "learning": "LIVE",
+    "paper": "PAPER_ONLY",
+    "broker": "NO_BROKER",
+    "live_order": "NO_LIVE_ORDER",
+    "ranking_owner": "observable_footprint_v1",
+    "ranking": "KEEP_OBSERVABLE_FOOTPRINT_RANKING_UNCHANGED",
+    "production_action": "NO_PRODUCTION_WEIGHT_CHANGE",
+    "production_apply": "BLOCKED",
+    "auto_weight_change": "OFF",
+    "output_layers": [
+      "RESEARCH",
+      "RESEARCH_EVIDENCE",
+      "RESEARCH_RANKING",
+      "RESEARCH_RISK",
+      "RESEARCH_LEARNING",
+      "RESEARCH_PROPOSAL"
+    ],
+    "allowed_surfaces": [
+      "research",
+      "shadow",
+      "replay",
+      "diagnostics",
+      "context",
+      "learning"
+    ],
+    "forbidden_outputs": [
+      "BUY",
+      "SELL",
+      "ORDER",
+      "PAPER_PICK",
+      "PRODUCTION_ORDER",
+      "LIVE_SIGNAL",
+      "AUTO_BUY",
+      "AUTO_SELL"
+    ],
+    "forbidden_transitions": [
+      "RESEARCH_TO_ALPHA",
+      "RESEARCH_TO_BUY_SELL",
+      "LEARNING_TO_AUTO_WEIGHT_CHANGE",
+      "BROKER_CONNECT",
+      "LIVE_ORDER_ENABLE",
+      "PRODUCTION_APPLY",
+      "WEIGHT_BYPASS"
+    ]
+  },
+  "source_sha256": {
+    "scripts/capital/scoring.py": "50020da0674fac61543237adca17dfea36e1561841dda30999967f34b772668f",
+    "scripts/capital/features.py": "3a5f4817d06f8557e58f0bf1cc52dfd3d5752332bb3eb56a1f0f66e551022d08",
+    "scripts/capital/evidence.py": "cdfc08645bbd6eb7ef7dd89b8b4a6e5a745d83e1cf8a6bd5bc2ed42b207e93ac",
+    "scripts/capital/control.py": "07af1c62fff80ad32a6eae2cecf7ce4665c0acb329c4e15d01aef865228a1d01",
+    "scripts/capital/state.py": "41eb0613bfb54601005d56c9a54da50a3b1347a0a9e542017cc30fe9eacd19b1",
+    "scripts/capital/intent.py": "510fda2a4451ad071d23e6730ce08a7cb55e8570af052ee4fe520a4873b4af3a",
+    "scripts/capital/path.py": "b8c81df7257cc6fc0008ab828a8d386254891a974cb939a55416fc6bdc2b97fa",
+    "scripts/capital/__init__.py": "03132a03f12a593e9e4ae32b2ea45e2a942f3c4134d8f9153175fbd2d1a2ccef"
+  },
+  "fingerprint_sha256": "defbef8be7b2f1dc845f9a04597ab43dae9d6cd5285fb11c6e01952815e50b18",
+  "git_commit": "c87c4584ec6216b83de1234171b2f1be330549ff",
+  "locked_at": "2026-09-05T19:10:45Z",
+  "do_not_mutate_during_replay": true
+}
